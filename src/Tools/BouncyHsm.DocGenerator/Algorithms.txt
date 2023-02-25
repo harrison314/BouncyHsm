@@ -12,18 +12,20 @@ end
 Supported algorithms for _Bouncy Hsm_ verison {{ Versions.Version }} (commit _{{Versions.Commit}}_).
 
 ## Mechanisms
+_Bouncy Hsm_ supports {{ MechanismsCount }} mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign | Verify | Derive | Encrypt | Decrypt |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: |
 {{~ for mi in Mechanisms ~}}
-| _{{ mi.MechanismType }}_ | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags | toCheck 'CKF_DIGEST' }} | {{mi.Flags | toCheck 'CKF_SIGN' }} | {{mi.Flags | toCheck 'CKF_VERIFY'}} | {{mi.Flags | toCheck 'CKF_DERIVE' }} | {{mi.Flags | toCheck 'CKF_ENCRYPT' }} | {{mi.Flags | toCheck 'CKF_DECRYPT' }} |
+| `{{ mi.MechanismType }}` | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags | toCheck 'CKF_DIGEST' }} | {{mi.Flags | toCheck 'CKF_SIGN' }} | {{mi.Flags | toCheck 'CKF_VERIFY'}} | {{mi.Flags | toCheck 'CKF_DERIVE' }} | {{mi.Flags | toCheck 'CKF_ENCRYPT' }} | {{mi.Flags | toCheck 'CKF_DECRYPT' }} |
 {{~ end ~}}
 
 ## Elitic curves
+_Bouncy Hsm_ supports {{ EcCount }} different named elliptic curves.
 
 | Curve | Kind | OID |
 | ---  | --- | --- |
 {{~ for e in Ec ~}}
-| {{ e.Name }} | {{ e.Kind }} | {{ e.Oid }} |
+| {{ e.Name }} | {{ e.Kind }} | `{{ e.Oid }}` |
 {{~ end ~}}
 
