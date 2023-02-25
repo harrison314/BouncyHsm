@@ -1,5 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Utils;
 using BouncyHsm.Core.UseCases.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,7 +27,6 @@ public class SlotFacade : ISlotFacade
     public async ValueTask<DomainResult<CreateSlotResult>> CreateSlot(CreateSlotData createSlotData, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to CreateSlot");
-
 
         SlotEntity slotEntity = new SlotEntity()
         {
@@ -72,7 +72,6 @@ public class SlotFacade : ISlotFacade
         }
     }
 
-
     public async ValueTask<DomainResult<IReadOnlyList<SlotEntity>>> GetAllSlots(CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to GetAllSlots");
@@ -83,8 +82,9 @@ public class SlotFacade : ISlotFacade
 
     private string CreateSerial(int serialLen = 8)
     {
-        byte[] data = RandomNumberGenerator.GetBytes(serialLen);
+        Span<byte> data = (serialLen <= 512) ? stackalloc byte[serialLen] : new byte[serialLen];
+        RandomNumberGenerator.Fill(data);
 
-        return BitConverter.ToString(data).Replace("-", string.Empty);
+        return HexConvertor.GetString(data);
     }
 }
