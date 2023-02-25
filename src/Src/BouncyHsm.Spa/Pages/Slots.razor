@@ -33,7 +33,7 @@ else
                     </div>
                     <div class="col-3">
                         <p class="fst-italic">Description</p>
-                        <p>@slot.Description</p>
+                        <p>@slot.Description <CopyBtn Text="@slot.Description" /></p>
                     </div>
                     <div class="col-3">
                          <table class="table table-borderless table-sm">
@@ -41,10 +41,12 @@ else
                                 <tr>
                                     <td>Token label:</td>
                                     <td>@slot.Token.Label</td>
+                                    <td><CopyBtn Text="@slot.Token.Label" /></td>
                                 </tr>
                                 <tr>
                                     <td>Token serial:</td>
                                     <td>@slot.Token.SerialNumber</td>
+                                    <td><CopyBtn Text="@slot.Token.SerialNumber" /></td>
                                 </tr>
                             </tbody>
                         </table>

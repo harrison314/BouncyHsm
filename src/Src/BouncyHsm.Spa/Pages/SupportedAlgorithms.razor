@@ -34,7 +34,7 @@ else
             @foreach (MechanismInfoDto mi in this.mechanisms)
             {
                 <tr>
-                    <td>@mi.MechanismType</td>
+                    <td class="code">@mi.MechanismType</td>
                     <td class="text-end">@mi.MinKeySize</td>
                     <td class="text-end">@mi.MaxKeySize</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Digest)</td>

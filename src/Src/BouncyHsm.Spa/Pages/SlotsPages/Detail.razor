@@ -8,6 +8,7 @@
 
 <div class="d-flex justify-content-end pb-3">
     <button type="button" class="btn btn-outline-primary" @onclick="ReloadObjects"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
+    <NavLink href="@($"/Slots/{this.Id}/Pkcs")" class="btn btn-outline-primary"><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
 </div>
 
 <p>The following is a list of all the objects stored in the token.</p>
@@ -27,7 +28,6 @@ else
             <div class="card-body">
                 <div class="d-flex justify-content-between">
 
-                    @*<div class="row">*@
                     <div class="col-1 d-flex align-items-center">
                         <div class="align-self-center">
                             <span class="@(GetIconClass(obj.Type)) icon-4x"></span>
@@ -40,14 +40,17 @@ else
                                 <tr>
                                     <td>Type:</td>
                                     <td>@obj.Type</td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td>CkLabel:</td>
                                     <td>@obj.CkLabel</td>
+                                    <td><CopyBtn Text="@obj.CkLabel" /></td>
                                 </tr>
                                 <tr>
                                     <td>CkId (HEX):</td>
                                     <td>@obj.CkIdHex</td>
+                                    <td><CopyBtn Text="@obj.CkIdHex" /></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -55,9 +58,12 @@ else
 
                     <div class="col-2">
                         <NavLink href="@($"/Slots/Detail/{this.Id}/object/{obj.Id}")" class="btn btn-outline-primary"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
+                    
+                        <DangerOperationBtn IconClass="icon-Full-Trash icon-1x" 
+                            Text="Remove"
+                            ConfirmText="@($"Remove object '{obj.Description}' with label '{obj.CkLabel}'?")"
+                            OnConfirm="() => this.RemoveObject(obj.Id)" />
                     </div>
-                    @*</div>*@
-
                 </div>
             </div>
         </div>
@@ -84,6 +90,12 @@ else
         this.storageObjectList = null;
         await Task.Yield();
         this.storageObjectList = await this.bouncyHsmClient.GetStorageObjectsAsync(this.Id, null, null);
+    }
+
+    private async Task RemoveObject(Guid objectId)
+    {
+        await this.bouncyHsmClient.RemoveStorageObjectAsync(this.Id, objectId);
+        await this.ReloadObjects();
     }
 
     private string GetIconClass(CKO cko)

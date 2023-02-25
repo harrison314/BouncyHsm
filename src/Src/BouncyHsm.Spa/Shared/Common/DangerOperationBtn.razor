@@ -1,0 +1,70 @@
+﻿@using BlazorStrap
+@using BlazorStrap.Shared.Components.Modal;
+
+<BSModal @ref="this.modalRef" HasCloseButton="true" IsStaticBackdrop="true">
+    <Header>Confirmation required</Header>
+    <Content>@this.ConfirmText</Content>
+    <Footer Context="modal">
+        <BSButton MarginStart="Margins.Auto" Color="BSColor.Secondary" OnClick="() => this.ClickNo()">No</BSButton>
+        <BSButton Color="BSColor.Primary" OnClick="() => this.ClickYes()">Yes</BSButton>
+    </Footer>
+</BSModal>
+
+<BSButton Color="BSColor.Danger" IsOutlined="true" OnClick="() => this.Show()"><span class="@this.IconClass"></span> @this.Text </BSButton>
+
+@code {
+    private BSModal? modalRef;
+
+    [Parameter]
+    public string IconClass
+    {
+        get;
+        set;
+    } = "";
+
+    [Parameter, EditorRequired]
+    public string Text
+    {
+        get;
+        set;
+    } = "";
+
+    [Parameter, EditorRequired]
+    public string ConfirmText
+    {
+        get;
+        set;
+    } = "";
+
+    [Parameter]
+    public EventCallback OnConfirm
+    {
+        get;
+        set;
+    }
+
+    private async Task Show()
+    {
+        if (this.modalRef != null)
+        {
+            await this.modalRef.ShowAsync();
+        }
+    }
+
+    private async Task ClickYes()
+    {
+        if (this.modalRef != null)
+        {
+            await this.modalRef.HideAsync();
+            await this.OnConfirm.InvokeAsync();
+        }
+    }
+
+    private async Task ClickNo()
+    {
+        if (this.modalRef != null)
+        {
+            await this.modalRef.HideAsync();
+        }
+    }
+}
