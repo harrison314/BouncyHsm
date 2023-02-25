@@ -1,0 +1,34 @@
+﻿@using BlazorStrap;
+@inject IJSRuntime JsRuntime
+@inject IBlazorStrap blazorStrap
+
+<button type="button" class="btn btn-outline-light btn-sm text-primary" @onclick="CopyToClipboard">
+    <i class="icon-Clipboard icon-1x"></i>
+</button>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Text
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    private async Task CopyToClipboard()
+    {
+        await this.JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", this.Text);
+
+        string shortedText = this.Text;
+        if (shortedText.Length > 62)
+        {
+            shortedText = string.Concat(shortedText.AsSpan(0, 60), "…");
+        }
+
+        this.blazorStrap.Toaster.Add("Copied to clipboard", shortedText, opt =>
+        {
+            opt.Color = BSColor.Primary;
+            opt.CloseAfter = 2_000;
+            opt.ContentClass = "small";
+        });
+    }
+}

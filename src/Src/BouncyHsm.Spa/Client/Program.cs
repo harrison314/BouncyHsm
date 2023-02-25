@@ -1,3 +1,4 @@
+using BlazorStrap;
 using BouncyHsm.Spa;
 using BouncyHsm.Spa.Services.Client;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,6 +21,8 @@ namespace BouncyHsm.Spa
                 return new BouncyHsmClient(builder.HostEnvironment.BaseAddress,
                     sp.GetRequiredService<HttpClient>());
             });
+
+            builder.Services.AddBlazorStrap();
 
             await builder.Build().RunAsync();
         }

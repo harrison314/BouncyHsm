@@ -5,7 +5,6 @@
     <div class="card-body">
         <div class="d-flex justify-content-between">
 
-            @*<div class="row">*@
             <div class="col-1 d-flex align-items-center">
                 <div class="align-self-center">
                     @if (this.Platform == DownloadPlatform.Windows)
@@ -22,7 +21,7 @@
                 <p>@this.Description</p>
             </div>
             <div class="col-2 align-items-center">
-                <a href="@GetDownloadLink(this.Architecture)" class="btn btn-sm btn-primary pe-4" download>
+                <a href="@GetDownloadLink(this.Architecture)" class="btn btn-sm btn-outline-primary pe-4" download>
                     <span class="icon-cloud-download"></span> Download
                 </a>
             </div>

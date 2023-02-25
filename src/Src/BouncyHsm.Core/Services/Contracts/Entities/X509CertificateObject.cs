@@ -80,6 +80,7 @@ public sealed class X509CertificateObject : CertificateObject
         this.CkaIssuer = Array.Empty<byte>();
         this.CkaSerialNumber = Array.Empty<byte>();
         this.CkaValue = Array.Empty<byte>();
+        this.CkaUrl = string.Empty;
 
         this.CkaHashOfSubjectPublicKey = Array.Empty<byte>();
         this.CkaHashOfIssuerPublicKey = Array.Empty<byte>();
