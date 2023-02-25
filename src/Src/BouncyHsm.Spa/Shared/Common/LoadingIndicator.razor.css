@@ -1,0 +1,15 @@
+.icn-spinner {
+    animation: spin-animation 1s infinite;
+    animation-timing-function: linear;
+    display: inline-block;
+}
+
+@keyframes spin-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

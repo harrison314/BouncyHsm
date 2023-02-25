@@ -1,0 +1,878 @@
+Name: Pkcs11RpcDefintions
+Description: RPC Definitions for PKCS11 library
+Rpc:
+  Ping:
+    Summary:
+    Request: PingRequest
+    Response: PingEnvelope
+
+  Initialize:
+    Summary: Call for C_Initialize
+    Request: InitializeRequest
+    Response: InitializeEnvelope
+  Finalize:
+    Summary: Call for C_Finalize
+    Request: FinalizeRequest
+    Response: FinalizeEnvelope
+  GetInfo:
+    Summary: Call for C_GetInfo
+    Request: GetInfoRequest
+    Response: GetInfoEnvelope
+  GetSlotList:
+    Summary: Call for C_etSlotList
+    Request: GetSlotListRequest
+    Response: GetSlotListEnvelope
+  GetSlotInfo:
+    Summary: Call for C_GetSlotInfo
+    Request: GetSlotInfoRequest
+    Response: GetSlotInfoEnvelope
+  GetTokenInfo:
+    Summary: Call for C_GetTokenInfo
+    Request: GetTokenInfoRequest
+    Response: GetTokenInfoEnvelope
+  GetMechanismList:
+    Summary: Call for C_GetMechanismList
+    Request: GetMechanismListRequest
+    Response: GetMechanismListEnvelope
+  GetMechanismInfo:
+    Summary: Call for C_GetMechanismInfo
+    Request: GetMechanismInfoRequest
+    Response: GetMechanismInfoEnvelope
+  OpenSession:
+    Summary: Call for C_OpenSession
+    Request: OpenSessionRequest
+    Response: OpenSessionEnvelope
+  CloseSession:
+    Summary: Call for C_CloseSession
+    Request: CloseSessionRequest
+    Response: CloseSessionEnvelope
+  CloseAllSessions:
+    Summary: Call for C_CloseAllSessions
+    Request: CloseAllSessionsRequest
+    Response: CloseAllSessionsEnvelope
+  GetSessionInfo:
+    Summary: Call for C_GetSessionInfo
+    Request: GetSessionInfoRequest
+    Response: GetSessionInfoEnvelope
+  Login:
+    Summary: Call for C_Login
+    Request: LoginRequest
+    Response: LoginEnvelope
+  Logout:
+    Summary: Call for C_Logout
+    Request: LogoutRequest
+    Response: LogoutEnvelope
+  SeedRandom:
+    Summary: Call for C_SeedRandom
+    Request: SeedRandomRequest
+    Response: SeedRandomEnvelope
+  GenerateRandom:
+    Summary: Call for C_GenerateRandom
+    Request: GenerateRandomRequest
+    Response: GenerateRandomEnvelope
+
+  DigestInit:
+    Summary: Call for C_DigestInit
+    Request: DigestInitRequest
+    Response: DigestInitEnvelope
+  Digest:
+    Summary: Call for C_Digest
+    Request: DigestRequest
+    Response: DigestEnvelope
+  DigestUpdate:
+    Summary: Call for C_DigestUpdate
+    Request: DigestUpdateRequest
+    Response: DigestUpdateEnvelope
+  DigestKey:
+    Summary: Call for C_DigestKey
+    Request: DigestKeyRequest
+    Response: DigestKeyEnvelope
+  DigestFinal:
+    Summary: Call for C_DigestFinal
+    Request: DigestFinalRequest
+    Response: DigestFinalEnvelope
+
+  CreateObject:
+    Summary: Call fro C_CreateObject
+    Request: CreateObjectRequest
+    Response: CreateObjectEnvelope
+  DestroyObject:
+    Summary: Call for C_DestroyObject
+    Request: DestroyObjectRequest
+    Response: DestroyObjectEnvelope
+  FindObjectsInit:
+    Summary: Call for C_FindObjectsInit
+    Request: FindObjectsInitRequest
+    Response: FindObjectsInitEnvelope
+  FindObjects:
+    Summary: Call for C_FindObjects
+    Request: FindObjectsRequest
+    Response: FindObjectsEnvelope
+  FindObjectsFinal:
+   Summary: Call for C_FindObjectsFinal
+   Request: FindObjectsFinalRequest
+   Response: FindObjectsFinalEnvelope
+  GetObjectSize:
+    Summary: Call for C_GetObjectSize
+    Request: GetObjectSizeRequest
+    Response: GetObjectSizeEnvelope
+  GetAttributeValue:
+    Summary: Call for C_GetAttributeValue
+    Request: GetAttributeValueRequest
+    Response: GetAttributeValueEnvelope
+  GenerateKeyPair:
+    Summary: Call for C_GenerateKeyPair
+    Request: GenerateKeyPairRequest
+    Response: GenerateKeyPairEnvelope
+
+  SignInit:
+    Summary: Call for C_SignInit
+    Request: SignInitRequest
+    Response: SignInitEnvelope
+  Sign:
+    Summary: Call for C_Sign
+    Request: SignRequest
+    Response: SignEnvelope
+  SignUpdate:
+    Summary: Call for C_SignUpdate
+    Request: SignUpdateRequest
+    Response: SignUpdateEnvelope
+  SignFinal:
+    Summary: Call for C_SignFinal
+    Request: SignFinalRequest
+    Response: SignFinalEnvelope
+
+  VerifyInit:
+    Summary: Call for C_VerifyInit
+    Request: VerifyInitRequest
+    Response: VerifyInitEnvelope
+  Verify:
+    Summary: Call for C_Verify
+    Request: VerifyRequest
+    Response: VerifyEnvelope
+  VerifyUpdate:
+    Summary: Call for C_VerifyUpdate
+    Request: VerifyUpdateRequest
+    Response: VerifyUpdateEnvelope
+  VerifyFinal:
+    Summary: Call for C_VerifyFinal
+    Request: VerifyFinalRequest
+    Response: VerifyFinalEnvelope
+
+  GenerateKey:
+    Summary: Call for C_GenerateKey
+    Request: GenerateKeyRequest
+    Response: GenerateKeyEnvelope
+
+  DeriveKey:
+    Summary: Call for C_DeriveKey
+    Request: DeriveKeyRequest
+    Response: DeriveKeyEnvelope
+
+Messages:
+  AppIdentification:
+    Summary: Application uniq identification data for server.
+    Fields:
+      AppName: string
+      AppNonce: string
+      Pid: uint64
+
+  ExtendedClientInfo:
+    Summary: Infromation about client
+    Fields:
+      CkUlongSize: uint32
+      PointerSize: uint32
+      Platform: string
+      LibVersion: string
+
+  PingRequest:
+    Summary: Request for ping
+    Fields:
+      AppId: AppIdentification
+
+  PingEnvelope:
+    Summary: Esponse for Ping
+    Fields:
+      Rv: uint32
+
+  InitializeRequest:
+    Summary: Initialize request
+    Fields:
+      AppId: AppIdentification
+      IsMutexFnSet: bool
+      LibraryCantCreateOsThreads: bool
+      OsLockingOk: bool
+      ClientInfo: ExtendedClientInfo
+  
+  InitializeEnvelope:
+    Summary: Response envelope
+    Fields:
+      Rv: uint32
+
+  FinalizeRequest:
+    Summary: Request for C_Finalize
+    Fields:
+      AppId: AppIdentification
+      IsPtrSet: bool
+
+  FinalizeEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  GetInfoRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+  
+  GetInfoEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      ManufacturerID: string
+
+  GetSlotListRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      IsTokenPresent: bool
+      IsSlotListPointerPresent: bool
+      PullCount: uint32
+
+  GetSlotListEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      PullCount: uint32
+      Slots: uint32[]
+
+  GetSlotInfoRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SlotId: uint32
+
+  CkVersion:
+    Summary: Represents version ifnormations.
+    Fields:
+      Major: int32
+      Minor: int32
+
+  CkSpecialUint:
+    Summary: Special ulong value
+    Fields:
+      UnavailableInformation: bool
+      EffectivelyInfinite: bool
+      InformationSensitive: bool
+      Value: uint32
+
+  SlotInfo:
+    Summary: Slot info object
+    Fields:
+      SlotDescription: string
+      ManufacturerID: string
+      FlagsTokenPresent: bool
+      FlagsRemovableDevice: bool
+      FlagsHwSlot: bool
+      HardwareVersion: CkVersion
+      FirmwareVersion: CkVersion
+
+  GetSlotInfoEnvelope:
+    Summary: 
+    Fields:
+      Rv: uint32
+      Data: SlotInfo?
+
+  GetTokenInfoRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SlotId: uint32
+
+  TokenInfo:
+    Summary:
+    Fields:
+      Label: string
+      ManufacturerId: string
+      Model: string
+      SerialNumber: string
+      Flags: uint32
+      MaxSessionCount: CkSpecialUint
+      SessionCount: CkSpecialUint
+      MaxRwSessionCount: CkSpecialUint
+      RwSessionCount: CkSpecialUint
+      MaxPinLen: uint32
+      MinPinLen: uint32
+      TotalPublicMemory: CkSpecialUint
+      FreePublicMemory: CkSpecialUint
+      TotalPrivateMemory: CkSpecialUint
+      FreePrivateMemory: CkSpecialUint
+      HardwareVersion: CkVersion
+      FirmwareVersion: CkVersion
+      UtcTime: string
+  
+  GetTokenInfoEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: TokenInfo?
+
+  GetMechanismListRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      IsMechanismListPointerPresent: bool
+      SlotId: uint32
+      PullCount: uint32
+
+  MechanismList:
+    Summary:
+    Fields:
+      PullCount: uint32
+      MechanismTypes: uint32[]
+
+  GetMechanismListEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: MechanismList?
+
+  GetMechanismInfoRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SlotId: uint32
+      MechanismType: uint32
+
+  MechanismInfo:
+    Summary: Complete mechanism info
+    Fields:
+      MechanismType: uint32
+      MinKeySize: uint32
+      MaxKeySize: uint32
+      Flags: uint32
+
+  GetMechanismInfoEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: MechanismInfo?
+
+  OpenSessionRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SlotId: uint32
+      Flags: uint32
+      IsPtrApplicationSet: bool
+      IsNotifySet: bool
+
+  OpenSessionEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      SessionId: uint32
+
+  CloseSessionRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+
+  CloseSessionEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  CloseAllSessionsRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SlotId: uint32
+
+  CloseAllSessionsEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  GetSessionInfoRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+
+  SessionInfoData:
+    Summary:
+    Fields:
+      SlotId: uint32
+      State: uint32
+      Flags: uint32
+      DeviceError: uint32
+
+  GetSessionInfoEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: SessionInfoData?
+
+  LoginRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      UserType: uint32
+      Utf8Pin: binary?
+
+  LoginEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  LogoutRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+
+  LogoutEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  SeedRandomRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Seed: binary
+
+  SeedRandomEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  GenerateRandomRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      RandomLen: uint32
+
+  GenerateRandomEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: binary?
+
+  MechanismValue:
+    Summary: Represents CK_MECHANISM/CK_MECHANISM_PTR. MechanismParamMp is serialized mechanism parameter.
+    Fields:
+      MechanismType: uint32
+      MechanismParamMp: binary?
+
+  DigestInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+
+  DigestInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  DigestRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+      IsDigestPtrSet: bool
+      PulDigestLen: uint32
+
+  DigestValue:
+    Summary: Representes digest returnet value.
+    Fields:
+      PulDigestLen: uint32
+      Data: binary?
+
+  DigestEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DigestValue?
+
+  DigestUpdateRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+
+  DigestUpdateEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  DigestKeyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      ObjectHandle: uint32
+
+  DigestKeyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  DigestFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      IsDigestPtrSet: bool
+      PulDigestLen: uint32
+
+  DigestFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DigestValue?
+
+  AttrValueFromNative:
+    Summary: Transport attribute value from native code to dotnet, with type hinting 1 - byte array, 2 - CK_BBOOL, 4 - CK_UINT, 5 - CK_DATE
+    Fields:
+      AttributeType: uint32
+      ValueTypeHint: int32
+      ValueRawBytes: binary
+      ValueBool: bool
+      ValueCkUlong: uint32
+      ValueCkDate: string?
+
+  CreateObjectRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Template: AttrValueFromNative[]
+
+  CreateObjectEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      ObjectHandle: uint32
+
+  DestroyObjectRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      ObjectHandle: uint32
+
+  DestroyObjectEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+
+  FindObjectsInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Template: AttrValueFromNative[]
+  FindObjectsInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+  FindObjectsRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      MaxObjectCount: uint32
+
+  FindObjectsData:
+    Summary:
+    Fields:
+      PullObjectCount: uint32
+      Objects: uint32[]
+      
+  FindObjectsEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: FindObjectsData?
+
+  FindObjectsFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+  FindObjectsFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  GetObjectSizeRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      ObjectHandle: uint32
+
+  GetObjectSizeEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: CkSpecialUint?
+
+  GetAttributeInputValues:
+    Summary: Attribute input method value
+    Fields:
+      AttributeType: uint32
+      IsValuePtrSet: bool
+      ValueLen: uint32
+
+  GetAttributeValueRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      ObjectHandle: uint32
+      InTemplate: GetAttributeInputValues[]
+
+  GetAttributeOutValue:
+    Summary:
+    Fields:
+      ValueLen: CkSpecialUint
+      ValueType: int32
+      ValueUint: uint32
+      ValueBool: bool
+      ValueBytes: binary
+      ValueCkDate: string?
+
+
+  GetAttributeOutValues:
+    Summary:
+    Fields:
+      OutTemplate: GetAttributeOutValue[]
+      
+  GetAttributeValueEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: GetAttributeOutValues?
+
+  GenerateKeyPairRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      PublicKeyTemplate: AttrValueFromNative[]
+      PrivateKeyTemplate: AttrValueFromNative[]
+ 
+  GenerateKeyPairData:
+     Summary:
+     Fields:
+       PublicKeyHandle: uint32
+       PrivateKeyHandle: uint32
+
+  GenerateKeyPairEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: GenerateKeyPairData?
+
+  SignInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  SignInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  SignRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+      IsSignaturePtrSet: bool
+      PullSignatureLen: uint32
+
+  SignatureData:
+    Summary:
+    Fields:
+      PullSignatureLen: uint32
+      Signature: binary
+
+  SignEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: SignatureData?
+
+  SignUpdateRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+
+  SignUpdateEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  SignFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      IsSignaturePtrSet: bool
+      PullSignatureLen: uint32
+
+  SignFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: SignatureData?
+
+  VerifyInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  VerifyInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+  
+  VerifyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+      Signature: binary
+
+  VerifyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  VerifyUpdateRequest:
+    Summary:
+    Fields: 
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+
+  VerifyUpdateEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  VerifyFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Signature: binary
+
+  VerifyFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  GenerateKeyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      Template: AttrValueFromNative[]
+      
+  GenerateKeyData:
+    Summary:
+    Fields:
+      KeyHandle: uint32
+
+  GenerateKeyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: GenerateKeyData?
+
+  DeriveKeyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      BaseKeyHandle: uint32
+      Template: AttrValueFromNative[]
+
+  DeriveKeyData:
+    Summary:
+    Fields:
+      KeyHandle: uint32
+
+  DeriveKeyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DeriveKeyData?
+
+  # CK_parsms DTO's
+  CkP_MacGeneralParams:
+    Summary: Representes CK_MAC_GENERAL_PARAMS
+    Fields:
+      Value: uint32
+
+  CkP_ExtractParams:
+    Summary: Representes CK_EXTRACT_PARAMS
+    Fields:
+      Value: uint32
+
+  CkP_RsaPkcsPssParams:
+    Summary: Representes CK_RSA_PKCS_PSS_PARAMS
+    Fields:
+      HashAlg: uint32 # CK_MECHANISM_TYPE
+      Mgf: uint32
+      SLen: uint32
+  
+  CkP_RawDataParams:
+    Summary: Representes raw data parameters
+    Fields:
+      Value: binary
+
+  CkP_KeyDerivationStringData:
+    Summary: Representes CK_KEY_DERIVATION_STRING_DATA
+    Fields:
+      Data: binary
+      Len: uint32
+
+  CkP_CkObjectHandle:
+    Summary: Representes CK_OBJECT_HANDLE as parameter
+    Fields:
+      Handle: uint32
+
+  Ckp_CkEcdh1DeriveParams:
+    Summary: Representes CK_ECDH1_DERIVE_PARAMS
+    Fields:
+      Kdf: uint32
+      SharedData: binary?
+      PublicData: binary

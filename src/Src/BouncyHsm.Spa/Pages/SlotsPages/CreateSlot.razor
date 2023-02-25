@@ -1,0 +1,139 @@
+﻿@page "/Slots/Create"
+@using BouncyHsm.Spa.Services.Client
+@inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation
+
+<PageTitle>Create slot with token</PageTitle>
+
+<h1>Create slot with token</h1>
+
+<div class="row">
+    <div class="col-6">
+        @if (this.errorMessage != null)
+        {
+            <div class="mb-6">
+                <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+            </div>
+        }
+
+        <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit">
+            <ValidatableObjectValidator />
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-1">
+                <label for="i-description" class="form-label">Description</label>
+                <InputText id="i-description" class="form-control" @bind-Value="this.model.Description" />
+                <div class="form-text">Human readable description for slot.</div>
+                <ValidationMessage For="() => this.model.Description" />
+            </div>
+            <div class="mb-1 form-check">
+                <InputCheckbox class="form-check-input" id="i-simulateHwSlot" @bind-Value="this.model.SimulateHwSlot" />
+                <label class="form-check-label" for="i-simulateHwSlot">Simulare HW slot</label>
+                <ValidationMessage For="() => this.model.SimulateHwSlot" />
+            </div>
+
+            <hr />
+            <div class="mb-1">
+                <label for="i-tokenLabel" class="form-label">Token label</label>
+                <InputText id="i-tokenLabel" class="form-control" @bind-Value="@this.model.TokenLabel" />
+                <ValidationMessage For="() => this.model.TokenLabel" />
+            </div>
+
+            <div class="mb-1">
+                <label for="i-tokenSerial" class="form-label">Token serial number</label>
+                <InputText id="i-tokenSerial" class="form-control" @bind-Value="@this.model.TokenSerialNumber" />
+                <div class="form-text">Serial number in hexadecimal as token serial. Is is empty, then generate on server.</div>
+                <ValidationMessage For="() => this.model.TokenSerialNumber" />
+            </div>
+
+            <div class="mb-1 form-check">
+                <InputCheckbox class="form-check-input" id="i-tokenSimHw" @bind-Value="@this.model.TokenSimulateHwMechanism" />
+                <label class="form-check-label" for="i-tokenSimHw">Simulare HW mechanism</label>
+                <ValidationMessage For="() => this.model.TokenSimulateHwMechanism" />
+            </div>
+            <div class="mb-1 form-check">
+                <InputCheckbox class="form-check-input" id="i-tokenSimHwRng" @bind-Value="@this.model.TokenSimulateHwRng" />
+                <label class="form-check-label" for="i=tokenSimHwRng">Simulare HW RNG</label>
+                <ValidationMessage For="() => this.model.TokenSimulateHwRng" />
+            </div>
+            <div class="mb-1 form-check">
+                <InputCheckbox class="form-check-input" id="i-tokenSimQa" @bind-Value="@this.model.TokenSimulateQualifiedArea" />
+                <label class="form-check-label" for="i-tokenSimQa">Simulare qualified area on token</label>
+                <ValidationMessage For="() => this.model.TokenSimulateQualifiedArea" />
+            </div>
+
+            <div class="mb-1">
+                <label for="i-tokenUserPin" class="form-label">User PIN (in UTF8 encoding)</label>
+                <InputText type="password" class="form-control" id="i-tokenUserPin" @bind-Value="@this.model.TokenUserPin" />
+                <ValidationMessage For="() => this.model.TokenUserPin" />
+            </div>
+            <div class="mb-1">
+                <label for="i-soUserPin" class="form-label">SO PIN (in UTF8 encoding)</label>
+                <InputText type="password" class="form-control" id="i-soUserPin" @bind-Value="@this.model.TokenSoPin" />
+                <ValidationMessage For="() => this.model.TokenSoPin" />
+            </div>
+
+            @if (this.model.TokenSimulateQualifiedArea)
+            {
+                <div class="mb-1">
+                    <label for="i-signPin" class="form-label">Signature PIN (in UTF8 encoding)</label>
+                    <InputText type="password" class="form-control" id="i-signPin" @bind-Value="@this.model.TokenSignaturePin" />
+                    <ValidationMessage For="() => this.model.TokenSignaturePin" />
+                </div>
+            }
+
+            <div class="justify-content-end">
+                <button type="submit" class="btn btn-primary"><span class="icon-plus icon-1x"></span> Create</button>
+            </div>
+        </EditForm>
+
+    </div>
+</div>
+
+@code {
+    private CreateSlotViewModel model = new CreateSlotViewModel();
+    private EditContext? editContext;
+    private string? errorMessage = null;
+
+    protected override void OnInitialized()
+    {
+        this.editContext = new EditContext(this.model);
+    }
+
+    private async Task HandleSubmit()
+    {
+        this.errorMessage = null;
+        await Task.Yield();
+
+        CreateSlotDto createSlotDto = new CreateSlotDto()
+            {
+                Description = this.model.Description.Trim(),
+                IsHwDevice = this.model.SimulateHwSlot,
+                Token = new CreateTokenDto()
+                {
+                    Label = this.model.TokenLabel,
+                    SerialNumber = string.IsNullOrWhiteSpace(this.model.TokenSerialNumber) ? null : this.model.TokenSerialNumber.Trim(),
+                    SimulateHwMechanism = this.model.TokenSimulateHwMechanism,
+                    SimulateHwRng = this.model.TokenSimulateHwRng,
+                    SimulateQualifiedArea = this.model.TokenSimulateQualifiedArea,
+                    SoPin = this.model.TokenSoPin.Trim(),
+                    UserPin = this.model.TokenUserPin.Trim(),
+                    SignaturePin = this.model.TokenSimulateQualifiedArea
+                                        ? this.model.TokenSignaturePin.Trim()
+                                        : null
+                }
+            };
+
+        try
+        {
+            await this.bouncyHsmClient.CreateSlotAsync(createSlotDto);
+            this.Navigation.NavigateTo("/Slots");
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            Console.WriteLine(ex);
+        }
+    }
+}

@@ -1,0 +1,25 @@
+﻿@page "/Slots/{SlotId:int}/Pkcs"
+@*@using BouncyHsm.Spa.Services.Client
+@inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation*@
+
+<PageTitle>Pkcs</PageTitle>
+
+<h1>Pkcs</h1>
+<div class="row">
+    <div class="col d-flex justify-content-end pb-3">
+        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs/ImportP12")" class="btn btn-outline-primary"><span class="icon-upload3 icon-1x"></span> Import P12</NavLink>
+    </div>
+</div>
+
+<p>TODO some description</p>
+
+@code {
+
+    [Parameter]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+}

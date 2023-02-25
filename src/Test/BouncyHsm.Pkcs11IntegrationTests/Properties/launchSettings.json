@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BouncyHsm.Pkcs11IntegrationTests": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

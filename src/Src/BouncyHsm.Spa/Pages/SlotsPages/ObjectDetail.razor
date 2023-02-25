@@ -1,0 +1,91 @@
+﻿@page "/Slots/Detail/{Id:int}/object/{ObjectId:guid}"
+@using BouncyHsm.Spa.Services.Client
+@inject IBouncyHsmClient bouncyHsmClient
+
+<PageTitle>Storage object detail</PageTitle>
+
+
+
+@if (this.objectDetail == null)
+{
+    <h1>Storage object detail</h1>
+    <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+}
+else
+{
+    <h1>Storage object detail @this.objectDetail.Description</h1>
+    <p>Attributes table.</p>
+
+    <table class="table table-responsive-md table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var attr in this.objectDetail.Attributes)
+            {
+                <tr>
+                    <td>@attr.AttributeType</td>
+                    <td>@attr.Size <i>B</i></td>
+                    <td>
+                        <div class="fst-italic">@attr.ValueText</div>
+                        <hr />
+
+                        <div>
+                            <BouncyHsm.Spa.Shared.Common.HexStringView Hex="@attr.ValueHex" Delimiter=" " BaytesOnLine="20" />
+                        </div>
+                    </td>
+                </tr>
+               @* <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td></td>
+                </tr>*@
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private StorageObjectDetailDto? objectDetail = null;
+
+    [Parameter]
+    public int Id
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public Guid ObjectId
+    {
+        get;
+        set;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.objectDetail = await this.bouncyHsmClient.GetStorageObjectAsync(this.Id, this.ObjectId);
+    }
+
+    private string GetIconClass(CKO cko)
+    {
+        return cko switch
+        {
+            CKO.CKO_CERTIFICATE => "icon-file-text2",
+            CKO.CKO_DATA => "icon-drive",
+            CKO.CKO_DOMAIN_PARAMETERS => "icon-Integrated-Circuit",
+            CKO.CKO_HW_FEATURE => "icon-Integrated-Circuit",
+            CKO.CKO_MECHANISM => "icon-Integrated-Circuit",
+            CKO.CKO_OTP_KEY => "icon-Integrated-Circuit",
+            CKO.CKO_PRIVATE_KEY => "icon-Key-Security",
+            CKO.CKO_PUBLIC_KEY => "icon-unlocked",
+            CKO.CKO_SECRET_KEY => "icon-Privacy",
+            CKO.CKO_VENDOR_DEFINED => "icon-Integrated-Circuit",
+            _ => throw new InvalidProgramException()
+        };
+    }
+}

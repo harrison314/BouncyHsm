@@ -1,0 +1,12 @@
+﻿<div class="alert alert-danger" role="alert">
+    <span class="icon-fire"></span> @this.Message
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Message
+    {
+        get;
+        set;
+    } = string.Empty;
+}

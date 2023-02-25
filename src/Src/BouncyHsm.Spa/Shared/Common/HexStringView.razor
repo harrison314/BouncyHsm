@@ -1,0 +1,54 @@
+﻿<code>
+    @{
+        int i = 0;
+    }
+    @foreach (string chunk in this.GetNextChars(this.Hex, 2))
+    {
+        <text>@chunk</text>
+        <text>@this.Delimiter</text>
+        @if (++i % this.BaytesOnLine == 0)
+        {
+            <br />
+        }
+    }
+</code>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public string Hex
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Parameter]
+    public string Delimiter
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Parameter]
+    public int BaytesOnLine
+    {
+        get;
+        set;
+    } = 10;
+
+
+    private IEnumerable<string> GetNextChars(string str, int iterateCount)
+    {
+        for (int i = 0; i < str.Length; i += iterateCount)
+        {
+            if (str.Length - i >= iterateCount)
+            {
+                yield return str.Substring(i, iterateCount);
+            }
+            else
+            {
+                yield return str.Substring(i, str.Length - i);
+            }
+        }
+    }
+}

@@ -1,0 +1,32 @@
+﻿@page "/DownloadP11"
+@using BouncyHsm.Spa.Shared.ForDownloadP11
+
+<PageTitle>Downlod PKCS#11 libs</PageTitle>
+
+<h1>Downlod PKCS#11 libs</h1>
+
+<p>TODO: license and other items</p>
+
+<div class="row">
+    <div class="col-9">
+        <DownloadCard Platform="DownloadPlatform.Windows"
+                      Architecture="x64"
+                      Description="Download BouncyHsm.Pkcs11.dll for 64 bit Windows 7 and higher." />
+
+        <DownloadCard Platform="DownloadPlatform.Windows"
+                      Architecture="x86"
+                      Description="Download BouncyHsm.Pkcs11.dll for 32 bit Windows 7 and higher." />
+
+        <DownloadCard Platform="DownloadPlatform.Linux"
+                      Architecture="x64"
+                      Description="Download BouncyHsm.Pkcs11.so for 64 bit linux (tested on Debian 11, CentOS 7)." />
+
+        <DownloadCard Platform="DownloadPlatform.Linux"
+                      Architecture="x86"
+                      Description="Download BouncyHsm.Pkcs11.so for 32 bit linux." />
+
+        <DownloadCard Platform="DownloadPlatform.Linux"
+                      Architecture="arm64"
+                      Description="Download BouncyHsm.Pkcs11.so for 64 bit ARM linux (RassberyPi)." />
+    </div>
+</div>

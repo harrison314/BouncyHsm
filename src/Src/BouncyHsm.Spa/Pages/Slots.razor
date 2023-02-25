@@ -1,0 +1,98 @@
+﻿@page "/Slots"
+@using BouncyHsm.Spa.Services.Client
+@inject IBouncyHsmClient bouncyHsmClient
+
+<PageTitle>Slots</PageTitle>
+
+<h1>Slots</h1>
+<div class="d-flex justify-content-end pb-3">
+    <button type="button" class="btn btn-outline-primary" @onclick="ReloadSlots"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
+    <NavLink href="/Slots/Create" class="btn btn-outline-primary"><span class="icon-plus icon-1x"></span> Create new</NavLink>
+</div>
+
+@if (this.slots == null)
+{
+    <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+}
+else
+{
+    @foreach (SlotDto slot in this.slots)
+    {
+        <div class="card mb-2">
+            <div class="card-header">
+                Slot ID: @slot.SlotId
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+
+                    @*<div class="row">*@
+                    <div class="col-1 d-flex align-items-center">
+                        <div class="align-self-center">
+                            <span class="icon-Sim-Card-Chip icon-4x"></span>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <p class="fst-italic">Description</p>
+                        <p>@slot.Description</p>
+                    </div>
+                    <div class="col-3">
+                         <table class="table table-borderless table-sm">
+                            <tbody>
+                                <tr>
+                                    <td>Token label:</td>
+                                    <td>@slot.Token.Label</td>
+                                </tr>
+                                <tr>
+                                    <td>Token serial:</td>
+                                    <td>@slot.Token.SerialNumber</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-3">
+                        <table class="table table-borderless table-sm">
+                            <tbody>
+                                <tr>
+                                    <td>HW mechanism:</td>
+                                    <td>@slot.Token.SimulateHwMechanism</td>
+                                </tr>
+                                <tr>
+                                    <td>HW RNG:</td>
+                                    <td>@slot.Token.SimulateHwRng</td>
+                                </tr>
+                                <tr>
+                                    <td>HW Qualifield area:</td>
+                                    <td>@slot.Token.SimulateQualifiedArea</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-2">
+                        <NavLink href="@($"/Slots/Detail/{slot.SlotId}")" class="btn btn-outline-primary"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
+                        <br />
+                        <NavLink href="@($"/Slots/{slot.SlotId}/Pkcs")" class="btn btn-outline-primary"><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+                    </div>
+                    @*</div>*@
+
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private IList<SlotDto>? slots;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.slots = await this.bouncyHsmClient.GetAllSlotsAsync();
+    }
+
+    private async Task ReloadSlots()
+    {
+        this.slots = null;
+        await Task.Yield();
+        this.slots = await this.bouncyHsmClient.GetAllSlotsAsync();
+    }
+}

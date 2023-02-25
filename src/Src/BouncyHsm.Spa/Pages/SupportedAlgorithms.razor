@@ -1,0 +1,98 @@
+﻿@page "/SupportedAlgorithms"
+@using BouncyHsm.Spa.Services.Client
+@inject IBouncyHsmClient bouncyHsmClient
+
+<PageTitle>Supported algorithms</PageTitle>
+
+<h1>Supported algorithms</h1>
+
+<p>List with actual supported mechanisms and eliptic curves.</p>
+
+<h2>Mechanisms</h2>
+
+@if (this.mechanisms == null)
+{
+    <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+}
+else
+{
+    <table class="table table-responsive-md table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Mechanism</th>
+                <th>Min. key size</th>
+                <th>Max. key size</th>
+                <th>Digest</th>
+                <th>Sign</th>
+                <th>Verify</th>
+                <th>Derive</th>
+                <th>Encrypt</th>
+                <th>Decrypt</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (MechanismInfoDto mi in this.mechanisms)
+            {
+                <tr>
+                    <td>@mi.MechanismType</td>
+                    <td class="text-end">@mi.MinKeySize</td>
+                    <td class="text-end">@mi.MaxKeySize</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Digest)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Sign)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Verify)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Derive)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Encrypt)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Decrypt)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2>Elitic curves</h2>
+
+    @if (this.curves == null)
+    {
+        <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+    }
+    else
+    {
+        <table class="table table-responsive-md table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Curve</th>
+                    <th>Kind</th>
+                    <th>OID</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (EcCurveInfoDto cr in this.curves)
+                {
+                    <tr>
+                        <td>@cr.Name</td>
+                        <td>@cr.Kind</td>
+                        <td class="fst-italic">@cr.Oid</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+}
+
+@code {
+    private IList<MechanismInfoDto>? mechanisms = null;
+    private IList<EcCurveInfoDto>? curves = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1);
+        this.mechanisms = await this.bouncyHsmClient.GetMechanismAsync();
+        await Task.Yield();
+        this.curves = await this.bouncyHsmClient.GetSupportedEcCurvesAsync();
+    }
+
+    private string ShowFlag(bool enabled)
+    {
+        return enabled ? "✓" : " ";
+    }
+}

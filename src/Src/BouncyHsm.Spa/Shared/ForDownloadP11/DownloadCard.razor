@@ -1,0 +1,60 @@
+﻿<div class="card mb-2">
+    <div class="card-header">
+        @this.Platform @this.Architecture
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+
+            @*<div class="row">*@
+            <div class="col-1 d-flex align-items-center">
+                <div class="align-self-center">
+                    @if (this.Platform == DownloadPlatform.Windows)
+                    {
+                        <span class="icon-windows icon-4x"></span>
+                    }
+                    else if (this.Platform == DownloadPlatform.Linux)
+                    {
+                        <span class="icon-tux icon-4x"></span>
+                    }
+                </div>
+            </div>
+            <div class="col-9">
+                <p>@this.Description</p>
+            </div>
+            <div class="col-2 align-items-center">
+                <a href="@GetDownloadLink(this.Architecture)" class="btn btn-sm btn-primary pe-4" download>
+                    <span class="icon-cloud-download"></span> Download
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public DownloadPlatform Platform
+    {
+        get;
+        set;
+    }
+
+    [Parameter, EditorRequired]
+    public string Architecture
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public string Description
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    private string GetDownloadLink(string architecture)
+    {
+        return "/todo"; //TODO: impelemnt likn
+    }
+}
