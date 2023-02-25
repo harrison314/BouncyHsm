@@ -36,13 +36,18 @@ public class Program
         builder.Services.Configure<Services.Configuration.BouncyHsmSetup>(builder.Configuration.GetSection("BouncyHsmSetup"));
         // Add services to the container.
 
-        builder.Services.AddControllers()
+        builder.Services.AddScoped<BouncyHsm.Infrastructure.Filters.HttpResponseExceptionFilter>();
+        builder.Services.AddControllers(cfg =>
+        {
+            cfg.Filters.Add<BouncyHsm.Infrastructure.Filters.HttpResponseExceptionFilter>();
+        })
             .AddJsonOptions(cfg =>
             {
                 cfg.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
                 cfg.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
                 cfg.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
+            
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
