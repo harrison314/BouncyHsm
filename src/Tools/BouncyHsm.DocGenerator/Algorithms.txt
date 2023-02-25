@@ -1,0 +1,29 @@
+﻿# Supported algorithms
+{{~
+func toCheck(b, flag)
+   if string.contains(b, flag)
+      ret '✓'
+   else
+      ret ' '
+   end
+end
+~}}
+
+Supported algorithms for _Bouncy Hsm_ verison {{ Versions.Version }} (commit _{{Versions.Commit}}_).
+
+## Mechanisms
+
+| Mechanism | Min key size | Max key size | Digest | Sign | Verify | Derive | Encrypt | Decrypt |
+| :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: |
+{{~ for mi in Mechanisms ~}}
+| _{{ mi.MechanismType }}_ | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags | toCheck 'CKF_DIGEST' }} | {{mi.Flags | toCheck 'CKF_SIGN' }} | {{mi.Flags | toCheck 'CKF_VERIFY'}} | {{mi.Flags | toCheck 'CKF_DERIVE' }} | {{mi.Flags | toCheck 'CKF_ENCRYPT' }} | {{mi.Flags | toCheck 'CKF_DECRYPT' }} |
+{{~ end ~}}
+
+## Elitic curves
+
+| Curve | Kind | OID |
+| ---  | --- | --- |
+{{~ for e in Ec ~}}
+| {{ e.Name }} | {{ e.Kind }} | {{ e.Oid }} |
+{{~ end ~}}
+
