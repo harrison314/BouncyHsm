@@ -73,7 +73,7 @@ public abstract class StorageObject : Entity, ICryptoApiObject
     {
         if (!this.values.ContainsKey(attributeType))
         {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_TYPE_INVALID, 
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_TYPE_INVALID,
                 $"Attribute type {attributeType} is not supported in {this.GetType().Name}.");
         }
 
@@ -83,10 +83,7 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             return;
         }
 
-        if (attributeType is CKA.CKA_ALWAYS_SENSITIVE 
-            or CKA.CKA_NEVER_EXTRACTABLE 
-            or CKA.CKA_ALWAYS_AUTHENTICATE
-            or CKA.CKA_LOCAL)
+        if (this.IsReadOnlyAttribute(attributeType))
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
         }
@@ -159,6 +156,14 @@ public abstract class StorageObject : Entity, ICryptoApiObject
     protected virtual bool IsSensitiveAttribute(CKA attributeType)
     {
         return false;
+    }
+
+    protected virtual bool IsReadOnlyAttribute(CKA attributeType)
+    {
+        return attributeType is CKA.CKA_ALWAYS_SENSITIVE
+            or CKA.CKA_NEVER_EXTRACTABLE
+            or CKA.CKA_ALWAYS_AUTHENTICATE
+            or CKA.CKA_LOCAL;
     }
 
     public override string ToString()

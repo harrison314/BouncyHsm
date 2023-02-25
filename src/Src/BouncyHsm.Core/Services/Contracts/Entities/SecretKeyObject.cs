@@ -58,14 +58,12 @@ public abstract class SecretKeyObject : KeyObject
         set => this.values[CKA.CKA_EXTRACTABLE] = AttributeValue.Create(value);
     }
 
-    //TODO: Can not set using PKCS11 interface
     public bool CkaAlwaysSensitive
     {
         get => this.values[CKA.CKA_ALWAYS_SENSITIVE].AsBool();
         set => this.values[CKA.CKA_ALWAYS_SENSITIVE] = AttributeValue.Create(value);
     }
 
-    //TODO: Can not set using PKCS11 interface
     public bool CkaNewerExtractable
     {
         get => this.values[CKA.CKA_NEVER_EXTRACTABLE].AsBool();
