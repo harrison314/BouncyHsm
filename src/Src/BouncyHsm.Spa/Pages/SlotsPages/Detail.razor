@@ -1,6 +1,7 @@
 ﻿@page "/Slots/Detail/{Id:int}"
 @using BouncyHsm.Spa.Services.Client
 @inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation
 
 <PageTitle>Slot detail</PageTitle>
 
@@ -9,6 +10,10 @@
 <div class="d-flex justify-content-end pb-3">
     <button type="button" class="btn btn-outline-primary" @onclick="ReloadObjects"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
     <NavLink href="@($"/Slots/{this.Id}/Pkcs")" class="btn btn-outline-primary"><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+    <DangerOperationBtn IconClass="icon-Full-Trash icon-1x"
+                        Text="Remove"
+                        ConfirmText="@($"Remove slot '{this.Id}'?")"
+                        OnConfirm="() => this.RemoveSlot()" />
 </div>
 
 <p>The following is a list of all the objects stored in the token.</p>
@@ -96,6 +101,12 @@ else
     {
         await this.bouncyHsmClient.RemoveStorageObjectAsync(this.Id, objectId);
         await this.ReloadObjects();
+    }
+
+    private async Task RemoveSlot()
+    {
+        await this.bouncyHsmClient.DeleteSlotAsync(this.Id);
+        this.Navigation.NavigateTo("Slots");
     }
 
     private string GetIconClass(CKO cko)

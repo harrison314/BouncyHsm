@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Infrastructure.Storage.InMemory;
 using BouncyHsm.Infrastructure.Storage.LiteDbFile.DbModels;
 using LiteDB;
 using Microsoft.Extensions.Logging;
@@ -161,6 +162,49 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         IReadOnlyList<SlotEntity> list = collection.FindAll().Select(t => mapper.MapSlot(t)).ToList();
         return new ValueTask<IReadOnlyList<SlotEntity>>(list);
+    }
+
+    public ValueTask DeleteSlot(uint slotId, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to DeleteSlot with slotId {slotId}.", slotId);
+
+        ILiteCollection<SlotModel> collection = this.database.GetCollection<SlotModel>();
+        int deletedSlots = collection.DeleteMany(t => t.SlotId == slotId);
+        if (deletedSlots != 1)
+        {
+            throw new BouncyHsmNotFoundException("Slot with slotId {slotId} not found.");
+        }
+
+        this.logger.LogDebug("Slot with slotId {slotId} has removed from database.", slotId);
+
+        ILiteCollection<StorageObjectInfo> objectCollection = this.database.GetCollection<StorageObjectInfo>();
+
+        const int pageSize = 100;
+        List<Guid> objectsIds = new List<Guid>(pageSize);
+        for (; ; )
+        {
+            objectsIds.Clear();
+            IEnumerable<Guid> ids = objectCollection.Find(t => t.SlotId == slotId, 0, pageSize).Select(t => t.Id);
+            objectsIds.AddRange(ids);
+
+            if (objectsIds.Count == 0)
+            {
+                break;
+            }
+
+            foreach (Guid objectId in objectsIds)
+            {
+                this.database.ExecuteInTransaction(db =>
+                {
+                    objectCollection.Delete(objectId);
+                    this.database.GetStorage<Guid>().Delete(objectId);
+                });
+
+                this.logger.LogDebug("Removed object with id {objectId}.", objectId);
+            }
+        }
+
+        return new ValueTask();
     }
 
     public ValueTask<bool> ValidatePin(SlotEntity slot, CKU userType, string pin, object? context, CancellationToken cancellationToken)

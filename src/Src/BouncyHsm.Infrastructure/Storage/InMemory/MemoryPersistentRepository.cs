@@ -11,18 +11,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BouncyHsm.Infrastructure.Storage.InMemory;
-
 internal class MemoryPersistentRepository : IPersistentRepository
 {
     private readonly ILogger<MemoryPersistentRepository> logger;
 
     private List<SlotEntity> slots;
-    private ConcurrentDictionary<Guid, StorageObject> storageObjects;
+    private ConcurrentDictionary<StorageObjectId, StorageObject> storageObjects;
 
     public MemoryPersistentRepository(ILogger<MemoryPersistentRepository> logger)
     {
         this.logger = logger;
-        this.storageObjects = new ConcurrentDictionary<Guid, StorageObject>();
+        this.storageObjects = new ConcurrentDictionary<StorageObjectId, StorageObject>();
 
         this.slots = new List<SlotEntity>()
         {
@@ -100,6 +99,21 @@ internal class MemoryPersistentRepository : IPersistentRepository
         return new ValueTask<SlotEntity?>(slot);
     }
 
+    public ValueTask DeleteSlot(uint slotId, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to DeleteSlot with slotId {slotId}.", slotId);
+
+        this.slots.RemoveAll(t => t.SlotId == slotId);
+
+        List<StorageObjectId> internalIds = this.storageObjects.Keys.Where(t => t.SlotId == slotId).ToList();
+        foreach (StorageObjectId internalId in internalIds)
+        {
+            this.storageObjects.TryRemove(internalId, out _);
+        }
+
+        return new ValueTask();
+    }
+
     public ValueTask<IReadOnlyList<SlotEntity>> GetSlots(GetSlotSpecification specification, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to GetSlots.");
@@ -116,18 +130,22 @@ internal class MemoryPersistentRepository : IPersistentRepository
 
     public ValueTask StoreObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
     {
+        this.logger.LogTrace("Entering to StoreObject with slotId {slotId}.", slotId);
+
         if (storageObject.Id == Guid.Empty)
         {
             storageObject.Id = Guid.NewGuid();
         }
 
-        this.storageObjects[storageObject.Id] = storageObject;
+        this.storageObjects[new StorageObjectId(storageObject.Id, slotId)] = storageObject;
 
         return new ValueTask();
     }
 
     public ValueTask<IReadOnlyList<StorageObject>> FindObjects(uint slotId, FindObjectSpecification specification, CancellationToken cancellationToken)
     {
+        this.logger.LogTrace("Entering to FindObjects with slotId {slotId}.", slotId);
+
         List<StorageObject> result = this.storageObjects.Values.Where(t => (specification.IsUserLogged || !t.CkaPrivate) && t.IsMatch(specification.Template)).ToList();
 
         return new ValueTask<IReadOnlyList<StorageObject>>(result);
@@ -135,6 +153,8 @@ internal class MemoryPersistentRepository : IPersistentRepository
 
     public ValueTask<bool> ValidatePin(SlotEntity slot, CKU userType, string pin, object? context, CancellationToken cancellationToken)
     {
+        this.logger.LogTrace("Entering to ValidatePin with slotId {slotId}, userType {userType}.", slot.Id, userType);
+
         if (userType == CKU.CKU_USER)
         {
             return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token!).UserPin == pin);
@@ -150,15 +170,22 @@ internal class MemoryPersistentRepository : IPersistentRepository
 
     public ValueTask<StorageObject?> TryLoadObject(uint slotId, Guid id, CancellationToken cancellationToken)
     {
+        this.logger.LogTrace("Entering to TryLoadObject with slotId {slotId}, object id {objectId}.", slotId, id);
+
         StorageObject? storageObject = null;
-        this.storageObjects.TryGetValue(id, out storageObject);
+        this.storageObjects.TryGetValue(new StorageObjectId(id, slotId), out storageObject);
 
         return new ValueTask<StorageObject?>(storageObject);
     }
 
     public ValueTask DestroyObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
     {
-        this.storageObjects.TryRemove(storageObject.Id, out _);
+        this.logger.LogTrace("Entering to DestroyObject with slotId {slotId}, object id {objectId}.", slotId, storageObject.Id);
+
+        if (!this.storageObjects.TryRemove(new StorageObjectId(storageObject.Id, slotId), out _))
+        {
+            throw new BouncyHsmNotFoundException($"Object with id {storageObject.Id} in slot {slotId} not found.");
+        }
 
         return new ValueTask();
     }

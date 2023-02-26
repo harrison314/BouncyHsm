@@ -41,4 +41,15 @@ public class SlotController : Controller
 
         return result.MapOk(SlotControllerMapper.ToDto).ToActionResult();
     }
+
+    [HttpDelete("{slotId}", Name = nameof(DeleteSlot))]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task<IActionResult> DeleteSlot(uint slotId)
+    {
+        this.logger.LogTrace("Entering to DeleteSlot with slotId {slotId}.", slotId);
+
+        VoidDomainResult result = await this.slotFacade.DeleteSlot(slotId, this.HttpContext.RequestAborted);
+
+        return result.ToActionResult();
+    }
 }

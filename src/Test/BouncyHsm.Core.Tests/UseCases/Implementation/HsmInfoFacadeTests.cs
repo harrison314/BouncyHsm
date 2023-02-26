@@ -36,7 +36,7 @@ public class HsmInfoFacadeTests
     public void GetCurves_Call_Success()
     {
         HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
-        IEnumerable<Services.Contracts.Entities.SupportedNameCurve> curves = hsmInfoFacade.GetCurves();
+        IEnumerable<BouncyHsm.Core.Services.Contracts.Entities.SupportedNameCurve> curves = hsmInfoFacade.GetCurves();
 
         Assert.IsNotNull(curves.ToList());
     }

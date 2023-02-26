@@ -8,4 +8,6 @@ public interface ISlotFacade
     ValueTask<DomainResult<IReadOnlyList<SlotEntity>>> GetAllSlots(CancellationToken cancellationToken);
 
     ValueTask<DomainResult<CreateSlotResult>> CreateSlot(CreateSlotData createSlotData, CancellationToken cancellationToken);
+
+    ValueTask<VoidDomainResult> DeleteSlot(uint slotId, CancellationToken cancellationToken);
 }

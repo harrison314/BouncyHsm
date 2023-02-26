@@ -84,4 +84,21 @@ public class SlotFacadeTests
         Assert.IsNotNull(value[0].Token?.SerialNumber);
         Assert.IsNotNull(value[0].Token?.Label);
     }
+
+    [TestMethod]
+    public async Task DeleteSlot_Call_Success()
+    {
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.DeleteSlot(12U, It.IsAny<CancellationToken>()))
+            .Returns(new ValueTask())
+            .Verifiable();
+
+        SlotFacade slotFacade = new SlotFacade(repository.Object, new NullLogger<SlotFacade>());
+
+        VoidDomainResult domainResult = await slotFacade.DeleteSlot(12U, default);
+
+        domainResult.AssertOk();
+
+        repository.VerifyAll();
+    }
 }

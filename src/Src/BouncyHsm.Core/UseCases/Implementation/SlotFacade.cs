@@ -80,6 +80,23 @@ public class SlotFacade : ISlotFacade
         return new DomainResult<IReadOnlyList<SlotEntity>>.Ok(result);
     }
 
+    public async ValueTask<VoidDomainResult> DeleteSlot(uint slotId, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to DeleteSlot with slotId {slotId}.", slotId);
+        try
+        {
+            await this.persistentRepository.DeleteSlot(slotId, cancellationToken);
+            this.logger.LogInformation("Removed slot with slotId {slotId}.", slotId);
+
+            return new VoidDomainResult.Ok();
+        }
+        catch (BouncyHsmNotFoundException ex)
+        {
+            this.logger.LogError(ex, "Slot {slotId} not found.", slotId);
+            return new VoidDomainResult.NotFound();
+        }
+    }
+
     private string CreateSerial(int serialLen = 8)
     {
         Span<byte> data = (serialLen <= 512) ? stackalloc byte[serialLen] : new byte[serialLen];
