@@ -21,6 +21,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BouncyHsm.Pkcs11Lib", "Src\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2AD5B4C3-B077-4B98-930B-5E9984CB6543}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
 		..\README.md = ..\README.md
 		RpcDefintion.yaml = RpcDefintion.yaml
@@ -34,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.DocGenerator", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.Core.Tests", "Test\BouncyHsm.Core.Tests\BouncyHsm.Core.Tests.csproj", "{B7160C65-C74A-475B-B9B2-A68DE867D2FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyHsm.ExampleApp", "Test\BouncyHsm.ExampleApp\BouncyHsm.ExampleApp.csproj", "{BA63BB8C-EA31-4364-9904-8718474EBF3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.ExampleApp", "Test\BouncyHsm.ExampleApp\BouncyHsm.ExampleApp.csproj", "{BA63BB8C-EA31-4364-9904-8718474EBF3E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6F83B51B-8FDA-40F2-88B5-F1E415918BA8} = {6F83B51B-8FDA-40F2-88B5-F1E415918BA8}
 	EndProjectSection
