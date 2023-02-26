@@ -16,8 +16,10 @@ or during network calls.
   * Create/remove slots.
   * Import P12/PFX files.
   * ...
-* Suports 80 named eliptic curves.
 * Possibility to simulate cards with a qualified area and a signature pin.
+* Suports RSA keys (with size 1-10K).
+* Suports 80 named eliptic curves.
+* Suports secrets (HMAC, serive,...)
 * [Suports mechanisms](/Doc/SuportedAlgorithms.md) **TODO**
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permision configuration).
