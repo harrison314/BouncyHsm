@@ -1,6 +1,7 @@
 ﻿@page "/Slots/{SlotId:int}/Pkcs/ImportP12"
 @using BouncyHsm.Spa.Pages.Pkcs;
 @using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils;
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
 
@@ -159,7 +160,7 @@
         {
             await this.bouncyHsmClient.ImportP12Async(this.SlotId, request);
             this.Navigation.NavigateTo($"/Slots/Detail/{this.SlotId}");
-    }
+        }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
             this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
@@ -173,7 +174,7 @@
         {
             BinaryForm.Utf8 => System.Text.Encoding.UTF8.GetBytes(value),
             BinaryForm.Base64 => Convert.FromBase64String(value),
-            BinaryForm.Hex => throw new NotImplementedException(),
+            BinaryForm.Hex => HexConvertorSlim.FromHex(value),
             _ => throw new InvalidProgramException($"Enum value {form} is not supported.")
         };
     }

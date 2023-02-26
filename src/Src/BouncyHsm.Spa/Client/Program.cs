@@ -5,26 +5,25 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BouncyHsm.Spa
+namespace BouncyHsm.Spa;
+
+public class Program
 {
-    public class Program
+    public static async Task Main(string[] args)
     {
-        public static async Task Main(string[] args)
+        var builder = WebAssemblyHostBuilder.CreateDefault(args);
+        builder.RootComponents.Add<App>("#app");
+        builder.RootComponents.Add<HeadOutlet>("head::after");
+
+        builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        builder.Services.AddScoped<IBouncyHsmClient>(sp =>
         {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
-            builder.RootComponents.Add<HeadOutlet>("head::after");
+            return new BouncyHsmClient(builder.HostEnvironment.BaseAddress,
+                sp.GetRequiredService<HttpClient>());
+        });
 
-            builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddScoped<IBouncyHsmClient>(sp =>
-            {
-                return new BouncyHsmClient(builder.HostEnvironment.BaseAddress,
-                    sp.GetRequiredService<HttpClient>());
-            });
+        builder.Services.AddBlazorStrap();
 
-            builder.Services.AddBlazorStrap();
-
-            await builder.Build().RunAsync();
-        }
+        await builder.Build().RunAsync();
     }
 }
