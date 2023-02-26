@@ -57,6 +57,12 @@ public class StorageObjectInfo
         set;
     }
 
+    public DateTime Created
+    {
+        get;
+        set;
+    }
+
     public StorageObjectInfo()
     {
 

@@ -32,6 +32,12 @@ public class SlotModel
         set;
     }
 
+    public DateTime Created
+    {
+        get;
+        set;
+    }
+
     public SlotModel()
     {
         this.Description = string.Empty;

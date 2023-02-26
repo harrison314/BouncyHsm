@@ -16,7 +16,10 @@ internal partial class SlotMapper
 
     }
 
+    [MapperIgnoreTarget(nameof(SlotModel.Created))]
     public partial SlotModel MapSlot(SlotEntity slotEntity);
 
+
+    [MapperIgnoreSource(nameof(SlotModel.Created))]
     public partial SlotEntity MapSlot(SlotModel model);
 }

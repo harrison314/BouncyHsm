@@ -73,6 +73,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         slotModel.Id = Guid.NewGuid();
         slotModel.SlotId = (uint)insertedId;
+        slotModel.Created = DateTime.UtcNow;
 
         PasswordsModel passwords = new PasswordsModel()
         {
@@ -252,7 +253,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             CkaClass = (uint)storageObject.CkaClass,
             LabelHash = this.CalculateXxxHash(storageObject.CkaLabel),
             IsPrivate = storageObject.CkaPrivate,
-            SlotId = slotId
+            SlotId = slotId,
+            Created = DateTime.UtcNow
         };
 
         StorageObjectMemento memento = storageObject.ToMemento();
