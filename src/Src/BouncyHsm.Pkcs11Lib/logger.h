@@ -25,5 +25,6 @@ bool logger_init(const char* level, const char* target);
 void log_message(int level, const char* format, ...);
 
 #define LOG_ENTERING_TO_FUNCTION() log_message(LOG_LEVEL_INFO, "Entering to function %s", __FUNCTION__)
+#define LOG_FAILED_CALL_RPC() log_message(LOG_LEVEL_ERROR, "Failed call remote endpoint in function %s", __FUNCTION__);
 
 #endif //LOGGER_H

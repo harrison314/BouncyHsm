@@ -174,7 +174,7 @@ bool envVariableDup(const char* name, char** variableValuePtr)
 	}
 
 	*variableValuePtr = buffer;
-	return false;
+	return true;
 #else
 	char* variable = getenv(name);
 	if (variable == NULL)
@@ -201,7 +201,7 @@ bool envVariableDup(const char* name, char** variableValuePtr)
 
 // premennu prostredia ako connection string NAME=VALUE; NAME2=VALUE2;
 // rozparsovat ako treba
-// "Server=127.0.0.1; Port=4589; LogTarget=ErrorCosnole; LogLevel=Error; Tag=45695;"
+// "Server=127.0.0.1; Port=8765; LogTarget=ErrorCosnole; LogLevel=Error; Tag=45695;"
 bool parseConnectionString(const char* connectionString, const char* name, char* outValue, int* sizePtr)
 {
 	if (connectionString == NULL || name == NULL || sizePtr == NULL)
@@ -286,7 +286,7 @@ bool parseConnectionStringOrDefault(const char* connectionString, const char* na
 void configureLogging(const char* configurationString)
 {
 	char targetBuffer[64];
-	char levelTarget[64];
+	char levelBuffer[64];
 
 	if (!parseConnectionStringOrDefault(configurationString, "LogTarget", targetBuffer, sizeof(targetBuffer), LOG_TARGET_ERR_CONSOLE))
 	{
@@ -294,13 +294,13 @@ void configureLogging(const char* configurationString)
 		return;
 	}
 
-	if (!parseConnectionStringOrDefault(configurationString, "LogLevel", levelTarget, sizeof(levelTarget), LOG_LEVEL_ERROR_NAME))
+	if (!parseConnectionStringOrDefault(configurationString, "LogLevel", levelBuffer, sizeof(levelBuffer), LOG_LEVEL_ERROR_NAME))
 	{
 		log_message(LOG_LEVEL_ERROR, "Error during reading LogLevel.");
 		return;
 	}
 
-	if (!logger_init(levelTarget, levelTarget))
+	if (!logger_init(levelBuffer, targetBuffer))
 	{
 		log_message(LOG_LEVEL_ERROR, "Error during initialized logger. Check LogTarget and LogLevel setting.");
 	}

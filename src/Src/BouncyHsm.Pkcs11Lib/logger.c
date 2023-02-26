@@ -11,6 +11,8 @@
 #include<syslog.h>
 #endif
 
+#include "platform_helper.h"
+
 static void send_log_message_None(int level, const char* levelText, const char* message)
 {
 
@@ -18,13 +20,13 @@ static void send_log_message_None(int level, const char* levelText, const char* 
 
 static void send_log_message_console(int level, const char* levelText, const char* message)
 {
-	printf("%s: %s\n", levelText, message);
+	printf("%s: %s" NEW_LINE_STR, levelText, message);
 	fflush(stdout);
 }
 
 static void send_log_message_errconsole(int level, const char* levelText, const char* message)
 {
-	fprintf(stderr, "%s: %s\n", levelText, message);
+	fprintf(stderr, "%s: %s" NEW_LINE_STR, levelText, message);
 	fflush(stderr);
 }
 

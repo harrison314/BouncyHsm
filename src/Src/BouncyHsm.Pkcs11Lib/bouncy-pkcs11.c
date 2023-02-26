@@ -1,24 +1,3 @@
-/*
- *  Copyright 2011-2016 The Pkcs11Interop Project
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
- /*
-  *  Written for the Pkcs11Interop project by:
-  *  Jaroslav IMRICH <jimrich@jimrich.sk>
-  */
-
 #include <stdlib.h>
 #include "bouncy-pkcs11.h"
 
@@ -28,8 +7,8 @@
 #include "timer.h"
 #include "logger.h"
 
-  // https://github.com/Pkcs11Interop/pkcs11-mock/blob/master/src/pkcs11-mock.c
-  // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
+// https://github.com/Pkcs11Interop/pkcs11-mock/blob/master/src/pkcs11-mock.c
+// https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
 
 
 void SetPaddedStrSafe(char* destination, size_t destinationSize, const char* src)
@@ -511,6 +490,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
 	int rv = nmrpc_call_Initialize(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -523,7 +503,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
 	}*/
 
 	return (CK_RV)envelope.Rv;
-	}
+}
 
 
 CK_DEFINE_FUNCTION(CK_RV, C_Finalize)(CK_VOID_PTR pReserved)
@@ -550,6 +530,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Finalize)(CK_VOID_PTR pReserved)
 
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -578,6 +559,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 	int rv = nmrpc_call_GetInfo(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -644,6 +626,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR p
 	int rv = nmrpc_call_GetSlotList(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -691,6 +674,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pIn
 	int rv = nmrpc_call_GetSlotInfo(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -742,6 +726,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR p
 	int rv = nmrpc_call_GetTokenInfo(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -799,6 +784,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TY
 	int rv = nmrpc_call_GetMechanismList(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -847,6 +833,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismInfo)(CK_SLOT_ID slotID, CK_MECHANISM_TY
 	int rv = nmrpc_call_GetMechanismInfo(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -914,6 +901,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_V
 	int rv = nmrpc_call_OpenSession(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -947,6 +935,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_CloseSession)(CK_SESSION_HANDLE hSession)
 	int rv = nmrpc_call_CloseSession(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -975,6 +964,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_CloseAllSessions)(CK_SLOT_ID slotID)
 	int rv = nmrpc_call_CloseAllSessions(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1008,6 +998,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSessionInfo)(CK_SESSION_HANDLE hSession, CK_SESSI
 	int rv = nmrpc_call_GetSessionInfo(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1071,6 +1062,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Login)(CK_SESSION_HANDLE hSession, CK_USER_TYPE user
 	int rv = nmrpc_call_Login(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1099,6 +1091,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Logout)(CK_SESSION_HANDLE hSession)
 	int rv = nmrpc_call_Logout(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1121,7 +1114,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
 	CreateObjectEnvelope envelope;
 	AttrValueFromNative* attrTemplate = NULL;
 
-
 	attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
 	if (NULL == attrTemplate)
 	{
@@ -1142,6 +1134,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
 	int rv = nmrpc_call_CreateObject(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
+		if (NULL != attrTemplate)
+		{
+			AttrValueFromNative_Destroy(attrTemplate, ulCount);
+		}
+
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1189,6 +1187,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DestroyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT
 	int rv = nmrpc_call_DestroyObject(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1223,6 +1222,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetObjectSize)(CK_SESSION_HANDLE hSession, CK_OBJECT
 	int rv = nmrpc_call_GetObjectSize(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1245,9 +1245,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 	{
 		return CKR_ARGUMENTS_BAD;
 	}
-
-	//https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
-	// pokracovat
 
 	GetAttributeValueRequest request;
 	GetAttributeValueEnvelope envelope;
@@ -1278,6 +1275,13 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 	int rv = nmrpc_call_GetAttributeValue(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
+
+		if (request.InTemplate.array != NULL)
+		{
+			free((void*)request.InTemplate.array);
+		}
+
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1420,6 +1424,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
 	int rv = nmrpc_call_FindObjectsInit(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
+		if (NULL != attrTemplate)
+		{
+			AttrValueFromNative_Destroy(attrTemplate, ulCount);
+		}
+
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1459,6 +1469,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_H
 	int rv = nmrpc_call_FindObjects(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1498,6 +1509,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
 	int rv = nmrpc_call_FindObjectsFinal(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1599,13 +1611,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
 	int rv = nmrpc_call_DigestInit(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
+		MechanismValue_Destroy(&request.Mechanism);
+
 		return CKR_DEVICE_ERROR;
 	}
-
-	/*if ((CK_RV)envelope.Rv == CKR_OK)
-	{
-		*phObject = (CK_ULONG)envelope.ObjectHandle;
-	}*/
 
 	MechanismValue_Destroy(&request.Mechanism);
 	DigestInitEnvelope_Release(&envelope);
@@ -1642,6 +1652,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 	int rv = nmrpc_call_Digest(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1690,6 +1701,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 	int rv = nmrpc_call_DigestUpdate(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -1719,7 +1731,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestKey)(CK_SESSION_HANDLE hSession, CK_OBJECT_HAN
 	int rv = nmrpc_call_DigestKey(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	DigestKeyEnvelope_Release(&envelope);
@@ -1749,7 +1762,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 	int rv = nmrpc_call_DigestFinal(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	if ((CK_RV)envelope.Rv == CKR_OK)
@@ -1801,7 +1815,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
 	int rv = nmrpc_call_SignInit(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	MechanismValue_Destroy(&request.Mechanism);
@@ -1838,7 +1853,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData,
 	int rv = nmrpc_call_Sign(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	if ((CK_RV)envelope.Rv == CKR_OK)
@@ -1886,7 +1902,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
 	int rv = nmrpc_call_SignUpdate(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	SignUpdateEnvelope_Release(&envelope);
@@ -1916,7 +1933,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
 	int rv = nmrpc_call_SignFinal(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	if ((CK_RV)envelope.Rv == CKR_OK)
@@ -1979,7 +1997,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
 	int rv = nmrpc_call_VerifyInit(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	MechanismValue_Destroy(&request.Mechanism);
@@ -2022,7 +2041,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 	int rv = nmrpc_call_Verify(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	VerifyEnvelope_Release(&envelope);
@@ -2058,7 +2078,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 	int rv = nmrpc_call_VerifyUpdate(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	VerifyUpdateEnvelope_Release(&envelope);
@@ -2094,7 +2115,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 	int rv = nmrpc_call_VerifyFinal(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
-		return CKR_DEVICE_ERROR;
+		LOG_FAILED_CALL_RPC()
+			return CKR_DEVICE_ERROR;
 	}
 
 	VerifyFinalEnvelope_Release(&envelope);
@@ -2190,6 +2212,14 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANIS
 	int rv = nmrpc_call_GenerateKey(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
+
+		MechanismValue_Destroy(&request.Mechanism);
+		if (NULL != attrTemplate)
+		{
+			AttrValueFromNative_Destroy(attrTemplate, ulCount);
+		}
+
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -2274,6 +2304,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECH
 	int rv = nmrpc_call_GenerateKeyPair(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
+		MechanismValue_Destroy(&request.Mechanism);
+		AttrValueFromNative_Destroy(pubKeyAttrTemplate, ulPublicKeyAttributeCount);
+		AttrValueFromNative_Destroy(privKeyAttrTemplate, ulPrivateKeyAttributeCount);
+
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -2349,6 +2384,13 @@ CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
 	int rv = nmrpc_call_DeriveKey(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
+		MechanismValue_Destroy(&request.Mechanism);
+		if (NULL != attrTemplate)
+		{
+			AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
+		}
+
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -2395,6 +2437,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SeedRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
 	int rv = nmrpc_call_SeedRandom(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 
@@ -2429,6 +2472,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_
 	int rv = nmrpc_call_GenerateRandom(&ctx, &request, &envelope);
 	if (rv != NMRPC_OK)
 	{
+		LOG_FAILED_CALL_RPC();
 		return CKR_DEVICE_ERROR;
 	}
 

@@ -147,6 +147,7 @@
     <ClInclude Include="bouncy-pkcs11.h" />
     <ClInclude Include="globalContext.h" />
     <ClInclude Include="logger.h" />
+    <ClInclude Include="platform_helper.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="rpc\rpc.h" />
     <ClInclude Include="rpc\tcpTransport.h" />
