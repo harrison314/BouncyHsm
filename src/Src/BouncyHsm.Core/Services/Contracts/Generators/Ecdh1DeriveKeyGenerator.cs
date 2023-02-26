@@ -7,6 +7,7 @@ using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
 
 namespace BouncyHsm.Core.Services.Contracts.Generators;
+
 internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
 {
     private IReadOnlyDictionary<CKA, IAttributeValue>? template;
@@ -110,7 +111,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "");
+            this.logger.LogError(ex, "Error during GetPublicKeyFromData.");
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
                 "PublicData from CK_ECDH1_DERIVE_PARAMS is not valid public key data.",
                 ex);
