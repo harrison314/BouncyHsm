@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BouncyHsm.ExampleApp": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
