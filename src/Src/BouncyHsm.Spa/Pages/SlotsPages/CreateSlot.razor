@@ -24,7 +24,7 @@
             <div class="mb-1">
                 <label for="i-description" class="form-label">Description</label>
                 <InputText id="i-description" class="form-control" @bind-Value="this.model.Description" />
-                <div class="form-text">Human readable description for slot.</div>
+                <div class="form-text">Description for slot.</div>
                 <ValidationMessage For="() => this.model.Description" />
             </div>
             <div class="mb-1 form-check">
@@ -66,11 +66,13 @@
             <div class="mb-1">
                 <label for="i-tokenUserPin" class="form-label">User PIN (in UTF8 encoding)</label>
                 <InputText type="password" class="form-control" id="i-tokenUserPin" @bind-Value="@this.model.TokenUserPin" />
+                <div class="form-text">The PIN requires at least 4 characters.</div>
                 <ValidationMessage For="() => this.model.TokenUserPin" />
             </div>
             <div class="mb-1">
                 <label for="i-soUserPin" class="form-label">SO PIN (in UTF8 encoding)</label>
                 <InputText type="password" class="form-control" id="i-soUserPin" @bind-Value="@this.model.TokenSoPin" />
+                <div class="form-text">The PIN requires at least 4 characters.</div>
                 <ValidationMessage For="() => this.model.TokenSoPin" />
             </div>
 
@@ -79,6 +81,7 @@
                 <div class="mb-1">
                     <label for="i-signPin" class="form-label">Signature PIN (in UTF8 encoding)</label>
                     <InputText type="password" class="form-control" id="i-signPin" @bind-Value="@this.model.TokenSignaturePin" />
+                    <div class="form-text">The PIN requires at least 4 characters.</div>
                     <ValidationMessage For="() => this.model.TokenSignaturePin" />
                 </div>
             }

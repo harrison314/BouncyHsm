@@ -24,6 +24,7 @@
 }
 else
 {
+    <p>Slot contains @this.storageObjectList.Objects.Count objects.</p>
     @foreach (var obj in this.storageObjectList.Objects)
     {
         <div class="card mb-2">
@@ -62,7 +63,7 @@ else
                     </div>
 
                     <div class="col-2">
-                        <NavLink href="@($"/Slots/Detail/{this.Id}/object/{obj.Id}")" class="btn btn-outline-primary"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
+                        <NavLink href="@($"/Slots/Detail/{this.Id}/object/{obj.Id}")" class="btn btn-outline-primary mb-1"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
                     
                         <DangerOperationBtn IconClass="icon-Full-Trash icon-1x" 
                             Text="Remove"

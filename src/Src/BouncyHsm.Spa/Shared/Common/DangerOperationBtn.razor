@@ -10,7 +10,12 @@
     </Footer>
 </BSModal>
 
-<BSButton Color="BSColor.Danger" IsOutlined="true" OnClick="() => this.Show()"><span class="@this.IconClass"></span> @this.Text </BSButton>
+<BSButton Color="BSColor.Danger"
+    IsOutlined="true"
+    Class="@this.AdditionalClass"
+    OnClick="() => this.Show()">
+    <span class="@this.IconClass"></span> @this.Text
+</BSButton>
 
 @code {
     private BSModal? modalRef;
@@ -31,6 +36,13 @@
 
     [Parameter, EditorRequired]
     public string ConfirmText
+    {
+        get;
+        set;
+    } = "";
+
+    [Parameter]
+    public string AdditionalClass
     {
         get;
         set;

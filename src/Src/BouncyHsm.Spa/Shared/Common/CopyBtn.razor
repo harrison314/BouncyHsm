@@ -19,9 +19,9 @@
         await this.JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", this.Text);
 
         string shortedText = this.Text;
-        if (shortedText.Length > 62)
+        if (shortedText.Length > 34)
         {
-            shortedText = string.Concat(shortedText.AsSpan(0, 60), "…");
+            shortedText = string.Concat(shortedText.AsSpan(0, 35), "…");
         }
 
         this.blazorStrap.Toaster.Add("Copied to clipboard", shortedText, opt =>
