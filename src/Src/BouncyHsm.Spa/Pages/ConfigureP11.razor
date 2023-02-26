@@ -74,10 +74,11 @@
     <div class="row">
         <div class="col-9">
             <h3>Configuration commands</h3>
-
+            
             <div class="card mb-2">
                 <div class="card-header">
                     <span class="icon-terminal icon-1x"></span>  cmd.exe
+                    <div class="float-end"><CopyBtn Text="@this.CmdCommand" /></div>
                 </div>
 
                 <div class="card-body">
@@ -88,6 +89,7 @@
             <div class="card mb-2">
                 <div class="card-header">
                     <span class="icon-terminal icon-1x"></span> Powershell
+                    <div class="float-end"><CopyBtn Text="@this.PowershellCommand" /></div>
                 </div>
 
                 <div class="card-body">
@@ -98,6 +100,7 @@
             <div class="card mb-2">
                 <div class="card-header">
                     <span class="icon-terminal icon-1x"></span> bash
+                    <div class="float-end"><CopyBtn Text="@this.BashCommand" /></div>
                 </div>
                 <div class="card-body">
                     <code>@this.BashCommand</code>
@@ -125,7 +128,7 @@
 
     private string CmdCommand
     {
-        get => $"SET {EnviromentVariable}=\"{CreateConfiguration()}\"";
+        get => $"SET {EnviromentVariable}={CreateConfiguration()}";
     }
 
     private string PowershellCommand
