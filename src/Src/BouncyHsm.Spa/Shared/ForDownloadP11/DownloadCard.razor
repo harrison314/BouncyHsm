@@ -21,7 +21,7 @@
                 <p>@this.Description</p>
             </div>
             <div class="col-2 align-items-center">
-                <a href="@GetDownloadLink(this.Architecture)" class="btn btn-sm btn-outline-primary pe-4" download>
+                <a href="@GetDownloadLink()" class="btn btn-sm btn-outline-primary pe-4" download>
                     <span class="icon-cloud-download"></span> Download
                 </a>
             </div>
@@ -52,8 +52,16 @@
         set;
     } = string.Empty;
 
-    private string GetDownloadLink(string architecture)
+    private string GetDownloadLink()
     {
-        return "/todo"; //TODO: impelemnt likn
+        string fileName = (this.Platform, this.Architecture) switch
+        {
+            (DownloadPlatform.Windows, "x64") => "BouncyHsm.Pkcs11Lib-Winx64.zip",
+            (DownloadPlatform.Windows, "x86") => "BouncyHsm.Pkcs11Lib-Winx86.zip",
+
+            _ => throw new InvalidProgramException($"Unsuported platform {this.Platform} and architecture {this.Architecture}.")
+        };
+
+        return string.Concat("native/", fileName);
     }
 }

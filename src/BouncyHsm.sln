@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.ExampleApp", "Tes
 		{6F83B51B-8FDA-40F2-88B5-F1E415918BA8} = {6F83B51B-8FDA-40F2-88B5-F1E415918BA8}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "..\build\Build.csproj", "{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -170,6 +172,16 @@ Global
 		{BA63BB8C-EA31-4364-9904-8718474EBF3E}.Release|x64.Build.0 = Release|Any CPU
 		{BA63BB8C-EA31-4364-9904-8718474EBF3E}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA63BB8C-EA31-4364-9904-8718474EBF3E}.Release|x86.Build.0 = Release|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Debug|x64.Build.0 = Debug|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Debug|x86.Build.0 = Debug|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Release|x64.ActiveCfg = Release|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Release|x64.Build.0 = Release|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Release|x86.ActiveCfg = Release|Any CPU
+		{0B9F55F5-DBDA-4894-A9AB-A4BE5A7354B9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

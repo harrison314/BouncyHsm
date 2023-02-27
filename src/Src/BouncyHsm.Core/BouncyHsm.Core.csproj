@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="$(CommitHash) != ''">
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="$(GitCommit) != ''">
       <_Parameter1>CommitHash</_Parameter1>
-      <_Parameter2>$(CommitHash)</_Parameter2>
+      <_Parameter2>$(GitCommit)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
 
