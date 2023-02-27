@@ -12,13 +12,6 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        //Log.Logger = new LoggerConfiguration()
-        //    .MinimumLevel.Verbose()
-        //.MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
-        //.Enrich.FromLogContext()
-        //.WriteTo.Console()
-        //.CreateBootstrapLogger();
-
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 #if DEBUG
         builder.Host.UseDefaultServiceProvider((hotBuilder, optios) =>
@@ -28,10 +21,8 @@ public class Program
 #endif
         builder.Host.UseSerilog((context, services, configuration) => configuration
                .ReadFrom.Configuration(context.Configuration)
-               .ReadFrom.Services(services)
-               .Enrich.FromLogContext()
-               .WriteTo.Console());
-
+                .ReadFrom.Services(services)
+               .Enrich.FromLogContext());
 
         builder.Services.Configure<Services.Configuration.BouncyHsmSetup>(builder.Configuration.GetSection("BouncyHsmSetup"));
         // Add services to the container.
