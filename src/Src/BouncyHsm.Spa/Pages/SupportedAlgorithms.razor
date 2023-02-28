@@ -28,6 +28,8 @@ else
                 <th>Derive</th>
                 <th>Encrypt</th>
                 <th>Decrypt</th>
+                <th>Generate key pair</th>
+                <th>Generate key</th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +45,8 @@ else
                     <td class="text-center">@ShowFlag(mi.Flags.Derive)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Encrypt)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Decrypt)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.GenerateKeyPair)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Generate)</td>
                 </tr>
             }
         </tbody>
@@ -59,8 +63,8 @@ else
         <table class="table table-responsive-md table-striped table-bordered">
             <thead>
                 <tr>
-                    <th>Curve</th>
                     <th>Kind</th>
+                    <th>Curve</th>
                     <th>OID</th>
                 </tr>
             </thead>
@@ -68,8 +72,8 @@ else
                 @foreach (EcCurveInfoDto cr in this.curves)
                 {
                     <tr>
-                        <td>@cr.Name</td>
                         <td>@cr.Kind</td>
+                        <td>@cr.Name</td>
                         <td class="fst-italic">@cr.Oid</td>
                     </tr>
                 }
