@@ -24,4 +24,32 @@ internal static partial class PkcsControllerMapper
     public static partial PkcsObjectsDto ToDto(PkcsObjects pkcsObjects);
 
     private static partial List<PkcsObjectInfoDto> ToDto(IReadOnlyList<PkcsObjectInfo> objects);
+
+    public static GeneratePkcs10Request FromDto(GeneratePkcs10RequestDto dto, uint slotId)
+    {
+        GeneratePkcs10Request request = FromDto(dto);
+        request.SlotId = slotId;
+
+        return request;
+    }
+
+    [MapperIgnoreTarget(nameof(ImportP12Request.SlotId))]
+    private static partial GeneratePkcs10Request FromDto(GeneratePkcs10RequestDto dto);
+
+    private static SubjectName FromDto(SubjectNameDto dto)
+    {
+        if (dto.OidValuePairs != null)
+        {
+            return new SubjectName.OidValuePairs(FromSubjectNameDtos(dto.OidValuePairs));
+        }
+
+        if (dto.DirName != null)
+        {
+            return new SubjectName.Text(dto.DirName);
+        }
+
+        throw new InvalidDataException("");
+    }
+
+    private static partial List<SubjectNameEntry> FromSubjectNameDtos(List<SubjectNameEntryDto> subjectNames);
 }

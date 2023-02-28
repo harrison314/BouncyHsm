@@ -69,6 +69,12 @@ public class PkcsFacadeTests
         throw new NotImplementedException();
     }
 
+    [TestMethod]
+    public async Task GeneratePkcs10_Call_Success()
+    {
+        throw new NotImplementedException();
+    }
+
     private byte[] GetP12Content(int id)
     {
         string[] contents = new string[]

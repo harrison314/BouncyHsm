@@ -19,6 +19,17 @@ public class PkcsController : Controller
         this.logger = logger;
     }
 
+    [HttpGet("{slotId}", Name = nameof(GetPkcsObjects))]
+    [ProducesResponseType(typeof(ImportP12ResponseDto), 200)]
+    public async Task<IActionResult> GetPkcsObjects(uint slotId)
+    {
+        this.logger.LogTrace("Entering to GetPkcsObjects with slotId {slotId}.", slotId);
+
+        DomainResult<PkcsObjects> result = await this.pkcsFacade.GetObjects(slotId, this.HttpContext.RequestAborted);
+
+        return result.MapOk(PkcsControllerMapper.ToDto).ToActionResult();
+    }
+
     [HttpPost("{slotId}/ImportP12", Name = nameof(ImportP12))]
     [ProducesResponseType(typeof(ImportP12ResponseDto), 200)]
     public async Task<IActionResult> ImportP12(uint slotId, [FromBody] ImportP12RequestDto model)
@@ -31,14 +42,15 @@ public class PkcsController : Controller
         return privateKeyId.MapOk(t => new ImportP12ResponseDto() { PrivateKeyId = t }).ToActionResult();
     }
 
-    [HttpGet("{slotId}", Name = nameof(GetPkcsObjects))]
-    [ProducesResponseType(typeof(ImportP12ResponseDto), 200)]
-    public async Task<IActionResult> GetPkcsObjects(uint slotId)
+    [HttpPost("{slotId}/GeneratePkcs10")]
+    [ProducesResponseType(typeof(Pkcs10Dto), 200)]
+    public async Task<IActionResult> GetPkcsObjects(uint slotId, [FromBody] GeneratePkcs10RequestDto model)
     {
         this.logger.LogTrace("Entering to GetPkcsObjects with slotId {slotId}.", slotId);
 
-        DomainResult<PkcsObjects> result = await this.pkcsFacade.GetObjects(slotId, this.HttpContext.RequestAborted);
+        GeneratePkcs10Request request = PkcsControllerMapper.FromDto(model, slotId);
+        DomainResult<byte[]> result = await this.pkcsFacade.GeneratePkcs10(request, this.HttpContext.RequestAborted);
 
-        return result.MapOk(PkcsControllerMapper.ToDto).ToActionResult();
+        return result.MapOk(t => new Pkcs10Dto(t)).ToActionResult();
     }
 }

@@ -5,6 +5,8 @@ using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Core.UseCases.Implementation.Generators;
 using BouncyHsm.Core.UseCases.Implementation.Visitors;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Pkcs;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -151,6 +153,61 @@ public class PkcsFacade : IPkcsFacade
         this.logger.LogTrace("Found {count} PKCS objects.", objects.Count);
 
         return new DomainResult<PkcsObjects>.Ok(new PkcsObjects(objects));
+    }
+
+    public async ValueTask<DomainResult<byte[]>> GeneratePkcs10(GeneratePkcs10Request request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GetObjects with slotId {slotId}, PrivateKeyId {PrivateKeyId}, PublicKeyId {PublicKeyId}.",
+            request.SlotId,
+            request.PrivateKeyId,
+            request.PublicKeyId);
+
+        StorageObject? privSo = await this.persistentRepository.TryLoadObject(request.SlotId, request.PrivateKeyId, cancellationToken);
+        if (privSo == null)
+        {
+            this.logger.LogError("Private key not found. SlotId {slotId}, object id {objectId}.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<byte[]>.NotFound();
+        }
+
+        PrivateKeyObject? privKo = privSo as PrivateKeyObject;
+        if (privKo == null)
+        {
+            this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not private key.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<byte[]>.InvalidInput("PrivateKeyId is not private key.");
+        }
+
+        StorageObject? pubSo = await this.persistentRepository.TryLoadObject(request.SlotId, request.PublicKeyId, cancellationToken);
+        if (pubSo == null)
+        {
+            this.logger.LogError("Public key not found. SlotId {slotId}, object id {objectId}.", request.SlotId, request.PublicKeyId);
+            return new DomainResult<byte[]>.NotFound();
+        }
+
+        PublicKeyObject? pubKo = pubSo as PublicKeyObject;
+        if (pubKo == null)
+        {
+            this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not public key.", request.SlotId, request.PublicKeyId);
+            return new DomainResult<byte[]>.InvalidInput("PublicKeyId is not public key.");
+        }
+
+        X509Name subject = request.Subject.Match(text => new X509Name(dirName: text.X509NameText),
+            oidValuePairs => new X509Name(oidValuePairs.Pairs.Select(t => new Org.BouncyCastle.Asn1.DerObjectIdentifier(t.Oid)).ToList(),
+                 oidValuePairs.Pairs.Select(t => t.Value).ToList()));
+
+        string algorithm = privKo.CkaKeyType switch
+        {
+            CKK.CKK_RSA => "SHA224WITHRSA",
+            CKK.CKK_ECDSA => "SHA256WITHECDSA",
+            _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
+        };
+
+        Pkcs10CertificationRequest certificationRequest = new Pkcs10CertificationRequest(algorithm,
+            subject,
+            pubKo.GetPublicKey(),
+            null,
+            privKo.GetPrivateKey());
+
+        return new DomainResult<byte[]>.Ok(certificationRequest.GetEncoded());
     }
 
     private async ValueTask<IEnumerable<T>> FindObjects<T>(uint slotId, CKO cko, CancellationToken cancellationToken, params KeyValuePair<CKA, IAttributeValue>[] additionalConstraints)

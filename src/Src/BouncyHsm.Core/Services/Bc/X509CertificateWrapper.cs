@@ -99,7 +99,7 @@ public class X509CertificateWrapper
         return this.certificate.GetPublicKey();
     }
 
-    public bool VerifyPrivateKey(AsymmetricKeyParameter privateKey)
+    public bool CheckPrivateKey(AsymmetricKeyParameter privateKey)
     {
         System.Diagnostics.Debug.Assert(privateKey != null);
 
