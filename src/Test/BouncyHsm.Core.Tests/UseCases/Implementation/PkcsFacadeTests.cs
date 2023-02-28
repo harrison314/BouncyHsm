@@ -64,13 +64,22 @@ public class PkcsFacadeTests
     }
 
     [TestMethod]
+    [Ignore]
     public async Task GetObjects_Call_Success()
     {
         throw new NotImplementedException();
     }
 
     [TestMethod]
+    [Ignore]
     public async Task GeneratePkcs10_Call_Success()
+    {
+        throw new NotImplementedException();
+    }
+
+    [TestMethod]
+    [Ignore]
+    public async Task ImportX509Certificate_Call_Success()
     {
         throw new NotImplementedException();
     }

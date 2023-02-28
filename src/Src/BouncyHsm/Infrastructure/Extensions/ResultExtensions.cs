@@ -28,6 +28,13 @@ internal static class DomainResultExtensions
             invalidInput => new DomainResult<TResult>.InvalidInput(invalidInput.Message));
     }
 
+    public static VoidDomainResult MapOkToVoid<T>(this DomainResult<T> domainResult)
+    {
+        return domainResult.Match<VoidDomainResult>(ok => new VoidDomainResult.Ok(),
+            notFound => new VoidDomainResult.NotFound(),
+            invalidInput => new VoidDomainResult.InvalidInput(invalidInput.Message));
+    }
+
     private static IActionResult ProblemNotFound()
     {
         ProblemDetails problemDetails = new ProblemDetails()

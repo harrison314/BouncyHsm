@@ -1,4 +1,5 @@
-﻿using BouncyHsm.Core.Services.Contracts;
+﻿using BouncyHsm.Core.Services.Bc;
+using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.UseCases.Contracts;
@@ -208,6 +209,62 @@ public class PkcsFacade : IPkcsFacade
             privKo.GetPrivateKey());
 
         return new DomainResult<byte[]>.Ok(certificationRequest.GetEncoded());
+    }
+
+    public async ValueTask<DomainResult<Guid>> ImportX509Certificate(ImportX509CertificateRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to ImportX509Certificate with slotId {slotId}, PrivateKeyId {PrivateKeyId}.",
+           request.SlotId,
+           request.PrivateKeyId);
+
+        StorageObject? privSo = await this.persistentRepository.TryLoadObject(request.SlotId, request.PrivateKeyId, cancellationToken);
+        if (privSo == null)
+        {
+            this.logger.LogError("Private key not found. SlotId {slotId}, object id {objectId}.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<Guid>.NotFound();
+        }
+
+        PrivateKeyObject? privKo = privSo as PrivateKeyObject;
+        if (privKo == null)
+        {
+            this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not private key.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<Guid>.InvalidInput("PrivateKeyId is not private key.");
+        }
+
+        X509CertificateWrapper certificate;
+        try
+        {
+            certificate = X509CertificateWrapper.FromInstance(request.Certificate);
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Problem during parse X509 certificate.");
+            return new DomainResult<Guid>.InvalidInput("Certificate is not valid X509 certificate.");
+        }
+
+        if (certificate.KeyType != privKo.CkaKeyType)
+        {
+            this.logger.LogError("Imported certificate is not match from private key. Certificate has key type {CertificateKeyType} private key type is {PrivateKeyType}.",
+                certificate.KeyType,
+                privKo.CkaKeyType);
+            return new DomainResult<Guid>.InvalidInput("Imported certificate is not match from private key.");
+        }
+
+        if (!certificate.CheckPrivateKey(privKo.GetPrivateKey()))
+        {
+            this.logger.LogError("Imported certificate is not match from private key. Keys not match.");
+            return new DomainResult<Guid>.InvalidInput("Imported certificate is not match from private key.");
+        }
+
+        X509CertObjectGenerator generator = new X509CertObjectGenerator(certificate,
+            privKo.CkaId,
+            privKo.CkaLabel);
+
+        X509CertificateObject certificateObject = generator.CreateCertificateObject(false);
+
+        await this.persistentRepository.StoreObject(request.SlotId, certificateObject, cancellationToken);
+
+        return new DomainResult<Guid>.Ok(certificateObject.Id);
     }
 
     private async ValueTask<IEnumerable<T>> FindObjects<T>(uint slotId, CKO cko, CancellationToken cancellationToken, params KeyValuePair<CKA, IAttributeValue>[] additionalConstraints)

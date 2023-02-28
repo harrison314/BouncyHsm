@@ -19,6 +19,18 @@ public class PkcsController : Controller
         this.logger = logger;
     }
 
+    [HttpPost("{slotId}/GeneratePkcs10")]
+    [ProducesResponseType(typeof(Pkcs10Dto), 200)]
+    public async Task<IActionResult> GetPkcsObjects(uint slotId, [FromBody] GeneratePkcs10RequestDto model)
+    {
+        this.logger.LogTrace("Entering to GetPkcsObjects with slotId {slotId}.", slotId);
+
+        GeneratePkcs10Request request = PkcsControllerMapper.FromDto(model, slotId);
+        DomainResult<byte[]> result = await this.pkcsFacade.GeneratePkcs10(request, this.HttpContext.RequestAborted);
+
+        return result.MapOk(t => new Pkcs10Dto(t)).ToActionResult();
+    }
+
     [HttpGet("{slotId}", Name = nameof(GetPkcsObjects))]
     [ProducesResponseType(typeof(ImportP12ResponseDto), 200)]
     public async Task<IActionResult> GetPkcsObjects(uint slotId)
@@ -42,15 +54,15 @@ public class PkcsController : Controller
         return privateKeyId.MapOk(t => new ImportP12ResponseDto() { PrivateKeyId = t }).ToActionResult();
     }
 
-    [HttpPost("{slotId}/GeneratePkcs10")]
-    [ProducesResponseType(typeof(Pkcs10Dto), 200)]
-    public async Task<IActionResult> GetPkcsObjects(uint slotId, [FromBody] GeneratePkcs10RequestDto model)
+    [HttpPost("{slotId}/ImportX509Certificate", Name = nameof(ImportX509Certificate))]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task<IActionResult> ImportX509Certificate(uint slotId, [FromBody] ImportX509CertificateRequestDto model)
     {
-        this.logger.LogTrace("Entering to GetPkcsObjects with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to ImportX509Certificate with slotId {slotId}.", slotId);
 
-        GeneratePkcs10Request request = PkcsControllerMapper.FromDto(model, slotId);
-        DomainResult<byte[]> result = await this.pkcsFacade.GeneratePkcs10(request, this.HttpContext.RequestAborted);
+        ImportX509CertificateRequest request = PkcsControllerMapper.FromDto(model, slotId);
+        DomainResult<Guid> result = await this.pkcsFacade.ImportX509Certificate(request, this.HttpContext.RequestAborted);
 
-        return result.MapOk(t => new Pkcs10Dto(t)).ToActionResult();
+        return result.MapOkToVoid().ToActionResult();
     }
 }

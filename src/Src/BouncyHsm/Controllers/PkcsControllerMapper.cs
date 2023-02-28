@@ -52,4 +52,15 @@ internal static partial class PkcsControllerMapper
     }
 
     private static partial List<SubjectNameEntry> FromSubjectNameDtos(List<SubjectNameEntryDto> subjectNames);
+
+    public static ImportX509CertificateRequest FromDto(ImportX509CertificateRequestDto dto, uint slotId)
+    {
+        ImportX509CertificateRequest request = FromDto(dto);
+        request.SlotId = slotId;
+
+        return request;
+    }
+
+    [MapperIgnoreTarget(nameof(ImportP12Request.SlotId))]
+    private static partial ImportX509CertificateRequest FromDto(ImportX509CertificateRequestDto dto);
 }
