@@ -1,7 +1,10 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Signers;
+using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 
 namespace BouncyHsm.Core.Services.Bc;
@@ -94,6 +97,32 @@ public class X509CertificateWrapper
     public AsymmetricKeyParameter ExtractPublicKey()
     {
         return this.certificate.GetPublicKey();
+    }
+
+    public bool VerifyPrivateKey(AsymmetricKeyParameter privateKey)
+    {
+        System.Diagnostics.Debug.Assert(privateKey != null);
+
+        ISigner signer = this.KeyType switch
+        {
+            CKK.CKK_RSA => SignerUtilities.GetSigner("SHA1withRSA"),
+            CKK.CKK_ECDSA => new DsaDigestSigner(new ECDsaSigner(), new Sha1Digest(), PlainDsaEncoding.Instance),
+            _ => throw new InvalidProgramException($"Enuum value {this.KeyType} not supported.")
+        };
+
+        byte[] data = new byte[20];
+        Random.Shared.NextBytes(data);
+
+        signer.Reset();
+        signer.Init(true, privateKey);
+        signer.BlockUpdate(data);
+        byte[] signature = signer.GenerateSignature();
+
+        signer.Reset();
+        signer.Init(false, this.certificate.GetPublicKey());
+        signer.BlockUpdate(data);
+
+        return signer.VerifySignature(signature);
     }
 
     private CKK GetKeyType()
