@@ -70,4 +70,9 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
     {
         return $"Secret Key ({generalSecretKeyObject.GetSecret().Length}B)";
     }
+
+    public string Visit(AesKeyObject aesKeyObject)
+    {
+        return $"AES-{aesKeyObject.CkaValueLen * 8} Key";
+    }
 }
