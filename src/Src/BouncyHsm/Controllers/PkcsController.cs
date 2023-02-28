@@ -65,4 +65,15 @@ public class PkcsController : Controller
 
         return result.MapOkToVoid().ToActionResult();
     }
+
+    [HttpDelete("{slotId}/AssociatedObjects/{objectId}", Name = nameof(DeleteAssociatedObject))]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task<IActionResult> DeleteAssociatedObject(uint slotId, Guid objectId)
+    {
+        this.logger.LogTrace("Entering to DeleteAssociatedObject with slotId {slotId}, objectId {objectId}.", slotId, objectId);
+
+        VoidDomainResult result = await this.pkcsFacade.DeteleAssociatedObjects(slotId, objectId, this.HttpContext.RequestAborted);
+
+        return result.ToActionResult();
+    }
 }

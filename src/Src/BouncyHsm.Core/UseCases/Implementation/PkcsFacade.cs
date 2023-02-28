@@ -267,6 +267,41 @@ public class PkcsFacade : IPkcsFacade
         return new DomainResult<Guid>.Ok(certificateObject.Id);
     }
 
+    public async ValueTask<VoidDomainResult> DeteleAssociatedObjects(uint slotId, Guid objectId, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to DeteleAssociatedObjects with objectId {objectId}.", objectId);
+
+        StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, objectId, cancellationToken);
+        if (storageObject == null)
+        {
+            this.logger.LogError("Object with id {objectId} not found.", objectId);
+            return new VoidDomainResult.NotFound();
+        }
+
+        AttributeValueResult idResult = storageObject.GetValue(CKA.CKA_ID);
+        if (!idResult.IsOK(out IAttributeValue? ckaId))
+        {
+            return new VoidDomainResult.InvalidInput("Object is not PKCS object (does not contains CKA_ID).");
+        }
+
+        Dictionary<CKA, IAttributeValue> serachTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            {CKA.CKA_LABEL, AttributeValue.Create(storageObject.CkaLabel) },
+            {CKA.CKA_ID, ckaId }
+        };
+
+        FindObjectSpecification specification = new FindObjectSpecification(serachTemplate, true);
+        IReadOnlyList<StorageObject> foundObjects = await this.persistentRepository.FindObjects(slotId, specification, cancellationToken);
+
+        foreach (StorageObject foundObject in foundObjects)
+        {
+            await this.persistentRepository.DestroyObject(slotId, foundObject, cancellationToken);
+            this.logger.LogInformation("Delete object with id {objectId}.", foundObject.Id);
+        }
+
+        return new VoidDomainResult.Ok();
+    }
+
     private async ValueTask<IEnumerable<T>> FindObjects<T>(uint slotId, CKO cko, CancellationToken cancellationToken, params KeyValuePair<CKA, IAttributeValue>[] additionalConstraints)
         where T : StorageObject
     {

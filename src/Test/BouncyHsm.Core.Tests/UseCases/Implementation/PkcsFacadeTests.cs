@@ -84,6 +84,13 @@ public class PkcsFacadeTests
         throw new NotImplementedException();
     }
 
+    [TestMethod]
+    [Ignore]
+    public async Task DeteleAsociatedObjects_Call_Success()
+    {
+        throw new NotImplementedException();
+    }
+
     private byte[] GetP12Content(int id)
     {
         string[] contents = new string[]
