@@ -24,12 +24,12 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
     {
         this.logger.LogTrace("Entering to  Handle with sessionId {SessionId}, type {UserType}, pin length {pinLength} pin is set {pinIsSet}.",
             request.SessionId,
-            request.UserType,
+            (CKU)request.UserType,
             request.Utf8Pin?.Length ?? 0,
             request.Utf8Pin != null);
 
         IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
-        Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
+        SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
 
         if (slot.Token == null)
         {
@@ -62,7 +62,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
                 };
             }
 
-            if(state.IsContextPinHasSet)
+            if (state.IsContextPinHasSet)
             {
                 this.logger.LogDebug("User already logged in specific context in session {SessionId}.", request.SessionId);
                 return new LoginEnvelope()

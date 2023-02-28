@@ -44,7 +44,7 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: CONTEXT_SPECIFIC login not required.");
         }
 
-        if (!this.IsContextPinHasSet)
+        if (this.IsContextPinHasSet)
         {
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_ALREADY_LOGGED_IN, "Error: Already CONTEXT_SPECIFIC logged.");
         }
