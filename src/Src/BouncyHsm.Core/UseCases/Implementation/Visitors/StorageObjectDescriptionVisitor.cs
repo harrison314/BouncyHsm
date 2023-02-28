@@ -31,7 +31,7 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
 
     public string Visit(RsaPrivateKeyObject rsaPrivateKeyObject)
     {
-        uint keySize = (uint)rsaPrivateKeyObject.CkaModulus.Length*8;
+        uint keySize = (uint)rsaPrivateKeyObject.CkaModulus.Length * 8;
 
         return $"Private key RSA-{keySize}";
     }

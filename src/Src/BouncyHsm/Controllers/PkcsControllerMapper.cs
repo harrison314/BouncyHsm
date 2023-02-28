@@ -20,4 +20,8 @@ internal static partial class PkcsControllerMapper
 
     [MapperIgnoreTarget(nameof(ImportP12Request.SlotId))]
     private static partial ImportP12Request FromDto(ImportP12RequestDto dto);
+
+    public static partial PkcsObjectsDto ToDto(PkcsObjects pkcsObjects);
+
+    private static partial List<PkcsObjectInfoDto> ToDto(IReadOnlyList<PkcsObjectInfo> objects);
 }

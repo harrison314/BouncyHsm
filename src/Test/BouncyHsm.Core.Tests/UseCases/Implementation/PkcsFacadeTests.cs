@@ -3,6 +3,7 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Core.UseCases.Implementation;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace BouncyHsm.Core.Tests.UseCases.Implementation;
@@ -60,6 +61,12 @@ public class PkcsFacadeTests
         _ = domainResult.AssertOkValue();
 
         repository.VerifyAll();
+    }
+
+    [TestMethod]
+    public async Task GetObjects_Call_Success()
+    {
+        throw new NotImplementedException();
     }
 
     private byte[] GetP12Content(int id)
