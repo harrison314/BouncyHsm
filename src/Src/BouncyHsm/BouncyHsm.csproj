@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.18.2" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   </ItemGroup>
@@ -18,10 +18,6 @@
     <ProjectReference Include="..\BouncyHsm.Core\BouncyHsm.Core.csproj" />
     <ProjectReference Include="..\BouncyHsm.Infrastructure\BouncyHsm.Infrastructure.csproj" />
     <ProjectReference Include="..\BouncyHsm.Spa\BouncyHsm.Spa.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\Extensions\" />
   </ItemGroup>
 
 </Project>

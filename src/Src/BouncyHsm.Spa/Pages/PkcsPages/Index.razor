@@ -1,25 +1,107 @@
 ﻿@page "/Slots/{SlotId:int}/Pkcs"
-@*@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils
 @inject IBouncyHsmClient bouncyHsmClient
-@inject NavigationManager Navigation*@
+@inject NavigationManager Navigation
 
-<PageTitle>Pkcs</PageTitle>
+<PageTitle>PKCS</PageTitle>
 
-<h1>Pkcs</h1>
+<h1>PKCS</h1>
 <div class="row">
     <div class="col d-flex justify-content-end pb-3">
+        <button type="button" class="btn btn-outline-primary" @onclick="Reload"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
         <NavLink href="@($"/Slots/{this.SlotId}/Pkcs/ImportP12")" class="btn btn-outline-primary"><span class="icon-upload3 icon-1x"></span> Import P12</NavLink>
+        <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary"><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
     </div>
 </div>
 
-<p>TODO some description</p>
+<p>Grouped objects.</p>
+@if (this.objects == null)
+{
+    <LoadingIndicator />
+}
+else
+{
+    @foreach (var obj in this.objects.Objects)
+    {
+        <div class="card mb-2">
+            <div class="card-header">
+                @obj.Subject
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+
+                    <div class="col-1 d-flex align-items-center">
+                        <div class="align-self-center">
+                            @foreach (var concteteObject in obj.Objects)
+                            {
+                                <StorageObjectIcon Cko="@concteteObject.CkaClass" AdditionalClass="icon-1x p-1" />
+                            }
+
+                        </div>
+                    </div>
+
+                    <div class="col-9">
+                        <table class="table table-borderless table-sm">
+                            <tbody>
+                                <tr>
+                                    <td>CkaLabel:</td>
+                                    <td>@obj.CkaLabel</td>
+                                    <td><CopyBtn Text="@obj.CkaLabel" /></td>
+                                </tr>
+                                <tr>
+                                    <td>CkaId (HEX):</td>
+                                    <td>@HexConvertorSlim.ToHex(obj.CkaId)</td>
+                                    <td><CopyBtn Text="@HexConvertorSlim.ToHex(obj.CkaId)" /></td>
+                                </tr>
+                                <tr>
+                                    <td>In qualified area:</td>
+                                    <td>@obj.AlwaysAuthenticate</td>
+                                    <td> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-2">
+                        @*Other buttons *@
+                        <DangerOperationBtn IconClass="icon-Full-Trash icon-1x"
+                                    Text="Remove"
+                                    ConfirmText="@($"Remove objects '{obj.Subject}'?")"
+                                    OnConfirm="() => this.RemoveAsociatedObjects(obj.Objects)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
 
 @code {
+    private PkcsObjectsDto? objects = null;
 
     [Parameter]
     public int SlotId
     {
         get;
         set;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.objects = await this.bouncyHsmClient.GetPkcsObjectsAsync(this.SlotId);
+    }
+
+    private async Task Reload()
+    {
+        this.objects = null;
+        await Task.Yield();
+        this.objects = await this.bouncyHsmClient.GetPkcsObjectsAsync(this.SlotId);
+    }
+
+    private async Task RemoveAsociatedObjects(ICollection<PkcsSpecificObjectDto> objects)
+    {
+        Guid objectId = objects.First().ObjectId;
+        await this.bouncyHsmClient.DeleteAssociatedObjectAsync(this.SlotId, objectId);
+        await this.Reload();
     }
 }

@@ -8,6 +8,7 @@ using BouncyHsm.Core.UseCases.Implementation.Visitors;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.X509;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -123,7 +124,8 @@ public class PkcsFacade : IPkcsFacade
             type = CKO.CKO_PRIVATE_KEY,
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
-            description = t.Accept(descriptionVisitor)
+            description = t.Accept(descriptionVisitor),
+            subject = null as string
         })
             .Concat(publicKeys.Select(t => new
             {
@@ -131,7 +133,8 @@ public class PkcsFacade : IPkcsFacade
                 type = CKO.CKO_PUBLIC_KEY,
                 id = t.Id,
                 alwaysAuthenticate = false,
-                description = t.Accept(descriptionVisitor)
+                description = t.Accept(descriptionVisitor),
+                subject = null as string
             }))
             .Concat(certificates.Select(t => new
             {
@@ -139,7 +142,8 @@ public class PkcsFacade : IPkcsFacade
                 type = CKO.CKO_CERTIFICATE,
                 id = t.Id,
                 alwaysAuthenticate = false,
-                description = t.Accept(descriptionVisitor)
+                description = t.Accept(descriptionVisitor),
+                subject = this.TryParseCertSubject(t)
             }))
             .GroupBy(t => t.key)
             .Select(t => new PkcsObjectInfo()
@@ -147,7 +151,8 @@ public class PkcsFacade : IPkcsFacade
                 CkaLabel = t.Key.CkaLabel,
                 CkaId = t.Key.CkaId,
                 Objects = t.Select(q => new PkcsSpecificObject(q.type, q.id, q.description)).OrderByDescending(o => (uint)o.CkaClass).ToArray(),
-                AlwaysAuthenticate = t.Any(q => q.alwaysAuthenticate)
+                AlwaysAuthenticate = t.Any(q => q.alwaysAuthenticate),
+                Subject = t.Select(q => q.subject).FirstOrDefault(q => q != null)
             })
             .ToList();
 
@@ -300,6 +305,19 @@ public class PkcsFacade : IPkcsFacade
         }
 
         return new VoidDomainResult.Ok();
+    }
+
+    private string? TryParseCertSubject(X509CertificateObject? x509CertificateObject)
+    {
+        if (x509CertificateObject == null || x509CertificateObject.CkaValue.Length == 0)
+        {
+            return null;
+        }
+
+        X509CertificateParser parser = new X509CertificateParser();
+        X509Certificate cert = parser.ReadCertificate(x509CertificateObject.CkaValue);
+
+        return cert.SubjectDN.ToString();
     }
 
     private async ValueTask<IEnumerable<T>> FindObjects<T>(uint slotId, CKO cko, CancellationToken cancellationToken, params KeyValuePair<CKA, IAttributeValue>[] additionalConstraints)

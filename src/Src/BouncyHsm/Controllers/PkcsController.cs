@@ -32,7 +32,7 @@ public class PkcsController : Controller
     }
 
     [HttpGet("{slotId}", Name = nameof(GetPkcsObjects))]
-    [ProducesResponseType(typeof(ImportP12ResponseDto), 200)]
+    [ProducesResponseType(typeof(PkcsObjectsDto), 200)]
     public async Task<IActionResult> GetPkcsObjects(uint slotId)
     {
         this.logger.LogTrace("Entering to GetPkcsObjects with slotId {slotId}.", slotId);

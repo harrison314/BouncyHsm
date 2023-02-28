@@ -22,93 +22,101 @@ namespace BouncyHsm.Spa.Services.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial interface IBouncyHsmClient
     {
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<BouncyHsmVersionDto> GetVersionsAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<BouncyHsmVersionDto> GetVersionsAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IList<EcCurveInfoDto>> GetSupportedEcCurvesAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IList<EcCurveInfoDto>> GetSupportedEcCurvesAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IList<MechanismInfoDto>> GetMechanismAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IList<MechanismInfoDto>> GetMechanismAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto? body);
+        System.Threading.Tasks.Task<Pkcs10Dto> Pkcs_GetPkcsObjectsAsync(int slotId, GeneratePkcs10RequestDto model);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto? body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Pkcs10Dto> Pkcs_GetPkcsObjectsAsync(int slotId, GeneratePkcs10RequestDto model, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto? body);
+        System.Threading.Tasks.Task<PkcsObjectsDto> GetPkcsObjectsAsync(int slotId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto? body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<PkcsObjectsDto> GetPkcsObjectsAsync(int slotId, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto model);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto model, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ImportX509CertificateAsync(int slotId, ImportX509CertificateRequestDto model);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ImportX509CertificateAsync(int slotId, ImportX509CertificateRequestDto model, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DeleteAssociatedObjectAsync(int slotId, System.Guid objectId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DeleteAssociatedObjectAsync(int slotId, System.Guid objectId, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto createSlotDto);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto createSlotDto, System.Threading.CancellationToken cancellationToken);
+
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IList<SlotDto>> GetAllSlotsAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IList<SlotDto>> GetAllSlotsAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteSlotAsync(int slotId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteSlotAsync(int slotId, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<StorageObjectsListDto> GetStorageObjectsAsync(int slotId, int? skip, int? take);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<StorageObjectsListDto> GetStorageObjectsAsync(int slotId, int? skip, int? take, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<StorageObjectDetailDto> GetStorageObjectAsync(int slotId, System.Guid objectId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<StorageObjectDetailDto> GetStorageObjectAsync(int slotId, System.Guid objectId, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveStorageObjectAsync(int slotId, System.Guid objectId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveStorageObjectAsync(int slotId, System.Guid objectId, System.Threading.CancellationToken cancellationToken);
 
@@ -117,13 +125,12 @@ namespace BouncyHsm.Spa.Services.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     internal partial class BouncyHsmClient : IBouncyHsmClient
     {
-        private string _baseUrl = "";
+        private string _baseUrl = "https://localhost:7007";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<System.Text.Json.JsonSerializerOptions> _settings;
 
-        public BouncyHsmClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public BouncyHsmClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl;
             _httpClient = httpClient;
             _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings);
         }
@@ -149,7 +156,6 @@ namespace BouncyHsm.Spa.Services.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<BouncyHsmVersionDto> GetVersionsAsync()
         {
@@ -157,7 +163,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<BouncyHsmVersionDto> GetVersionsAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -171,7 +176,7 @@ namespace BouncyHsm.Spa.Services.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -201,7 +206,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -211,7 +216,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -243,7 +248,6 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.IList<EcCurveInfoDto>> GetSupportedEcCurvesAsync()
         {
@@ -251,7 +255,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IList<EcCurveInfoDto>> GetSupportedEcCurvesAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -265,7 +268,7 @@ namespace BouncyHsm.Spa.Services.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -295,7 +298,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -305,7 +308,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -337,7 +340,6 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.IList<MechanismInfoDto>> GetMechanismAsync()
         {
@@ -345,7 +347,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IList<MechanismInfoDto>> GetMechanismAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -359,7 +360,7 @@ namespace BouncyHsm.Spa.Services.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -389,7 +390,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -399,7 +400,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -431,23 +432,24 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto? body)
+        public virtual System.Threading.Tasks.Task<Pkcs10Dto> Pkcs_GetPkcsObjectsAsync(int slotId, GeneratePkcs10RequestDto model)
         {
-            return ImportP12Async(slotId, body, System.Threading.CancellationToken.None);
+            return Pkcs_GetPkcsObjectsAsync(slotId, model, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto? body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<Pkcs10Dto> Pkcs_GetPkcsObjectsAsync(int slotId, GeneratePkcs10RequestDto model, System.Threading.CancellationToken cancellationToken)
         {
             if (slotId == null)
                 throw new System.ArgumentNullException("slotId");
 
+            if (model == null)
+                throw new System.ArgumentNullException("model");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Pkcs/{slotId}/ImportP12");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Pkcs/{slotId}/GeneratePkcs10");
             urlBuilder_.Replace("{slotId}", System.Uri.EscapeDataString(ConvertToString(slotId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
@@ -456,12 +458,12 @@ namespace BouncyHsm.Spa.Services.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+                    var json_ = System.Text.Json.JsonSerializer.Serialize(model, _settings.Value);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -491,7 +493,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -501,7 +503,206 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<Pkcs10Dto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiBouncyHsmException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<PkcsObjectsDto> GetPkcsObjectsAsync(int slotId)
+        {
+            return GetPkcsObjectsAsync(slotId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PkcsObjectsDto> GetPkcsObjectsAsync(int slotId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (slotId == null)
+                throw new System.ArgumentNullException("slotId");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Pkcs/{slotId}");
+            urlBuilder_.Replace("{slotId}", System.Uri.EscapeDataString(ConvertToString(slotId, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PkcsObjectsDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiBouncyHsmException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto model)
+        {
+            return ImportP12Async(slotId, model, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ImportP12ResponseDto> ImportP12Async(int slotId, ImportP12RequestDto model, System.Threading.CancellationToken cancellationToken)
+        {
+            if (slotId == null)
+                throw new System.ArgumentNullException("slotId");
+
+            if (model == null)
+                throw new System.ArgumentNullException("model");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Pkcs/{slotId}/ImportP12");
+            urlBuilder_.Replace("{slotId}", System.Uri.EscapeDataString(ConvertToString(slotId, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.Serialize(model, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -533,20 +734,25 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto? body)
+        public virtual System.Threading.Tasks.Task ImportX509CertificateAsync(int slotId, ImportX509CertificateRequestDto model)
         {
-            return CreateSlotAsync(body, System.Threading.CancellationToken.None);
+            return ImportX509CertificateAsync(slotId, model, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto? body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ImportX509CertificateAsync(int slotId, ImportX509CertificateRequestDto model, System.Threading.CancellationToken cancellationToken)
         {
+            if (slotId == null)
+                throw new System.ArgumentNullException("slotId");
+
+            if (model == null)
+                throw new System.ArgumentNullException("model");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Slot");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Pkcs/{slotId}/ImportX509Certificate");
+            urlBuilder_.Replace("{slotId}", System.Uri.EscapeDataString(ConvertToString(slotId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -554,12 +760,11 @@ namespace BouncyHsm.Spa.Services.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+                    var json_ = System.Text.Json.JsonSerializer.Serialize(model, _settings.Value);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -589,7 +794,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -599,7 +804,195 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiBouncyHsmException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task DeleteAssociatedObjectAsync(int slotId, System.Guid objectId)
+        {
+            return DeleteAssociatedObjectAsync(slotId, objectId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task DeleteAssociatedObjectAsync(int slotId, System.Guid objectId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (slotId == null)
+                throw new System.ArgumentNullException("slotId");
+
+            if (objectId == null)
+                throw new System.ArgumentNullException("objectId");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Pkcs/{slotId}/AssociatedObjects/{objectId}");
+            urlBuilder_.Replace("{slotId}", System.Uri.EscapeDataString(ConvertToString(slotId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{objectId}", System.Uri.EscapeDataString(ConvertToString(objectId, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiBouncyHsmException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto createSlotDto)
+        {
+            return CreateSlotAsync(createSlotDto, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CreateSlotResultDto> CreateSlotAsync(CreateSlotDto createSlotDto, System.Threading.CancellationToken cancellationToken)
+        {
+            if (createSlotDto == null)
+                throw new System.ArgumentNullException("createSlotDto");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Slot");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.Serialize(createSlotDto, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -631,7 +1024,6 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.IList<SlotDto>> GetAllSlotsAsync()
         {
@@ -639,7 +1031,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IList<SlotDto>> GetAllSlotsAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -653,7 +1044,7 @@ namespace BouncyHsm.Spa.Services.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -683,7 +1074,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -693,7 +1084,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -725,7 +1116,6 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task DeleteSlotAsync(int slotId)
         {
@@ -733,7 +1123,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task DeleteSlotAsync(int slotId, System.Threading.CancellationToken cancellationToken)
         {
@@ -780,7 +1169,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -790,7 +1179,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -817,7 +1206,6 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<StorageObjectsListDto> GetStorageObjectsAsync(int slotId, int? skip, int? take)
         {
@@ -825,7 +1213,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<StorageObjectsListDto> GetStorageObjectsAsync(int slotId, int? skip, int? take, System.Threading.CancellationToken cancellationToken)
         {
@@ -852,7 +1239,7 @@ namespace BouncyHsm.Spa.Services.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -882,7 +1269,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -892,7 +1279,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -924,7 +1311,6 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<StorageObjectDetailDto> GetStorageObjectAsync(int slotId, System.Guid objectId)
         {
@@ -932,7 +1318,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<StorageObjectDetailDto> GetStorageObjectAsync(int slotId, System.Guid objectId, System.Threading.CancellationToken cancellationToken)
         {
@@ -954,7 +1339,7 @@ namespace BouncyHsm.Spa.Services.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -984,7 +1369,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -994,7 +1379,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -1026,7 +1411,6 @@ namespace BouncyHsm.Spa.Services.Client
             }
         }
 
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task RemoveStorageObjectAsync(int slotId, System.Guid objectId)
         {
@@ -1034,7 +1418,6 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task RemoveStorageObjectAsync(int slotId, System.Guid objectId, System.Threading.CancellationToken cancellationToken)
         {
@@ -1085,7 +1468,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 500)
@@ -1095,7 +1478,7 @@ namespace BouncyHsm.Spa.Services.Client
                             {
                                 throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiBouncyHsmException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 200)
@@ -1223,26 +1606,42 @@ namespace BouncyHsm.Spa.Services.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum AttrTypeTag
+    public partial class ProblemDetails
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"ByteArray")]
-        ByteArray = 0,
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
 
-        [System.Runtime.Serialization.EnumMember(Value = @"String")]
-        String = 1,
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Type { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"CkUint")]
-        CkUint = 2,
+        [System.Text.Json.Serialization.JsonPropertyName("title")]
 
-        [System.Runtime.Serialization.EnumMember(Value = @"CkBool")]
-        CkBool = 3,
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Title { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"DateTime")]
-        DateTime = 4,
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
 
-        [System.Runtime.Serialization.EnumMember(Value = @"CkAttributeArray")]
-        CkAttributeArray = 5,
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("detail")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Detail { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("instance")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Instance { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
@@ -1273,272 +1672,6 @@ namespace BouncyHsm.Spa.Services.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CKK
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RSA")]
-        CKK_RSA = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DSA")]
-        CKK_DSA = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DH")]
-        CKK_DH = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_ECDSA")]
-        CKK_ECDSA = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_X9_42_DH")]
-        CKK_X9_42_DH = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_KEA")]
-        CKK_KEA = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GENERIC_SECRET")]
-        CKK_GENERIC_SECRET = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RC2")]
-        CKK_RC2 = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RC4")]
-        CKK_RC4 = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DES")]
-        CKK_DES = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DES2")]
-        CKK_DES2 = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DES3")]
-        CKK_DES3 = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAST")]
-        CKK_CAST = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAST3")]
-        CKK_CAST3 = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAST5")]
-        CKK_CAST5 = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RC5")]
-        CKK_RC5 = 15,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_IDEA")]
-        CKK_IDEA = 16,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SKIPJACK")]
-        CKK_SKIPJACK = 17,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_BATON")]
-        CKK_BATON = 18,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_JUNIPER")]
-        CKK_JUNIPER = 19,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CDMF")]
-        CKK_CDMF = 20,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_AES")]
-        CKK_AES = 21,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_BLOWFISH")]
-        CKK_BLOWFISH = 22,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_TWOFISH")]
-        CKK_TWOFISH = 23,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SECURID")]
-        CKK_SECURID = 24,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_HOTP")]
-        CKK_HOTP = 25,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_ACTI")]
-        CKK_ACTI = 26,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAMELLIA")]
-        CKK_CAMELLIA = 27,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_ARIA")]
-        CKK_ARIA = 28,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_MD5_HMAC")]
-        CKK_MD5_HMAC = 29,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA_1_HMAC")]
-        CKK_SHA_1_HMAC = 30,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RIPEMD128_HMAC")]
-        CKK_RIPEMD128_HMAC = 31,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RIPEMD160_HMAC")]
-        CKK_RIPEMD160_HMAC = 32,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA256_HMAC")]
-        CKK_SHA256_HMAC = 33,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA384_HMAC")]
-        CKK_SHA384_HMAC = 34,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA512_HMAC")]
-        CKK_SHA512_HMAC = 35,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA224_HMAC")]
-        CKK_SHA224_HMAC = 36,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SEED")]
-        CKK_SEED = 37,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GOSTR3410")]
-        CKK_GOSTR3410 = 38,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GOSTR3411")]
-        CKK_GOSTR3411 = 39,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GOST28147")]
-        CKK_GOST28147 = 40,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_VENDOR_DEFINED")]
-        CKK_VENDOR_DEFINED = 41,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CKO
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_DATA")]
-        CKO_DATA = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_CERTIFICATE")]
-        CKO_CERTIFICATE = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_PUBLIC_KEY")]
-        CKO_PUBLIC_KEY = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_PRIVATE_KEY")]
-        CKO_PRIVATE_KEY = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_SECRET_KEY")]
-        CKO_SECRET_KEY = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_HW_FEATURE")]
-        CKO_HW_FEATURE = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_DOMAIN_PARAMETERS")]
-        CKO_DOMAIN_PARAMETERS = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_MECHANISM")]
-        CKO_MECHANISM = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_OTP_KEY")]
-        CKO_OTP_KEY = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CKO_VENDOR_DEFINED")]
-        CKO_VENDOR_DEFINED = 9,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateSlotDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsHwDevice")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool IsHwDevice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(512, MinimumLength = 1)]
-        public string Description { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Token")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public CreateTokenDto Token { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateSlotResultDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Guid Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SlotId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int SlotId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TokenSerialNumber")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string TokenSerialNumber { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateTokenDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Label")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(512, MinimumLength = 1)]
-        public string Label { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SerialNumber")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.StringLength(64, MinimumLength = 2)]
-        public string? SerialNumber { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwRng")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool SimulateHwRng { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwMechanism")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool SimulateHwMechanism { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SimulateQualifiedArea")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool SimulateQualifiedArea { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UserPin")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(120, MinimumLength = 1)]
-        public string UserPin { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SoPin")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(120, MinimumLength = 1)]
-        public string SoPin { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SignaturePin")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.StringLength(120, MinimumLength = 1)]
-        public string? SignaturePin { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class EcCurveInfoDto
     {
 
@@ -1560,59 +1693,28 @@ namespace BouncyHsm.Spa.Services.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ImportP12RequestDto
+    public partial class MechanismInfoDto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("CkaLabel")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(1024, MinimumLength = 1)]
-        public string CkaLabel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CkaId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(1024)]
-        public byte[] CkaId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ImportMode")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public P12ImportMode ImportMode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ImportChain")]
+        [System.Text.Json.Serialization.JsonPropertyName("MechanismType")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool ImportChain { get; set; } = default!;
+        public string MechanismType { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Pkcs12Content")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(1048576)]
-        public byte[] Pkcs12Content { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Password")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(1024, MinimumLength = 1)]
-        public string Password { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ImportP12ResponseDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("PrivateKeyId")]
+        [System.Text.Json.Serialization.JsonPropertyName("MinKeySize")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Guid PrivateKeyId { get; set; } = default!;
+        public int MinKeySize { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaxKeySize")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int MaxKeySize { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Flags")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public MechanismFlags Flags { get; set; } = default!;
 
     }
 
@@ -1683,28 +1785,223 @@ namespace BouncyHsm.Spa.Services.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class MechanismInfoDto
+    public partial class Pkcs10Dto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MechanismType")]
+        [System.Text.Json.Serialization.JsonPropertyName("Content")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string MechanismType { get; set; } = default!;
+        public byte[] Content { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("MinKeySize")]
+    }
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int MinKeySize { get; set; } = default!;
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeneratePkcs10RequestDto
+    {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MaxKeySize")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int MaxKeySize { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Flags")]
+        [System.Text.Json.Serialization.JsonPropertyName("PrivateKeyId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public MechanismFlags Flags { get; set; } = default!;
+        public System.Guid PrivateKeyId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PublicKeyId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid PublicKeyId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Subject")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public SubjectNameDto Subject { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SubjectNameDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("DirName")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? DirName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OidValuePairs")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<SubjectNameEntryDto>? OidValuePairs { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SubjectNameEntryDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Oid")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string Oid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Value")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string Value { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PkcsObjectsDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Objects")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<PkcsObjectInfoDto> Objects { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PkcsObjectInfoDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("CkaLabel")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string CkaLabel { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CkaId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public byte[] CkaId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Objects")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<PkcsSpecificObjectDto> Objects { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AlwaysAuthenticate")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool AlwaysAuthenticate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Subject")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Subject { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PkcsSpecificObjectDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("CkaClass")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CKO CkaClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ObjectId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid ObjectId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string Description { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CKO
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_DATA")]
+        CKO_DATA = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_CERTIFICATE")]
+        CKO_CERTIFICATE = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_PUBLIC_KEY")]
+        CKO_PUBLIC_KEY = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_PRIVATE_KEY")]
+        CKO_PRIVATE_KEY = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_SECRET_KEY")]
+        CKO_SECRET_KEY = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_HW_FEATURE")]
+        CKO_HW_FEATURE = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_DOMAIN_PARAMETERS")]
+        CKO_DOMAIN_PARAMETERS = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_MECHANISM")]
+        CKO_MECHANISM = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_OTP_KEY")]
+        CKO_OTP_KEY = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKO_VENDOR_DEFINED")]
+        CKO_VENDOR_DEFINED = 9,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ImportP12ResponseDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrivateKeyId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid PrivateKeyId { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ImportP12RequestDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("CkaLabel")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(1024, MinimumLength = 1)]
+        public string CkaLabel { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CkaId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(1024, MinimumLength = 1)]
+        public byte[] CkaId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ImportMode")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public P12ImportMode ImportMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ImportChain")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool ImportChain { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pkcs12Content")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(1048576, MinimumLength = 1)]
+        public byte[] Pkcs12Content { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Password")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(1024, MinimumLength = 1)]
+        public string Password { get; set; } = default!;
 
     }
 
@@ -1724,42 +2021,116 @@ namespace BouncyHsm.Spa.Services.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ProblemDetails
+    public partial class ImportX509CertificateRequestDto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        [System.Text.Json.Serialization.JsonPropertyName("PrivateKeyId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? Type { get; set; } = default!;
+        public System.Guid PrivateKeyId { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("title")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        [System.Text.Json.Serialization.JsonPropertyName("Certificate")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Status { get; set; } = default!;
+        public byte[] Certificate { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("detail")]
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateSlotResultDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? Detail { get; set; } = default!;
+        public System.Guid Id { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("instance")]
+        [System.Text.Json.Serialization.JsonPropertyName("SlotId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? Instance { get; set; } = default!;
+        public int SlotId { get; set; } = default!;
 
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+        [System.Text.Json.Serialization.JsonPropertyName("TokenSerialNumber")]
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string TokenSerialNumber { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateSlotDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsHwDevice")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool IsHwDevice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(512, MinimumLength = 1)]
+        public string Description { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Token")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public CreateTokenDto Token { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateTokenDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Label")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(512, MinimumLength = 1)]
+        public string Label { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SerialNumber")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.ComponentModel.DataAnnotations.StringLength(64, MinimumLength = 2)]
+        public string? SerialNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwRng")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool SimulateHwRng { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwMechanism")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool SimulateHwMechanism { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateQualifiedArea")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool SimulateQualifiedArea { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("UserPin")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(120, MinimumLength = 1)]
+        public string UserPin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SoPin")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(120, MinimumLength = 1)]
+        public string SoPin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SignaturePin")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.ComponentModel.DataAnnotations.StringLength(120, MinimumLength = 1)]
+        public string? SignaturePin { get; set; } = default!;
 
     }
 
@@ -1790,60 +2161,64 @@ namespace BouncyHsm.Spa.Services.Client
         [System.Text.Json.Serialization.JsonPropertyName("Token")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public TokenDto Token { get; set; } = default!;
+        public TokenDto? Token { get; set; } = default!;
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class StorageObjectAttributeDto
+    public partial class TokenDto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("AttributeType")]
+        [System.Text.Json.Serialization.JsonPropertyName("Label")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string AttributeType { get; set; } = default!;
+        public string Label { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TypeTag")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public AttrTypeTag TypeTag { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ValueHex")]
+        [System.Text.Json.Serialization.JsonPropertyName("SerialNumber")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string ValueHex { get; set; } = default!;
+        public string SerialNumber { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ValueText")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? ValueText { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Size")]
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwRng")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Size { get; set; } = default!;
+        public bool SimulateHwRng { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwMechanism")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool SimulateHwMechanism { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateQualifiedArea")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool SimulateQualifiedArea { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsUserPinLocked")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool IsUserPinLocked { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsSoPinLocked")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool IsSoPinLocked { get; set; } = default!;
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class StorageObjectDetailDto
+    public partial class StorageObjectsListDto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        [System.Text.Json.Serialization.JsonPropertyName("TotalCount")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Guid Id { get; set; } = default!;
+        public int TotalCount { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Description { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Attributes")]
+        [System.Text.Json.Serialization.JsonPropertyName("Objects")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<StorageObjectAttributeDto> Attributes { get; set; } = default!;
+        public System.Collections.Generic.ICollection<StorageObjectInfoDto> Objects { get; set; } = default!;
 
     }
 
@@ -1886,59 +2261,217 @@ namespace BouncyHsm.Spa.Services.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class StorageObjectsListDto
+    public enum CKK
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("TotalCount")]
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RSA")]
+        CKK_RSA = 0,
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int TotalCount { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DSA")]
+        CKK_DSA = 1,
 
-        [System.Text.Json.Serialization.JsonPropertyName("Objects")]
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DH")]
+        CKK_DH = 2,
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<StorageObjectInfoDto> Objects { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_EC")]
+        CKK_ECDSA = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_EC")]
+        CKK_EC = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_X9_42_DH")]
+        CKK_X9_42_DH = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_KEA")]
+        CKK_KEA = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GENERIC_SECRET")]
+        CKK_GENERIC_SECRET = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RC2")]
+        CKK_RC2 = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RC4")]
+        CKK_RC4 = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DES")]
+        CKK_DES = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DES2")]
+        CKK_DES2 = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_DES3")]
+        CKK_DES3 = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAST")]
+        CKK_CAST = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAST3")]
+        CKK_CAST3 = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAST5")]
+        CKK_CAST5 = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAST5")]
+        CKK_CAST128 = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RC5")]
+        CKK_RC5 = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_IDEA")]
+        CKK_IDEA = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SKIPJACK")]
+        CKK_SKIPJACK = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_BATON")]
+        CKK_BATON = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_JUNIPER")]
+        CKK_JUNIPER = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CDMF")]
+        CKK_CDMF = 22,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_AES")]
+        CKK_AES = 23,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_BLOWFISH")]
+        CKK_BLOWFISH = 24,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_TWOFISH")]
+        CKK_TWOFISH = 25,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SECURID")]
+        CKK_SECURID = 26,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_HOTP")]
+        CKK_HOTP = 27,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_ACTI")]
+        CKK_ACTI = 28,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_CAMELLIA")]
+        CKK_CAMELLIA = 29,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_ARIA")]
+        CKK_ARIA = 30,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_MD5_HMAC")]
+        CKK_MD5_HMAC = 31,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA_1_HMAC")]
+        CKK_SHA_1_HMAC = 32,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RIPEMD128_HMAC")]
+        CKK_RIPEMD128_HMAC = 33,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_RIPEMD160_HMAC")]
+        CKK_RIPEMD160_HMAC = 34,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA256_HMAC")]
+        CKK_SHA256_HMAC = 35,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA384_HMAC")]
+        CKK_SHA384_HMAC = 36,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA512_HMAC")]
+        CKK_SHA512_HMAC = 37,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SHA224_HMAC")]
+        CKK_SHA224_HMAC = 38,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_SEED")]
+        CKK_SEED = 39,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GOSTR3410")]
+        CKK_GOSTR3410 = 40,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GOSTR3411")]
+        CKK_GOSTR3411 = 41,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_GOST28147")]
+        CKK_GOST28147 = 42,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_VENDOR_DEFINED")]
+        CKK_VENDOR_DEFINED = 43,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class TokenDto
+    public partial class StorageObjectDetailDto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Label")]
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Label { get; set; } = default!;
+        public System.Guid Id { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SerialNumber")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string SerialNumber { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwRng")]
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool SimulateHwRng { get; set; } = default!;
+        public string Description { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SimulateHwMechanism")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool SimulateHwMechanism { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SimulateQualifiedArea")]
+        [System.Text.Json.Serialization.JsonPropertyName("Attributes")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool SimulateQualifiedArea { get; set; } = default!;
+        public System.Collections.Generic.ICollection<StorageObjectAttributeDto> Attributes { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("IsUserPinLocked")]
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class StorageObjectAttributeDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("AttributeType")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool IsUserPinLocked { get; set; } = default!;
+        public string AttributeType { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("IsSoPinLocked")]
+        [System.Text.Json.Serialization.JsonPropertyName("TypeTag")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool IsSoPinLocked { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public AttrTypeTag TypeTag { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ValueHex")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string ValueHex { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ValueText")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? ValueText { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Size")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int Size { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AttrTypeTag
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ByteArray")]
+        ByteArray = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"String")]
+        String = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CkUint")]
+        CkUint = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CkBool")]
+        CkBool = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DateTime")]
+        DateTime = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CkAttributeArray")]
+        CkAttributeArray = 5,
 
     }
 

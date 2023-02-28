@@ -26,6 +26,12 @@ public class PkcsObjectInfo
         set;
     }
 
+    public string? Subject
+    {
+        get;
+        set;
+    }
+
     public PkcsObjectInfo()
     {
         this.CkaLabel = string.Empty;

@@ -159,7 +159,7 @@
         try
         {
             await this.bouncyHsmClient.ImportP12Async(this.SlotId, request);
-            this.Navigation.NavigateTo($"/Slots/Detail/{this.SlotId}");
+            this.Navigation.NavigateTo($"/Slots/{this.SlotId}/Pkcs");
         }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {

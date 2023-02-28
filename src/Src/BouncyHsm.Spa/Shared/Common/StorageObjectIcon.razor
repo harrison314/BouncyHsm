@@ -1,0 +1,45 @@
+﻿@using BouncyHsm.Spa.Services.Client
+
+<span class="@GetIconClass()"></span>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public CKO Cko
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public string? AdditionalClass
+    {
+        get;
+        set;
+    }
+
+    private string GetIconClass()
+    {
+        string iconClass = this.Cko switch
+        {
+            CKO.CKO_CERTIFICATE => "icon-file-text2",
+            CKO.CKO_DATA => "icon-drive",
+            CKO.CKO_DOMAIN_PARAMETERS => "icon-Integrated-Circuit",
+            CKO.CKO_HW_FEATURE => "icon-Integrated-Circuit",
+            CKO.CKO_MECHANISM => "icon-Integrated-Circuit",
+            CKO.CKO_OTP_KEY => "icon-Integrated-Circuit",
+            CKO.CKO_PRIVATE_KEY => "icon-Key-Security",
+            CKO.CKO_PUBLIC_KEY => "icon-unlocked",
+            CKO.CKO_SECRET_KEY => "icon-Privacy",
+            CKO.CKO_VENDOR_DEFINED => "icon-Integrated-Circuit",
+            _ => throw new InvalidProgramException($"Enum value {this.Cko} is not supported.")
+        };
+
+        if (!string.IsNullOrEmpty(this.AdditionalClass))
+        {
+            iconClass = string.Concat(iconClass, " ", this.AdditionalClass);
+        }
+
+        return iconClass;
+    }
+}

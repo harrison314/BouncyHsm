@@ -21,7 +21,7 @@ public class Program
 #endif
         builder.Host.UseSerilog((context, services, configuration) => configuration
                .ReadFrom.Configuration(context.Configuration)
-                .ReadFrom.Services(services)
+               .ReadFrom.Services(services)
                .Enrich.FromLogContext());
 
         builder.Services.Configure<Services.Configuration.BouncyHsmSetup>(builder.Configuration.GetSection("BouncyHsmSetup"));
@@ -40,11 +40,12 @@ public class Program
             });
             
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(cfg =>
+        builder.Services.AddOpenApiDocument(cfg =>
         {
-            cfg.SupportNonNullableReferenceTypes();
+            cfg.Title = "Bouncy Hsm REST API";
+            cfg.Description = "Management API for Bouncy Hsm.";
+            cfg.UseRouteNameAsOperationId = true;
         });
 
 
@@ -84,8 +85,8 @@ public class Program
         if (app.Environment.IsDevelopment()
             || app.Configuration.GetValue<bool>($"{nameof(BouncyHsmSetup)}:{nameof(BouncyHsmSetup.EnableSwagger)}"))
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
         }
 
         app.UseHttpsRedirection();
