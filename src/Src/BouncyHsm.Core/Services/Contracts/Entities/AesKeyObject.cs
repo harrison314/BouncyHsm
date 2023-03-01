@@ -65,7 +65,7 @@ public sealed class AesKeyObject : SecretKeyObject
               $"Attribute {CKA.CKA_VALUE} has different lenth than {CKA.CKA_VALUE_LEN} value.");
         }
 
-        if (!this.IsKeySizeValid((int)this.CkaValueLen))
+        if (!IsKeySizeValid((int)this.CkaValueLen))
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
               $"Attribute {CKA.CKA_VALUE} has no valid lenght for AES key.");
@@ -118,7 +118,7 @@ public sealed class AesKeyObject : SecretKeyObject
         return $"{this.GetType().Name} (AES-{this.CkaValueLen * 8}): Id={this.Id}";
     }
 
-    private bool IsKeySizeValid(int size)
+    internal static bool IsKeySizeValid(int size)
     {
         return size is 16 or 24 or 32;
     }

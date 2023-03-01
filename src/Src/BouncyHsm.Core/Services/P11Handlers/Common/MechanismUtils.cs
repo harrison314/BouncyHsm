@@ -18,6 +18,9 @@ internal static class MechanismUtils
 
     private const uint SecretMaxKeySize = 10 * 1024 * 1024;
 
+    private const uint AesMinKeySize = 16;
+    private const uint AesMaxKeySize = 32;
+
     private const MechanismCkf EcdsaSignVerify = MechanismCkf.CKF_SIGN
         | MechanismCkf.CKF_VERIFY
         | MechanismCkf.CKF_EC_NAMEDCURVE
@@ -129,6 +132,8 @@ internal static class MechanismUtils
             
             {CKM.CKM_ECDH1_DERIVE, new MechanismInfo(EcMinKeySize, EcMaxKeySize, MechanismCkf.CKF_DERIVE | MechanismCkf.CKF_EC_NAMEDCURVE, MechanismCkf.CKF_DERIVE)},
 
+            // AES
+            {CKM.CKM_AES_KEY_GEN, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE)},
         };
     }
 

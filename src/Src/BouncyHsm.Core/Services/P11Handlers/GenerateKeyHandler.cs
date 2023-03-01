@@ -82,6 +82,7 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
         return ckMechanism switch
         {
             CKM.CKM_GENERIC_SECRET_KEY_GEN => new GenericSeecretKeyGenerator(this.loggerFactory.CreateLogger<GenericSeecretKeyGenerator>()),
+            CKM.CKM_AES_KEY_GEN => new AesKeyGenerator(this.loggerFactory.CreateLogger<AesKeyGenerator>()),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for generate key.")
         };
