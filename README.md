@@ -32,7 +32,7 @@ If the found error or changes refer to the PKCS#11 standard, please complete the
 
 ## Links
 
-## Technology
+### Technology
 * [Dotnet 6.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6)
 * [BouncyCastle](https://github.com/bcgit/bc-csharp)
 * [Pkcs11Interop](https://github.com/Pkcs11Interop)
@@ -41,6 +41,6 @@ If the found error or changes refer to the PKCS#11 standard, please complete the
 * [cmp](https://github.com/camgunz/cmp)
 * [MessagePack-CSharp](https://github.com/neuecc/MessagePack-CSharp)
 
-## Other links
+### Other links
 * [PKCS #11 Cryptographic Token Interface Base Specification Version 2.40](http://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html)
 * [Software Ideas Modeler](https://www.softwareideas.net/) - tool in which the diagrams in the documentation were drawn
