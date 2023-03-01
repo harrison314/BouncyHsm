@@ -67,7 +67,7 @@ else
                         <button type="button"
                                 class="btn btn-outline-primary mb-1"
                                 @onclick="()=>this.ShowOffCanvas(obj)">
-                            <span class="icon-enlarge2 icon-1x"></span>  Actions
+                            <span class="icon-enlarge2 icon-1x"></span> Actions
                         </button>
                         <br />
 
@@ -94,16 +94,16 @@ else
 
 <BSOffCanvas @ref="offCanvas" Placement="@BlazorStrap.Placement.Right">
     <Header>
-        <h4>Label: @(this.selectedObject?.CkaLabel)</h4>
+        <h4 class="text-break"><span class="icon-enlarge2 icon-1x"></span> Label: @(this.selectedObject?.CkaLabel)</h4>
     </Header>
     <Content>
-        <BouncyHsm.Spa.Shared.ForPkcsPages.IndexActionButtons SelectedObject="@this.selectedObject" />
+        <BouncyHsm.Spa.Shared.ForPkcsPages.IndexActionButtons SlotId="@this.SlotId"  SelectedObject="@this.selectedObject" />
     </Content>
 </BSOffCanvas>
 
 <BSOffCanvas @ref="offCanvasForCert" Placement="@BlazorStrap.Placement.Right">
     <Header>
-        <h4>Label: @(this.selectedObject?.CkaLabel)</h4>
+        <h4 class="text-break"><span class="icon-View-File icon-1x"></span> Label: @(this.selectedObject?.CkaLabel)</h4>
     </Header>
     <Content>
         <BouncyHsm.Spa.Shared.ForPkcsPages.CertificateView SlotId="@this.SlotId" SelectedObject="@this.selectedObject" />

@@ -1,0 +1,60 @@
+﻿@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils
+@using System.IO
+@inject IJSRuntime JS
+
+<button type="button"
+        class="btn btn-outline-primary btn-sm mb-1"
+        disabled="@this.isInLoading"
+        @onclick="this.OnCLick">
+    @if (this.isInLoading)
+    {
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    }
+    else
+    {
+        <span class="icon-cloud-download icon-1x"></span>
+    }
+
+    @this.Text
+</button>
+
+@code {
+    private bool isInLoading = false;
+
+    [Parameter, EditorRequired]
+    public string Text
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public Func<Task<ObjectContentDto>> DownloadAction
+    {
+        get;
+        set;
+    } = default!;
+
+    private async Task OnCLick()
+    {
+        try
+        {
+            this.isInLoading = true;
+            await Task.Yield();
+
+            ObjectContentDto content = await this.DownloadAction();
+
+            using MemoryStream ms = new MemoryStream(content.Content);
+            using var streamRef = new DotNetStreamReference(stream: ms);
+
+            await this.JS.InvokeVoidAsync("downloadFileFromStream", content.FileName, streamRef);
+        }
+        finally
+        {
+            this.isInLoading = false;
+        }
+    }
+}
