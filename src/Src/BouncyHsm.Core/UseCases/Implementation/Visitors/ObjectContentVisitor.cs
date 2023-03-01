@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.UseCases.Contracts;
 using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
 
     public DomainResult<ObjectContent> Visit(RsaPublicKeyObject rsaPublicKeyObject)
     {
-        return this.CreatePemResult("rsa_public_key.pem", rsaPublicKeyObject.GetPublicKey());
+        return this.CreatePemResult("rsa_public_key.pem", SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(rsaPublicKeyObject.GetPublicKey()));
     }
 
     public DomainResult<ObjectContent> Visit(X509CertificateObject x509CertificateObject)
@@ -53,7 +54,7 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
 
     public DomainResult<ObjectContent> Visit(EcdsaPublicKeyObject ecdsaPublicKeyObject)
     {
-        return this.CreatePemResult("rsa_public_key.pem", ecdsaPublicKeyObject.GetPublicKey());
+        return this.CreatePemResult("rsa_public_key.pem", SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(ecdsaPublicKeyObject.GetPublicKey()));
     }
 
     public DomainResult<ObjectContent> Visit(EcdsaPrivateKeyObject ecdsaPrivateKeyObject)
