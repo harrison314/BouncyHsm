@@ -63,4 +63,6 @@ internal static partial class PkcsControllerMapper
 
     [MapperIgnoreTarget(nameof(ImportP12Request.SlotId))]
     private static partial ImportX509CertificateRequest FromDto(ImportX509CertificateRequestDto dto);
+
+    public static partial CertificateDetailDto ToDto(CertificateDetail detail);
 }

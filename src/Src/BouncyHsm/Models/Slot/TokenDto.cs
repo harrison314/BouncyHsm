@@ -1,5 +1,6 @@
 ﻿namespace BouncyHsm.Models.Slot;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.Services.Contracts.Entities.TokenInfo))]
 public class TokenDto
 {
     public string Label

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BouncyHsm.Models.Slot;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.CreateSlotData))]
 public class CreateSlotDto
 {
     public bool IsHwDevice

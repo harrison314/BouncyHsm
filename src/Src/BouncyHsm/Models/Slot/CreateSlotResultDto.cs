@@ -1,5 +1,6 @@
 ﻿namespace BouncyHsm.Models.Slot;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.CreateSlotResult))]
 public class CreateSlotResultDto
 {
     public Guid Id

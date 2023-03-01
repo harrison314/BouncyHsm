@@ -2,6 +2,7 @@
 
 namespace BouncyHsm.Models.StorageObjects;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.StorageObjectAttribute))]
 public class StorageObjectAttributeDto
 {
     public string AttributeType

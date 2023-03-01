@@ -2,6 +2,7 @@
 
 namespace BouncyHsm.Models.Slot;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.CreateTokenData))]
 public class CreateTokenDto
 {
     [Required]
