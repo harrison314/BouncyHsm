@@ -203,6 +203,68 @@ public class T23_DeriveKeyEcdsa
         _ = this.GetValue(session, derivedKey);
     }
 
+    [TestMethod]
+    public void Derive_ECDH1Sha1AesKey_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"EcPrivKey-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> privateAttrs = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_EC),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, false),
+
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, HexConvertor.GetBytes(P256_1_Ecparams)),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, HexConvertor.GetBytes(P256_1_EcValue)),
+        };
+
+        IObjectHandle privateKeyHandle = session.CreateObject(privateAttrs);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkEcdh1DeriveParams mp = factories.MechanismParamsFactory.CreateCkEcdh1DeriveParams((ulong)CKD.CKD_SHA1_KDF,
+                null,
+                HexConvertor.GetBytes(P256_2_EcPoint));
+        using IMechanism deriveMechanism = factories.MechanismFactory.Create(CKM.CKM_ECDH1_DERIVE, mp);
+
+        List<IObjectAttribute> deriveAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_AES),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, 32)
+        };
+
+        IObjectHandle derivedKey = session.DeriveKey(deriveMechanism, privateKeyHandle, deriveAttributes);
+
+        Assert.IsNotNull(derivedKey);
+    }
+
     private byte[] GetValue(ISession session, IObjectHandle handle, CKA attr = CKA.CKA_VALUE)
     {
         return session.GetAttributeValue(handle, new List<CKA>() { attr })[0].GetValueAsByteArray();
