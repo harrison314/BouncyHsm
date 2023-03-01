@@ -1,0 +1,74 @@
+﻿@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils
+
+@if (this.SelectedObject != null)
+{
+    @if (this.SelectedObject.Subject != null)
+    {
+        <p><strong>Subject:</strong> @this.SelectedObject.Subject</p>
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY))
+    {
+        <button type="button"
+                class="btn btn-outline-primary btn-sm mb-1">
+            <span class="icon-cloud-download icon-1x"></span> Download private key
+        </button>
+        <br />
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PUBLIC_KEY))
+    {
+        <button type="button"
+                class="btn btn-outline-primary btn-sm mb-1">
+            <span class="icon-cloud-download icon-1x"></span> Download public key
+        </button>
+        <br />
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
+    {
+        <button type="button"
+                class="btn btn-outline-primary btn-sm mb-1">
+            <span class="icon-cloud-download icon-1x"></span>  Download certificate
+        </button>
+        <br />
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY) && !this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
+    {
+        <hr />
+
+        <button type="button"
+                class="btn btn-outline-primary btn-sm mb-1">
+            <span class="icon-Rename icon-1x"></span> Generate PKCS10
+        </button>
+        <br />
+
+        <button type="button"
+                class="btn btn-outline-primary btn-sm mb-1">
+            <span class="icon-cloud-upload icon-1x"></span> Upload certificate
+        </button>
+        <br />
+    }
+}
+
+
+@code {
+    [Parameter]
+    public PkcsObjectInfoDto? SelectedObject
+    {
+        get;
+        set;
+    }
+
+    private bool ContainsObj(PkcsObjectInfoDto obj, CKO objType)
+    {
+        return obj.Objects.Any(t => t.CkaClass == objType);
+    }
+
+    private bool ContainsObj(PkcsObjectInfoDto obj, CKO objType, CKO nextType)
+    {
+        return obj.Objects.Any(t => t.CkaClass == objType) && obj.Objects.Any(t => t.CkaClass == nextType);
+    }
+}
