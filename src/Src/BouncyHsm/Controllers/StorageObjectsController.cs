@@ -53,4 +53,15 @@ public class StorageObjectsController : Controller
 
         return result.ToActionResult();
     }
+
+    [HttpGet("{slotId}/{objectId}/Content", Name = nameof(GetObjectContent))]
+    [ProducesResponseType(typeof(ObjectContentDto), 200)]
+    public async Task<IActionResult> GetObjectContent(uint slotId, Guid objectId)
+    {
+        this.logger.LogTrace("Entering to GetObjectContent with slotId {slotId}, objectId {objectId}.", slotId, objectId);
+
+        DomainResult<ObjectContent> result = await this.storageObjectsFacade.Download(slotId, objectId, this.HttpContext.RequestAborted);
+
+        return result.MapOk(StorageObjectsControllerMapper.ToDto).ToActionResult();
+    }
 }

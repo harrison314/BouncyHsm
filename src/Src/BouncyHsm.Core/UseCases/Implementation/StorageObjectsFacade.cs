@@ -92,6 +92,20 @@ public class StorageObjectsFacade : IStorageObjectsFacade
         return new VoidDomainResult.Ok();
     }
 
+    public async ValueTask<DomainResult<ObjectContent>> Download(uint slotId, Guid id, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to Download with slotId {slotId}, id {id}.", slotId, id);
+
+        StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
+        if (storageObject == null)
+        {
+            this.logger.LogError("Storage object with id {id} not found.", id);
+            return new DomainResult<ObjectContent>.NotFound();
+        }
+
+        return storageObject.Accept(new ObjectContentVisitor());
+    }
+
     private StorageObjectInfo BuildInfo(StorageObject storageObject, string description)
     {
         string? ckaIdHex = storageObject.GetValue(CKA.CKA_ID)
