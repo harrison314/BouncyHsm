@@ -12,7 +12,7 @@ internal static class AssertExtensions
     public static T AssertOkValue<T>(this DomainResult<T> result)
     {
         Assert.IsNotNull(result);
-        if(result is DomainResult<T>.Ok ok)
+        if (result is DomainResult<T>.Ok ok)
         {
             return ok.Value;
         }
@@ -24,5 +24,13 @@ internal static class AssertExtensions
     public static void AssertOk(this VoidDomainResult result)
     {
         Assert.IsInstanceOfType(result, typeof(VoidDomainResult.Ok));
+    }
+
+    public static void IsNotNullOrEmpty(this Assert _, string value, string? message = null)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            Assert.Fail(message ?? "Value can not by string or empty.");
+        }
     }
 }

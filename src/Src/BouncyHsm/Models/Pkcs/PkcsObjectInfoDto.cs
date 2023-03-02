@@ -1,5 +1,6 @@
 ﻿namespace BouncyHsm.Models.Pkcs;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.PkcsObjectInfo))]
 public class PkcsObjectInfoDto
 {
     public string CkaLabel

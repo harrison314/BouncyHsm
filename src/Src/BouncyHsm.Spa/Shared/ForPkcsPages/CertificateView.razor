@@ -1,0 +1,96 @@
+﻿@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils
+@inject IBouncyHsmClient bouncyHsmClient
+
+@if (this.detail == null)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <ol class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="d-flex justify-content-between"><span class="fw-bold">Subject</span> <CopyBtn Text="@this.detail.Subject" /></div>
+                <div class="text-break">@this.detail.Subject</div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="d-flex justify-content-between"><span class="fw-bold">Issuer</span> <CopyBtn Text="@this.detail.Issuer" /></div>
+                <div class="text-break">@this.detail.Issuer</div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="d-flex justify-content-between"><span class="fw-bold">Serial&nbsp;number</span>  <CopyBtn Text="@this.detail.SerialNumber" /></div>
+                <div class="text-break">
+                    @this.detail.SerialNumber
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="d-flex justify-content-between"><span class="fw-bold">Thumbprint</span>  <CopyBtn Text="@this.detail.Thumbprint" /></div>
+                <div class="text-break">
+                    @this.detail.Thumbprint
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="d-flex justify-content-start"><span class="fw-bold">No before</span></div>
+                <div class="text-break">
+                    @this.detail.NotBefore
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="d-flex justify-content-start"><span class="fw-bold">No after</span></div>
+                <div class="text-break">
+                    @this.detail.NotAfter
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="d-flex justify-content-start"><span class="fw-bold">Signature algorithm</span></div>
+                <div class="text-break">
+                    @this.detail.SignatureAlgorithm
+                </div>
+            </div>
+        </li>
+    </ol>
+}
+
+@code {
+    private CertificateDetailDto? detail = null;
+
+    [Parameter, EditorRequired]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+
+    [Parameter, EditorRequired]
+    public PkcsObjectInfoDto? SelectedObject
+    {
+        get;
+        set;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (this.SelectedObject == null)
+        {
+            this.detail = null;
+        }
+        else
+        {
+            Guid certificateId = this.SelectedObject.Objects.Single(t => t.CkaClass == CKO.CKO_CERTIFICATE).ObjectId;
+            this.detail = await this.bouncyHsmClient.ParseCertificateAsync(this.SlotId, certificateId);
+        }
+    }
+}

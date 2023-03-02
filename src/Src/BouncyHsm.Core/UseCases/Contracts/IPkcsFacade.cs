@@ -11,4 +11,6 @@ public interface IPkcsFacade
     ValueTask<DomainResult<Guid>> ImportX509Certificate(ImportX509CertificateRequest request, CancellationToken cancellationToken);
 
     ValueTask<VoidDomainResult> DeteleAssociatedObjects(uint slotId, Guid objectId, CancellationToken cancellationToken);
+
+    ValueTask<DomainResult<CertificateDetail>> ParseCertificate(uint slotId, Guid objectId, CancellationToken cancellationToken);
 }

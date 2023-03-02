@@ -1,0 +1,97 @@
+﻿@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils
+@inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation
+
+@if (this.SelectedObject != null)
+{
+    @if (this.SelectedObject.Subject != null)
+    {
+        <p><strong>Subject:</strong> @this.SelectedObject.Subject</p>
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY))
+    {
+        <DownloadBtn Text="Download private key" DownloadAction="@this.GetPrivateKey" />
+        <br />
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PUBLIC_KEY))
+    {
+        <DownloadBtn Text="Download public key" DownloadAction="@this.GetPublicKey" />
+        <br />
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
+    {
+        <DownloadBtn Text="Downloadcertificate" DownloadAction="@this.GetCertificate" />
+        <br />
+    }
+
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY) && !this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
+    {
+        <hr />
+
+        <button type="button"
+                class="btn btn-outline-primary btn-sm mb-1">
+            <span class="icon-Rename icon-1x"></span> Generate PKCS10
+        </button>
+        <br />
+
+        <button type="button"
+                class="btn btn-outline-primary btn-sm mb-1">
+            <span class="icon-cloud-upload icon-1x"></span> Upload certificate
+        </button>
+        <br />
+    }
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+
+    [Parameter, EditorRequired]
+    public PkcsObjectInfoDto? SelectedObject
+    {
+        get;
+        set;
+    }
+
+    private bool ContainsObj(PkcsObjectInfoDto obj, CKO objType)
+    {
+        return obj.Objects.Any(t => t.CkaClass == objType);
+    }
+
+    private bool ContainsObj(PkcsObjectInfoDto obj, CKO objType, CKO nextType)
+    {
+        return obj.Objects.Any(t => t.CkaClass == objType) && obj.Objects.Any(t => t.CkaClass == nextType);
+    }
+
+    private async Task<ObjectContentDto> GetPublicKey()
+    {
+        System.Diagnostics.Debug.Assert(this.SelectedObject != null);
+
+        Guid publicKeyid = this.SelectedObject.Objects.First(t => t.CkaClass == CKO.CKO_PUBLIC_KEY).ObjectId;
+        return await this.bouncyHsmClient.GetObjectContentAsync(this.SlotId, publicKeyid);
+    }
+
+    private async Task<ObjectContentDto> GetPrivateKey()
+    {
+        System.Diagnostics.Debug.Assert(this.SelectedObject != null);
+
+        Guid privateKey = this.SelectedObject.Objects.First(t => t.CkaClass == CKO.CKO_PRIVATE_KEY).ObjectId;
+        return await this.bouncyHsmClient.GetObjectContentAsync(this.SlotId, privateKey);
+    }
+
+    private async Task<ObjectContentDto> GetCertificate()
+    {
+        System.Diagnostics.Debug.Assert(this.SelectedObject != null);
+
+        Guid certificate = this.SelectedObject.Objects.First(t => t.CkaClass == CKO.CKO_CERTIFICATE).ObjectId;
+        return await this.bouncyHsmClient.GetObjectContentAsync(this.SlotId, certificate);
+    }
+}

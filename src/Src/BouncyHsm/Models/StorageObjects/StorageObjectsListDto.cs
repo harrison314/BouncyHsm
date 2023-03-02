@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BouncyHsm.Models.StorageObjects;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.StorageObjectsList))]
 public class StorageObjectsListDto
 {
     public int TotalCount

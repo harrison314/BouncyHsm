@@ -64,7 +64,23 @@ else
                     </div>
 
                     <div class="col-2">
-                        @*Other buttons *@
+                        <button type="button"
+                                class="btn btn-outline-primary mb-1"
+                                @onclick="()=>this.ShowOffCanvas(obj)">
+                            <span class="icon-enlarge2 icon-1x"></span> Actions
+                        </button>
+                        <br />
+
+                        @if (obj.Objects.Any(t => t.CkaClass == CKO.CKO_CERTIFICATE))
+                        {
+                            <button type="button"
+                                    class="btn btn-outline-primary mb-1"
+                                    @onclick="()=>this.ShowOffCertificate(obj)">
+                                <span class="icon-View-File icon-1x"></span> Show certificate
+                            </button>
+                            <br />
+                        }
+
                         <DangerOperationBtn IconClass="icon-Full-Trash icon-1x"
                                     Text="Remove"
                                     ConfirmText="@($"Remove objects '{obj.Subject}'?")"
@@ -76,8 +92,31 @@ else
     }
 }
 
+<BSOffCanvas @ref="offCanvas" Placement="@BlazorStrap.Placement.Right">
+    <Header>
+        <h4 class="text-break"><span class="icon-enlarge2 icon-1x"></span> Label: @(this.selectedObject?.CkaLabel)</h4>
+    </Header>
+    <Content>
+        <BouncyHsm.Spa.Shared.ForPkcsPages.IndexActionButtons SlotId="@this.SlotId"  SelectedObject="@this.selectedObject" />
+    </Content>
+</BSOffCanvas>
+
+<BSOffCanvas @ref="offCanvasForCert" Placement="@BlazorStrap.Placement.Right">
+    <Header>
+        <h4 class="text-break"><span class="icon-View-File icon-1x"></span> Label: @(this.selectedObject?.CkaLabel)</h4>
+    </Header>
+    <Content>
+        <BouncyHsm.Spa.Shared.ForPkcsPages.CertificateView SlotId="@this.SlotId" SelectedObject="@this.selectedObject" />
+    </Content>
+</BSOffCanvas>
+
 @code {
     private PkcsObjectsDto? objects = null;
+    private BSOffCanvas? offCanvas = null;
+    private BSOffCanvas? offCanvasForCert = null;
+
+    private PkcsObjectInfoDto? selectedObject = null;
+
 
     [Parameter]
     public int SlotId
@@ -103,5 +142,21 @@ else
         Guid objectId = objects.First().ObjectId;
         await this.bouncyHsmClient.DeleteAssociatedObjectAsync(this.SlotId, objectId);
         await this.Reload();
+    }
+
+    private async Task ShowOffCanvas(PkcsObjectInfoDto obj)
+    {
+        System.Diagnostics.Debug.Assert(this.offCanvas != null);
+
+        this.selectedObject = obj;
+        await this.offCanvas.ShowAsync();
+    }
+
+    private async Task ShowOffCertificate(PkcsObjectInfoDto obj)
+    {
+        System.Diagnostics.Debug.Assert(this.offCanvasForCert != null);
+
+        this.selectedObject = obj;
+        await this.offCanvasForCert.ShowAsync();
     }
 }

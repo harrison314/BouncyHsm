@@ -1,5 +1,6 @@
 ﻿namespace BouncyHsm.Models.StorageObjects;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.StorageObjectDetail))]
 public class StorageObjectDetailDto
 {
     public Guid Id

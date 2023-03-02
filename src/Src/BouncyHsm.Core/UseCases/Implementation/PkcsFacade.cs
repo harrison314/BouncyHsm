@@ -307,6 +307,41 @@ public class PkcsFacade : IPkcsFacade
         return new VoidDomainResult.Ok();
     }
 
+    public async ValueTask<DomainResult<CertificateDetail>> ParseCertificate(uint slotId, Guid objectId, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to ParseCertificate with slotId {slotId}, objectId {objectId}.", slotId, objectId);
+
+        StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, objectId, cancellationToken);
+        if (storageObject == null)
+        {
+            this.logger.LogError("Certificate not found. SlotId {slotId}, object id {objectId}.", slotId,objectId);
+            return new DomainResult<CertificateDetail>.NotFound();
+        }
+
+        X509CertificateObject? certificateObject = storageObject as X509CertificateObject;
+        if (certificateObject == null)
+        {
+            this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not X509Certificate.", slotId, objectId);
+            return new DomainResult<CertificateDetail>.InvalidInput("PrivateKeyId is not X509Certificate.");
+        }
+
+        X509CertificateParser parser = new X509CertificateParser();
+        X509Certificate certificate = parser.ReadCertificate(certificateObject.CkaValue);
+
+        CertificateDetail result = new CertificateDetail()
+        {
+            Subject = certificate.SubjectDN.ToString(),
+            Issuer = certificate.IssuerDN.ToString(),
+            NotAfter = certificate.NotAfter.ToUniversalTime(),
+            NotBefore = certificate.NotBefore.ToUniversalTime(),
+            SerialNumber = certificate.SerialNumber.ToString(16),
+            Thumbprint = certificate.GetThumbprint(),
+            SignatureAlgorithm = certificate.SigAlgName
+        };
+
+        return new DomainResult<CertificateDetail>.Ok(result);
+    }
+
     private string? TryParseCertSubject(X509CertificateObject? x509CertificateObject)
     {
         if (x509CertificateObject == null || x509CertificateObject.CkaValue.Length == 0)

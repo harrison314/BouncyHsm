@@ -91,6 +91,51 @@ public class PkcsFacadeTests
         throw new NotImplementedException();
     }
 
+    [TestMethod]
+    public async Task ParseCertificate_Call_Success()
+    {
+        uint slotId = 12;
+        Guid objectId = Guid.NewGuid();
+
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(slotId, objectId, It.IsAny<CancellationToken>()))
+         .ReturnsAsync(new X509CertificateObject()
+         {
+             CkaValue = Convert.FromBase64String(@"MIIDnjCCAoagAwIBAgIBBDANBgkqhkiG9w0BAQsFADAiMQswCQYDVQQGEwJTSzET
+MBEGA1UEAxMKT2NzcFRlc3RDYTAgFw0yMzAzMDExMTUyMDBaGA8yMTc1MDMwMTEx
+NTIwMFowgYwxCzAJBgNVBAYTAlNLMRMwEQYDVQQHEwpCcmF0aXNsYXZhMRswGQYD
+VQQDExJUZXN0IGNlcnRpZmljYXRlIDExEjAQBgNVBAUTCTEyMzQ1Njc4OTEZMBcG
+A1UEDRMQU29tZSBzZWRjcmlwdGlvbjEcMBoGA1UEDRMTQW5vdGhlciBkZXNjcmlw
+dGlvbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAL92pQ7csbEY6/Cd
+OWCr2txhrdXfhMw/ljNGge18AI44lf5T1oTpkGUMs+nS4vCNe4AqOifhz0VVWnuJ
+FcdcT6PEMC5xGd8nMWneflECjOWX/lAqprMafAWtifu/CLV3KxVmuTkXNY+u2S6a
+BBk94zniVLj4TWg7u4bGazc7A37USffEof7h5FIEVmnK7zNtiEjKoO4rmRQFgGwJ
+Hl3AH6H5Peb3+/xU/Y4ecDABJXh7lLkm1rRFIwIES8qoiADrlDMGOdovf392bqVD
+/IzsGMjNq/Up6QN2q/RteFrV+l0ymIe719w6kuz5K4ayUgXBIifkAh+k6MXwAibf
+8bCm3fUCAwEAAaNyMHAwCQYDVR0TBAIwADAdBgNVHQ4EFgQUNek7YdB0yksh4q6X
+m1q1tg6xwdAwHwYDVR0jBBgwFoAU1mB5PJXj9osKMG3/uvfTDrQW1QAwDgYDVR0P
+AQH/BAQDAgbAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMA0GCSqGSIb3DQEBCwUAA4IB
+AQAcz8FGd4lVYwCJiPx2diFJ55MozExzzNpmE4L1AyaUiA0RcOddrqNCfLUyONaY
+0dyKvPldenrueXo5x5lyYshKUaPTXGY+LupzmSIhIUx/nqHfX/5MDR9XBt3P32Yd
+VKduDr/FqqXqlNd5WiRiquAeY9cNpMbrnOtnBDHUatXO/6z+t5mNhyZSbwYsqP+Q
+tDB36ZXqy3/dFnjStOXbur6YTKusZmiT23B64ZphseAbivZzdKFXbRd4MzyzSdO3
+HJEaJ5pTZXquh9ztiNgUD171gJ/YqA2tGsnIehfVi7XIzf51zoO/0iSHvF4eyctw
+pU0+bapXOCAQP9suslVRcEn3")
+         })
+         .Verifiable();
+
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, new NullLogger<PkcsFacade>());
+
+        DomainResult<CertificateDetail> domianResult = await pkcsFacade.ParseCertificate(slotId, objectId, default);
+        CertificateDetail result = domianResult.AssertOkValue();
+
+        Assert.That.IsNotNullOrEmpty(result.Issuer);
+        Assert.That.IsNotNullOrEmpty(result.Subject);
+        Assert.That.IsNotNullOrEmpty(result.SerialNumber);
+        Assert.That.IsNotNullOrEmpty(result.SignatureAlgorithm);
+        Assert.That.IsNotNullOrEmpty(result.Thumbprint);
+    }
+
     private byte[] GetP12Content(int id)
     {
         string[] contents = new string[]

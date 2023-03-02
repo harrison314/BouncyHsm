@@ -1,6 +1,7 @@
 ﻿
 namespace BouncyHsm.Models.HsmInfo;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.MechanismInfoData))]
 public class MechanismInfoDto
 {
     public string MechanismType

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BouncyHsm.Models.Pkcs;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.ImportP12Request), IgnoredMembers = new string[] { "SlotId" })]
 public class ImportP12RequestDto
 {
     [Required]

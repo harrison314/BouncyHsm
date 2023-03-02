@@ -108,4 +108,29 @@ public class StorageObjectsFacadeTests
 
         repository.VerifyAll();
     }
+
+    [TestMethod]
+    public async Task Download_Call_Success()
+    {
+        Guid objectId = Guid.NewGuid();
+        StorageObject deletedObject = new DataObject()
+        {
+            CkaLabel = "label",
+            CkaValue = new byte[32]
+        };
+
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, objectId, It.IsAny<CancellationToken>()))
+           .ReturnsAsync(deletedObject)
+           .Verifiable();
+
+        StorageObjectsFacade storageObjectFacade = new StorageObjectsFacade(repository.Object, new NullLogger<StorageObjectsFacade>());
+        DomainResult<ObjectContent> domainResult = await storageObjectFacade.Download(12U, objectId, default);
+        ObjectContent result = domainResult.AssertOkValue();
+
+        Assert.That.IsNotNullOrEmpty(result.FileName);
+        Assert.IsNotNull(result.Content);
+
+        repository.VerifyAll();
+    }
 }

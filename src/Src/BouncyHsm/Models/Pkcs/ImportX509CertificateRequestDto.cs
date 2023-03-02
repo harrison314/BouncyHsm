@@ -1,5 +1,6 @@
 ﻿namespace BouncyHsm.Models.Pkcs;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.ImportX509CertificateRequest), IgnoredMembers = new string[] { "SlotId" })]
 public class ImportX509CertificateRequestDto
 {
     public Guid PrivateKeyId

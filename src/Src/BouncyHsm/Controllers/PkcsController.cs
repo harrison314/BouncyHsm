@@ -76,4 +76,15 @@ public class PkcsController : Controller
 
         return result.ToActionResult();
     }
+
+    [HttpGet("{slotId}/ParseCertificate/{objectId}", Name = nameof(ParseCertificate))]
+    [ProducesResponseType(typeof(CertificateDetailDto), 200)]
+    public async Task<IActionResult> ParseCertificate(uint slotId, Guid objectId)
+    {
+        this.logger.LogTrace("Entering to ParseCertificate with slotId {slotId}, objectId {objectId}.", slotId, objectId);
+
+        DomainResult<CertificateDetail> result = await this.pkcsFacade.ParseCertificate(slotId, objectId, this.HttpContext.RequestAborted);
+
+        return result.MapOk(PkcsControllerMapper.ToDto).ToActionResult();
+    }
 }

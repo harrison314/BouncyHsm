@@ -20,4 +20,6 @@ internal static partial class StorageObjectsControllerMapper
         // Disabling use generating Mapperly fast to string
         return attributeType.ToString();
     }
+
+    public static partial ObjectContentDto ToDto(ObjectContent objectContent);
 }

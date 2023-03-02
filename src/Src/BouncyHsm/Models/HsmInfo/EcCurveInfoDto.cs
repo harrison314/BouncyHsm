@@ -1,6 +1,7 @@
 
 namespace BouncyHsm.Models.HsmInfo;
 
+[SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.Services.Contracts.Entities.SupportedNameCurve))]
 public class EcCurveInfoDto
 {
     public string Kind
