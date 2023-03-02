@@ -85,7 +85,7 @@ internal class WrapperSignerFactory
             CKM.CKM_SHA512_224_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha512tDigest(224), null),
             CKM.CKM_SHA512_256_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha512tDigest(256), null),
 
-            _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for signing.")
+            _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for signing or validation.")
         };
     }
 

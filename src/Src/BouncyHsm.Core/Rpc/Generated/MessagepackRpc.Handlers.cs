@@ -216,6 +216,26 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
    // Implement in another class
 }
 
+public partial class EncryptInitHandler : IRpcRequestHandler<EncryptInitRequest, EncryptInitEnvelope>
+{
+   // Implement in another class
+}
+
+public partial class EncryptHandler : IRpcRequestHandler<EncryptRequest, EncryptEnvelope>
+{
+   // Implement in another class
+}
+
+public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequest, EncryptUpdateEnvelope>
+{
+   // Implement in another class
+}
+
+public partial class EncryptFinalHandler : IRpcRequestHandler<EncryptFinalRequest, EncryptFinalEnvelope>
+{
+   // Implement in another class
+}
+
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public static partial class RpcDefinitionUtils
 {
@@ -265,6 +285,10 @@ public static partial class RpcDefinitionUtils
          { typeof(IRpcRequestHandler<VerifyFinalRequest, VerifyFinalEnvelope>), typeof(VerifyFinalHandler)},
          { typeof(IRpcRequestHandler<GenerateKeyRequest, GenerateKeyEnvelope>), typeof(GenerateKeyHandler)},
          { typeof(IRpcRequestHandler<DeriveKeyRequest, DeriveKeyEnvelope>), typeof(DeriveKeyHandler)},
+         { typeof(IRpcRequestHandler<EncryptInitRequest, EncryptInitEnvelope>), typeof(EncryptInitHandler)},
+         { typeof(IRpcRequestHandler<EncryptRequest, EncryptEnvelope>), typeof(EncryptHandler)},
+         { typeof(IRpcRequestHandler<EncryptUpdateRequest, EncryptUpdateEnvelope>), typeof(EncryptUpdateHandler)},
+         { typeof(IRpcRequestHandler<EncryptFinalRequest, EncryptFinalEnvelope>), typeof(EncryptFinalHandler)},
        };
     }
 }

@@ -2487,6 +2487,249 @@ public partial class DeriveKeyEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptInitRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public MechanismValue Mechanism
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(3)]
+    public uint KeyObjectHandle
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptInitEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public byte[] Data
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+    [Key(3)]
+    public bool IsEncryptedDataPtrSet
+    {
+        get;
+        set;
+    }
+
+    [Key(4)]
+    public uint EncryptedDataLen
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptData
+{
+    [Key(0)]
+    public uint PullEncryptedDataLen
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public byte[] EncryptedData
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public EncryptData? Data
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptUpdateRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public byte[] PartData
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+    [Key(3)]
+    public bool IsEncryptedDataPtrSet
+    {
+        get;
+        set;
+    }
+
+    [Key(4)]
+    public uint EncryptedDataLen
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptUpdateEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public EncryptData? Data
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptFinalRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public bool IsEncryptedDataPtrSet
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public uint EncryptedDataLen
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class EncryptFinalEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public EncryptData? Data
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public partial class CkP_MacGeneralParams
 {
     [Key(0)]

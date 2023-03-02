@@ -234,12 +234,12 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 		}
 
 		CK_KEY_DERIVATION_STRING_DATA_PTR dsd = (CK_KEY_DERIVATION_STRING_DATA_PTR)pMechanism->pParameter;
-		CkP_KeyDerivationStringData rawDataParams;
-		rawDataParams.Data.data = (uint8_t*)dsd->pData;
-		rawDataParams.Data.size = (size_t)dsd->ulLen;
-		rawDataParams.Len = (uint32_t)dsd->ulLen;
+		CkP_KeyDerivationStringData derivationStringData;
+		derivationStringData.Data.data = (uint8_t*)dsd->pData;
+		derivationStringData.Data.size = (size_t)dsd->ulLen;
+		derivationStringData.Len = (uint32_t)dsd->ulLen;
 
-		result = nmrpc_writeAsBinary(&rawDataParams, CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
+		result = nmrpc_writeAsBinary(&derivationStringData, CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
 		if (result != NMRPC_OK)
 		{
 			return result;
@@ -320,6 +320,34 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 		}
 	}
 	break;
+
+    case CKM_AES_CBC:
+    case CKM_AES_CBC_PAD:
+    case CKM_AES_CFB1:
+    case CKM_AES_CFB8:
+    case CKM_AES_CFB64:
+    case CKM_AES_CFB128:
+    case CKM_AES_OFB:
+    case CKM_AES_CTR:
+    case CKM_AES_CTS:
+    {
+        if (pMechanism->pParameter == NULL)
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted raw data in this mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CkP_RawDataParams rawData;
+        rawData.Value.data = (uint8_t*)pMechanism->pParameter;
+        rawData.Value.size = (size_t)pMechanism->ulParameterLen;
+
+        result = nmrpc_writeAsBinary(&rawData, CkP_RawDataParams_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+    }
+    break;
 
 	default:
 		break;
@@ -1521,33 +1549,173 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
 
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {
-	LOG_ENTERING_TO_FUNCTION();
+    LOG_ENTERING_TO_FUNCTION();
 
-	return CKR_FUNCTION_NOT_SUPPORTED;
+    if (NULL == pMechanism)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    EncryptInitRequest request;
+    EncryptInitEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+
+    request.AppId = globalContext.appId;
+    request.SessionId = (uint32_t)hSession;
+    if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_GENERAL_ERROR;
+    }
+
+    request.KeyObjectHandle = (uint32_t)hKey;
+
+    int rv = nmrpc_call_EncryptInit(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    MechanismValue_Destroy(&request.Mechanism);
+    EncryptInitEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 
 CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pEncryptedData, CK_ULONG_PTR pulEncryptedDataLen)
 {
-	LOG_ENTERING_TO_FUNCTION();
+    LOG_ENTERING_TO_FUNCTION();
+    if (NULL == pData || NULL == pulEncryptedDataLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
 
-	return CKR_FUNCTION_NOT_SUPPORTED;
+    EncryptRequest request;
+    EncryptEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+
+    request.AppId = globalContext.appId;
+    request.SessionId = (uint32_t)hSession;
+    request.Data.data = (uint8_t*)pData;
+    request.Data.size = (size_t)ulDataLen;
+    request.IsEncryptedDataPtrSet = pEncryptedData != NULL;
+    request.EncryptedDataLen = (uint32_t)*pulEncryptedDataLen;
+
+    int rv = nmrpc_call_Encrypt(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    if ((CK_RV)envelope.Rv == CKR_OK)
+    {
+        if (pEncryptedData != NULL)
+        {
+            memcpy_s(pEncryptedData, *pulEncryptedDataLen, envelope.Data->EncryptedData.data, envelope.Data->EncryptedData.size);
+            *pulEncryptedDataLen = (CK_ULONG)envelope.Data->EncryptedData.size;
+        }
+        else
+        {
+            *pulEncryptedDataLen = envelope.Data->PullEncryptedDataLen;
+        }
+    }
+
+    EncryptEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
 {
-	LOG_ENTERING_TO_FUNCTION();
+    LOG_ENTERING_TO_FUNCTION();
 
-	return CKR_FUNCTION_NOT_SUPPORTED;
+    if (NULL == pPart)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    EncryptUpdateRequest request;
+    EncryptUpdateEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+
+    request.AppId = globalContext.appId;
+    request.SessionId = (uint32_t)hSession;
+    request.PartData.data = (uint8_t*)pPart;
+    request.PartData.size = (size_t)ulPartLen;
+
+    int rv = nmrpc_call_EncryptUpdate(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+            return CKR_DEVICE_ERROR;
+    }
+
+    EncryptUpdateEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastEncryptedPart, CK_ULONG_PTR pulLastEncryptedPartLen)
 {
-	LOG_ENTERING_TO_FUNCTION();
+    LOG_ENTERING_TO_FUNCTION();
 
-	return CKR_FUNCTION_NOT_SUPPORTED;
+    EncryptFinalRequest request;
+    EncryptFinalEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+
+    request.AppId = globalContext.appId;
+    request.SessionId = (uint32_t)hSession;
+    request.IsEncryptedDataPtrSet = pLastEncryptedPart != NULL;
+    request.EncryptedDataLen = (uint32_t)*pulLastEncryptedPartLen;
+
+    int rv = nmrpc_call_EncryptFinal(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+            return CKR_DEVICE_ERROR;
+    }
+
+    if ((CK_RV)envelope.Rv == CKR_OK)
+    {
+        if (pLastEncryptedPart != NULL)
+        {
+            memcpy_s(pLastEncryptedPart, *pulLastEncryptedPartLen, envelope.Data->EncryptedData.data, envelope.Data->EncryptedData.size);
+            *pulLastEncryptedPartLen = (CK_ULONG)envelope.Data->EncryptedData.size;
+        }
+        else
+        {
+            *pulLastEncryptedPartLen = envelope.Data->PullEncryptedDataLen;
+        }
+    }
+
+    EncryptFinalEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

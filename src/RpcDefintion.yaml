@@ -169,6 +169,24 @@ Rpc:
     Request: DeriveKeyRequest
     Response: DeriveKeyEnvelope
 
+  EncryptInit:
+    Summary: Call for C_EncryptInit
+    Request: EncryptInitRequest
+    Response: EncryptInitEnvelope
+  Encrypt:
+    Summary: Call for C_Encrypt
+    Request: EncryptRequest
+    Response: EncryptEnvelope
+  EncryptUpdate:
+    Summary: Call for C_EncryptUpdate
+    Request: EncryptUpdateRequest
+    Response: EncryptUpdateEnvelope
+  EncryptFinal:
+    Summary: Call for C_EncryptFinal
+    Request: EncryptFinalRequest
+    Response: EncryptFinalEnvelope
+
+
 Messages:
   AppIdentification:
     Summary: Application uniq identification data for server.
@@ -835,6 +853,69 @@ Messages:
     Fields:
       Rv: uint32
       Data: DeriveKeyData?
+
+  EncryptInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  EncryptInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  EncryptRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+      IsEncryptedDataPtrSet: bool
+      EncryptedDataLen: uint32
+
+  EncryptData:
+    Summary:
+    Fields:
+      PullEncryptedDataLen: uint32
+      EncryptedData: binary
+
+  EncryptEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: EncryptData?
+      
+  EncryptUpdateRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      PartData: binary
+      IsEncryptedDataPtrSet: bool
+      EncryptedDataLen: uint32
+
+  EncryptUpdateEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: EncryptData?
+
+  EncryptFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      IsEncryptedDataPtrSet: bool
+      EncryptedDataLen: uint32
+
+  EncryptFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: EncryptData?
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:
