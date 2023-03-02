@@ -2888,3 +2888,37 @@ public partial class Ckp_CkGcmParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class Ckp_CkCcmParams
+{
+    [Key(0)]
+    public uint DataLen
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public byte[]? Nonce
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public byte[]? Aad
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public uint MacLen
+    {
+        get;
+        set;
+    }
+
+}
+

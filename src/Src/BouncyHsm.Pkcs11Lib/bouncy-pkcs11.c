@@ -350,7 +350,6 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     break;
 
     case  CKM_AES_GCM:
-    case  CKM_AES_CCM:
     {
         if (pMechanism->ulParameterLen != sizeof(CK_GCM_PARAMS))
         {
@@ -387,6 +386,49 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         }
 
         result = nmrpc_writeAsBinary(&gcmDerivedParams, Ckp_CkGcmParams_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+    }
+    break;
+
+    case  CKM_AES_CCM:
+    {
+        if (pMechanism->ulParameterLen != sizeof(CK_CCM_PARAMS))
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted CK_CCM_PARAMS in mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CK_CCM_PARAMS_PTR gcmParams = (CK_CCM_PARAMS_PTR)pMechanism->pParameter;
+
+        Ckp_CkCcmParams ccmDerivedParams;
+        Binary nonceData;
+        Binary aadData;
+
+        ccmDerivedParams.DataLen = (uint32_t)gcmParams->ulDataLen;
+        ccmDerivedParams.Nonce = NULL;
+        ccmDerivedParams.Aad = NULL;
+        ccmDerivedParams.MacLen = (uint32_t)gcmParams->ulMACLen;
+
+        if (gcmParams->pNonce != NULL)
+        {
+            nonceData.data = (uint8_t*)gcmParams->pNonce;
+            nonceData.size = (size_t)gcmParams->ulNonceLen;
+
+            ccmDerivedParams.Nonce = &nonceData;
+        }
+
+        if (gcmParams->pAAD != NULL)
+        {
+            aadData.data = (uint8_t*)gcmParams->pAAD;
+            aadData.size = (size_t)gcmParams->ulAADLen;
+
+            ccmDerivedParams.Aad = &aadData;
+        }
+
+        result = nmrpc_writeAsBinary(&ccmDerivedParams, Ckp_CkCcmParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;

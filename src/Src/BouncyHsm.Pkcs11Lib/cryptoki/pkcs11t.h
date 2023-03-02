@@ -1911,4 +1911,16 @@ typedef struct CK_GCM_PARAMS {
 } CK_GCM_PARAMS;
 
 typedef CK_GCM_PARAMS CK_PTR CK_GCM_PARAMS_PTR;
+
+typedef struct CK_CCM_PARAMS {
+    CK_ULONG ulDataLen; /*plaintext or ciphertext*/
+    CK_BYTE_PTR pNonce;
+    CK_ULONG ulNonceLen;
+    CK_BYTE_PTR pAAD;
+    CK_ULONG ulAADLen;
+    CK_ULONG ulMACLen;
+} CK_CCM_PARAMS;
+
+typedef CK_CCM_PARAMS CK_PTR CK_CCM_PARAMS_PTR;
+
 #endif

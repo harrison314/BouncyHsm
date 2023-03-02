@@ -97,10 +97,8 @@ public class T24_Encrypt
         Assert.IsNotNull(chiperText);
     }
 
-    [DataTestMethod]
-    [DataRow(CKM.CKM_AES_GCM, 16)]
-    [DataRow(CKM.CKM_AES_CCM, 8)]
-    public void Encrypt_AesWithAead_Success(CKM mechanismType, int nonceLen)
+    [TestMethod]
+    public void Encrypt_AesGcm_Success()
     {
         byte[] plainText = new byte[16];
         Random.Shared.NextBytes(plainText);
@@ -117,14 +115,46 @@ public class T24_Encrypt
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(nonceLen);
+        byte[] nonce = session.GenerateRandom(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
-            (ulong)nonce.Length * 8,
+            (ulong)0,
             null,
             16 * 8);
 
-        using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, gcmParams);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_GCM, gcmParams);
+        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
+
+        Assert.IsNotNull(chiperText);
+    }
+
+    [TestMethod]
+    public void Encrypt_AesCcm_Success()
+    {
+        byte[] plainText = new byte[16];
+        Random.Shared.NextBytes(plainText);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] nonce = session.GenerateRandom(8);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkCcmParams ccmParams = session.Factories.MechanismParamsFactory.CreateCkCcmParams((ulong)plainText.Length,
+            nonce,
+            null,
+            16 * 8);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CCM, ccmParams);
         byte[] chiperText = session.Encrypt(mechanism, key, plainText);
 
         Assert.IsNotNull(chiperText);

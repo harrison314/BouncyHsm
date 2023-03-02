@@ -45,8 +45,8 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_CTR => this.CreateAes(CipherUtilities.GetCipher("AES/CTR/NOPADDING"), mechanism),
             CKM.CKM_AES_CTS => this.CreateAes(CipherUtilities.GetCipher("AES/CTS/NOPADDING"), mechanism),
 
-            CKM.CKM_AES_GCM => this.CreateAeadAes(CipherUtilities.GetCipher("AES/GCM/NOPADDING"), mechanism),
-            CKM.CKM_AES_CCM => this.CreateAeadAes(CipherUtilities.GetCipher("AES/CCM/NOPADDING"), mechanism),
+            CKM.CKM_AES_GCM => this.CreateAesGcm(CipherUtilities.GetCipher("AES/GCM/NOPADDING"), mechanism),
+            CKM.CKM_AES_CCM => this.CreateAesCcm(CipherUtilities.GetCipher("AES/CCM/NOPADDING"), mechanism),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
@@ -74,7 +74,7 @@ internal class BufferedCipherWrapperFactory
             this.loggerFactory.CreateLogger<AesBufferedCipherWrapper>());
     }
 
-    private AesAeadBufferedCipherWrapper CreateAeadAes(IBufferedCipher bufferedCipher, MechanismValue mechanism)
+    private AesAeadBufferedCipherWrapper CreateAesGcm(IBufferedCipher bufferedCipher, MechanismValue mechanism)
     {
         Ckp_CkGcmParams gcmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkGcmParams>(mechanism.MechanismParamMp);
 
@@ -89,6 +89,18 @@ internal class BufferedCipherWrapperFactory
             (int)gcmParams.TagBits,
             gcmParams.Iv,
             gcmParams.Aad,
+            (CKM)mechanism.MechanismType,
+            this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
+    }
+
+    private AesAeadBufferedCipherWrapper CreateAesCcm(IBufferedCipher bufferedCipher, MechanismValue mechanism)
+    {
+        Ckp_CkCcmParams ccmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkCcmParams>(mechanism.MechanismParamMp);
+
+        return new AesAeadBufferedCipherWrapper(bufferedCipher,
+            (int)ccmParams.MacLen,
+            ccmParams.Nonce,
+            ccmParams.Aad,
             (CKM)mechanism.MechanismType,
             this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
     }

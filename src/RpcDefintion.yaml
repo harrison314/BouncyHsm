@@ -965,3 +965,11 @@ Messages:
       IvBits: uint32
       Aad: binary?
       TagBits: uint32
+
+  Ckp_CkCcmParams:
+    Summary: Representes CK_CCM_PARAMS
+    Fields:
+      DataLen: uint32
+      Nonce: binary?
+      Aad: binary?
+      MacLen: uint32
