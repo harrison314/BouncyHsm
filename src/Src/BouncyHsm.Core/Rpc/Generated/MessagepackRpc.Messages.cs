@@ -2854,3 +2854,37 @@ public partial class Ckp_CkEcdh1DeriveParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class Ckp_CkGcmParams
+{
+    [Key(0)]
+    public byte[]? Iv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public uint IvBits
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public byte[]? Aad
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public uint TagBits
+    {
+        get;
+        set;
+    }
+
+}
+

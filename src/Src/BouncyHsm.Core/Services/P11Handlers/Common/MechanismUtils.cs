@@ -145,6 +145,9 @@ internal static class MechanismUtils
             {CKM.CKM_AES_CTR, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT)},
             {CKM.CKM_AES_CTS, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT)},
 
+            {CKM.CKM_AES_GCM, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT)},
+            {CKM.CKM_AES_CCM, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT)},
+
         };
     }
 

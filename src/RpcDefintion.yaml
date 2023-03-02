@@ -957,3 +957,11 @@ Messages:
       Kdf: uint32
       SharedData: binary?
       PublicData: binary
+
+  Ckp_CkGcmParams:
+    Summary: Representes CK_GCM_PARAMS
+    Fields:
+      Iv: binary?
+      IvBits: uint32
+      Aad: binary?
+      TagBits: uint32

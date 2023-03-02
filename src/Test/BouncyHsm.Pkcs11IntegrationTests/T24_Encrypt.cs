@@ -97,6 +97,39 @@ public class T24_Encrypt
         Assert.IsNotNull(chiperText);
     }
 
+    [DataTestMethod]
+    [DataRow(CKM.CKM_AES_GCM, 16)]
+    [DataRow(CKM.CKM_AES_CCM, 8)]
+    public void Encrypt_AesWithAead_Success(CKM mechanismType, int nonceLen)
+    {
+        byte[] plainText = new byte[16];
+        Random.Shared.NextBytes(plainText);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] nonce = session.GenerateRandom(nonceLen);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
+            (ulong)nonce.Length * 8,
+            null,
+            16 * 8);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, gcmParams);
+        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
+
+        Assert.IsNotNull(chiperText);
+    }
+
     public IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

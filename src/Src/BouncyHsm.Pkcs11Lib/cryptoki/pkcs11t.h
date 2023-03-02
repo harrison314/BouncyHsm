@@ -982,6 +982,10 @@ typedef CK_ULONG          CK_MECHANISM_TYPE;
 #define CKM_AES_CFB128                  0x00002107
 #define CKM_AES_CFB1                    0x00002108
 
+#define CKM_AES_GCM                     0x00001087
+#define CKM_AES_CCM                     0x00001088
+
+
 /* AES counter mode is new for PKCS #11 v2.20 amendment 3 */
 #define CKM_AES_CTR                    0x00001086
 
@@ -1896,4 +1900,15 @@ typedef struct CK_ARIA_CBC_ENCRYPT_DATA_PARAMS {
 
 typedef CK_ARIA_CBC_ENCRYPT_DATA_PARAMS CK_PTR CK_ARIA_CBC_ENCRYPT_DATA_PARAMS_PTR;
 
+
+typedef struct CK_GCM_PARAMS {
+    CK_BYTE_PTR       pIv;
+    CK_ULONG          ulIvLen;
+    CK_ULONG          ulIvBits;
+    CK_BYTE_PTR       pAAD;
+    CK_ULONG          ulAADLen;
+    CK_ULONG          ulTagBits;
+} CK_GCM_PARAMS;
+
+typedef CK_GCM_PARAMS CK_PTR CK_GCM_PARAMS_PTR;
 #endif

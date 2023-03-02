@@ -27,7 +27,7 @@ internal class BufferedCipherWrapperFactory
     {
         this.logger.LogTrace("Entering to CreateCipherAlgorithm with mechanism type {mechanismType}", mechanism.MechanismType);
 
-        
+
         CKM ckMechanism = (CKM)mechanism.MechanismType;
 
         return ckMechanism switch
@@ -40,13 +40,13 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_CFB8 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB8/NOPADDING"), mechanism),
             CKM.CKM_AES_CFB64 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB64/NOPADDING"), mechanism),
             CKM.CKM_AES_CFB128 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB128/NOPADDING"), mechanism),
-            
+
             CKM.CKM_AES_OFB => this.CreateAes(CipherUtilities.GetCipher("AES/OFB/NOPADDING"), mechanism),
             CKM.CKM_AES_CTR => this.CreateAes(CipherUtilities.GetCipher("AES/CTR/NOPADDING"), mechanism),
             CKM.CKM_AES_CTS => this.CreateAes(CipherUtilities.GetCipher("AES/CTS/NOPADDING"), mechanism),
 
-            //https://www.cryptsoft.com/pkcs11doc/v230/group__SEC__11__11__2__AES__GCM__AND__CCM__MECHANISM__PARAMETERS.html
-            //CKM.CKM_AES_GCM => this.CreateAes(CipherUtilities.GetCipher("AES/GCM/NOPADDING"), mechanism),
+            CKM.CKM_AES_GCM => this.CreateAeadAes(CipherUtilities.GetCipher("AES/GCM/NOPADDING"), mechanism),
+            CKM.CKM_AES_CCM => this.CreateAeadAes(CipherUtilities.GetCipher("AES/CCM/NOPADDING"), mechanism),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
@@ -72,5 +72,24 @@ internal class BufferedCipherWrapperFactory
             rawDataParams.Value,
             (CKM)mechanism.MechanismType,
             this.loggerFactory.CreateLogger<AesBufferedCipherWrapper>());
+    }
+
+    private AesAeadBufferedCipherWrapper CreateAeadAes(IBufferedCipher bufferedCipher, MechanismValue mechanism)
+    {
+        Ckp_CkGcmParams gcmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkGcmParams>(mechanism.MechanismParamMp);
+
+        if (gcmParams.Iv != null && gcmParams.Iv.Length * 8 != gcmParams.IvBits)
+        {
+            this.logger.LogWarning("Ignore IvBits in CkGcmParams. IV has {ivLen} bit lenght, iv bits is {ivBits}.",
+                gcmParams.Iv.Length * 8,
+                gcmParams.IvBits);
+        }
+
+        return new AesAeadBufferedCipherWrapper(bufferedCipher,
+            (int)gcmParams.TagBits,
+            gcmParams.Iv,
+            gcmParams.Aad,
+            (CKM)mechanism.MechanismType,
+            this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
     }
 }
