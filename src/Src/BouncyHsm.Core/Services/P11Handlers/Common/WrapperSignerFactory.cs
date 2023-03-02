@@ -30,7 +30,6 @@ internal class WrapperSignerFactory
     {
         this.logger.LogTrace("Entering to CreateSignatureAlgorithm with mechanism type {mechanismType}", mechanism.MechanismType);
 
-        MechanismUtils.CheckMechanism(mechanism, MechanismCkf.CKF_SIGN);
         CKM ckMechanism = (CKM)mechanism.MechanismType;
 
         return ckMechanism switch

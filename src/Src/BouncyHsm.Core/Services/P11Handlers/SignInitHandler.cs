@@ -35,9 +35,10 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
+        MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_SIGN);
         p11Session.State.EnsureEmpty();
 
-        KeyObject objectInstance = await hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);
+        KeyObject objectInstance = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);
 
         WrapperSignerFactory signerFactory = new WrapperSignerFactory(this.loggerFactory);
 

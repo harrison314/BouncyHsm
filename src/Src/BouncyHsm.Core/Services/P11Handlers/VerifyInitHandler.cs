@@ -31,9 +31,10 @@ public partial class VerifyInitHandler : IRpcRequestHandler<VerifyInitRequest, V
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
+        MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_VERIFY);
         p11Session.State.EnsureEmpty();
 
-        KeyObject objectInstance = await hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);
+        KeyObject objectInstance = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);
 
         WrapperSignerFactory signerFactory = new WrapperSignerFactory(this.loggerFactory);
 
