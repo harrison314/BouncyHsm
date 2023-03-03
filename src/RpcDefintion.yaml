@@ -186,6 +186,22 @@ Rpc:
     Request: EncryptFinalRequest
     Response: EncryptFinalEnvelope
 
+  DecryptInit:
+    Summary: Call for C_DecryptInit
+    Request: DecryptInitRequest
+    Response: DecryptInitEnvelope
+  Decrypt:
+    Summary: Call for C_Decrypt
+    Request: DecryptRequest
+    Response: DecryptEnvelope
+  DecryptUpdate:
+    Summary: Call for C_DecryptUpdate
+    Request: DecryptUpdateRequest
+    Response: DecryptUpdateEnvelope
+  DecryptFinal:
+    Summary:
+    Request: DecryptFinalRequest
+    Response: DecryptFinalEnvelope
 
 Messages:
   AppIdentification:
@@ -916,6 +932,69 @@ Messages:
     Fields:
       Rv: uint32
       Data: EncryptData?
+
+  DecryptInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  DecryptInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  DecryptRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      EncryptedData: binary
+      IsDataPtrSet: bool
+      PullDataLen: uint32
+
+  DecryptData:
+    Summary:
+    Fields:
+      Data: binary
+      PullDataLen: uint32
+
+  DecryptEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DecryptData?
+
+  DecryptUpdateRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      EncryptedData: binary
+      IsDataPtrSet: bool
+      PullDataLen: uint32
+
+  DecryptUpdateEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DecryptData?
+
+  DecryptFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      IsDataPtrSet: bool
+      PullDataLen: uint32
+
+  DecryptFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DecryptData?
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

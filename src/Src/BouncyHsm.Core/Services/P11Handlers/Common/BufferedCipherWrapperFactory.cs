@@ -78,7 +78,16 @@ internal class BufferedCipherWrapperFactory
     {
         Ckp_CkGcmParams gcmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkGcmParams>(mechanism.MechanismParamMp);
 
-        if (gcmParams.Iv != null && gcmParams.Iv.Length * 8 != gcmParams.IvBits)
+        if (this.logger.IsEnabled(LogLevel.Trace))
+        {
+            this.logger.LogTrace("Using AES GCM params with IV len {ivLen}, IV bits {ivBits}, AAD len {aadLen}, tag bits {tagBits}.",
+                gcmParams.Iv?.Length ?? 0,
+                gcmParams.IvBits,
+                gcmParams.Aad?.Length ?? 0,
+                gcmParams.TagBits);
+        }
+
+        if (gcmParams.IvBits != 0 && gcmParams.Iv != null && gcmParams.Iv.Length * 8 != gcmParams.IvBits)
         {
             this.logger.LogWarning("Ignore IvBits in CkGcmParams. IV has {ivLen} bit lenght, iv bits is {ivBits}.",
                 gcmParams.Iv.Length * 8,
@@ -96,6 +105,14 @@ internal class BufferedCipherWrapperFactory
     private AesAeadBufferedCipherWrapper CreateAesCcm(IBufferedCipher bufferedCipher, MechanismValue mechanism)
     {
         Ckp_CkCcmParams ccmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkCcmParams>(mechanism.MechanismParamMp);
+
+        if (this.logger.IsEnabled(LogLevel.Trace))
+        {
+            this.logger.LogTrace("Using AES CCM params with nonce len {nonceLen}, AAD len {aadLen}, mac len {macLen}.",
+                ccmParams.Nonce?.Length ?? 0,
+                ccmParams.Aad?.Length ?? 0,
+                ccmParams.MacLen);
+        }
 
         return new AesAeadBufferedCipherWrapper(bufferedCipher,
             (int)ccmParams.MacLen,

@@ -70,6 +70,10 @@ public static partial class RequestProcessor
         "Encrypt" => ProcessRequestBody<EncryptRequest, EncryptEnvelope>(serviceProvider, "Encrypt", requestBody, static ckRv => new EncryptEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "EncryptUpdate" => ProcessRequestBody<EncryptUpdateRequest, EncryptUpdateEnvelope>(serviceProvider, "EncryptUpdate", requestBody, static ckRv => new EncryptUpdateEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "EncryptFinal" => ProcessRequestBody<EncryptFinalRequest, EncryptFinalEnvelope>(serviceProvider, "EncryptFinal", requestBody, static ckRv => new EncryptFinalEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "DecryptInit" => ProcessRequestBody<DecryptInitRequest, DecryptInitEnvelope>(serviceProvider, "DecryptInit", requestBody, static ckRv => new DecryptInitEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "Decrypt" => ProcessRequestBody<DecryptRequest, DecryptEnvelope>(serviceProvider, "Decrypt", requestBody, static ckRv => new DecryptEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "DecryptUpdate" => ProcessRequestBody<DecryptUpdateRequest, DecryptUpdateEnvelope>(serviceProvider, "DecryptUpdate", requestBody, static ckRv => new DecryptUpdateEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "DecryptFinal" => ProcessRequestBody<DecryptFinalRequest, DecryptFinalEnvelope>(serviceProvider, "DecryptFinal", requestBody, static ckRv => new DecryptFinalEnvelope(){ Rv = ckRv }, logger, cancellationToken),
           _ => throw new InvalidOperationException($"RPC operation {header.Operation} is not supported.")
       };
    }

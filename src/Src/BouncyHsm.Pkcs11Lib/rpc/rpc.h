@@ -121,6 +121,15 @@ typedef struct _EncryptUpdateRequest EncryptUpdateRequest;
 typedef struct _EncryptUpdateEnvelope EncryptUpdateEnvelope;
 typedef struct _EncryptFinalRequest EncryptFinalRequest;
 typedef struct _EncryptFinalEnvelope EncryptFinalEnvelope;
+typedef struct _DecryptInitRequest DecryptInitRequest;
+typedef struct _DecryptInitEnvelope DecryptInitEnvelope;
+typedef struct _DecryptRequest DecryptRequest;
+typedef struct _DecryptData DecryptData;
+typedef struct _DecryptEnvelope DecryptEnvelope;
+typedef struct _DecryptUpdateRequest DecryptUpdateRequest;
+typedef struct _DecryptUpdateEnvelope DecryptUpdateEnvelope;
+typedef struct _DecryptFinalRequest DecryptFinalRequest;
+typedef struct _DecryptFinalEnvelope DecryptFinalEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1351,6 +1360,105 @@ int EncryptFinalEnvelope_Serialize(cmp_ctx_t* ctx, EncryptFinalEnvelope* value);
 int EncryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, EncryptFinalEnvelope* value);
 int EncryptFinalEnvelope_Release(EncryptFinalEnvelope* value);
 
+typedef struct _DecryptInitRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    MechanismValue Mechanism;
+    uint32_t KeyObjectHandle;
+} DecryptInitRequest;
+
+int DecryptInitRequest_Serialize(cmp_ctx_t* ctx, DecryptInitRequest* value);
+int DecryptInitRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptInitRequest* value);
+int DecryptInitRequest_Release(DecryptInitRequest* value);
+
+typedef struct _DecryptInitEnvelope
+{
+    uint32_t Rv;
+} DecryptInitEnvelope;
+
+int DecryptInitEnvelope_Serialize(cmp_ctx_t* ctx, DecryptInitEnvelope* value);
+int DecryptInitEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptInitEnvelope* value);
+int DecryptInitEnvelope_Release(DecryptInitEnvelope* value);
+
+typedef struct _DecryptRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    Binary EncryptedData;
+    bool IsDataPtrSet;
+    uint32_t PullDataLen;
+} DecryptRequest;
+
+int DecryptRequest_Serialize(cmp_ctx_t* ctx, DecryptRequest* value);
+int DecryptRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptRequest* value);
+int DecryptRequest_Release(DecryptRequest* value);
+
+typedef struct _DecryptData
+{
+    Binary Data;
+    uint32_t PullDataLen;
+} DecryptData;
+
+int DecryptData_Serialize(cmp_ctx_t* ctx, DecryptData* value);
+int DecryptData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptData* value);
+int DecryptData_Release(DecryptData* value);
+
+typedef struct _DecryptEnvelope
+{
+    uint32_t Rv;
+    DecryptData* Data;
+} DecryptEnvelope;
+
+int DecryptEnvelope_Serialize(cmp_ctx_t* ctx, DecryptEnvelope* value);
+int DecryptEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptEnvelope* value);
+int DecryptEnvelope_Release(DecryptEnvelope* value);
+
+typedef struct _DecryptUpdateRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    Binary EncryptedData;
+    bool IsDataPtrSet;
+    uint32_t PullDataLen;
+} DecryptUpdateRequest;
+
+int DecryptUpdateRequest_Serialize(cmp_ctx_t* ctx, DecryptUpdateRequest* value);
+int DecryptUpdateRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptUpdateRequest* value);
+int DecryptUpdateRequest_Release(DecryptUpdateRequest* value);
+
+typedef struct _DecryptUpdateEnvelope
+{
+    uint32_t Rv;
+    DecryptData* Data;
+} DecryptUpdateEnvelope;
+
+int DecryptUpdateEnvelope_Serialize(cmp_ctx_t* ctx, DecryptUpdateEnvelope* value);
+int DecryptUpdateEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptUpdateEnvelope* value);
+int DecryptUpdateEnvelope_Release(DecryptUpdateEnvelope* value);
+
+typedef struct _DecryptFinalRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    bool IsDataPtrSet;
+    uint32_t PullDataLen;
+} DecryptFinalRequest;
+
+int DecryptFinalRequest_Serialize(cmp_ctx_t* ctx, DecryptFinalRequest* value);
+int DecryptFinalRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptFinalRequest* value);
+int DecryptFinalRequest_Release(DecryptFinalRequest* value);
+
+typedef struct _DecryptFinalEnvelope
+{
+    uint32_t Rv;
+    DecryptData* Data;
+} DecryptFinalEnvelope;
+
+int DecryptFinalEnvelope_Serialize(cmp_ctx_t* ctx, DecryptFinalEnvelope* value);
+int DecryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptFinalEnvelope* value);
+int DecryptFinalEnvelope_Release(DecryptFinalEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1513,5 +1621,9 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
 int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, EncryptEnvelope* response);
 int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* request, EncryptUpdateEnvelope* response);
 int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* request, EncryptFinalEnvelope* response);
+int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* request, DecryptInitEnvelope* response);
+int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, DecryptEnvelope* response);
+int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* request, DecryptUpdateEnvelope* response);
+int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* request, DecryptFinalEnvelope* response);
 
 #endif // NMRPC_rpc

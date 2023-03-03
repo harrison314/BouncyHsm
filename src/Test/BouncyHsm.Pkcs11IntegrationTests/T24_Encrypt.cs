@@ -59,7 +59,7 @@ public class T24_Encrypt
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_ECB);
         using MemoryStream plainTextMs = new MemoryStream(plainText);
         using MemoryStream ciperTextMs = new MemoryStream();
-        session.Encrypt(mechanism, key, plainTextMs, ciperTextMs, 20);
+        session.Encrypt(mechanism, key, plainTextMs, ciperTextMs, 32);
     }
 
     [DataTestMethod]
