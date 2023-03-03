@@ -2838,17 +2838,12 @@ int LoginRequest_Release(LoginRequest* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Utf8Pin)
+  if (value->Utf8Pin != NULL)
   {
       Binary_Release(value->Utf8Pin);
       free((void*)value->Utf8Pin);
       value->Utf8Pin = NULL;
   }
- if (value->Utf8Pin != NULL)
- {
-     free((void*) value->Utf8Pin);
-     value->Utf8Pin = NULL;
- }
     return NMRPC_OK;
 }
 int LoginEnvelope_Serialize(cmp_ctx_t* ctx, LoginEnvelope* value)
@@ -3201,17 +3196,12 @@ int GenerateRandomEnvelope_Release(GenerateRandomEnvelope* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Data)
+  if (value->Data != NULL)
   {
       Binary_Release(value->Data);
       free((void*)value->Data);
       value->Data = NULL;
   }
- if (value->Data != NULL)
- {
-     free((void*) value->Data);
-     value->Data = NULL;
- }
     return NMRPC_OK;
 }
 int MechanismValue_Serialize(cmp_ctx_t* ctx, MechanismValue* value)
@@ -3263,17 +3253,12 @@ int MechanismValue_Release(MechanismValue* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->MechanismParamMp)
+  if (value->MechanismParamMp != NULL)
   {
       Binary_Release(value->MechanismParamMp);
       free((void*)value->MechanismParamMp);
       value->MechanismParamMp = NULL;
   }
- if (value->MechanismParamMp != NULL)
- {
-     free((void*) value->MechanismParamMp);
-     value->MechanismParamMp = NULL;
- }
     return NMRPC_OK;
 }
 int DigestInitRequest_Serialize(cmp_ctx_t* ctx, DigestInitRequest* value)
@@ -3497,17 +3482,12 @@ int DigestValue_Release(DigestValue* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Data)
+  if (value->Data != NULL)
   {
       Binary_Release(value->Data);
       free((void*)value->Data);
       value->Data = NULL;
   }
- if (value->Data != NULL)
- {
-     free((void*) value->Data);
-     value->Data = NULL;
- }
     return NMRPC_OK;
 }
 int DigestEnvelope_Serialize(cmp_ctx_t* ctx, DigestEnvelope* value)
@@ -7494,17 +7474,12 @@ int Ckp_CkEcdh1DeriveParams_Release(Ckp_CkEcdh1DeriveParams* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->SharedData)
+  if (value->SharedData != NULL)
   {
       Binary_Release(value->SharedData);
       free((void*)value->SharedData);
       value->SharedData = NULL;
   }
- if (value->SharedData != NULL)
- {
-     free((void*) value->SharedData);
-     value->SharedData = NULL;
- }
   Binary_Release(&value->PublicData);
     return NMRPC_OK;
 }
@@ -7569,28 +7544,18 @@ int Ckp_CkGcmParams_Release(Ckp_CkGcmParams* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Iv)
+  if (value->Iv != NULL)
   {
       Binary_Release(value->Iv);
       free((void*)value->Iv);
       value->Iv = NULL;
   }
- if (value->Iv != NULL)
- {
-     free((void*) value->Iv);
-     value->Iv = NULL;
- }
-  if (value->Aad)
+  if (value->Aad != NULL)
   {
       Binary_Release(value->Aad);
       free((void*)value->Aad);
       value->Aad = NULL;
   }
- if (value->Aad != NULL)
- {
-     free((void*) value->Aad);
-     value->Aad = NULL;
- }
     return NMRPC_OK;
 }
 int Ckp_CkCcmParams_Serialize(cmp_ctx_t* ctx, Ckp_CkCcmParams* value)
@@ -7654,28 +7619,18 @@ int Ckp_CkCcmParams_Release(Ckp_CkCcmParams* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Nonce)
+  if (value->Nonce != NULL)
   {
       Binary_Release(value->Nonce);
       free((void*)value->Nonce);
       value->Nonce = NULL;
   }
- if (value->Nonce != NULL)
- {
-     free((void*) value->Nonce);
-     value->Nonce = NULL;
- }
-  if (value->Aad)
+  if (value->Aad != NULL)
   {
       Binary_Release(value->Aad);
       free((void*)value->Aad);
       value->Aad = NULL;
   }
- if (value->Aad != NULL)
- {
-     free((void*) value->Aad);
-     value->Aad = NULL;
- }
     return NMRPC_OK;
 }
 int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvelope* response)
