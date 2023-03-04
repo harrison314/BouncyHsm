@@ -48,6 +48,9 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_GCM => this.CreateAesGcm(CipherUtilities.GetCipher("AES/GCM/NOPADDING"), mechanism),
             CKM.CKM_AES_CCM => this.CreateAesCcm(CipherUtilities.GetCipher("AES/CCM/NOPADDING"), mechanism),
 
+            CKM.CKM_RSA_PKCS => this.CreateRsaPkcs(mechanism),
+            //CKM.CKM_RSA_PKCS_OAEP - https://pkcs11interop.net/doc/_high_level_a_p_i_2_19__encrypt_and_decrypt_test_8cs-example.html
+
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
     }
@@ -120,5 +123,12 @@ internal class BufferedCipherWrapperFactory
             ccmParams.Aad,
             (CKM)mechanism.MechanismType,
             this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
+    }
+
+    private RsaBufferedCipherWrapper CreateRsaPkcs(MechanismValue mechanism)
+    {
+        return new RsaBufferedCipherWrapper(CipherUtilities.GetCipher("RSA//PKCS1PADDING"),
+            (CKM)mechanism.MechanismType,
+            this.loggerFactory.CreateLogger<RsaBufferedCipherWrapper>());
     }
 }

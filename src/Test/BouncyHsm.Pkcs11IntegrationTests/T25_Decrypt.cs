@@ -1,5 +1,6 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
+using System.Security.Cryptography;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 
@@ -173,6 +174,33 @@ public class T25_Decrypt
         Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
     }
 
+    [TestMethod]
+    public void Decrypt_RSAPkcs1_Success()
+    {
+        byte[] plainText = new byte[64];
+        Random.Shared.NextBytes(plainText);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS);
+        byte[] chiperText = session.Encrypt(mechanism, publicKey, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, privateKey, chiperText);
+
+        Assert.IsNotNull(decrypted);
+        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+    }
+
     public IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
@@ -196,5 +224,49 @@ public class T25_Decrypt
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
 
         return session.GenerateKey(mechanism, keyAttributes);
+    }
+
+    private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
+    {
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_MODULUS_BITS, 2048),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PUBLIC_EXPONENT, new byte[] { 0x01, 0x00, 0x01 })
+        };
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
+        };
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN);
+
+        session.GenerateKeyPair(mechanism,
+            publicKeyAttributes,
+            privateKeyAttributes,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+
+        return (privateKey, publicKey);
     }
 }
