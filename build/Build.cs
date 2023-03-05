@@ -33,6 +33,11 @@ public partial class Build : NukeBuild
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
     AbsolutePath ArtifactsTmpDirectory => RootDirectory / "artifacts" / ".tmp";
 
+    [PackageExecutable(
+        packageId: "dotnet-project-licenses",
+        packageExecutable: "NugetUtility.dll",
+        Framework = "net6.0")]
+    readonly Tool DotnetProjectLicenses;
 
     Target Clean => _ => _
         .Executes(() =>
@@ -74,11 +79,21 @@ public partial class Build : NukeBuild
                 "0.1.0.0", //TODO
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Winx86.zip");
 
+            CopyLicenses(ArtifactsTmpDirectory / "BouncyHsm");
+
             Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm",
                 ArtifactsDirectory / "BouncyHsm.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep");
         });
 
+    private void CopyLicenses(AbsolutePath bouncyHsmPath)
+    {
+        Log.Debug("Copy license files");
+
+        AbsolutePath licensesFilePath = bouncyHsmPath / "LicensesThirdParty.txt";
+        DotnetProjectLicenses($"--input \"{RootDirectory/ "src" / "BouncyHsm.sln"}\" -o -t --outfile \"{licensesFilePath}\" -p false");
+        CopyFile("LICENSE", bouncyHsmPath / "License.txt");
+    }
 
     private void CreateZip(AbsolutePath dllFile, string platform, string version, AbsolutePath destination)
     {
