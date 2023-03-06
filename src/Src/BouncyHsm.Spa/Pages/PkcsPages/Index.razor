@@ -26,7 +26,7 @@ else
     {
         <div class="card mb-2">
             <div class="card-header">
-                @obj.Subject
+                @(string.IsNullOrEmpty(obj.Subject) ? "-" : obj.Subject)
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between">
@@ -43,20 +43,25 @@ else
 
                     <div class="col-9">
                         <table class="table table-borderless table-sm">
+                            <colgroup>
+                                <col class="col-1 col-sm-2 col-xs-3" />
+                                <col class="col-10 col-sm-9 col-xs-7" />
+                                <col class="col-1 col-sm-1 col-xs-2" />
+                            </colgroup>
                             <tbody>
                                 <tr>
                                     <td>CkaLabel:</td>
-                                    <td>@obj.CkaLabel</td>
+                                    <td class="text-break">@obj.CkaLabel</td>
                                     <td><CopyBtn Text="@obj.CkaLabel" /></td>
                                 </tr>
                                 <tr>
                                     <td>CkaId (HEX):</td>
-                                    <td>@HexConvertorSlim.ToHex(obj.CkaId)</td>
+                                    <td class="text-break">@HexConvertorSlim.ToHex(obj.CkaId)</td>
                                     <td><CopyBtn Text="@HexConvertorSlim.ToHex(obj.CkaId)" /></td>
                                 </tr>
                                 <tr>
                                     <td>In qualified area:</td>
-                                    <td>@obj.AlwaysAuthenticate</td>
+                                    <td class="text-break">@obj.AlwaysAuthenticate</td>
                                     <td> </td>
                                 </tr>
                             </tbody>
@@ -66,7 +71,7 @@ else
                     <div class="col-2">
                         <button type="button"
                                 class="btn btn-outline-primary mb-1"
-                                @onclick="()=>this.ShowOffCanvas(obj)">
+                        @onclick="()=>this.ShowOffCanvas(obj)">
                             <span class="icon-enlarge2 icon-1x"></span> Actions
                         </button>
                         <br />
@@ -75,7 +80,7 @@ else
                         {
                             <button type="button"
                                     class="btn btn-outline-primary mb-1"
-                                    @onclick="()=>this.ShowOffCertificate(obj)">
+                        @onclick="()=>this.ShowOffCertificate(obj)">
                                 <span class="icon-View-File icon-1x"></span> Show certificate
                             </button>
                             <br />
@@ -97,7 +102,7 @@ else
         <h4 class="text-break"><span class="icon-enlarge2 icon-1x"></span> Label: @(this.selectedObject?.CkaLabel)</h4>
     </Header>
     <Content>
-        <BouncyHsm.Spa.Shared.ForPkcsPages.IndexActionButtons SlotId="@this.SlotId"  SelectedObject="@this.selectedObject" />
+        <BouncyHsm.Spa.Shared.ForPkcsPages.IndexActionButtons SlotId="@this.SlotId" SelectedObject="@this.selectedObject" />
     </Content>
 </BSOffCanvas>
 

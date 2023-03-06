@@ -42,20 +42,25 @@ else
 
                     <div class="col-9">
                         <table class="table table-borderless table-sm">
+                            <colgroup>
+                                <col class="col-1 col-sm-2 col-xs-3" />
+                                <col class="col-10 col-sm-9 col-xs-7" />
+                                <col class="col-1 col-sm-1 col-xs-2" />
+                            </colgroup>
                             <tbody>
                                 <tr>
                                     <td>Type:</td>
-                                    <td>@obj.Type</td>
+                                    <td class="text-break">@obj.Type</td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td>CkLabel:</td>
-                                    <td>@obj.CkLabel</td>
+                                    <td class="text-break">@obj.CkLabel</td>
                                     <td><CopyBtn Text="@obj.CkLabel" /></td>
                                 </tr>
                                 <tr>
                                     <td>CkId (HEX):</td>
-                                    <td>@obj.CkIdHex</td>
+                                    <td class="text-break">@obj.CkIdHex</td>
                                     <td><CopyBtn Text="@obj.CkIdHex" /></td>
                                 </tr>
                             </tbody>
@@ -64,7 +69,8 @@ else
 
                     <div class="col-2">
                         <NavLink href="@($"/Slots/Detail/{this.Id}/object/{obj.Id}")" class="btn btn-outline-primary mb-1"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
-                    
+                        <br />
+
                         <DangerOperationBtn IconClass="icon-Full-Trash icon-1x" 
                             Text="Remove"
                             ConfirmText="@($"Remove object '{obj.Description}' with label '{obj.CkLabel}'?")"
