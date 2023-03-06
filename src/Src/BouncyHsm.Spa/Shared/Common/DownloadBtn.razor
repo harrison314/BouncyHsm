@@ -52,6 +52,10 @@
 
             await this.JS.InvokeVoidAsync("downloadFileFromStream", content.FileName, streamRef);
         }
+        catch(Exception ex)
+        {
+            Console.Error.WriteLine(ex); //TODO: change to logger
+        }
         finally
         {
             this.isInLoading = false;
