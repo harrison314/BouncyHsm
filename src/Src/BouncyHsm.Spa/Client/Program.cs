@@ -24,6 +24,12 @@ public class Program
 
         builder.Services.AddBlazorStrap();
 
+#if DEBUG
+        builder.Logging.SetMinimumLevel(LogLevel.Trace);
+#else
+        builder.Logging.SetMinimumLevel(LogLevel.Warning);
+#endif
+
         await builder.Build().RunAsync();
     }
 }

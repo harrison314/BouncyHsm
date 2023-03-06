@@ -2,6 +2,7 @@
 @using BouncyHsm.Spa.Utils
 @using System.IO
 @inject IJSRuntime JS
+@inject ILogger<DownloadBtn> logger
 
 <button type="button"
         class="btn btn-outline-primary btn-sm mb-1"
@@ -52,9 +53,9 @@
 
             await this.JS.InvokeVoidAsync("downloadFileFromStream", content.FileName, streamRef);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            Console.Error.WriteLine(ex); //TODO: change to logger
+            this.logger.LogError(ex, "Error during download content.");
         }
         finally
         {
