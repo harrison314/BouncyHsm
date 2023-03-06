@@ -109,3 +109,15 @@ a, .btn-link {
 .validation-message {
     color: #dc3545 !important;
 }
+
+.btn-w-tm {
+    min-width: 10rem;
+}
+
+.btn-w-action {
+    min-width: 7.5rem;
+}
+
+.btn-w-action-menu {
+    min-width: 12rem;
+}

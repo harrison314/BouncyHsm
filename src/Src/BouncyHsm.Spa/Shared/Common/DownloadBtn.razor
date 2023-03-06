@@ -5,7 +5,7 @@
 @inject ILogger<DownloadBtn> logger
 
 <button type="button"
-        class="btn btn-outline-primary btn-sm mb-1"
+        class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu"
         disabled="@this.isInLoading"
         @onclick="this.OnCLick">
     @if (this.isInLoading)
