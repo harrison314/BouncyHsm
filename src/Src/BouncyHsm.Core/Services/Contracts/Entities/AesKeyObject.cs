@@ -22,7 +22,7 @@ public sealed class AesKeyObject : SecretKeyObject
     }
 
     public AesKeyObject()
-        : base(CKK.CKK_GENERIC_SECRET, CKM.CKM_AES_KEY_GEN)
+        : base(CKK.CKK_AES, CKM.CKM_AES_KEY_GEN)
     {
         this.CkaValue = Array.Empty<byte>();
         this.CkaValueLen = 0;
