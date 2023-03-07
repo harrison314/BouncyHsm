@@ -38,7 +38,7 @@ internal sealed class TcpHostedService : BackgroundService
             return;
         }
 
-        Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+        using Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
         socket.ReceiveTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEnspoint.ReceiveTimeout);
         socket.SendTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEnspoint.SendTimeout);
 
