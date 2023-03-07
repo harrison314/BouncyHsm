@@ -8206,6 +8206,75 @@ int Ckp_CkCcmParams_Release(Ckp_CkCcmParams* value)
   }
     return NMRPC_OK;
 }
+int Ckp_CkRsaPkcsOaepParams_Serialize(cmp_ctx_t* ctx, Ckp_CkRsaPkcsOaepParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->HashAlg);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Mgf);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Source);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->SourceData != NULL)? cmp_write_bin(ctx, value->SourceData->data, (uint32_t)value->SourceData->size) : cmp_write_nil(ctx);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkRsaPkcsOaepParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkRsaPkcsOaepParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->HashAlg);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->Mgf);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->Source);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_nullable_binary(ctx, &value->SourceData);
+   if (result != NMRPC_OK) return result;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkRsaPkcsOaepParams_Release(Ckp_CkRsaPkcsOaepParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  if (value->SourceData != NULL)
+  {
+      Binary_Release(value->SourceData);
+      free((void*)value->SourceData);
+      value->SourceData = NULL;
+  }
+    return NMRPC_OK;
+}
 int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvelope* response)
 {
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;

@@ -1,5 +1,6 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
+using Net.Pkcs11Interop.HighLevelAPI.MechanismParams;
 using System.Security.Cryptography;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
@@ -194,6 +195,43 @@ public class T25_Decrypt
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS);
+        byte[] chiperText = session.Encrypt(mechanism, publicKey, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, privateKey, chiperText);
+
+        Assert.IsNotNull(decrypted);
+        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+    }
+
+    [DataTestMethod]
+    [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1)]
+    [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256)]
+    [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512)]
+    public void Decrypt_RSAOAEP_Success(CKM hashAlg, CKG mgf)
+    {
+        byte[] plainText = new byte[64];
+        Random.Shared.NextBytes(plainText);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
+
+        using ICkRsaPkcsOaepParams mechanismParams = session.Factories.MechanismParamsFactory.CreateCkRsaPkcsOaepParams(
+            (ulong)hashAlg,
+            (ulong)mgf,
+            (ulong)CKZ.CKZ_DATA_SPECIFIED,
+            null
+        );
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_OAEP, mechanismParams);
         byte[] chiperText = session.Encrypt(mechanism, publicKey, plainText);
         byte[] decrypted = session.Decrypt(mechanism, privateKey, chiperText);
 

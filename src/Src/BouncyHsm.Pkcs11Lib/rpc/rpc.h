@@ -139,6 +139,7 @@ typedef struct _CkP_CkObjectHandle CkP_CkObjectHandle;
 typedef struct _Ckp_CkEcdh1DeriveParams Ckp_CkEcdh1DeriveParams;
 typedef struct _Ckp_CkGcmParams Ckp_CkGcmParams;
 typedef struct _Ckp_CkCcmParams Ckp_CkCcmParams;
+typedef struct _Ckp_CkRsaPkcsOaepParams Ckp_CkRsaPkcsOaepParams;
 
 typedef struct _Binary Binary;
 
@@ -1550,6 +1551,18 @@ typedef struct _Ckp_CkCcmParams
 int Ckp_CkCcmParams_Serialize(cmp_ctx_t* ctx, Ckp_CkCcmParams* value);
 int Ckp_CkCcmParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkCcmParams* value);
 int Ckp_CkCcmParams_Release(Ckp_CkCcmParams* value);
+
+typedef struct _Ckp_CkRsaPkcsOaepParams
+{
+    uint32_t HashAlg;
+    uint32_t Mgf;
+    uint32_t Source;
+    Binary* SourceData;
+} Ckp_CkRsaPkcsOaepParams;
+
+int Ckp_CkRsaPkcsOaepParams_Serialize(cmp_ctx_t* ctx, Ckp_CkRsaPkcsOaepParams* value);
+int Ckp_CkRsaPkcsOaepParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkRsaPkcsOaepParams* value);
+int Ckp_CkRsaPkcsOaepParams_Release(Ckp_CkRsaPkcsOaepParams* value);
 
 
 typedef void* (*nmrpc_malloc_fn_t)(size_t size);

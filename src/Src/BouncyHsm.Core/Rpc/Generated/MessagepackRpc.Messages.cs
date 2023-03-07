@@ -3165,3 +3165,37 @@ public partial class Ckp_CkCcmParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class Ckp_CkRsaPkcsOaepParams
+{
+    [Key(0)]
+    public uint HashAlg
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public uint Mgf
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public uint Source
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public byte[]? SourceData
+    {
+        get;
+        set;
+    }
+
+}
+

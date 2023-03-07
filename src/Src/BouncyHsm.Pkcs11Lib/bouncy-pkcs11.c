@@ -436,6 +436,40 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     }
     break;
 
+    case  CKM_RSA_PKCS_OAEP:
+    {
+        if (pMechanism->ulParameterLen != sizeof(CK_RSA_PKCS_OAEP_PARAMS))
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted CK_RSA_PKCS_OAEP_PARAMS in mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CK_RSA_PKCS_OAEP_PARAMS_PTR oaepParams = (CK_RSA_PKCS_OAEP_PARAMS_PTR)pMechanism->pParameter;
+
+        Ckp_CkRsaPkcsOaepParams oaepDervedParams;
+        Binary sourceData;
+
+        oaepDervedParams.HashAlg = (uint32_t)oaepParams->hashAlg;
+        oaepDervedParams.Mgf = (uint32_t)oaepParams->mgf;
+        oaepDervedParams.Source = (uint32_t)oaepParams->source;
+        oaepDervedParams.SourceData = NULL;
+
+        if (oaepParams->pSourceData != NULL)
+        {
+            sourceData.data = (uint8_t*)oaepParams->pSourceData;
+            sourceData.size = (size_t)oaepParams->ulSourceDataLen;
+
+            oaepDervedParams.SourceData = &sourceData;
+        }
+
+        result = nmrpc_writeAsBinary(&oaepDervedParams, Ckp_CkRsaPkcsOaepParams_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+    }
+    break;
+
     default:
         break;
     }

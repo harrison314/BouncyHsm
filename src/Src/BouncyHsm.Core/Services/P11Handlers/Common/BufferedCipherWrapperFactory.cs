@@ -3,6 +3,8 @@ using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.P11;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Encodings;
+using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
@@ -49,7 +51,7 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_CCM => this.CreateAesCcm(CipherUtilities.GetCipher("AES/CCM/NOPADDING"), mechanism),
 
             CKM.CKM_RSA_PKCS => this.CreateRsaPkcs(mechanism),
-            //CKM.CKM_RSA_PKCS_OAEP - https://pkcs11interop.net/doc/_high_level_a_p_i_2_19__encrypt_and_decrypt_test_8cs-example.html
+            CKM.CKM_RSA_PKCS_OAEP => this.CreateRsaOaep(mechanism),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
@@ -65,64 +67,88 @@ internal class BufferedCipherWrapperFactory
 
     private AesBufferedCipherWrapper CreateAes(IBufferedCipher bufferedCipher, MechanismValue mechanism)
     {
-        CkP_RawDataParams rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RawDataParams>(mechanism.MechanismParamMp);
+        try
+        {
+            CkP_RawDataParams rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RawDataParams>(mechanism.MechanismParamMp);
 
-        this.logger.LogDebug("Extract IV with len {ivLen} for mechanism {mechanism}.",
-            rawDataParams.Value.Length,
-            (CKM)mechanism.MechanismType);
+            this.logger.LogDebug("Extract IV with len {ivLen} for mechanism {mechanism}.",
+                rawDataParams.Value.Length,
+                (CKM)mechanism.MechanismType);
 
-        return new AesBufferedCipherWrapper(bufferedCipher,
-            rawDataParams.Value,
-            (CKM)mechanism.MechanismType,
-            this.loggerFactory.CreateLogger<AesBufferedCipherWrapper>());
+            return new AesBufferedCipherWrapper(bufferedCipher,
+                rawDataParams.Value,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<AesBufferedCipherWrapper>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
     }
 
     private AesAeadBufferedCipherWrapper CreateAesGcm(IBufferedCipher bufferedCipher, MechanismValue mechanism)
     {
-        Ckp_CkGcmParams gcmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkGcmParams>(mechanism.MechanismParamMp);
-
-        if (this.logger.IsEnabled(LogLevel.Trace))
+        try
         {
-            this.logger.LogTrace("Using AES GCM params with IV len {ivLen}, IV bits {ivBits}, AAD len {aadLen}, tag bits {tagBits}.",
-                gcmParams.Iv?.Length ?? 0,
-                gcmParams.IvBits,
-                gcmParams.Aad?.Length ?? 0,
-                gcmParams.TagBits);
-        }
+            Ckp_CkGcmParams gcmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkGcmParams>(mechanism.MechanismParamMp);
 
-        if (gcmParams.IvBits != 0 && gcmParams.Iv != null && gcmParams.Iv.Length * 8 != gcmParams.IvBits)
+            if (this.logger.IsEnabled(LogLevel.Trace))
+            {
+                this.logger.LogTrace("Using AES GCM params with IV len {ivLen}, IV bits {ivBits}, AAD len {aadLen}, tag bits {tagBits}.",
+                    gcmParams.Iv?.Length ?? 0,
+                    gcmParams.IvBits,
+                    gcmParams.Aad?.Length ?? 0,
+                    gcmParams.TagBits);
+            }
+
+            if (gcmParams.IvBits != 0 && gcmParams.Iv != null && gcmParams.Iv.Length * 8 != gcmParams.IvBits)
+            {
+                this.logger.LogWarning("Ignore IvBits in CkGcmParams. IV has {ivLen} bit lenght, iv bits is {ivBits}.",
+                    gcmParams.Iv.Length * 8,
+                    gcmParams.IvBits);
+            }
+
+            return new AesAeadBufferedCipherWrapper(bufferedCipher,
+                (int)gcmParams.TagBits,
+                gcmParams.Iv,
+                gcmParams.Aad,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
+        }
+        catch (Exception ex)
         {
-            this.logger.LogWarning("Ignore IvBits in CkGcmParams. IV has {ivLen} bit lenght, iv bits is {ivBits}.",
-                gcmParams.Iv.Length * 8,
-                gcmParams.IvBits);
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
         }
-
-        return new AesAeadBufferedCipherWrapper(bufferedCipher,
-            (int)gcmParams.TagBits,
-            gcmParams.Iv,
-            gcmParams.Aad,
-            (CKM)mechanism.MechanismType,
-            this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
     }
 
     private AesAeadBufferedCipherWrapper CreateAesCcm(IBufferedCipher bufferedCipher, MechanismValue mechanism)
     {
-        Ckp_CkCcmParams ccmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkCcmParams>(mechanism.MechanismParamMp);
-
-        if (this.logger.IsEnabled(LogLevel.Trace))
+        try
         {
-            this.logger.LogTrace("Using AES CCM params with nonce len {nonceLen}, AAD len {aadLen}, mac len {macLen}.",
-                ccmParams.Nonce?.Length ?? 0,
-                ccmParams.Aad?.Length ?? 0,
-                ccmParams.MacLen);
-        }
+            Ckp_CkCcmParams ccmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkCcmParams>(mechanism.MechanismParamMp);
 
-        return new AesAeadBufferedCipherWrapper(bufferedCipher,
-            (int)ccmParams.MacLen,
-            ccmParams.Nonce,
-            ccmParams.Aad,
-            (CKM)mechanism.MechanismType,
-            this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
+            if (this.logger.IsEnabled(LogLevel.Trace))
+            {
+                this.logger.LogTrace("Using AES CCM params with nonce len {nonceLen}, AAD len {aadLen}, mac len {macLen}.",
+                    ccmParams.Nonce?.Length ?? 0,
+                    ccmParams.Aad?.Length ?? 0,
+                    ccmParams.MacLen);
+            }
+
+            return new AesAeadBufferedCipherWrapper(bufferedCipher,
+                (int)ccmParams.MacLen,
+                ccmParams.Nonce,
+                ccmParams.Aad,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
     }
 
     private RsaBufferedCipherWrapper CreateRsaPkcs(MechanismValue mechanism)
@@ -131,4 +157,52 @@ internal class BufferedCipherWrapperFactory
             (CKM)mechanism.MechanismType,
             this.loggerFactory.CreateLogger<RsaBufferedCipherWrapper>());
     }
+
+    private RsaBufferedCipherWrapper CreateRsaOaep(MechanismValue mechanism)
+    {
+        try
+        {
+            Ckp_CkRsaPkcsOaepParams rsaPkcsOaepParamas = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkRsaPkcsOaepParams>(mechanism.MechanismParamMp);
+
+            if (this.logger.IsEnabled(LogLevel.Trace))
+            {
+                this.logger.LogTrace("Using RSA OAEP params with hashAlg {hashAlg}, mgf {mgf}, source {source}, source data len {sourceDataLen}.",
+                    (CKM)rsaPkcsOaepParamas.HashAlg,
+                    (CKG)rsaPkcsOaepParamas.Mgf,
+                    (CKZ)rsaPkcsOaepParamas.Source,
+                    rsaPkcsOaepParamas.SourceData?.Length ?? 0);
+            }
+
+
+            IDigest? hashAlg = DigestUtils.TryGetDigest((CKM)rsaPkcsOaepParamas.HashAlg);
+            if (hashAlg == null)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid hashAlg {(CKM)rsaPkcsOaepParamas.Mgf} in CK_RSA_PKCS_OAEP_PARAMS (mechanism CKM_RSA_PKCS_OAEP).");
+            }
+
+            IDigest? mgf = DigestUtils.TryGetDigest((CKG)rsaPkcsOaepParamas.Mgf);
+            if (mgf == null)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid mgf {(CKG)rsaPkcsOaepParamas.Mgf} in CK_RSA_PKCS_OAEP_PARAMS (mechanism CKM_RSA_PKCS_OAEP).");
+            }
+
+            RsaBlindedEngine rsa = new RsaBlindedEngine();
+            OaepEncoding rsaOpeap = new OaepEncoding(rsa, hashAlg, mgf, rsaPkcsOaepParamas.SourceData);
+            BufferedAsymmetricBlockCipher bufferedChiper = new BufferedAsymmetricBlockCipher(rsaOpeap);
+
+            return new RsaBufferedCipherWrapper(bufferedChiper,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<RsaBufferedCipherWrapper>());
+        }
+        catch (RpcPkcs11Exception)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
 }

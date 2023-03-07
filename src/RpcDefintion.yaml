@@ -1052,3 +1052,11 @@ Messages:
       Nonce: binary?
       Aad: binary?
       MacLen: uint32
+
+  Ckp_CkRsaPkcsOaepParams:
+    Summary: Representes CK_RSA_PKCS_OAEP_PARAMS
+    Fields:
+      HashAlg: uint32
+      Mgf: uint32
+      Source: uint32
+      SourceData: binary?
