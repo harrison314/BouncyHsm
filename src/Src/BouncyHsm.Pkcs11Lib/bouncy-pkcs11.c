@@ -226,6 +226,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_CONCATENATE_DATA_AND_BASE:
     case CKM_CONCATENATE_BASE_AND_DATA:
     case CKM_XOR_BASE_AND_DATA:
+    case CKM_AES_ECB_ENCRYPT_DATA:
     {
         if (pMechanism->ulParameterLen != sizeof(CK_KEY_DERIVATION_STRING_DATA))
         {

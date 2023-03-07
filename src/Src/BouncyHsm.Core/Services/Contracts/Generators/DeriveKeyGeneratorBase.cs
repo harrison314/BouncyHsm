@@ -38,7 +38,7 @@ internal abstract class DeriveKeyGeneratorBase : IDeriveKeyGenerator
 
         SecretKeyObject sBaseKey = (SecretKeyObject)baseKey;
 
-        SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(template);
+        SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(this.template);
         generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
         generalSecretKeyObject.CkaExtractable = sBaseKey.CkaExtractable;
 

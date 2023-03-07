@@ -7,6 +7,7 @@ using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Security;
 using System.Threading;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
@@ -111,9 +112,9 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
             CKM.CKM_ECDH1_DERIVE => this.CreateEcdh1DeriveGenerator(mechanism),
 
+            CKM.CKM_AES_ECB_ENCRYPT_DATA => new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>()),
             //TODO: Implemet mechanisms
             // CKM_AES_CBC_ENCRYPT_DATA 
-            // CKM_AES_ECB_ENCRYPT_DATA 
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for derive key.")
         }; ;
