@@ -2,9 +2,10 @@
 @using BouncyHsm.Spa.Utils
 @using System.IO
 @inject IJSRuntime JS
+@inject ILogger<DownloadBtn> logger
 
 <button type="button"
-        class="btn btn-outline-primary btn-sm mb-1"
+        class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu"
         disabled="@this.isInLoading"
         @onclick="this.OnCLick">
     @if (this.isInLoading)
@@ -51,6 +52,10 @@
             using var streamRef = new DotNetStreamReference(stream: ms);
 
             await this.JS.InvokeVoidAsync("downloadFileFromStream", content.FileName, streamRef);
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error during download content.");
         }
         finally
         {

@@ -3,17 +3,29 @@
 @inject IBouncyHsmClient bouncyHsmClient
 
 <PageTitle>Storage object detail</PageTitle>
-
-
-
 @if (this.objectDetail == null)
 {
     <h1>Storage object detail</h1>
-    <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
 }
 else
 {
     <h1>Storage object detail @this.objectDetail.Description</h1>
+}
+
+<div class="row">
+    <div class="col d-flex justify-content-end pb-3">
+        <button type="button" class="btn btn-outline-primary btn-w-tm" @onclick="Reload"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
+        <NavLink href="@($"/Slots/Detail/{this.Id}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+    </div>
+</div>
+
+
+@if (this.objectDetail == null)
+{
+    <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+}
+else
+{
     <p>Attributes table.</p>
 
     <table class="table table-responsive-md table-striped table-bordered">
@@ -63,6 +75,13 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
+        this.objectDetail = await this.bouncyHsmClient.GetStorageObjectAsync(this.Id, this.ObjectId);
+    }
+
+    private async Task Reload()
+    {
+        this.objectDetail = null;
+        await Task.Yield();
         this.objectDetail = await this.bouncyHsmClient.GetStorageObjectAsync(this.Id, this.ObjectId);
     }
 }

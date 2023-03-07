@@ -9,9 +9,9 @@
 <h1>PKCS</h1>
 <div class="row">
     <div class="col d-flex justify-content-end pb-3">
-        <button type="button" class="btn btn-outline-primary" @onclick="Reload"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
-        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs/ImportP12")" class="btn btn-outline-primary"><span class="icon-upload3 icon-1x"></span> Import P12</NavLink>
-        <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary"><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+        <button type="button" class="btn btn-outline-primary btn-w-tm" @onclick="Reload"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
+        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs/ImportP12")" class="btn btn-outline-primary btn-w-tm"><span class="icon-upload3 icon-1x"></span> Import P12</NavLink>
+        <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm"><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
     </div>
 </div>
 
@@ -26,7 +26,7 @@ else
     {
         <div class="card mb-2">
             <div class="card-header">
-                @obj.Subject
+                @(string.IsNullOrEmpty(obj.Subject) ? "-" : obj.Subject)
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between">
@@ -43,20 +43,25 @@ else
 
                     <div class="col-9">
                         <table class="table table-borderless table-sm">
+                            <colgroup>
+                                <col class="col-1 col-sm-2 col-xs-3" />
+                                <col class="col-10 col-sm-9 col-xs-7" />
+                                <col class="col-1 col-sm-1 col-xs-2" />
+                            </colgroup>
                             <tbody>
                                 <tr>
                                     <td>CkaLabel:</td>
-                                    <td>@obj.CkaLabel</td>
+                                    <td class="text-break">@obj.CkaLabel</td>
                                     <td><CopyBtn Text="@obj.CkaLabel" /></td>
                                 </tr>
                                 <tr>
                                     <td>CkaId (HEX):</td>
-                                    <td>@HexConvertorSlim.ToHex(obj.CkaId)</td>
+                                    <td class="text-break">@HexConvertorSlim.ToHex(obj.CkaId)</td>
                                     <td><CopyBtn Text="@HexConvertorSlim.ToHex(obj.CkaId)" /></td>
                                 </tr>
                                 <tr>
                                     <td>In qualified area:</td>
-                                    <td>@obj.AlwaysAuthenticate</td>
+                                    <td class="text-break">@obj.AlwaysAuthenticate</td>
                                     <td> </td>
                                 </tr>
                             </tbody>
@@ -65,8 +70,8 @@ else
 
                     <div class="col-2">
                         <button type="button"
-                                class="btn btn-outline-primary mb-1"
-                                @onclick="()=>this.ShowOffCanvas(obj)">
+                                class="btn btn-outline-primary mb-1 btn-w-action"
+                        @onclick="()=>this.ShowOffCanvas(obj)">
                             <span class="icon-enlarge2 icon-1x"></span> Actions
                         </button>
                         <br />
@@ -74,8 +79,8 @@ else
                         @if (obj.Objects.Any(t => t.CkaClass == CKO.CKO_CERTIFICATE))
                         {
                             <button type="button"
-                                    class="btn btn-outline-primary mb-1"
-                                    @onclick="()=>this.ShowOffCertificate(obj)">
+                                    class="btn btn-outline-primary mb-1 btn-w-action"
+                        @onclick="()=>this.ShowOffCertificate(obj)">
                                 <span class="icon-View-File icon-1x"></span> Show certificate
                             </button>
                             <br />
@@ -83,6 +88,7 @@ else
 
                         <DangerOperationBtn IconClass="icon-Full-Trash icon-1x"
                                     Text="Remove"
+                                    AdditionalClass="btn-w-action"
                                     ConfirmText="@($"Remove objects '{obj.Subject}'?")"
                                     OnConfirm="() => this.RemoveAsociatedObjects(obj.Objects)" />
                     </div>
@@ -97,7 +103,7 @@ else
         <h4 class="text-break"><span class="icon-enlarge2 icon-1x"></span> Label: @(this.selectedObject?.CkaLabel)</h4>
     </Header>
     <Content>
-        <BouncyHsm.Spa.Shared.ForPkcsPages.IndexActionButtons SlotId="@this.SlotId"  SelectedObject="@this.selectedObject" />
+        <BouncyHsm.Spa.Shared.ForPkcsPages.IndexActionButtons SlotId="@this.SlotId" SelectedObject="@this.selectedObject" />
     </Content>
 </BSOffCanvas>
 
