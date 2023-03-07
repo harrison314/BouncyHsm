@@ -52,7 +52,6 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 
 AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 {
-
     size_t allocCount = (ulCount > 0) ? sizeof(AttrValueFromNative) * ulCount : sizeof(AttrValueFromNative);
 
     AttrValueFromNative* ptr = (AttrValueFromNative*)malloc(allocCount);
@@ -241,6 +240,29 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         derivationStringData.Len = (uint32_t)dsd->ulLen;
 
         result = nmrpc_writeAsBinary(&derivationStringData, CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+    }
+    break;
+
+    case CKM_AES_CBC_ENCRYPT_DATA:
+    {
+        if (pMechanism->ulParameterLen != sizeof(CK_AES_CBC_ENCRYPT_DATA_PARAMS))
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted CK_AES_CBC_ENCRYPT_DATA_PARAMS in mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CK_AES_CBC_ENCRYPT_DATA_PARAMS_PTR cedp = (CK_AES_CBC_ENCRYPT_DATA_PARAMS_PTR)pMechanism->pParameter;
+        Ckp_CkAesCbcEnryptDataParams cbcData;
+        cbcData.Iv.data = (uint8_t*)cedp->iv;
+        cbcData.Iv.size = sizeof(cedp->iv);
+        cbcData.Data.data = (uint8_t*)cedp->pData;
+        cbcData.Data.size = (size_t)cedp->length;
+
+        result = nmrpc_writeAsBinary(&cbcData, Ckp_CkAesCbcEnryptDataParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;

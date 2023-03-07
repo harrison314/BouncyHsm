@@ -113,11 +113,10 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             CKM.CKM_ECDH1_DERIVE => this.CreateEcdh1DeriveGenerator(mechanism),
 
             CKM.CKM_AES_ECB_ENCRYPT_DATA => new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>()),
-            //TODO: Implemet mechanisms
-            // CKM_AES_CBC_ENCRYPT_DATA 
+            CKM.CKM_AES_CBC_ENCRYPT_DATA => this.CreateAesCbcEncryptionGenerator(mechanism),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for derive key.")
-        }; ;
+        };
     }
 
     private IDeriveKeyGenerator CreateExtrackKeyGenerator(MechanismValue mechanism)
@@ -152,6 +151,26 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         catch (Exception ex)
         {
             this.logger.LogError(ex, "Error during decode Ckp_CkEcdh1DeriveParams.");
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private AesDeriveKeyGenerator CreateAesCbcEncryptionGenerator(MechanismValue mechanism)
+    {
+        this.logger.LogTrace("Entering to CreateAesCbcEncryptionGenerator.");
+
+        try
+        {
+            Ckp_CkAesCbcEnryptDataParams cbcEncryptData = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkAesCbcEnryptDataParams>(mechanism.MechanismParamMp);
+
+            return new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/CBC/NOPADDING"),
+                cbcEncryptData.Data,
+                cbcEncryptData.Iv,
+                this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error during decode Ckp_CkAesCbcEnryptDataParams.");
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
         }
     }

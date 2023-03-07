@@ -137,6 +137,7 @@ internal static class MechanismUtils
 
             // Derive using AES
             {CKM.CKM_AES_ECB_ENCRYPT_DATA,  new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE)},
+            {CKM.CKM_AES_CBC_ENCRYPT_DATA,  new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE)},
             
             // AES
             {CKM.CKM_AES_KEY_GEN, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE)},

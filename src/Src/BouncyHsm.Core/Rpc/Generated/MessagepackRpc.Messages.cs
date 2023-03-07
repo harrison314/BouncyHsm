@@ -3199,3 +3199,23 @@ public partial class Ckp_CkRsaPkcsOaepParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class Ckp_CkAesCbcEnryptDataParams
+{
+    [Key(0)]
+    public byte[] Iv
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+    [Key(1)]
+    public byte[] Data
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+}
+
