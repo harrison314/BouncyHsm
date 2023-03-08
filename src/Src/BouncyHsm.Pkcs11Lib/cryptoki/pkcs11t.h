@@ -975,8 +975,22 @@ typedef CK_ULONG          CK_MECHANISM_TYPE;
 #define CKM_AES_MAC_GENERAL            0x00001084
 #define CKM_AES_CBC_PAD                0x00001085
 
+ /* AES counter mode is new for PKCS #11 v2.40 amendment 3 */
+#define CKM_AES_OFB                     0x00002104
+#define CKM_AES_CFB64                   0x00002105
+#define CKM_AES_CFB8                    0x00002106
+#define CKM_AES_CFB128                  0x00002107
+#define CKM_AES_CFB1                    0x00002108
+
+#define CKM_AES_GCM                     0x00001087
+#define CKM_AES_CCM                     0x00001088
+
+
 /* AES counter mode is new for PKCS #11 v2.20 amendment 3 */
 #define CKM_AES_CTR                    0x00001086
+
+/* AES counter mode is new for PKCS #11 v2.40 amendment 3 */
+#define CKM_AES_CTS                     0x00001089
 
 /* BlowFish and TwoFish are new for v2.20 */
 #define CKM_BLOWFISH_KEY_GEN           0x00001090
@@ -1885,5 +1899,28 @@ typedef struct CK_ARIA_CBC_ENCRYPT_DATA_PARAMS {
 } CK_ARIA_CBC_ENCRYPT_DATA_PARAMS;
 
 typedef CK_ARIA_CBC_ENCRYPT_DATA_PARAMS CK_PTR CK_ARIA_CBC_ENCRYPT_DATA_PARAMS_PTR;
+
+
+typedef struct CK_GCM_PARAMS {
+    CK_BYTE_PTR       pIv;
+    CK_ULONG          ulIvLen;
+    CK_ULONG          ulIvBits;
+    CK_BYTE_PTR       pAAD;
+    CK_ULONG          ulAADLen;
+    CK_ULONG          ulTagBits;
+} CK_GCM_PARAMS;
+
+typedef CK_GCM_PARAMS CK_PTR CK_GCM_PARAMS_PTR;
+
+typedef struct CK_CCM_PARAMS {
+    CK_ULONG ulDataLen; /*plaintext or ciphertext*/
+    CK_BYTE_PTR pNonce;
+    CK_ULONG ulNonceLen;
+    CK_BYTE_PTR pAAD;
+    CK_ULONG ulAADLen;
+    CK_ULONG ulMACLen;
+} CK_CCM_PARAMS;
+
+typedef CK_CCM_PARAMS CK_PTR CK_CCM_PARAMS_PTR;
 
 #endif

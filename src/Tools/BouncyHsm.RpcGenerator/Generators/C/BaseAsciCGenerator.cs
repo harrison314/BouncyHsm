@@ -59,7 +59,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
             {
                 if (declaredType.IsNullable)
                 {
-                    sb.AppendLine($"  if (value->{fieldName})");
+                    sb.AppendLine($"  if (value->{fieldName} != NULL)");
                     sb.AppendLine("  {");
                     sb.AppendLine($"      Binary_Release(value->{fieldName});");
                     sb.AppendLine($"      free((void*)value->{fieldName});");
@@ -70,6 +70,8 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
                 {
                     sb.AppendLine($"  Binary_Release(&value->{fieldName});");
                 }
+
+                continue;
             }
 
             if (declaredType.IsNullable || declaredType.BaseDefinition == DeclaredType.StringName)

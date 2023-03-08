@@ -21,6 +21,8 @@ public interface ICryptoApiObjectVisitor
     void Visit(EcdsaPrivateKeyObject ecdsaPrivateKeyObject);
 
     void Visit(GenericSecretKeyObject generalSecretKeyObject);
+
+    void Visit(AesKeyObject aesKeyObject);
 }
 
 public interface ICryptoApiObjectVisitor<out T>
@@ -44,4 +46,6 @@ public interface ICryptoApiObjectVisitor<out T>
     T Visit(EcdsaPrivateKeyObject ecdsaPrivateKeyObject);
 
     T Visit(GenericSecretKeyObject generalSecretKeyObject);
+
+    T Visit(AesKeyObject aesKeyObject);
 }

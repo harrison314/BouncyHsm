@@ -42,5 +42,5 @@ If the found error or changes refer to the PKCS#11 standard, please complete the
 * [MessagePack-CSharp](https://github.com/neuecc/MessagePack-CSharp)
 
 ### Other links
-* [PKCS #11 Cryptographic Token Interface Base Specification Version 2.40](http://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html)
+* [PKCS #11 Cryptographic Token Interface Base Specification Version 2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf)
 * [Software Ideas Modeler](https://www.softwareideas.net/) - tool in which the diagrams in the documentation were drawn

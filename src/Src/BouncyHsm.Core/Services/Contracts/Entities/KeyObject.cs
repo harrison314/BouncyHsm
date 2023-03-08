@@ -3,7 +3,7 @@
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 public abstract class KeyObject : StorageObject
 {
-    public CKK CkaKeyType
+    public virtual CKK CkaKeyType
     {
         get => (CKK)this.values[CKA.CKA_KEY_TYPE].AsUint();
         set => this.values[CKA.CKA_KEY_TYPE] = AttributeValue.Create((uint)value);

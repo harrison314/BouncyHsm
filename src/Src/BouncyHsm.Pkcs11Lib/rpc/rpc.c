@@ -2838,17 +2838,12 @@ int LoginRequest_Release(LoginRequest* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Utf8Pin)
+  if (value->Utf8Pin != NULL)
   {
       Binary_Release(value->Utf8Pin);
       free((void*)value->Utf8Pin);
       value->Utf8Pin = NULL;
   }
- if (value->Utf8Pin != NULL)
- {
-     free((void*) value->Utf8Pin);
-     value->Utf8Pin = NULL;
- }
     return NMRPC_OK;
 }
 int LoginEnvelope_Serialize(cmp_ctx_t* ctx, LoginEnvelope* value)
@@ -3201,17 +3196,12 @@ int GenerateRandomEnvelope_Release(GenerateRandomEnvelope* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Data)
+  if (value->Data != NULL)
   {
       Binary_Release(value->Data);
       free((void*)value->Data);
       value->Data = NULL;
   }
- if (value->Data != NULL)
- {
-     free((void*) value->Data);
-     value->Data = NULL;
- }
     return NMRPC_OK;
 }
 int MechanismValue_Serialize(cmp_ctx_t* ctx, MechanismValue* value)
@@ -3263,17 +3253,12 @@ int MechanismValue_Release(MechanismValue* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->MechanismParamMp)
+  if (value->MechanismParamMp != NULL)
   {
       Binary_Release(value->MechanismParamMp);
       free((void*)value->MechanismParamMp);
       value->MechanismParamMp = NULL;
   }
- if (value->MechanismParamMp != NULL)
- {
-     free((void*) value->MechanismParamMp);
-     value->MechanismParamMp = NULL;
- }
     return NMRPC_OK;
 }
 int DigestInitRequest_Serialize(cmp_ctx_t* ctx, DigestInitRequest* value)
@@ -3497,17 +3482,12 @@ int DigestValue_Release(DigestValue* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->Data)
+  if (value->Data != NULL)
   {
       Binary_Release(value->Data);
       free((void*)value->Data);
       value->Data = NULL;
   }
- if (value->Data != NULL)
- {
-     free((void*) value->Data);
-     value->Data = NULL;
- }
     return NMRPC_OK;
 }
 int DigestEnvelope_Serialize(cmp_ctx_t* ctx, DigestEnvelope* value)
@@ -6576,6 +6556,1152 @@ int DeriveKeyEnvelope_Release(DeriveKeyEnvelope* value)
  }
     return NMRPC_OK;
 }
+int EncryptInitRequest_Serialize(cmp_ctx_t* ctx, EncryptInitRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = MechanismValue_Serialize(ctx, &value->Mechanism);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->KeyObjectHandle);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptInitRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptInitRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = MechanismValue_Deserialize(ctx, NULL, &value->Mechanism);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->KeyObjectHandle);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptInitRequest_Release(EncryptInitRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+    return NMRPC_OK;
+}
+int EncryptInitEnvelope_Serialize(cmp_ctx_t* ctx, EncryptInitEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 1);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptInitEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptInitEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 1) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptInitEnvelope_Release(EncryptInitEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+    return NMRPC_OK;
+}
+int EncryptRequest_Serialize(cmp_ctx_t* ctx, EncryptRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 5);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->Data.data, (uint32_t)value->Data.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bool(ctx, value->IsEncryptedDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->EncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 5) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_binary(ctx, &value->Data);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_bool(ctx, &value->IsEncryptedDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->EncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptRequest_Release(EncryptRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->Data);
+    return NMRPC_OK;
+}
+int EncryptData_Serialize(cmp_ctx_t* ctx, EncryptData* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->PullEncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->EncryptedData.data, (uint32_t)value->EncryptedData.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptData* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->PullEncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_binary(ctx, &value->EncryptedData);
+   if (result != NMRPC_OK) return result;
+
+    return NMRPC_OK;
+}
+
+int EncryptData_Release(EncryptData* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->EncryptedData);
+    return NMRPC_OK;
+}
+int EncryptEnvelope_Serialize(cmp_ctx_t* ctx, EncryptEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Data != NULL)? EncryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  cmp_read_object(ctx, &tmp_obj);
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->Data = NULL;
+  }
+  else
+  {
+     value->Data = (EncryptData*) malloc(sizeof(EncryptData));
+     if (value->Data == NULL) return NMRPC_FATAL_ERROR;
+     result = EncryptData_Deserialize(ctx, &tmp_obj, value->Data);
+      if (result != NMRPC_OK) return result;
+  }
+
+    return NMRPC_OK;
+}
+
+int EncryptEnvelope_Release(EncryptEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+ if (value->Data != NULL) 
+ {
+     if (EncryptData_Release(value->Data) != NMRPC_OK)
+     {
+        return NMRPC_FATAL_ERROR;
+     }
+     free((void*) value->Data);
+     value->Data = NULL;
+ }
+    return NMRPC_OK;
+}
+int EncryptUpdateRequest_Serialize(cmp_ctx_t* ctx, EncryptUpdateRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 5);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->PartData.data, (uint32_t)value->PartData.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bool(ctx, value->IsEncryptedDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->EncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptUpdateRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptUpdateRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 5) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_binary(ctx, &value->PartData);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_bool(ctx, &value->IsEncryptedDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->EncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptUpdateRequest_Release(EncryptUpdateRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->PartData);
+    return NMRPC_OK;
+}
+int EncryptUpdateEnvelope_Serialize(cmp_ctx_t* ctx, EncryptUpdateEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Data != NULL)? EncryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptUpdateEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptUpdateEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  cmp_read_object(ctx, &tmp_obj);
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->Data = NULL;
+  }
+  else
+  {
+     value->Data = (EncryptData*) malloc(sizeof(EncryptData));
+     if (value->Data == NULL) return NMRPC_FATAL_ERROR;
+     result = EncryptData_Deserialize(ctx, &tmp_obj, value->Data);
+      if (result != NMRPC_OK) return result;
+  }
+
+    return NMRPC_OK;
+}
+
+int EncryptUpdateEnvelope_Release(EncryptUpdateEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+ if (value->Data != NULL) 
+ {
+     if (EncryptData_Release(value->Data) != NMRPC_OK)
+     {
+        return NMRPC_FATAL_ERROR;
+     }
+     free((void*) value->Data);
+     value->Data = NULL;
+ }
+    return NMRPC_OK;
+}
+int EncryptFinalRequest_Serialize(cmp_ctx_t* ctx, EncryptFinalRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bool(ctx, value->IsEncryptedDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->EncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptFinalRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptFinalRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_bool(ctx, &value->IsEncryptedDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->EncryptedDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptFinalRequest_Release(EncryptFinalRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+    return NMRPC_OK;
+}
+int EncryptFinalEnvelope_Serialize(cmp_ctx_t* ctx, EncryptFinalEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Data != NULL)? EncryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int EncryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, EncryptFinalEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  cmp_read_object(ctx, &tmp_obj);
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->Data = NULL;
+  }
+  else
+  {
+     value->Data = (EncryptData*) malloc(sizeof(EncryptData));
+     if (value->Data == NULL) return NMRPC_FATAL_ERROR;
+     result = EncryptData_Deserialize(ctx, &tmp_obj, value->Data);
+      if (result != NMRPC_OK) return result;
+  }
+
+    return NMRPC_OK;
+}
+
+int EncryptFinalEnvelope_Release(EncryptFinalEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+ if (value->Data != NULL) 
+ {
+     if (EncryptData_Release(value->Data) != NMRPC_OK)
+     {
+        return NMRPC_FATAL_ERROR;
+     }
+     free((void*) value->Data);
+     value->Data = NULL;
+ }
+    return NMRPC_OK;
+}
+int DecryptInitRequest_Serialize(cmp_ctx_t* ctx, DecryptInitRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = MechanismValue_Serialize(ctx, &value->Mechanism);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->KeyObjectHandle);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptInitRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptInitRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = MechanismValue_Deserialize(ctx, NULL, &value->Mechanism);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->KeyObjectHandle);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptInitRequest_Release(DecryptInitRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+    return NMRPC_OK;
+}
+int DecryptInitEnvelope_Serialize(cmp_ctx_t* ctx, DecryptInitEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 1);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptInitEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptInitEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 1) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptInitEnvelope_Release(DecryptInitEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+    return NMRPC_OK;
+}
+int DecryptRequest_Serialize(cmp_ctx_t* ctx, DecryptRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 5);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->EncryptedData.data, (uint32_t)value->EncryptedData.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bool(ctx, value->IsDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 5) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_binary(ctx, &value->EncryptedData);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_bool(ctx, &value->IsDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptRequest_Release(DecryptRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->EncryptedData);
+    return NMRPC_OK;
+}
+int DecryptData_Serialize(cmp_ctx_t* ctx, DecryptData* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->Data.data, (uint32_t)value->Data.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptData* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmph_read_binary(ctx, &value->Data);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptData_Release(DecryptData* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->Data);
+    return NMRPC_OK;
+}
+int DecryptEnvelope_Serialize(cmp_ctx_t* ctx, DecryptEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Data != NULL)? DecryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  cmp_read_object(ctx, &tmp_obj);
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->Data = NULL;
+  }
+  else
+  {
+     value->Data = (DecryptData*) malloc(sizeof(DecryptData));
+     if (value->Data == NULL) return NMRPC_FATAL_ERROR;
+     result = DecryptData_Deserialize(ctx, &tmp_obj, value->Data);
+      if (result != NMRPC_OK) return result;
+  }
+
+    return NMRPC_OK;
+}
+
+int DecryptEnvelope_Release(DecryptEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+ if (value->Data != NULL) 
+ {
+     if (DecryptData_Release(value->Data) != NMRPC_OK)
+     {
+        return NMRPC_FATAL_ERROR;
+     }
+     free((void*) value->Data);
+     value->Data = NULL;
+ }
+    return NMRPC_OK;
+}
+int DecryptUpdateRequest_Serialize(cmp_ctx_t* ctx, DecryptUpdateRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 5);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->EncryptedData.data, (uint32_t)value->EncryptedData.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bool(ctx, value->IsDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptUpdateRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptUpdateRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 5) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_binary(ctx, &value->EncryptedData);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_bool(ctx, &value->IsDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptUpdateRequest_Release(DecryptUpdateRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->EncryptedData);
+    return NMRPC_OK;
+}
+int DecryptUpdateEnvelope_Serialize(cmp_ctx_t* ctx, DecryptUpdateEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Data != NULL)? DecryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptUpdateEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptUpdateEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  cmp_read_object(ctx, &tmp_obj);
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->Data = NULL;
+  }
+  else
+  {
+     value->Data = (DecryptData*) malloc(sizeof(DecryptData));
+     if (value->Data == NULL) return NMRPC_FATAL_ERROR;
+     result = DecryptData_Deserialize(ctx, &tmp_obj, value->Data);
+      if (result != NMRPC_OK) return result;
+  }
+
+    return NMRPC_OK;
+}
+
+int DecryptUpdateEnvelope_Release(DecryptUpdateEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+ if (value->Data != NULL) 
+ {
+     if (DecryptData_Release(value->Data) != NMRPC_OK)
+     {
+        return NMRPC_FATAL_ERROR;
+     }
+     free((void*) value->Data);
+     value->Data = NULL;
+ }
+    return NMRPC_OK;
+}
+int DecryptFinalRequest_Serialize(cmp_ctx_t* ctx, DecryptFinalRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = AppIdentification_Serialize(ctx, &value->AppId);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bool(ctx, value->IsDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptFinalRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptFinalRequest* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->SessionId);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_bool(ctx, &value->IsDataPtrSet);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->PullDataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptFinalRequest_Release(DecryptFinalRequest* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+    return NMRPC_OK;
+}
+int DecryptFinalEnvelope_Serialize(cmp_ctx_t* ctx, DecryptFinalEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Data != NULL)? DecryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int DecryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, DecryptFinalEnvelope* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Rv);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  cmp_read_object(ctx, &tmp_obj);
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->Data = NULL;
+  }
+  else
+  {
+     value->Data = (DecryptData*) malloc(sizeof(DecryptData));
+     if (value->Data == NULL) return NMRPC_FATAL_ERROR;
+     result = DecryptData_Deserialize(ctx, &tmp_obj, value->Data);
+      if (result != NMRPC_OK) return result;
+  }
+
+    return NMRPC_OK;
+}
+
+int DecryptFinalEnvelope_Release(DecryptFinalEnvelope* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+ if (value->Data != NULL) 
+ {
+     if (DecryptData_Release(value->Data) != NMRPC_OK)
+     {
+        return NMRPC_FATAL_ERROR;
+     }
+     free((void*) value->Data);
+     value->Data = NULL;
+ }
+    return NMRPC_OK;
+}
 int CkP_MacGeneralParams_Serialize(cmp_ctx_t* ctx, CkP_MacGeneralParams* value)
 {
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
@@ -6921,18 +8047,285 @@ int Ckp_CkEcdh1DeriveParams_Release(Ckp_CkEcdh1DeriveParams* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if (value->SharedData)
+  if (value->SharedData != NULL)
   {
       Binary_Release(value->SharedData);
       free((void*)value->SharedData);
       value->SharedData = NULL;
   }
- if (value->SharedData != NULL)
- {
-     free((void*) value->SharedData);
-     value->SharedData = NULL;
- }
   Binary_Release(&value->PublicData);
+    return NMRPC_OK;
+}
+int Ckp_CkGcmParams_Serialize(cmp_ctx_t* ctx, Ckp_CkGcmParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Iv != NULL)? cmp_write_bin(ctx, value->Iv->data, (uint32_t)value->Iv->size) : cmp_write_nil(ctx);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->IvBits);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Aad != NULL)? cmp_write_bin(ctx, value->Aad->data, (uint32_t)value->Aad->size) : cmp_write_nil(ctx);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->TagBits);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkGcmParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkGcmParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmph_read_nullable_binary(ctx, &value->Iv);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->IvBits);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_nullable_binary(ctx, &value->Aad);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->TagBits);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkGcmParams_Release(Ckp_CkGcmParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  if (value->Iv != NULL)
+  {
+      Binary_Release(value->Iv);
+      free((void*)value->Iv);
+      value->Iv = NULL;
+  }
+  if (value->Aad != NULL)
+  {
+      Binary_Release(value->Aad);
+      free((void*)value->Aad);
+      value->Aad = NULL;
+  }
+    return NMRPC_OK;
+}
+int Ckp_CkCcmParams_Serialize(cmp_ctx_t* ctx, Ckp_CkCcmParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->DataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Nonce != NULL)? cmp_write_bin(ctx, value->Nonce->data, (uint32_t)value->Nonce->size) : cmp_write_nil(ctx);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->Aad != NULL)? cmp_write_bin(ctx, value->Aad->data, (uint32_t)value->Aad->size) : cmp_write_nil(ctx);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->MacLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkCcmParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkCcmParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->DataLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_nullable_binary(ctx, &value->Nonce);
+   if (result != NMRPC_OK) return result;
+
+  result = cmph_read_nullable_binary(ctx, &value->Aad);
+   if (result != NMRPC_OK) return result;
+
+  result = cmp_read_uint(ctx, &value->MacLen);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkCcmParams_Release(Ckp_CkCcmParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  if (value->Nonce != NULL)
+  {
+      Binary_Release(value->Nonce);
+      free((void*)value->Nonce);
+      value->Nonce = NULL;
+  }
+  if (value->Aad != NULL)
+  {
+      Binary_Release(value->Aad);
+      free((void*)value->Aad);
+      value->Aad = NULL;
+  }
+    return NMRPC_OK;
+}
+int Ckp_CkRsaPkcsOaepParams_Serialize(cmp_ctx_t* ctx, Ckp_CkRsaPkcsOaepParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 4);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->HashAlg);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Mgf);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_uinteger(ctx, value->Source);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = (value->SourceData != NULL)? cmp_write_bin(ctx, value->SourceData->data, (uint32_t)value->SourceData->size) : cmp_write_nil(ctx);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkRsaPkcsOaepParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkRsaPkcsOaepParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->HashAlg);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->Mgf);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_read_uint(ctx, &value->Source);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_nullable_binary(ctx, &value->SourceData);
+   if (result != NMRPC_OK) return result;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkRsaPkcsOaepParams_Release(Ckp_CkRsaPkcsOaepParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  if (value->SourceData != NULL)
+  {
+      Binary_Release(value->SourceData);
+      free((void*)value->SourceData);
+      value->SourceData = NULL;
+  }
+    return NMRPC_OK;
+}
+int Ckp_CkAesCbcEnryptDataParams_Serialize(cmp_ctx_t* ctx, Ckp_CkAesCbcEnryptDataParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->Iv.data, (uint32_t)value->Iv.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_bin(ctx, value->Data.data, (uint32_t)value->Data.size);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkAesCbcEnryptDataParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkAesCbcEnryptDataParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmph_read_binary(ctx, &value->Iv);
+   if (result != NMRPC_OK) return result;
+
+  result = cmph_read_binary(ctx, &value->Data);
+   if (result != NMRPC_OK) return result;
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkAesCbcEnryptDataParams_Release(Ckp_CkAesCbcEnryptDataParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->Iv);
+  Binary_Release(&value->Data);
     return NMRPC_OK;
 }
 int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvelope* response)
@@ -13392,6 +14785,1302 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
 
     result = DeriveKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* request, EncryptInitEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(EncryptInitEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "EncryptInit", 11);
+
+    result = EncryptInitRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = EncryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, EncryptEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(EncryptEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "Encrypt", 7);
+
+    result = EncryptRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = EncryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* request, EncryptUpdateEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(EncryptUpdateEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "EncryptUpdate", 13);
+
+    result = EncryptUpdateRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = EncryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* request, EncryptFinalEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(EncryptFinalEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "EncryptFinal", 12);
+
+    result = EncryptFinalRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = EncryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* request, DecryptInitEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(DecryptInitEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "DecryptInit", 11);
+
+    result = DecryptInitRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = DecryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, DecryptEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(DecryptEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "Decrypt", 7);
+
+    result = DecryptRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = DecryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* request, DecryptUpdateEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(DecryptUpdateEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "DecryptUpdate", 13);
+
+    result = DecryptUpdateRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = DecryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    err:
+
+    if (is_connection_open)
+    {
+       if (ctx->close(ctx->user_ctx) != NMRPC_OK)
+       {
+          NMRPC_LOG_FAILED_CLOSE_SOCKET();
+       }
+    }
+
+    InternalBuffer_free(&write_head_buffer);
+    InternalBuffer_free(&write_body_buffer);
+    InternalBuffer_free(&read_head_buffer);
+    InternalBuffer_free(&read_body_buffer);
+
+    return result;
+}
+
+int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* request, DecryptFinalEnvelope* response)
+{
+    if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
+
+    int result = NMRPC_OK;
+    uint8_t size_header[8];
+    cmp_ctx_t write_body_ctx = {0};   
+    cmp_ctx_t write_head_ctx = {0};
+
+    cmp_ctx_t read_body_ctx = {0};
+
+    InternalBuffer_t write_body_buffer = {0}; 
+    InternalBuffer_t write_head_buffer = {0}; 
+    InternalBuffer_t read_body_buffer = {0}; 
+    InternalBuffer_t read_head_buffer = {0}; 
+
+    size_t response_header_size;
+    size_t response_body_size;
+    bool is_connection_open = false;
+
+
+    memset((void*) response, 0, sizeof(DecryptFinalEnvelope));
+
+    result = InternalBuffer_init(&write_head_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&write_body_buffer, 256);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+
+    //TODO: tag, nonce,...
+    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_str(&write_head_ctx, "DecryptFinal", 12);
+
+    result = DecryptFinalRequest_Serialize(&write_body_ctx, request);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // header and protocol version
+    size_header[0] = 0xBC; // Bouncy Castle
+    size_header[1] = 0;
+
+    // header size
+    size_header[2] = (write_head_buffer.size >> 8) & 0xFF;
+    size_header[3] = write_head_buffer.size & 0xFF;
+
+    // body size
+    size_header[4] = (write_body_buffer.size >> 24) & 0xFF;
+    size_header[5] = (write_body_buffer.size >> 16) & 0xFF;
+    size_header[6] = (write_body_buffer.size >> 8) & 0xFF;
+    size_header[7] = write_body_buffer.size & 0xFF;
+
+
+    result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    is_connection_open = true;
+
+    result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    result = ctx->flush(ctx->user_ctx);
+    if (result != NMRPC_OK)
+    {
+        goto err;
+    }
+
+    // reading response
+
+    memset(size_header, 0, sizeof(size_header));
+    result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
+    if (!result)
+    {
+        goto err;
+    }
+
+    response_header_size = (size_t)size_header[3];
+    response_header_size |= ((size_t)size_header[2]) << 8;
+
+    response_body_size = (size_t)size_header[7];
+    response_body_size |= ((size_t)size_header[6]) << 8;
+    response_body_size |= ((size_t)size_header[5]) << 16;
+    response_body_size |= ((size_t)size_header[4]) << 24;
+
+
+    result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
+    if (result != NMRPC_OK)
+    {
+        return result;
+    }
+
+    read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
+    if (read_head_buffer.size != response_header_size)
+    {
+        goto err;
+    }
+
+    read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
+    if (read_body_buffer.size != response_body_size)
+    {
+        goto err;
+    }
+
+    InternalBufferReader_t body_reader;
+    body_reader.position = 0;
+    body_reader.size = read_body_buffer.size;
+    body_reader.buffer = read_body_buffer.buffer;
+
+    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+
+    result = DecryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
         goto err;

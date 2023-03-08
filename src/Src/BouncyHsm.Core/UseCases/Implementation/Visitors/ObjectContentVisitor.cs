@@ -68,6 +68,11 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
         return new DomainResult<ObjectContent>.Ok(new ObjectContent("secret.bin", generalSecretKeyObject.CkaValue));
     }
 
+    public DomainResult<ObjectContent> Visit(AesKeyObject aesKeyObject)
+    {
+        return new DomainResult<ObjectContent>.Ok(new ObjectContent("aes_key.bin", aesKeyObject.CkaValue));
+    }
+
     private DomainResult<ObjectContent> CreatePemResult(string fileName, object pemObject)
     {
         if (pemObject is SubjectPublicKeyInfo spki)

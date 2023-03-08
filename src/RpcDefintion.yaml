@@ -169,6 +169,40 @@ Rpc:
     Request: DeriveKeyRequest
     Response: DeriveKeyEnvelope
 
+  EncryptInit:
+    Summary: Call for C_EncryptInit
+    Request: EncryptInitRequest
+    Response: EncryptInitEnvelope
+  Encrypt:
+    Summary: Call for C_Encrypt
+    Request: EncryptRequest
+    Response: EncryptEnvelope
+  EncryptUpdate:
+    Summary: Call for C_EncryptUpdate
+    Request: EncryptUpdateRequest
+    Response: EncryptUpdateEnvelope
+  EncryptFinal:
+    Summary: Call for C_EncryptFinal
+    Request: EncryptFinalRequest
+    Response: EncryptFinalEnvelope
+
+  DecryptInit:
+    Summary: Call for C_DecryptInit
+    Request: DecryptInitRequest
+    Response: DecryptInitEnvelope
+  Decrypt:
+    Summary: Call for C_Decrypt
+    Request: DecryptRequest
+    Response: DecryptEnvelope
+  DecryptUpdate:
+    Summary: Call for C_DecryptUpdate
+    Request: DecryptUpdateRequest
+    Response: DecryptUpdateEnvelope
+  DecryptFinal:
+    Summary:
+    Request: DecryptFinalRequest
+    Response: DecryptFinalEnvelope
+
 Messages:
   AppIdentification:
     Summary: Application uniq identification data for server.
@@ -836,6 +870,132 @@ Messages:
       Rv: uint32
       Data: DeriveKeyData?
 
+  EncryptInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  EncryptInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  EncryptRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+      IsEncryptedDataPtrSet: bool
+      EncryptedDataLen: uint32
+
+  EncryptData:
+    Summary:
+    Fields:
+      PullEncryptedDataLen: uint32
+      EncryptedData: binary
+
+  EncryptEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: EncryptData?
+      
+  EncryptUpdateRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      PartData: binary
+      IsEncryptedDataPtrSet: bool
+      EncryptedDataLen: uint32
+
+  EncryptUpdateEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: EncryptData?
+
+  EncryptFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      IsEncryptedDataPtrSet: bool
+      EncryptedDataLen: uint32
+
+  EncryptFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: EncryptData?
+
+  DecryptInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  DecryptInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  DecryptRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      EncryptedData: binary
+      IsDataPtrSet: bool
+      PullDataLen: uint32
+
+  DecryptData:
+    Summary:
+    Fields:
+      Data: binary
+      PullDataLen: uint32
+
+  DecryptEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DecryptData?
+
+  DecryptUpdateRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      EncryptedData: binary
+      IsDataPtrSet: bool
+      PullDataLen: uint32
+
+  DecryptUpdateEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DecryptData?
+
+  DecryptFinalRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      IsDataPtrSet: bool
+      PullDataLen: uint32
+
+  DecryptFinalEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DecryptData?
+
   # CK_parsms DTO's
   CkP_MacGeneralParams:
     Summary: Representes CK_MAC_GENERAL_PARAMS
@@ -876,3 +1036,33 @@ Messages:
       Kdf: uint32
       SharedData: binary?
       PublicData: binary
+
+  Ckp_CkGcmParams:
+    Summary: Representes CK_GCM_PARAMS
+    Fields:
+      Iv: binary?
+      IvBits: uint32
+      Aad: binary?
+      TagBits: uint32
+
+  Ckp_CkCcmParams:
+    Summary: Representes CK_CCM_PARAMS
+    Fields:
+      DataLen: uint32
+      Nonce: binary?
+      Aad: binary?
+      MacLen: uint32
+
+  Ckp_CkRsaPkcsOaepParams:
+    Summary: Representes CK_RSA_PKCS_OAEP_PARAMS
+    Fields:
+      HashAlg: uint32
+      Mgf: uint32
+      Source: uint32
+      SourceData: binary?
+
+  Ckp_CkAesCbcEnryptDataParams:
+    Summary: Representes CK_AES_CBC_ENCRYPT_DATA_PARAMS
+    Fields:
+      Iv: binary
+      Data: binary

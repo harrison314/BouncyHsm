@@ -22,8 +22,10 @@ public static class StorageObjectFactory
         X509AttributeCertificateObject,
         EcdsaPublicKeyObject,
         EcdsaPrivateKeyObject,
-        GenericSecretKeyObject
+        GenericSecretKeyObject,
+        AesKeyObject
     }
+
     internal interface IStorageObjectInternalFactory
     {
         StorageObject Create(StorageObjectInternalType storageObjectType);
@@ -49,6 +51,7 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.EcdsaPublicKeyObject => new EcdsaPublicKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN),
                 StorageObjectInternalType.EcdsaPrivateKeyObject => new EcdsaPrivateKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN),
                 StorageObjectInternalType.GenericSecretKeyObject => new GenericSecretKeyObject(),
+                StorageObjectInternalType.AesKeyObject => new AesKeyObject(),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -76,6 +79,7 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.EcdsaPublicKeyObject => new EcdsaPublicKeyObject(this.memento),
                 StorageObjectInternalType.EcdsaPrivateKeyObject => new EcdsaPrivateKeyObject(this.memento),
                 StorageObjectInternalType.GenericSecretKeyObject => new GenericSecretKeyObject(this.memento),
+                StorageObjectInternalType.AesKeyObject => new AesKeyObject(this.memento),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -211,6 +215,7 @@ public static class StorageObjectFactory
             CKK.CKK_RIPEMD128_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
             CKK.CKK_RIPEMD160_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
 
+            CKK.CKK_AES => factory.Create(StorageObjectInternalType.AesKeyObject),
             _ => throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"Value {keyType} for CKO_SECRET_KEY is not defined.")
         };
 
