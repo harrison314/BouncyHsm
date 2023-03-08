@@ -1,12 +1,12 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ verison 0.1.0.0 (commit _c4035438836326dfbc5ad1574be3412936fc1d5f_).
+Supported algorithms for _Bouncy Hsm_ verison 0.1.0.0 (commit _489d1c0f16b18a69147ebb3ad11b165b0eadb8d7_).
 
 ## Mechanisms
 _Bouncy Hsm_ supports 91 mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign | Verify | Derive | Encrypt | Decrypt | Generate key pair | Generate key |
-| :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | `CKM_RSA_PKCS_KEY_PAIR_GEN` | 2048  | 6144 |   |   |   |   |   |   | ✓ | ✓ |
 | `CKM_RSA_PKCS` | 2048  | 6144 |   | ✓ | ✓ |   | ✓ | ✓ |   |   |
 | `CKM_MD2_RSA_PKCS` | 2048  | 6144 |   | ✓ | ✓ |   |   |   |   |   |

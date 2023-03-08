@@ -15,7 +15,7 @@ Supported algorithms for _Bouncy Hsm_ verison {{ Versions.Version }} (commit _{{
 _Bouncy Hsm_ supports {{ MechanismsCount }} mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign | Verify | Derive | Encrypt | Decrypt | Generate key pair | Generate key |
-| :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 {{~ for mi in Mechanisms ~}}
 | `{{ mi.MechanismType }}` | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags | toCheck 'CKF_DIGEST' }} | {{mi.Flags | toCheck 'CKF_SIGN' }} | {{mi.Flags | toCheck 'CKF_VERIFY'}} | {{mi.Flags | toCheck 'CKF_DERIVE' }} | {{mi.Flags | toCheck 'CKF_ENCRYPT' }} | {{mi.Flags | toCheck 'CKF_DECRYPT' }} | {{mi.Flags | toCheck 'CKF_GENERATE_KEY_PAIR' }} | {{mi.Flags | toCheck 'CKF_GENERATE' }} |
 {{~ end ~}}
