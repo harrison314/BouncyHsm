@@ -1,0 +1,97 @@
+﻿@foreach ((uint bKey, OidValuePair pair) in pairs)
+{
+    <div class="row mb-1" @key="@bKey">
+        <div class="col-2">
+            <select class="form-select form-select-sm" @onchange="@((ea)=>pair.Hint = pair.Oid = ea.Value?.ToString()??string.Empty)">
+                @foreach ((string name, string oid) in this.Oids)
+                {
+                    <option value="@oid">@name</option>
+                }
+            </select>
+        </div>
+        <div class="col-2">
+            <input type="text" class="form-control form-control-sm" @bind="pair.Oid" readonly="@(!string.IsNullOrEmpty(pair.Hint))" />
+        </div>
+        <div class="col-7">
+            <input type="text" class="form-control form-control-sm" @bind="pair.Value" />
+        </div>
+        <div class="col-1">
+            <button type="button" class="btn btn-outline-danger btn-sm" @onclick="@(()=> this.pairs.Remove(bKey))">
+                <span class="icon-cross icon-1x"></span>
+            </button>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col">
+        <button type="button" class="btn btn-outline-primary float-end" @onclick="this.AddKey">
+            <span class="icon-plus icon-1x"></span>
+        </button>
+    </div>
+</div>
+
+@code {
+    private uint counter = 0;
+    private Dictionary<uint, OidValuePair> pairs = new Dictionary<uint, OidValuePair>();
+    private Dictionary<string, string> Oids = new Dictionary<string, string>()
+    {
+        //https://github.com/bcgit/bc-csharp/blob/master/crypto/src/asn1/x509/X509Name.cs
+        {"C","2.5.4.6"},
+        {"O","2.5.4.10"},
+        {"OU","2.5.4.11"},
+        {"CN","2.5.4.3"},
+        {"Street","2.5.4.9"},
+        {"SerialNumber","2.5.4.5"},
+        {"L","2.5.4.7"},
+        {"Surname","2.5.4.4"},
+        {"GivenName","2.5.4.42"},
+        {"Initials","2.5.4.43"},
+        {"UniqueIdentifier","2.5.4.45"},
+        {"PostalCode","2.5.4.17"},
+        {"Pseudonym","2.5.4.65"},
+        {"EmailAddress","1.2.840.113549.1.9.1"},
+        {"Custom OID",""}
+    };
+
+    [Parameter]
+    public EventCallback<List<(string Oid, string Value)>> ValuesChanged 
+    {
+        get;
+        set;
+    }
+
+    private void AddKey()
+    {
+        string firstOid = Oids.Values.First();
+        this.pairs.Add(this.counter++, new OidValuePair() { Hint = firstOid, Oid = firstOid, Value = string.Empty });
+    }
+
+    internal class OidValuePair
+    {
+        public string Oid
+        {
+            get;
+            set;
+        }
+
+        public string Hint
+        {
+            get;
+            set;
+        }
+
+        public string Value
+        {
+            get;
+            set;
+        }
+
+        public OidValuePair()
+        {
+            this.Oid = string.Empty;
+            this.Hint = string.Empty;
+            this.Value = string.Empty;
+        }
+    }
+}

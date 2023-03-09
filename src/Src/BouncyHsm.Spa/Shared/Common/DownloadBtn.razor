@@ -48,10 +48,7 @@
 
             ObjectContentDto content = await this.DownloadAction();
 
-            using MemoryStream ms = new MemoryStream(content.Content);
-            using var streamRef = new DotNetStreamReference(stream: ms);
-
-            await this.JS.InvokeVoidAsync("downloadFileFromStream", content.FileName, streamRef);
+            await this.JS.DownloadFile(content.FileName, content.Content);
         }
         catch (Exception ex)
         {

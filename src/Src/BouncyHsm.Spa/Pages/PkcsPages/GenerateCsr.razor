@@ -1,0 +1,116 @@
+﻿@page "/Slots/{SlotId:int}/Pkcs/GenerateCsr/{PrivateKeyId:guid}/{PublicKeyId:guid}"
+@using BouncyHsm.Spa.Pages.Pkcs;
+@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils;
+@inject IBouncyHsmClient bouncyHsmClient
+@inject IJSRuntime JS
+
+<PageTitle>Generate PKCS#10 request</PageTitle>
+
+<h1>Generate PKCS#10 request</h1>
+<div class="row">
+    <div class="col d-flex justify-content-end pb-3">
+        <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <p>Generate PKCS#10 request for key pair <em>@label</em>.</p>
+
+        @if (this.errorMessage != null)
+        {
+            <div class="mb-6">
+                <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+            </div>
+        }
+
+        <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-1">
+                <label for="i-ckalabel" class="form-label">Subject</label>
+                <InputText id="i-ckalabel" class="form-control" @bind-Value="this.model.Subject" />
+                <div class="form-text">Subject value eg. <code>CN=common name, C=SK, SERIALNUMBER=458965</code>.</div>
+                <ValidationMessage For="() => this.model.Subject" />
+            </div>
+
+            <div class="justify-content-end">
+                <button type="submit" class="btn btn-primary"><span class="icon-Rename icon-1x"></span> Generate</button>
+            </div>
+        </EditForm>
+
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public Guid PrivateKeyId
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public Guid PublicKeyId
+    {
+        get;
+        set;
+    }
+
+    private GenerateCsrModel model = new GenerateCsrModel();
+    private EditContext? editContext;
+    private string? errorMessage = null;
+    private IBrowserFile? file = null;
+    private string label = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        this.editContext = new EditContext(this.model);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var objectDetail = await this.bouncyHsmClient.GetStorageObjectAsync(this.SlotId, this.PrivateKeyId);
+        string? label = objectDetail.Attributes.FirstOrDefault(t => t.AttributeType == "CKA_LABEL")?.ValueText;
+
+        this.label = $"{label} ({objectDetail.Description})";
+    }
+
+    private async Task HandleSubmit()
+    {
+        this.errorMessage = null;
+        await Task.Yield();
+
+        try
+        {
+            Pkcs10Dto pkcs10 = await this.bouncyHsmClient.Pkcs_GetPkcsObjectsAsync(this.SlotId, new GeneratePkcs10RequestDto()
+                {
+                    PrivateKeyId = this.PrivateKeyId,
+                    PublicKeyId = this.PublicKeyId,
+                    Subject = new SubjectNameDto()
+                    {
+                        DirName = this.model.Subject,
+                        OidValuePairs = null
+                    }
+                });
+
+            await this.JS.DownloadFile("request.csr", pkcs10.Content);
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            Console.WriteLine(ex);
+        }
+    }
+}
