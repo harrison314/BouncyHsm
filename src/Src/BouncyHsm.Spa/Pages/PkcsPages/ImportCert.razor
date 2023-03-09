@@ -1,0 +1,122 @@
+﻿@page "/Slots/{SlotId:int}/Pkcs/ImportCert/{PrivateKeyId:guid}"
+@using BouncyHsm.Spa.Pages.Pkcs;
+@using BouncyHsm.Spa.Services.Client
+@using BouncyHsm.Spa.Utils;
+@inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation
+
+<PageTitle>Upload certificate</PageTitle>
+
+<h1>Upload certificate</h1>
+<div class="row">
+    <div class="col d-flex justify-content-end pb-3">
+        <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <p>Upload certificate for key pair <em>@label</em>.</p>
+
+        @if (this.errorMessage != null)
+        {
+            <div class="mb-6">
+                <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+            </div>
+        }
+
+
+
+        <div class="mb-1">
+            <label for="i-p12file" class="form-label">P12/PFX file</label>
+            <InputFile id="i-p12file" OnChange="LoadFiles" class="form-control" accept=".cer, .crt" />
+            <div class="form-text">Certificate file.</div>
+        </div>
+
+        <div class="justify-content-end">
+            <button type="button" class="btn btn-primary" @onclick="this.HandleSubmit"><span class="icon-upload3 icon-1x"></span> Submit</button>
+        </div>
+
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public Guid PrivateKeyId
+    {
+        get;
+        set;
+    }
+
+
+
+    private string? errorMessage = null;
+    private IBrowserFile? file = null;
+    private string label = string.Empty;
+
+    private void LoadFiles(InputFileChangeEventArgs e)
+    {
+        if (e.FileCount == 1)
+        {
+            this.file = e.File;
+        }
+        else
+        {
+            this.file = null;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var objectDetail = await this.bouncyHsmClient.GetStorageObjectAsync(this.SlotId, this.PrivateKeyId);
+        string? label = objectDetail.Attributes.FirstOrDefault(t => t.AttributeType == "CKA_LABEL")?.ValueText;
+
+        this.label = $"{label} ({objectDetail.Description})";
+    }
+
+    private async Task HandleSubmit()
+    {
+        this.errorMessage = null;
+        await Task.Yield();
+
+        try
+        {
+            byte[] certContent;
+            if (this.file == null)
+            {
+                this.errorMessage = "File is not set";
+                return;
+            }
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using Stream fs = this.file.OpenReadStream();
+                await fs.CopyToAsync(ms);
+
+                certContent = ms.ToArray();
+            }
+
+            await this.bouncyHsmClient.ImportX509CertificateAsync(this.SlotId, new ImportX509CertificateRequestDto()
+                {
+                    PrivateKeyId = this.PrivateKeyId,
+                    Certificate = certContent
+                });
+
+            this.Navigation.NavigateTo($"/Slots/{this.SlotId}/Pkcs");
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            Console.WriteLine(ex);
+        }
+    }
+}

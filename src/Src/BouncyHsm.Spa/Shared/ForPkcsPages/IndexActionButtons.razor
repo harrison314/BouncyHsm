@@ -24,24 +24,27 @@
 
     @if (this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
     {
-        <DownloadBtn Text="Downloadcertificate" DownloadAction="@this.GetCertificate" />
+        <DownloadBtn Text="Download certificate" DownloadAction="@this.GetCertificate" />
         <br />
     }
 
-    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY, CKO.CKO_PUBLIC_KEY) && !this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY) && !this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
     {
         <hr />
 
-        <NavLink href="@($"Slots/{this.SlotId}/Pkcs/GenerateCsr/{this.GetObjectId(this.SelectedObject, CKO.CKO_PRIVATE_KEY)}/{this.GetObjectId(this.SelectedObject, CKO.CKO_PUBLIC_KEY)}")"
-                class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
-            <span class="icon-Rename icon-1x"></span> Generate PKCS10
-        </NavLink>
-        <br />
+        @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PUBLIC_KEY))
+        {
+            <NavLink href="@($"Slots/{this.SlotId}/Pkcs/GenerateCsr/{this.GetObjectId(this.SelectedObject, CKO.CKO_PRIVATE_KEY)}/{this.GetObjectId(this.SelectedObject, CKO.CKO_PUBLIC_KEY)}")"
+                     class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
+                <span class="icon-Rename icon-1x"></span> Generate PKCS10
+            </NavLink>
+            <br />
+        }
 
-        <button type="button"
-                class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
-            <span class="icon-cloud-upload icon-1x"></span> Upload certificate
-        </button>
+        <NavLink href="@($"Slots/{this.SlotId}/Pkcs/ImportCert/{this.GetObjectId(this.SelectedObject, CKO.CKO_PRIVATE_KEY)}")"
+                 class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
+            <span class="icon-cloud-upload icon-1x"></span> Import certificate
+        </NavLink>
         <br />
     }
 }
