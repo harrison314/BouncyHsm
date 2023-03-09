@@ -1,7 +1,7 @@
 ﻿# Supported algorithms
 {{~
 func toCheck(b, flag)
-   if string.contains(b, flag)
+   if string.contains(b, flag) && !string.contains(b, flag + '_') # TODO: fix CKF_GENERATE_KEY_PAIR and CKF_GENERATE in c# code
       ret '✓'
    else
       ret ' '

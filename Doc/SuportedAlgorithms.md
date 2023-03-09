@@ -1,13 +1,13 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ verison 0.1.0.0 (commit _489d1c0f16b18a69147ebb3ad11b165b0eadb8d7_).
+Supported algorithms for _Bouncy Hsm_ verison 0.1.0.0 (commit _15f6d6a2b5d59077b2682ac97ff4cc0cb12dae95_).
 
 ## Mechanisms
 _Bouncy Hsm_ supports 91 mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign | Verify | Derive | Encrypt | Decrypt | Generate key pair | Generate key |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `CKM_RSA_PKCS_KEY_PAIR_GEN` | 2048  | 6144 |   |   |   |   |   |   | ✓ | ✓ |
+| `CKM_RSA_PKCS_KEY_PAIR_GEN` | 2048  | 6144 |   |   |   |   |   |   | ✓ |   |
 | `CKM_RSA_PKCS` | 2048  | 6144 |   | ✓ | ✓ |   | ✓ | ✓ |   |   |
 | `CKM_MD2_RSA_PKCS` | 2048  | 6144 |   | ✓ | ✓ |   |   |   |   |   |
 | `CKM_MD5_RSA_PKCS` | 2048  | 6144 |   | ✓ | ✓ |   |   |   |   |   |
@@ -74,7 +74,7 @@ _Bouncy Hsm_ supports 91 mechanisms.
 | `CKM_SHA384_KEY_DERIVATION` | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |
 | `CKM_SHA512_KEY_DERIVATION` | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |
 | `CKM_SHA224_KEY_DERIVATION` | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |
-| `CKM_ECDSA_KEY_PAIR_GEN` | 192  | 521 |   |   |   |   |   |   | ✓ | ✓ |
+| `CKM_ECDSA_KEY_PAIR_GEN` | 192  | 521 |   |   |   |   |   |   | ✓ |   |
 | `CKM_ECDSA` | 192  | 521 |   | ✓ | ✓ |   |   |   |   |   |
 | `CKM_ECDSA_SHA1` | 192  | 521 |   | ✓ | ✓ |   |   |   |   |   |
 | `CKM_ECDSA_SHA224` | 192  | 521 |   | ✓ | ✓ |   |   |   |   |   |
