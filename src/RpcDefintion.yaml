@@ -203,6 +203,15 @@ Rpc:
     Request: DecryptFinalRequest
     Response: DecryptFinalEnvelope
 
+  WrapKey:
+    Summary: Call for C_WrapKey
+    Request: WrapKeyRequest
+    Response: WrapKeyEnvelope
+  UnwrapKey:
+    Summary: Call for C_UnwrapKey
+    Request: UnwrapKeyRequest
+    Response: UnwrapKeyEnvelope
+
 Messages:
   AppIdentification:
     Summary: Application uniq identification data for server.
@@ -995,6 +1004,51 @@ Messages:
     Fields:
       Rv: uint32
       Data: DecryptData?
+
+  WrapKeyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      WrappingKeyHandle: uint32
+      KeyHandle: uint32
+      IsPtrWrappedKeySet: bool
+      PulWrappedKeyLen: uint32
+
+  WrapKeyData:
+    Summary:
+    Fields:
+      WrappedKeyData: binary
+      PulWrappedKeyLen: uint32
+
+  WrapKeyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: WrapKeyData?
+
+  UnwrapKeyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      UnwrappingKeyHandle: uint32
+      WrappedKeyData: binary
+      Template: AttrValueFromNative[]
+
+  UnwrapKeyData:
+    Summary:
+    Fields:
+      KeyHandle: uint32
+
+  UnwrapKeyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: UnwrapKeyData?
+  
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

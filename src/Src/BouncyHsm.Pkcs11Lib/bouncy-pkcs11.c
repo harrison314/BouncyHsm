@@ -2816,7 +2816,58 @@ CK_DEFINE_FUNCTION(CK_RV, C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    if (pMechanism == NULL_PTR || pulWrappedKeyLen == NULL)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    WrapKeyRequest request;
+    WrapKeyEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+
+    request.AppId = globalContext.appId;
+    request.SessionId = (uint32_t)hSession;
+    if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
+    {
+        return CKR_MECHANISM_INVALID;
+    }
+
+    request.WrappingKeyHandle = (uint32_t)hWrappingKey;
+    request.KeyHandle = (uint32_t)hKey;
+    request.IsPtrWrappedKeySet = pWrappedKey != NULL;
+    request.PulWrappedKeyLen = (uint32_t)*pulWrappedKeyLen;
+
+    int rv = nmrpc_call_WrapKey(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+
+        MechanismValue_Destroy(&request.Mechanism);
+        return CKR_DEVICE_ERROR;
+    }
+
+    if ((CK_RV)envelope.Rv == CKR_OK)
+    {
+        if (pWrappedKey != NULL)
+        {
+            memcpy_s(pWrappedKey, *pulWrappedKeyLen, envelope.Data->WrappedKeyData.data, envelope.Data->WrappedKeyData.size);
+            *pulWrappedKeyLen = (CK_ULONG)envelope.Data->WrappedKeyData.size;
+        }
+        else
+        {
+            *pulWrappedKeyLen = (CK_ULONG)envelope.Data->PulWrappedKeyLen;
+        }
+    }
+
+    MechanismValue_Destroy(&request.Mechanism);
+    WrapKeyEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 
@@ -2824,9 +2875,69 @@ CK_DEFINE_FUNCTION(CK_RV, C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
-}
+    if (NULL == pMechanism || NULL == pTemplate || NULL == pWrappedKey || NULL == phKey)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
 
+    UnwrapKeyRequest request;
+    UnwrapKeyEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+    AttrValueFromNative* attrTemplate = NULL;
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+
+    request.AppId = globalContext.appId;
+    request.SessionId = (uint32_t)hSession;
+    if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
+    {
+        return CKR_MECHANISM_INVALID;
+    }
+
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount);
+    if (NULL == attrTemplate)
+    {
+        MechanismValue_Destroy(&request.Mechanism);
+        return CKR_GENERAL_ERROR;
+    }
+
+    request.Template.array = attrTemplate;
+    request.Template.length = (int)ulAttributeCount;
+    request.UnwrappingKeyHandle = (uint32_t)hUnwrappingKey;
+    request.WrappedKeyData.data = (uint8_t*)pWrappedKey;
+    request.WrappedKeyData.size = (size_t)ulWrappedKeyLen;
+
+    int rv = nmrpc_call_UnwrapKey(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
+        }
+
+        return CKR_DEVICE_ERROR;
+    }
+
+    if ((CK_RV)envelope.Rv == CKR_OK)
+    {
+        *phKey = (CK_OBJECT_HANDLE)envelope.Data->KeyHandle;
+    }
+
+    MechanismValue_Destroy(&request.Mechanism);
+    if (NULL != attrTemplate)
+    {
+        AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
+    }
+
+    UnwrapKeyEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
+}
 
 CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hBaseKey, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
 {

@@ -256,6 +256,16 @@ public partial class DecryptFinalHandler : IRpcRequestHandler<DecryptFinalReques
    // Implement in another class
 }
 
+public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKeyEnvelope>
+{
+   // Implement in another class
+}
+
+public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, UnwrapKeyEnvelope>
+{
+   // Implement in another class
+}
+
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public static partial class RpcDefinitionUtils
 {
@@ -313,6 +323,8 @@ public static partial class RpcDefinitionUtils
          { typeof(IRpcRequestHandler<DecryptRequest, DecryptEnvelope>), typeof(DecryptHandler)},
          { typeof(IRpcRequestHandler<DecryptUpdateRequest, DecryptUpdateEnvelope>), typeof(DecryptUpdateHandler)},
          { typeof(IRpcRequestHandler<DecryptFinalRequest, DecryptFinalEnvelope>), typeof(DecryptFinalHandler)},
+         { typeof(IRpcRequestHandler<WrapKeyRequest, WrapKeyEnvelope>), typeof(WrapKeyHandler)},
+         { typeof(IRpcRequestHandler<UnwrapKeyRequest, UnwrapKeyEnvelope>), typeof(UnwrapKeyHandler)},
        };
     }
 }

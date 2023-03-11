@@ -2973,6 +2973,182 @@ public partial class DecryptFinalEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class WrapKeyRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public MechanismValue Mechanism
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(3)]
+    public uint WrappingKeyHandle
+    {
+        get;
+        set;
+    }
+
+    [Key(4)]
+    public uint KeyHandle
+    {
+        get;
+        set;
+    }
+
+    [Key(5)]
+    public bool IsPtrWrappedKeySet
+    {
+        get;
+        set;
+    }
+
+    [Key(6)]
+    public uint PulWrappedKeyLen
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class WrapKeyData
+{
+    [Key(0)]
+    public byte[] WrappedKeyData
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+    [Key(1)]
+    public uint PulWrappedKeyLen
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class WrapKeyEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public WrapKeyData? Data
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class UnwrapKeyRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public MechanismValue Mechanism
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(3)]
+    public uint UnwrappingKeyHandle
+    {
+        get;
+        set;
+    }
+
+    [Key(4)]
+    public byte[] WrappedKeyData
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+    [Key(5)]
+    public AttrValueFromNative[] Template
+    {
+        get;
+        set;
+    } = Array.Empty<AttrValueFromNative>();
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class UnwrapKeyData
+{
+    [Key(0)]
+    public uint KeyHandle
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class UnwrapKeyEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public UnwrapKeyData? Data
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public partial class CkP_MacGeneralParams
 {
     [Key(0)]

@@ -1,4 +1,5 @@
-﻿using BouncyHsm.Core.Services.Contracts;
+﻿using BouncyHsm.Core.Services.Bc;
+using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using Microsoft.Extensions.Logging;
@@ -58,6 +59,54 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
             this.bufferedCipher.Init(true, rsaPublicKeyObject.GetPublicKey());
 
             return this.bufferedCipher;
+        }
+        else
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, $"Mechanism {this.mechanismType} required private RSA key.");
+        }
+    }
+
+    public IWrapper IntoUnwraping(KeyObject keyObject)
+    {
+        this.logger.LogTrace("Entering to IntoUnwraping with object id {objectId}.", keyObject);
+
+        if (keyObject is RsaPrivateKeyObject rsaPrivateKeyObject)
+        {
+            if (!rsaPrivateKeyObject.CkaUnwrap)
+            {
+                this.logger.LogError("Object with id {ObjectId} can not set CKA_UNWRAP to true.", keyObject.Id);
+                throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
+                    "The operation is not allowed because objet is not authorized to decrypt (CKA_UNWRAP must by true).");
+            }
+
+            BufferedChiperWrapper wrapper = new BufferedChiperWrapper(this.bufferedCipher);
+            wrapper.Init(false, rsaPrivateKeyObject.GetPrivateKey());
+
+            return wrapper;
+        }
+        else
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, $"Mechanism {this.mechanismType} required private RSA key.");
+        }
+    }
+
+    public IWrapper IntoWraping(KeyObject keyObject)
+    {
+        this.logger.LogTrace("Entering to IntoWraping with object id {objectId}.", keyObject);
+
+        if (keyObject is RsaPublicKeyObject rsaPublicKeyObject)
+        {
+            if (!rsaPublicKeyObject.CkaWrap)
+            {
+                this.logger.LogError("Object with id {ObjectId} can not set CKA_WRAP to true.", keyObject.Id);
+                throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
+                    "The operation is not allowed because objet is not authorized to encrypt (CKA_WRAP must by true).");
+            }
+
+            BufferedChiperWrapper wrapper = new BufferedChiperWrapper(this.bufferedCipher);
+            wrapper.Init(true, rsaPublicKeyObject.GetPublicKey());
+
+            return wrapper;
         }
         else
         {

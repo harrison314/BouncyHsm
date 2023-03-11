@@ -130,6 +130,12 @@ typedef struct _DecryptUpdateRequest DecryptUpdateRequest;
 typedef struct _DecryptUpdateEnvelope DecryptUpdateEnvelope;
 typedef struct _DecryptFinalRequest DecryptFinalRequest;
 typedef struct _DecryptFinalEnvelope DecryptFinalEnvelope;
+typedef struct _WrapKeyRequest WrapKeyRequest;
+typedef struct _WrapKeyData WrapKeyData;
+typedef struct _WrapKeyEnvelope WrapKeyEnvelope;
+typedef struct _UnwrapKeyRequest UnwrapKeyRequest;
+typedef struct _UnwrapKeyData UnwrapKeyData;
+typedef struct _UnwrapKeyEnvelope UnwrapKeyEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1461,6 +1467,74 @@ int DecryptFinalEnvelope_Serialize(cmp_ctx_t* ctx, DecryptFinalEnvelope* value);
 int DecryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecryptFinalEnvelope* value);
 int DecryptFinalEnvelope_Release(DecryptFinalEnvelope* value);
 
+typedef struct _WrapKeyRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    MechanismValue Mechanism;
+    uint32_t WrappingKeyHandle;
+    uint32_t KeyHandle;
+    bool IsPtrWrappedKeySet;
+    uint32_t PulWrappedKeyLen;
+} WrapKeyRequest;
+
+int WrapKeyRequest_Serialize(cmp_ctx_t* ctx, WrapKeyRequest* value);
+int WrapKeyRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, WrapKeyRequest* value);
+int WrapKeyRequest_Release(WrapKeyRequest* value);
+
+typedef struct _WrapKeyData
+{
+    Binary WrappedKeyData;
+    uint32_t PulWrappedKeyLen;
+} WrapKeyData;
+
+int WrapKeyData_Serialize(cmp_ctx_t* ctx, WrapKeyData* value);
+int WrapKeyData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, WrapKeyData* value);
+int WrapKeyData_Release(WrapKeyData* value);
+
+typedef struct _WrapKeyEnvelope
+{
+    uint32_t Rv;
+    WrapKeyData* Data;
+} WrapKeyEnvelope;
+
+int WrapKeyEnvelope_Serialize(cmp_ctx_t* ctx, WrapKeyEnvelope* value);
+int WrapKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, WrapKeyEnvelope* value);
+int WrapKeyEnvelope_Release(WrapKeyEnvelope* value);
+
+typedef struct _UnwrapKeyRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    MechanismValue Mechanism;
+    uint32_t UnwrappingKeyHandle;
+    Binary WrappedKeyData;
+    ArrayOfAttrValueFromNative Template;
+} UnwrapKeyRequest;
+
+int UnwrapKeyRequest_Serialize(cmp_ctx_t* ctx, UnwrapKeyRequest* value);
+int UnwrapKeyRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, UnwrapKeyRequest* value);
+int UnwrapKeyRequest_Release(UnwrapKeyRequest* value);
+
+typedef struct _UnwrapKeyData
+{
+    uint32_t KeyHandle;
+} UnwrapKeyData;
+
+int UnwrapKeyData_Serialize(cmp_ctx_t* ctx, UnwrapKeyData* value);
+int UnwrapKeyData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, UnwrapKeyData* value);
+int UnwrapKeyData_Release(UnwrapKeyData* value);
+
+typedef struct _UnwrapKeyEnvelope
+{
+    uint32_t Rv;
+    UnwrapKeyData* Data;
+} UnwrapKeyEnvelope;
+
+int UnwrapKeyEnvelope_Serialize(cmp_ctx_t* ctx, UnwrapKeyEnvelope* value);
+int UnwrapKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, UnwrapKeyEnvelope* value);
+int UnwrapKeyEnvelope_Release(UnwrapKeyEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1649,5 +1723,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
 int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, DecryptEnvelope* response);
 int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* request, DecryptUpdateEnvelope* response);
 int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* request, DecryptFinalEnvelope* response);
+int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, WrapKeyEnvelope* response);
+int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request, UnwrapKeyEnvelope* response);
 
 #endif // NMRPC_rpc
