@@ -23,13 +23,12 @@ else
                 <th>Min. key size</th>
                 <th>Max. key size</th>
                 <th>Digest</th>
-                <th>Sign</th>
-                <th>Verify</th>
+                <th>Sign, Verify</th>
                 <th>Derive</th>
-                <th>Encrypt</th>
-                <th>Decrypt</th>
+                <th>Encrypt, Decrypt</th>
                 <th>Generate key pair</th>
                 <th>Generate key</th>
+                <th>Wrap, Unwrap</th>
             </tr>
         </thead>
         <tbody>
@@ -40,13 +39,12 @@ else
                     <td class="text-end">@mi.MinKeySize</td>
                     <td class="text-end">@mi.MaxKeySize</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Digest)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Sign)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Verify)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Sign, mi.Flags.Verify)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Derive)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Encrypt)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Decrypt)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Encrypt, mi.Flags.Decrypt)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.GenerateKeyPair)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Generate)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.Wrap, mi.Flags.Unwrap)</td>
                 </tr>
             }
         </tbody>
@@ -98,5 +96,16 @@ else
     private string ShowFlag(bool enabled)
     {
         return enabled ? "✓" : " ";
+    }
+
+    private string ShowFlag(bool op1, bool op2)
+    {
+        return (op1, op2) switch
+        {
+            (false, false) => " ",
+            (false, true) => "-",
+            (true, false) => "-",
+            (true, true) => "✓"
+        };
     }
 }
