@@ -1,11 +1,12 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.UseCases.Contracts;
 
 namespace BouncyHsm.DocGenerator;
 
 public class DocModel
 {
-    public List<MechanismInfoData> Mechanisms
+    public List<MechanismInfo> Mechanisms
     {
         get;
         internal set;
@@ -35,7 +36,7 @@ public class DocModel
 
     public DocModel()
     {
-        this.Mechanisms = new List<MechanismInfoData>();
+        this.Mechanisms = new List<MechanismInfo>();
         this.Ec = new List<SupportedNameCurve>();
         this.Versions = new BouncyHsmVersion("", "", "", "");
     }

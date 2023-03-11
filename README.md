@@ -15,11 +15,13 @@ or during network calls.
 * Slot and crypto object managment using web interface and rest api.
   * Create/remove slots.
   * Import P12/PFX files.
+  * Generate CSR, import certificate file.
   * ...
 * Possibility to simulate cards with a qualified area and a signature pin.
 * Suports RSA keys (with size 1-10K).
 * Suports 80 named eliptic curves.
 * Suports secrets (HMAC, derive,...)
+* Suports AES keys.
 * [Suports mechanisms](/Doc/SuportedAlgorithms.md)
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permision configuration).
