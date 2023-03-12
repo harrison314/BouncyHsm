@@ -25,27 +25,27 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        EncryptState enctyptSessionState = p11Session.State.Ensure<EncryptState>();
-        this.logger.LogDebug("Encrypt using {sessionState}.", enctyptSessionState);
+        EncryptState encryptSessionState = p11Session.State.Ensure<EncryptState>();
+        this.logger.LogDebug("Encrypt using {sessionState}.", encryptSessionState);
 
-        uint chiperTextLen = enctyptSessionState.GetUpdateSize(request.PartData);
+        uint cipherTextLen = encryptSessionState.GetUpdateSize(request.PartData);
 
         if (request.IsEncryptedDataPtrSet)
         {
-            if (request.EncryptedDataLen < chiperTextLen)
+            if (request.EncryptedDataLen < cipherTextLen)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Encrypted data buffer is small ({request.EncryptedDataLen}, required is {chiperTextLen}).");
+                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Encrypted data buffer is small ({request.EncryptedDataLen}, required is {cipherTextLen}).");
             }
 
-            byte[] chiperText = enctyptSessionState.Update(request.PartData);
+            byte[] cipherText = encryptSessionState.Update(request.PartData);
 
             return new ValueTask<EncryptUpdateEnvelope>(new EncryptUpdateEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new EncryptData()
                 {
-                    EncryptedData = chiperText,
-                    PullEncryptedDataLen = (uint)chiperText.Length
+                    EncryptedData = cipherText,
+                    PullEncryptedDataLen = (uint)cipherText.Length
                 }
             });
         }
@@ -57,7 +57,7 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
                 Data = new EncryptData()
                 {
                     EncryptedData = Array.Empty<byte>(),
-                    PullEncryptedDataLen = chiperTextLen
+                    PullEncryptedDataLen = cipherTextLen
                 }
             });
         }

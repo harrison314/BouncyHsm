@@ -33,7 +33,7 @@ internal static class DigestUtils
     public static byte[] Compute(CKM mechanism, ReadOnlySpan<byte> data)
     {
         IDigest? digest = TryGetDigest(mechanism);
-        if (digest == null) throw new ArgumentException("mechanism is not digest mchanism.");
+        if (digest == null) throw new ArgumentException("mechanism is not digest mechanism.");
 
         digest.BlockUpdate(data);
 

@@ -14,9 +14,9 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 #if DEBUG
-        builder.Host.UseDefaultServiceProvider((hotBuilder, optios) =>
+        builder.Host.UseDefaultServiceProvider((hotBuilder, options) =>
         {
-            optios.ValidateOnBuild = true;
+            options.ValidateOnBuild = true;
         });
 #endif
         builder.Host.UseSerilog((context, services, configuration) => configuration

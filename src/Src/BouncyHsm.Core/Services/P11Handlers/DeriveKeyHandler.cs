@@ -5,7 +5,6 @@ using BouncyHsm.Core.Services.Contracts.Generators;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Security;
 using System.Threading;
@@ -68,7 +67,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
         if (this.logger.IsEnabled(LogLevel.Information))
         {
-            this.logger.LogInformation("Create new symetric key using {generator}. Key <Id: {publicKeyId}, CK_ID: {publicKeyCkId}, CK_LABEL: {publicKeyCkLabel}>",
+            this.logger.LogInformation("Create new symmetric key using {generator}. Key <Id: {publicKeyId}, CK_ID: {publicKeyCkId}, CK_LABEL: {publicKeyCkLabel}>",
                 generator.ToString(),
                 keyObject.Id,
                 BitConverter.ToString(keyObject.CkaId),
@@ -108,7 +107,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             CKM.CKM_CONCATENATE_DATA_AND_BASE => new ConcatDataAndBaseDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatDataAndBaseDeriveKeyGenerator>()),
             CKM.CKM_XOR_BASE_AND_DATA => new XorBaseAndDataDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<XorBaseAndDataDeriveKeyGenerator>()),
             CKM.CKM_CONCATENATE_BASE_AND_KEY => new ConcatBaseAndKeyDeriveKeyGenerator(await this.GetSecretKey(mechanism, memorySession, p11Session), this.loggerFactory.CreateLogger<ConcatBaseAndKeyDeriveKeyGenerator>()),
-            CKM.CKM_EXTRACT_KEY_FROM_KEY => this.CreateExtrackKeyGenerator(mechanism),
+            CKM.CKM_EXTRACT_KEY_FROM_KEY => this.CreateExtractKeyGenerator(mechanism),
 
             CKM.CKM_ECDH1_DERIVE => this.CreateEcdh1DeriveGenerator(mechanism),
 
@@ -119,9 +118,9 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         };
     }
 
-    private IDeriveKeyGenerator CreateExtrackKeyGenerator(MechanismValue mechanism)
+    private IDeriveKeyGenerator CreateExtractKeyGenerator(MechanismValue mechanism)
     {
-        this.logger.LogTrace("Entering to CreateExtrackKeyGenerator.");
+        this.logger.LogTrace("Entering to CreateExtractKeyGenerator.");
 
         try
         {
@@ -207,7 +206,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
             if (!keyObject.CkaDerive)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, "Key object from mechanism parameter can not alloved derive.");
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, "Key object from mechanism parameter can not allowed derive.");
             }
 
 

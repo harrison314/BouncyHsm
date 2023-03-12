@@ -34,8 +34,8 @@ public class T25_Decrypt
         IObjectHandle key = this.GenerateAesKey(session, 32);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_ECB);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
-        byte[] decrypted = session.Decrypt(mechanism, key, chiperText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
         Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
@@ -101,8 +101,8 @@ public class T25_Decrypt
         byte[] iv = session.GenerateRandom(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
-        byte[] decrypted = session.Decrypt(mechanism, key, chiperText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
         Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
@@ -135,8 +135,8 @@ public class T25_Decrypt
 
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_GCM, gcmParams);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
-        byte[] decrypted = session.Decrypt(mechanism, key, chiperText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
         Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
@@ -168,8 +168,8 @@ public class T25_Decrypt
             16 * 8);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CCM, ccmParams);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
-        byte[] decrypted = session.Decrypt(mechanism, key, chiperText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
         Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
@@ -195,8 +195,8 @@ public class T25_Decrypt
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS);
-        byte[] chiperText = session.Encrypt(mechanism, publicKey, plainText);
-        byte[] decrypted = session.Decrypt(mechanism, privateKey, chiperText);
+        byte[] cipherText = session.Encrypt(mechanism, publicKey, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, privateKey, cipherText);
 
         Assert.IsNotNull(decrypted);
         Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));

@@ -65,7 +65,7 @@ public class SlotFacade : ISlotFacade
 
             return new DomainResult<CreateSlotResult>.Ok(result);
         }
-        catch (BouncyHsmStorageException ex) when (ex.Message.Contains("alerady exists"))
+        catch (BouncyHsmStorageException ex) when (ex.Message.Contains("already exists"))
         {
             this.logger.LogError(ex, "Error during create slot.");
             return new DomainResult<CreateSlotResult>.InvalidInput(ex.Message);

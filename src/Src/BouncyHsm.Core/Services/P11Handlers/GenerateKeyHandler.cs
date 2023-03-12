@@ -55,7 +55,7 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
 
         if (this.logger.IsEnabled(LogLevel.Information))
         {
-            this.logger.LogInformation("Create new symetric key using {generator}. Key <Id: {publicKeyId}, CK_ID: {publicKeyCkId}, CK_LABEL: {publicKeyCkLabel}>",
+            this.logger.LogInformation("Create new symmetric key using {generator}. Key <Id: {publicKeyId}, CK_ID: {publicKeyCkId}, CK_LABEL: {publicKeyCkLabel}>",
                 generator.ToString(),
                 keyObject.Id,
                 BitConverter.ToString(keyObject.CkaId),
@@ -81,7 +81,7 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
 
         return ckMechanism switch
         {
-            CKM.CKM_GENERIC_SECRET_KEY_GEN => new GenericSeecretKeyGenerator(this.loggerFactory.CreateLogger<GenericSeecretKeyGenerator>()),
+            CKM.CKM_GENERIC_SECRET_KEY_GEN => new GenericSecretKeyGenerator(this.loggerFactory.CreateLogger<GenericSecretKeyGenerator>()),
             CKM.CKM_AES_KEY_GEN => new AesKeyGenerator(this.loggerFactory.CreateLogger<AesKeyGenerator>()),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for generate key.")

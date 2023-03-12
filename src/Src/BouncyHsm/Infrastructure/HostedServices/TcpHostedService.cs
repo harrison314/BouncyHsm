@@ -27,25 +27,25 @@ internal sealed class TcpHostedService : BackgroundService
         this.bouncyHsmSetup = bouncyHsmSetup;
         this.logger = logger;
 
-        System.Diagnostics.Debug.Assert(this.bouncyHsmSetup.Value.TcpEnspoint != null);
+        System.Diagnostics.Debug.Assert(this.bouncyHsmSetup.Value.TcpEndpoint != null);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (this.bouncyHsmSetup.Value.TcpEnspoint == null)
+        if (this.bouncyHsmSetup.Value.TcpEndpoint == null)
         {
             this.logger.LogWarning("TCP endpoint is not enabled.");
             return;
         }
 
         using Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-        socket.ReceiveTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEnspoint.ReceiveTimeout);
-        socket.SendTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEnspoint.SendTimeout);
+        socket.ReceiveTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEndpoint.ReceiveTimeout);
+        socket.SendTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEndpoint.SendTimeout);
 
-        socket.Bind(System.Net.IPEndPoint.Parse(this.bouncyHsmSetup.Value.TcpEnspoint.Endpoint));
+        socket.Bind(System.Net.IPEndPoint.Parse(this.bouncyHsmSetup.Value.TcpEndpoint.Endpoint));
         socket.Listen(100);
 
-        this.logger.LogInformation("Starting TCP listening on {bindAddress}.", this.bouncyHsmSetup.Value.TcpEnspoint.Endpoint);
+        this.logger.LogInformation("Starting TCP listening on {bindAddress}.", this.bouncyHsmSetup.Value.TcpEndpoint.Endpoint);
 
         while (!stoppingToken.IsCancellationRequested)
         {

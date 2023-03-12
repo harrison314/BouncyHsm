@@ -66,9 +66,9 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
         }
     }
 
-    public IWrapper IntoUnwraping(KeyObject keyObject)
+    public IWrapper IntoUnwrapping(KeyObject keyObject)
     {
-        this.logger.LogTrace("Entering to IntoUnwraping with object id {objectId}.", keyObject);
+        this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject);
 
         if (keyObject is RsaPrivateKeyObject rsaPrivateKeyObject)
         {
@@ -79,7 +79,7 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
                     "The operation is not allowed because objet is not authorized to decrypt (CKA_UNWRAP must by true).");
             }
 
-            BufferedChiperWrapper wrapper = new BufferedChiperWrapper(this.bufferedCipher);
+            BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
             wrapper.Init(false, rsaPrivateKeyObject.GetPrivateKey());
 
             return wrapper;
@@ -90,9 +90,9 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
         }
     }
 
-    public IWrapper IntoWraping(KeyObject keyObject)
+    public IWrapper IntoWrapping(KeyObject keyObject)
     {
-        this.logger.LogTrace("Entering to IntoWraping with object id {objectId}.", keyObject);
+        this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject);
 
         if (keyObject is RsaPublicKeyObject rsaPublicKeyObject)
         {
@@ -103,7 +103,7 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
                     "The operation is not allowed because objet is not authorized to encrypt (CKA_WRAP must by true).");
             }
 
-            BufferedChiperWrapper wrapper = new BufferedChiperWrapper(this.bufferedCipher);
+            BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
             wrapper.Init(true, rsaPublicKeyObject.GetPublicKey());
 
             return wrapper;

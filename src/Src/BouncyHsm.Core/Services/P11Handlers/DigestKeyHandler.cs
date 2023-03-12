@@ -34,12 +34,12 @@ public partial class DigestKeyHandler : IRpcRequestHandler<DigestKeyRequest, Dig
             request.ObjectHandle,
             cancellationToken);
 
-        if (storageObject is SecretKeyObject seecretKeyObject)
+        if (storageObject is SecretKeyObject secretKeyObject)
         {
-            digestSessionState.Update(seecretKeyObject.GetSecret());
+            digestSessionState.Update(secretKeyObject.GetSecret());
             this.logger.LogDebug("Update digest using key {keyId} - {keyType}.",
-                seecretKeyObject.Id,
-                seecretKeyObject);
+                secretKeyObject.Id,
+                secretKeyObject);
 
             return new DigestKeyEnvelope()
             {
@@ -48,7 +48,7 @@ public partial class DigestKeyHandler : IRpcRequestHandler<DigestKeyRequest, Dig
         }
         else
         {
-            this.logger.LogError("Object handle is not seecret key. Returns CKR_KEY_INDIGESTIBLE.");
+            this.logger.LogError("Object handle is not secret key. Returns CKR_KEY_INDIGESTIBLE.");
             return new DigestKeyEnvelope()
             {
                 Rv = (uint)CKR.CKR_KEY_INDIGESTIBLE

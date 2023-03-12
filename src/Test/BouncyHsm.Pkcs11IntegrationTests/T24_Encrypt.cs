@@ -34,9 +34,9 @@ public class T24_Encrypt
         IObjectHandle key = this.GenerateAesKey(session, 32);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_ECB);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
-        Assert.IsNotNull(chiperText);
+        Assert.IsNotNull(cipherText);
     }
 
     [TestMethod]
@@ -94,9 +94,9 @@ public class T24_Encrypt
         byte[] iv = session.GenerateRandom(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
-        Assert.IsNotNull(chiperText);
+        Assert.IsNotNull(cipherText);
     }
 
     [TestMethod]
@@ -126,9 +126,9 @@ public class T24_Encrypt
 
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_GCM, gcmParams);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
-        Assert.IsNotNull(chiperText);
+        Assert.IsNotNull(cipherText);
     }
 
     [TestMethod]
@@ -157,9 +157,9 @@ public class T24_Encrypt
             16 * 8);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CCM, ccmParams);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
-        Assert.IsNotNull(chiperText);
+        Assert.IsNotNull(cipherText);
     }
 
     [TestMethod]
@@ -182,9 +182,9 @@ public class T24_Encrypt
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS);
-        byte[] chiperText = session.Encrypt(mechanism, publicKey, plainText);
+        byte[] cipherText = session.Encrypt(mechanism, publicKey, plainText);
 
-        Assert.IsNotNull(chiperText);
+        Assert.IsNotNull(cipherText);
     }
 
     [DataTestMethod]
@@ -217,9 +217,9 @@ public class T24_Encrypt
         );
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_OAEP, mechanismParams);
-        byte[] chiperText = session.Encrypt(mechanism, publicKey, plainText);
+        byte[] cipherText = session.Encrypt(mechanism, publicKey, plainText);
 
-        Assert.IsNotNull(chiperText);
+        Assert.IsNotNull(cipherText);
     }
 
     public IObjectHandle GenerateAesKey(ISession session, int size)

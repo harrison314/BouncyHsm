@@ -80,8 +80,8 @@ internal class MemoryPersistentRepository : IPersistentRepository
 
         if (this.slots.Any(t => string.Equals(t.Token?.SerialNumber, slot.Token.SerialNumber, StringComparison.OrdinalIgnoreCase)))
         {
-            this.logger.LogError("Token serial {TokenSerial} alerady exists.", slot.Token.SerialNumber);
-            throw new BouncyHsmStorageException($"Token serial {slot.Token.SerialNumber} alerady exists.");
+            this.logger.LogError("Token serial {TokenSerial} already exists.", slot.Token.SerialNumber);
+            throw new BouncyHsmStorageException($"Token serial {slot.Token.SerialNumber} already exists.");
         }
 
         this.slots.Add(slotEntity);

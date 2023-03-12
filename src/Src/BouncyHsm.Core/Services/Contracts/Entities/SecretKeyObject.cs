@@ -135,7 +135,7 @@ public abstract class SecretKeyObject : KeyObject
         // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
         // Section 4.10
         // Is firt 3 bytes of reslut of encryption with CKA_VALUE as key and data block with all zeros bytes.
-        // CKA_CHECK_VALUE <= SymetricEncrypt(chiper: AES_CBC, key: CKA_VALUE, data: 0x0000...).Slice(0, 3)
+        // CKA_CHECK_VALUE <= SymetricEncrypt(cipher: AES_CBC, key: CKA_VALUE, data: 0x0000...).Slice(0, 3)
     }
 
     public abstract byte[] GetSecret();

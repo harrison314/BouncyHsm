@@ -81,7 +81,7 @@ public class PkcsFacade : IPkcsFacade
                     cancellationToken);
             }
 
-            this.logger.LogInformation("Succesfull imported Pkcs12 file into private key {privateKeyId}, publicKey {publicKeyId} and certificate {certificateId}.",
+            this.logger.LogInformation("Successfull imported Pkcs12 file into private key {privateKeyId}, publicKey {publicKeyId} and certificate {certificateId}.",
                 objects[0].Id,
                 objects[1].Id,
                 objects[2].Id);
@@ -100,7 +100,7 @@ public class PkcsFacade : IPkcsFacade
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Unexcepted exceptionduring import p12 file.");
+            this.logger.LogError(ex, "Unexecuted exception during import p12 file.");
             throw;
         }
     }
@@ -272,9 +272,9 @@ public class PkcsFacade : IPkcsFacade
         return new DomainResult<Guid>.Ok(certificateObject.Id);
     }
 
-    public async ValueTask<VoidDomainResult> DeteleAssociatedObjects(uint slotId, Guid objectId, CancellationToken cancellationToken)
+    public async ValueTask<VoidDomainResult> DeleteAssociatedObjects(uint slotId, Guid objectId, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Entering to DeteleAssociatedObjects with objectId {objectId}.", objectId);
+        this.logger.LogTrace("Entering to DeleteAssociatedObjects with objectId {objectId}.", objectId);
 
         StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, objectId, cancellationToken);
         if (storageObject == null)
@@ -289,13 +289,13 @@ public class PkcsFacade : IPkcsFacade
             return new VoidDomainResult.InvalidInput("Object is not PKCS object (does not contains CKA_ID).");
         }
 
-        Dictionary<CKA, IAttributeValue> serachTemplate = new Dictionary<CKA, IAttributeValue>()
+        Dictionary<CKA, IAttributeValue> searchTemplate = new Dictionary<CKA, IAttributeValue>()
         {
             {CKA.CKA_LABEL, AttributeValue.Create(storageObject.CkaLabel) },
             {CKA.CKA_ID, ckaId }
         };
 
-        FindObjectSpecification specification = new FindObjectSpecification(serachTemplate, true);
+        FindObjectSpecification specification = new FindObjectSpecification(searchTemplate, true);
         IReadOnlyList<StorageObject> foundObjects = await this.persistentRepository.FindObjects(slotId, specification, cancellationToken);
 
         foreach (StorageObject foundObject in foundObjects)
@@ -358,19 +358,19 @@ public class PkcsFacade : IPkcsFacade
     private async ValueTask<IEnumerable<T>> FindObjects<T>(uint slotId, CKO cko, CancellationToken cancellationToken, params KeyValuePair<CKA, IAttributeValue>[] additionalConstraints)
         where T : StorageObject
     {
-        this.logger.LogTrace("Enetring to FindObjects with slotId {slotId}m cko {cko}.", slotId, cko);
+        this.logger.LogTrace("Entering to FindObjects with slotId {slotId}m cko {cko}.", slotId, cko);
 
-        Dictionary<CKA, IAttributeValue> serachTemplate = new Dictionary<CKA, IAttributeValue>()
+        Dictionary<CKA, IAttributeValue> searchTemplate = new Dictionary<CKA, IAttributeValue>()
         {
             {CKA.CKA_CLASS, AttributeValue.Create((uint) cko) }
         };
 
         foreach ((CKA attrType, IAttributeValue attrValue) in additionalConstraints)
         {
-            serachTemplate.Add(attrType, attrValue);
+            searchTemplate.Add(attrType, attrValue);
         }
 
-        FindObjectSpecification specification = new FindObjectSpecification(serachTemplate, true);
+        FindObjectSpecification specification = new FindObjectSpecification(searchTemplate, true);
         IReadOnlyList<StorageObject> result = await this.persistentRepository.FindObjects(slotId, specification, cancellationToken);
         return result.OfType<T>();
     }

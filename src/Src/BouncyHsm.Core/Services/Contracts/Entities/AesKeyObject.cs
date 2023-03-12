@@ -125,15 +125,15 @@ public sealed class AesKeyObject : SecretKeyObject
 
     private byte[] CreateCheckValue(byte[] ckaValue)
     {
-        EcbBlockCipher chiper = new EcbBlockCipher(AesUtilities.CreateEngine());
-        int blockSize = chiper.GetBlockSize();
-        chiper.Init(true, new KeyParameter(ckaValue));
+        EcbBlockCipher cipher = new EcbBlockCipher(AesUtilities.CreateEngine());
+        int blockSize = cipher.GetBlockSize();
+        cipher.Init(true, new KeyParameter(ckaValue));
 
         Span<byte> vector = stackalloc byte[blockSize];
         Span<byte> outVector = stackalloc byte[blockSize];
 
         vector.Fill(0);
-        chiper.ProcessBlock(vector, outVector);
+        cipher.ProcessBlock(vector, outVector);
         return outVector.Slice(0, 3).ToArray();
     }
 }

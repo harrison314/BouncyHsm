@@ -59,8 +59,8 @@ public class StorageObjectsFacade : IStorageObjectsFacade
             Attributes = new List<StorageObjectAttribute>()
         };
 
-        StorageObjectMemento memnto = storageObject.ToMemento();
-        foreach (KeyValuePair<CKA, IAttributeValue> kvp in memnto.Values)
+        StorageObjectMemento memento = storageObject.ToMemento();
+        foreach (KeyValuePair<CKA, IAttributeValue> kvp in memento.Values)
         {
             StorageObjectAttribute attrInfo = new StorageObjectAttribute()
             {

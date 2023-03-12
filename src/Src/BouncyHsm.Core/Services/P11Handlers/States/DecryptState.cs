@@ -39,18 +39,18 @@ internal class DecryptState : ISessionState
 
     public byte[] Update(byte[] partData)
     {
-        byte[]? chiperText = this.bufferedCipher.ProcessBytes(partData);
+        byte[]? plainText = this.bufferedCipher.ProcessBytes(partData);
         this.IsUpdated = true;
 
-        return chiperText ?? Array.Empty<byte>();
+        return plainText ?? Array.Empty<byte>();
     }
 
     public byte[] DoFinal(byte[] partData)
     {
-        byte[]? chiperText = this.bufferedCipher.DoFinal(partData);
+        byte[]? plainText = this.bufferedCipher.DoFinal(partData);
         this.IsUpdated = false;
 
-        return chiperText ?? Array.Empty<byte>();
+        return plainText ?? Array.Empty<byte>();
     }
 
     public byte[] DoFinal()

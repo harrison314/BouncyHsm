@@ -38,9 +38,9 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_UNWRAP);
 
-        BufferedCipherWrapperFactory chiperFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
-        IBufferedCipherWrapper chiperWrapper = chiperFactory.CreateCipherAlgorithm(request.Mechanism);
-        Org.BouncyCastle.Crypto.IWrapper unwrapper = chiperWrapper.IntoUnwraping(wrappingKey);
+        BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
+        IBufferedCipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
+        Org.BouncyCastle.Crypto.IWrapper unwrapper = cipherWrapper.IntoUnwrapping(wrappingKey);
 
         Dictionary<CKA, IAttributeValue> template = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
         StorageObject storageObject = StorageObjectFactory.CreateEmpty(template);
@@ -49,8 +49,8 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
             storageObject.SetValue(attrType, attrValue);
         }
 
-        byte[] unwrapedKey = unwrapper.Unwrap(request.WrappedKeyData, 0, request.WrappedKeyData.Length);
-        this.SetKeyValues(storageObject, unwrapedKey);
+        byte[] unwrappedKey = unwrapper.Unwrap(request.WrappedKeyData, 0, request.WrappedKeyData.Length);
+        this.SetKeyValues(storageObject, unwrappedKey);
 
         storageObject.ReComputeAttributes();
         storageObject.Validate();
@@ -78,47 +78,47 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         };
     }
 
-    private void SetKeyValues(StorageObject storageObject, byte[] unwrapedKey)
+    private void SetKeyValues(StorageObject storageObject, byte[] unwrappedKey)
     {
         this.logger.LogTrace("Entering to SetKeyValues.");
 
         if (storageObject is SecretKeyObject secretKeyObject)
         {
-            secretKeyObject.SetSecret(unwrapedKey);
+            secretKeyObject.SetSecret(unwrappedKey);
             secretKeyObject.CkaLocal = false;
             secretKeyObject.CkaNewerExtractable = false;
             secretKeyObject.CkaAlwaysSensitive = false;
 
-            this.logger.LogDebug("Unwraped secret {secret}.", secretKeyObject);
+            this.logger.LogDebug("Unwrapped secret {secret}.", secretKeyObject);
         }
         else if (storageObject is RsaPrivateKeyObject privateKeyObject)
         {
             PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(PkcsObjectIdentifiers.RsaEncryption),
-                Asn1Object.FromByteArray(unwrapedKey));
+                Asn1Object.FromByteArray(unwrappedKey));
 
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymetricParams = PrivateKeyFactory.CreateKey(pki);
-            privateKeyObject.SetPrivateKey(asymetricParams);
+            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
+            privateKeyObject.SetPrivateKey(asymmetricParams);
 
             privateKeyObject.CkaLocal = false;
             privateKeyObject.CkaNewerExtractable = false;
             privateKeyObject.CkaAlwaysSensitive = false;
 
-            this.logger.LogDebug("Unwraped private key {privateKey}.", privateKeyObject);
+            this.logger.LogDebug("Unwrapped private key {privateKey}.", privateKeyObject);
         }
         else if (storageObject is EcdsaPrivateKeyObject ecPrivateKeyObject)
         {
             DerObjectIdentifier curveNameOid = EcdsaUtils.ParseEcParamsOid(ecPrivateKeyObject.CkaEcParams);
             PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, curveNameOid),
-                Asn1Object.FromByteArray(unwrapedKey));
+                Asn1Object.FromByteArray(unwrappedKey));
 
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymetricParams = PrivateKeyFactory.CreateKey(pki);
-            ecPrivateKeyObject.SetPrivateKey(asymetricParams);
+            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
+            ecPrivateKeyObject.SetPrivateKey(asymmetricParams);
 
             ecPrivateKeyObject.CkaLocal = false;
             ecPrivateKeyObject.CkaNewerExtractable = false;
             ecPrivateKeyObject.CkaAlwaysSensitive = false;
 
-            this.logger.LogDebug("Unwraped private key {privateKey}.", ecPrivateKeyObject);
+            this.logger.LogDebug("Unwrapped private key {privateKey}.", ecPrivateKeyObject);
         }
         else
         {

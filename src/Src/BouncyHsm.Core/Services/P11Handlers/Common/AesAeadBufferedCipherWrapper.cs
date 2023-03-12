@@ -35,7 +35,7 @@ internal class AesAeadBufferedCipherWrapper : IBufferedCipherWrapper
     public IBufferedCipher IntoEncryption(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoEncryption with object id {objectId}.", keyObject);
-        this.bufferedCipher.Init(true, this.CreateChiperParams(BufferedCipherWrapperOperation.CKA_ENCRYPT, keyObject));
+        this.bufferedCipher.Init(true, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_ENCRYPT, keyObject));
 
         return this.bufferedCipher;
     }
@@ -43,33 +43,33 @@ internal class AesAeadBufferedCipherWrapper : IBufferedCipherWrapper
     public IBufferedCipher IntoDecryption(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoDecryption with object id {objectId}.", keyObject);
-        this.bufferedCipher.Init(false, this.CreateChiperParams(BufferedCipherWrapperOperation.CKA_DECRYPT, keyObject));
+        this.bufferedCipher.Init(false, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_DECRYPT, keyObject));
 
         return this.bufferedCipher;
     }
 
-    public IWrapper IntoWraping(KeyObject keyObject)
+    public IWrapper IntoWrapping(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoWraping with object id {objectId}.", keyObject);
-        BufferedChiperWrapper wrapper = new BufferedChiperWrapper(this.bufferedCipher);
-        wrapper.Init(true, this.CreateChiperParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject));
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+        wrapper.Init(true, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject));
 
         return wrapper;
     }
 
-    public IWrapper IntoUnwraping(KeyObject keyObject)
+    public IWrapper IntoUnwrapping(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoUnwraping with object id {objectId}.", keyObject);
 
-        BufferedChiperWrapper wrapper = new BufferedChiperWrapper(this.bufferedCipher);
-        wrapper.Init(false, this.CreateChiperParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject));
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+        wrapper.Init(false, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject));
 
         return wrapper;
     }
 
-    private ICipherParameters CreateChiperParams(BufferedCipherWrapperOperation operation, KeyObject keyObject)
+    private ICipherParameters CreateCipherParams(BufferedCipherWrapperOperation operation, KeyObject keyObject)
     {
-        this.logger.LogTrace("Entering to CreateChiperParams.");
+        this.logger.LogTrace("Entering to CreateCipherParams.");
 
         if (keyObject is AesKeyObject aesKeyObject)
         {

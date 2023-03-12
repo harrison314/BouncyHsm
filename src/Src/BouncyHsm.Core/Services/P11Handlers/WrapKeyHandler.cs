@@ -38,18 +38,18 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_WRAP);
         this.CheckExtractable(key);
 
-        BufferedCipherWrapperFactory chiperFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
-        IBufferedCipherWrapper chiperWrapper = chiperFactory.CreateCipherAlgorithm(request.Mechanism);
-        Org.BouncyCastle.Crypto.IWrapper wrapper = chiperWrapper.IntoWraping(wrappingKey);
+        BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
+        IBufferedCipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
+        Org.BouncyCastle.Crypto.IWrapper wrapper = cipherWrapper.IntoWrapping(wrappingKey);
 
         byte[] keyData = this.EncodeKey(key);
-        byte[] wrapedKey = wrapper.Wrap(keyData, 0, keyData.Length);
+        byte[] wrappedKey = wrapper.Wrap(keyData, 0, keyData.Length);
 
         if (request.IsPtrWrappedKeySet)
         {
-            if (request.PulWrappedKeyLen < wrapedKey.Length)
+            if (request.PulWrappedKeyLen < wrappedKey.Length)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Wrapped data buffer is small ({request.PulWrappedKeyLen}, required is {wrapedKey.Length}).");
+                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Wrapped data buffer is small ({request.PulWrappedKeyLen}, required is {wrappedKey.Length}).");
             }
 
             return new WrapKeyEnvelope()
@@ -57,8 +57,8 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
                 Rv = (uint)CKR.CKR_OK,
                 Data = new WrapKeyData()
                 {
-                    PulWrappedKeyLen = (uint)wrapedKey.Length,
-                    WrappedKeyData = wrapedKey
+                    PulWrappedKeyLen = (uint)wrappedKey.Length,
+                    WrappedKeyData = wrappedKey
                 }
             };
         }
@@ -69,7 +69,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
                 Rv = (uint)CKR.CKR_OK,
                 Data = new WrapKeyData()
                 {
-                    PulWrappedKeyLen = (uint)wrapedKey.Length,
+                    PulWrappedKeyLen = (uint)wrappedKey.Length,
                     WrappedKeyData = Array.Empty<byte>()
                 }
             };

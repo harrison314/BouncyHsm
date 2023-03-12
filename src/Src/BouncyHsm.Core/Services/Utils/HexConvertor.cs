@@ -36,7 +36,7 @@ public static class HexConvertor
         return array;
     }
 
-    public static bool TryGetBytes(ReadOnlySpan<char> hexValue, Span<byte> ouput, out int writeBytes)
+    public static bool TryGetBytes(ReadOnlySpan<char> hexValue, Span<byte> output, out int writeBytes)
     {
         if (hexValue.Length > 2 && hexValue[0] == '0' && (hexValue[1] == 'x' || hexValue[1] == 'X'))
         {
@@ -49,13 +49,13 @@ public static class HexConvertor
         }
 
         int size = hexValue.Length / 2;
-        if (ouput.Length < size)
+        if (output.Length < size)
         {
             writeBytes = 0;
             return false;
         }
 
-        Span<byte> array = ouput.Slice(0, size);
+        Span<byte> array = output.Slice(0, size);
         for (int i = 0; i < array.Length; i++)
         {
             array[i] = (byte)((GetHexVal(hexValue[i << 1]) << 4) + (GetHexVal(hexValue[(i << 1) + 1])));
@@ -131,20 +131,20 @@ public static class HexConvertor
         string unicode = $"0000{((int)hex):X}";
         unicode = unicode.Substring(unicode.Length - 4);
 
-        string charactedDescription;
+        string characterDescription;
         if (char.IsLetterOrDigit(hex) || char.IsPunctuation(hex) || char.IsSymbol(hex))
         {
-            charactedDescription = $"'{hex}' (\\u{unicode})";
+            characterDescription = $"'{hex}' (\\u{unicode})";
         }
         else if (char.IsWhiteSpace(hex))
         {
-            charactedDescription = $"whitespace (\\u{unicode})";
+            characterDescription = $"whitespace (\\u{unicode})";
         }
         else
         {
-            charactedDescription = $"\\u{unicode}";
+            characterDescription = $"\\u{unicode}";
         }
 
-        throw new ArgumentException($"The argument hexValue contains non-hexadecimal character: {charactedDescription}.");
+        throw new ArgumentException($"The argument hexValue contains non-hexadecimal character: {characterDescription}.");
     }
 }

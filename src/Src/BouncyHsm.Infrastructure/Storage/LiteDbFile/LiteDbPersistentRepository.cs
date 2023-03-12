@@ -92,8 +92,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             }
             catch (LiteException ex) when (ex.Message.Contains("IX_SlotEntity_TokenSerial"))
             {
-                this.logger.LogError(ex, "Token serial {TokenSerial} alerady exists.", slot.Token.SerialNumber);
-                throw new BouncyHsmStorageException($"Token serial {slot.Token.SerialNumber} alerady exists.", ex);
+                this.logger.LogError(ex, "Token serial {TokenSerial} already exists.", slot.Token.SerialNumber);
+                throw new BouncyHsmStorageException($"Token serial {slot.Token.SerialNumber} already exists.", ex);
             }
 
             collection.Insert(slotModel);
@@ -430,8 +430,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             this.logger.LogDebug("Init index {indexName}.", "IX_StorageObjectInfo_SlotId");
         }
 
-        ILiteCollection<SlotModel> slotCoollection = this.database.GetCollection<SlotModel>();
-        if (slotCoollection.EnsureIndex("IX_SlotEntity_TokenSerial", t => t.Token.SerialNumber, true))
+        ILiteCollection<SlotModel> slotCollection = this.database.GetCollection<SlotModel>();
+        if (slotCollection.EnsureIndex("IX_SlotEntity_TokenSerial", t => t.Token.SerialNumber, true))
         {
             this.logger.LogDebug("Init index {indexName}.", "IX_SlotEntity_TokenSerial");
         }

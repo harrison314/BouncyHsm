@@ -5,7 +5,6 @@
 #include "rpc/rpc.h"
 
 
-
 typedef struct _globalContext {
 	char appIdRandomChars[25];
 	char appIdName[50];

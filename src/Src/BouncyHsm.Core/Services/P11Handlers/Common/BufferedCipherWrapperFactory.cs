@@ -104,7 +104,7 @@ internal class BufferedCipherWrapperFactory
 
             if (gcmParams.IvBits != 0 && gcmParams.Iv != null && gcmParams.Iv.Length * 8 != gcmParams.IvBits)
             {
-                this.logger.LogWarning("Ignore IvBits in CkGcmParams. IV has {ivLen} bit lenght, iv bits is {ivBits}.",
+                this.logger.LogWarning("Ignore IvBits in CkGcmParams. IV has {ivLen} bit length, iv bits is {ivBits}.",
                     gcmParams.Iv.Length * 8,
                     gcmParams.IvBits);
             }
@@ -162,35 +162,35 @@ internal class BufferedCipherWrapperFactory
     {
         try
         {
-            Ckp_CkRsaPkcsOaepParams rsaPkcsOaepParamas = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkRsaPkcsOaepParams>(mechanism.MechanismParamMp);
+            Ckp_CkRsaPkcsOaepParams rsaPkcsOaepParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkRsaPkcsOaepParams>(mechanism.MechanismParamMp);
 
             if (this.logger.IsEnabled(LogLevel.Trace))
             {
                 this.logger.LogTrace("Using RSA OAEP params with hashAlg {hashAlg}, mgf {mgf}, source {source}, source data len {sourceDataLen}.",
-                    (CKM)rsaPkcsOaepParamas.HashAlg,
-                    (CKG)rsaPkcsOaepParamas.Mgf,
-                    (CKZ)rsaPkcsOaepParamas.Source,
-                    rsaPkcsOaepParamas.SourceData?.Length ?? 0);
+                    (CKM)rsaPkcsOaepParams.HashAlg,
+                    (CKG)rsaPkcsOaepParams.Mgf,
+                    (CKZ)rsaPkcsOaepParams.Source,
+                    rsaPkcsOaepParams.SourceData?.Length ?? 0);
             }
 
 
-            IDigest? hashAlg = DigestUtils.TryGetDigest((CKM)rsaPkcsOaepParamas.HashAlg);
+            IDigest? hashAlg = DigestUtils.TryGetDigest((CKM)rsaPkcsOaepParams.HashAlg);
             if (hashAlg == null)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid hashAlg {(CKM)rsaPkcsOaepParamas.Mgf} in CK_RSA_PKCS_OAEP_PARAMS (mechanism CKM_RSA_PKCS_OAEP).");
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid hashAlg {(CKM)rsaPkcsOaepParams.Mgf} in CK_RSA_PKCS_OAEP_PARAMS (mechanism CKM_RSA_PKCS_OAEP).");
             }
 
-            IDigest? mgf = DigestUtils.TryGetDigest((CKG)rsaPkcsOaepParamas.Mgf);
+            IDigest? mgf = DigestUtils.TryGetDigest((CKG)rsaPkcsOaepParams.Mgf);
             if (mgf == null)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid mgf {(CKG)rsaPkcsOaepParamas.Mgf} in CK_RSA_PKCS_OAEP_PARAMS (mechanism CKM_RSA_PKCS_OAEP).");
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid mgf {(CKG)rsaPkcsOaepParams.Mgf} in CK_RSA_PKCS_OAEP_PARAMS (mechanism CKM_RSA_PKCS_OAEP).");
             }
 
             RsaBlindedEngine rsa = new RsaBlindedEngine();
-            OaepEncoding rsaOpeap = new OaepEncoding(rsa, hashAlg, mgf, rsaPkcsOaepParamas.SourceData);
-            BufferedAsymmetricBlockCipher bufferedChiper = new BufferedAsymmetricBlockCipher(rsaOpeap);
+            OaepEncoding rsaOpeap = new OaepEncoding(rsa, hashAlg, mgf, rsaPkcsOaepParams.SourceData);
+            BufferedAsymmetricBlockCipher bufferedCipher = new BufferedAsymmetricBlockCipher(rsaOpeap);
 
-            return new RsaBufferedCipherWrapper(bufferedChiper,
+            return new RsaBufferedCipherWrapper(bufferedCipher,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<RsaBufferedCipherWrapper>());
         }

@@ -52,7 +52,7 @@ internal class AesDeriveKeyGenerator : IDeriveKeyGenerator
         SecretKeyObject sBaseKey = (SecretKeyObject)baseKey;
 
 
-        ICipherParameters chiperParams = this.CreateChiperParams(sBaseKey);
+        ICipherParameters cipherParams = this.CreateCipherParams(sBaseKey);
 
         SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(this.template);
         generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
@@ -69,7 +69,7 @@ internal class AesDeriveKeyGenerator : IDeriveKeyGenerator
         }
 
 
-        byte[] secret = this.CreateSecret(chiperParams);
+        byte[] secret = this.CreateSecret(cipherParams);
 
         this.logger.LogInformation("Derived secret with length {secretLen}.", secret.Length);
 
@@ -88,12 +88,12 @@ internal class AesDeriveKeyGenerator : IDeriveKeyGenerator
         return generalSecretKeyObject;
     }
 
-    private byte[] CreateSecret(ICipherParameters chiperParams)
+    private byte[] CreateSecret(ICipherParameters cipherParams)
     {
         this.logger.LogTrace("Entering to CreateSecret");
 
         this.bufferedCipher.Reset();
-        this.bufferedCipher.Init(true, chiperParams);
+        this.bufferedCipher.Init(true, cipherParams);
 
         return this.bufferedCipher.DoFinal(this.data);
     }
@@ -103,9 +103,9 @@ internal class AesDeriveKeyGenerator : IDeriveKeyGenerator
         return $"AesDeriveKeyGenerator with {this.bufferedCipher.AlgorithmName}";
     }
 
-    private ICipherParameters CreateChiperParams(KeyObject keyObject)
+    private ICipherParameters CreateCipherParams(KeyObject keyObject)
     {
-        this.logger.LogTrace("Entering to CreateChiperParams.");
+        this.logger.LogTrace("Entering to CreateCipherParams.");
 
         if (keyObject is AesKeyObject aesKeyObject)
         {

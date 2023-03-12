@@ -90,7 +90,7 @@ public static class Program
         byte[] iv = session.GenerateRandom(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
-        byte[] chiperText = session.Encrypt(mechanism, key, plainText);
-        byte[] decrypted = session.Decrypt(mechanism, key, chiperText);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
+        byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
     }
 }

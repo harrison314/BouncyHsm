@@ -39,7 +39,7 @@ public class T27_UnwrapKey
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
 
-        IObjectHandle unwrapedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
     }
 
     [TestMethod]
@@ -68,7 +68,7 @@ public class T27_UnwrapKey
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_GCM, gcmParams);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
-        IObjectHandle unwrapedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
     }
 
     [TestMethod]
@@ -97,7 +97,7 @@ public class T27_UnwrapKey
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_GCM, gcmParams);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
-        IObjectHandle unwrapedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateEcKeyTemplate(session));
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateEcKeyTemplate(session));
     }
 
     [TestMethod]
@@ -126,7 +126,7 @@ public class T27_UnwrapKey
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CCM, ccmParams);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
-        IObjectHandle unwrapedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
     }
 
     [TestMethod]
@@ -151,7 +151,7 @@ public class T27_UnwrapKey
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS);
         byte[] wrappedKey = session.WrapKey(mechanism, publicKey, aesKey);
-        IObjectHandle unwrapedKey = session.UnwrapKey(mechanism, privateKey, wrappedKey, this.GetAesKeytamplate(session));
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, privateKey, wrappedKey, this.GetAesKeytamplate(session));
     }
 
     [DataTestMethod]
@@ -186,7 +186,7 @@ public class T27_UnwrapKey
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_OAEP, mechanismParams);
         byte[] wrappedKey = session.WrapKey(mechanism, publicKey, aesKey);
-        IObjectHandle unwrapedKey = session.UnwrapKey(mechanism, privateKey, wrappedKey, this.GetAesKeytamplate(session));
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, privateKey, wrappedKey, this.GetAesKeytamplate(session));
     }
 
     public IObjectHandle GenerateAesKey(ISession session, int size)

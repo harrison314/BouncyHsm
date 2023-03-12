@@ -114,7 +114,7 @@ internal class WrapperSignerFactory
 
             if (generalParams.Value == 0)
             {
-                this.logger.LogWarning("CK_MacGeneralParams with value 0 for mechanism {MechanismType}. Signa and verify returns nonsensical results.",
+                this.logger.LogWarning("CK_MacGeneralParams with value 0 for mechanism {MechanismType}. Sign and verify returns nonsensical results.",
                     (CKM)mechanism.MechanismType);
             }
 

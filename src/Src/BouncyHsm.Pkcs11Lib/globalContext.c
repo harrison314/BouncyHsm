@@ -122,11 +122,11 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 		log_message(LOG_LEVEL_ERROR, "Can not open /proc/self/comm.");
 		return false;
 	}
-	size_t readed = fread(buff, sizeof(char), maxSize - 1, procFile);
-	buff[readed] = 0;
+	size_t readChars = fread(buff, sizeof(char), maxSize - 1, procFile);
+	buff[readChars] = 0;
 	fclose(f);
 
-	return (readed > 0);
+	return (readChars > 0);
 }
 #endif
 
@@ -341,7 +341,6 @@ void GlobalContextInit()
 	strcpy_s(globalContext.server, sizeof(globalContext.server), BOUNCY_HSM_DEFAULT_SERVER);
 	globalContext.port = BOUNCY_HSM_DEFAULT_PORT;
 
-	//TODO spravit nastavenia
 	logger_init(LOG_LEVEL_ERROR_NAME, LOG_TARGET_ERR_CONSOLE);
 
 	char* cfgString;
@@ -386,5 +385,5 @@ void GlobalContextInit()
 	log_message(LOG_LEVEL_INFO, "Successful initialized PKCS11 library.");
 	log_message(LOG_LEVEL_INFO, "Config - pid %i AppName: %s Nonce: %s", globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
 	log_message(LOG_LEVEL_INFO, "Config - Server: %s Port: %i", globalContext.server, globalContext.port);
-	}
+ }
 

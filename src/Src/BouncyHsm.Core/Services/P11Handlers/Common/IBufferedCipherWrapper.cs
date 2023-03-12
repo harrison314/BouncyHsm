@@ -7,9 +7,9 @@ internal interface IBufferedCipherWrapper
 {
     IBufferedCipher IntoEncryption(KeyObject keyObject);
 
-    IWrapper IntoWraping(KeyObject keyObject);
+    IWrapper IntoWrapping(KeyObject keyObject);
 
     IBufferedCipher IntoDecryption(KeyObject keyObject);
 
-    IWrapper IntoUnwraping(KeyObject keyObject);
+    IWrapper IntoUnwrapping(KeyObject keyObject);
 }

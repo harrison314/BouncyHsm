@@ -72,7 +72,7 @@ public class PkcsController : Controller
     {
         this.logger.LogTrace("Entering to DeleteAssociatedObject with slotId {slotId}, objectId {objectId}.", slotId, objectId);
 
-        VoidDomainResult result = await this.pkcsFacade.DeteleAssociatedObjects(slotId, objectId, this.HttpContext.RequestAborted);
+        VoidDomainResult result = await this.pkcsFacade.DeleteAssociatedObjects(slotId, objectId, this.HttpContext.RequestAborted);
 
         return result.ToActionResult();
     }

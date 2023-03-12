@@ -15,7 +15,7 @@ public class OneKeyPkcs12
         get;
     }
 
-    public X509CertificateWrapper[] CetificateChain
+    public X509CertificateWrapper[] CertificateChain
     {
         get;
     }
@@ -41,7 +41,7 @@ public class OneKeyPkcs12
 
         this.PrivateKey = store.GetKey(alias).Key;
         this.Certificate = X509CertificateWrapper.FromInstance(store.GetCertificate(alias).Certificate);
-        this.CetificateChain = this.TranslateChain(store.GetCertificateChain(alias));
+        this.CertificateChain = this.TranslateChain(store.GetCertificateChain(alias));
     }
 
     private void CheckStore(Pkcs12Store store)

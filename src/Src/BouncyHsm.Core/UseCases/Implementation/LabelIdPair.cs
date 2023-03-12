@@ -74,7 +74,7 @@ internal struct LabelIdPair : IEquatable<LabelIdPair>
         return hc;
     }
 
-    private static int GethashCodeInternal(ReadOnlySpan<char> data)
+    private static int GetHashCodeInternal(ReadOnlySpan<char> data)
     {
         int i = data.Length;
         int hc = i + 1;

@@ -41,7 +41,7 @@ internal class P12ObjectsGenerator
         {
             CKK.CKK_RSA => new RsaPrivateKeyObject(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN),
             CKK.CKK_ECDSA => new EcdsaPrivateKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN),
-            _ => throw new BouncyHsmInvalidInputException("Unsuported key type in P12.")
+            _ => throw new BouncyHsmInvalidInputException("Unsupported key type in P12 file.")
         };
 
         privateKeyObject.SetPrivateKey(this.p12.PrivateKey);
@@ -72,7 +72,7 @@ internal class P12ObjectsGenerator
         {
             CKK.CKK_RSA => new RsaPublicKeyObject(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN),
             CKK.CKK_ECDSA => new EcdsaPublicKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN),
-            _ => throw new BouncyHsmInvalidInputException("Unsuported key type in P12.")
+            _ => throw new BouncyHsmInvalidInputException("Unsupported key type in P12 file.")
         };
 
         publicKeyObject.SetPublicKey(this.p12.Certificate.ExtractPublicKey());
@@ -110,7 +110,7 @@ internal class P12ObjectsGenerator
 
     public X509CertificateObject[] GetCertificateChain()
     {
-        X509CertificateWrapper[] chain = this.p12.CetificateChain;
+        X509CertificateWrapper[] chain = this.p12.CertificateChain;
         if (chain.Length == 0)
         {
             return Array.Empty<X509CertificateObject>();

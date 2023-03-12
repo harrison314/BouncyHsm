@@ -44,25 +44,25 @@ internal class EncryptState : ISessionState
 
     public byte[] Update(byte[] partData)
     {
-        byte[]? chiperText = this.bufferedCipher.ProcessBytes(partData);
+        byte[]? cipherText = this.bufferedCipher.ProcessBytes(partData);
         this.IsUpdated = true;
 
-        return chiperText ?? Array.Empty<byte>();
+        return cipherText ?? Array.Empty<byte>();
     }
 
     public byte[] DoFinal(byte[] partData)
     {
-        byte[]? chiperText = this.bufferedCipher.DoFinal(partData);
+        byte[]? cipherText = this.bufferedCipher.DoFinal(partData);
         this.IsUpdated = false;
 
-        return chiperText ?? Array.Empty<byte>();
+        return cipherText ?? Array.Empty<byte>();
     }
 
     public byte[] DoFinal()
     {
         if (!this.IsUpdated)
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: Chiper empty data.");
+            throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Error: Cipher empty data.");
         }
 
         return this.bufferedCipher.DoFinal() ?? Array.Empty<byte>();

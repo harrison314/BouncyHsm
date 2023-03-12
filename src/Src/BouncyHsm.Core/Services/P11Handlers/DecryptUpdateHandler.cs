@@ -28,13 +28,13 @@ public partial class DecryptUpdateHandler : IRpcRequestHandler<DecryptUpdateRequ
         DecryptState decryptSessionState = p11Session.State.Ensure<DecryptState>();
         this.logger.LogDebug("Decrypt using {sessionState}.", decryptSessionState);
 
-        uint chiperTextLen = decryptSessionState.GetUpdateSize(request.EncryptedData);
+        uint plainTextLen = decryptSessionState.GetUpdateSize(request.EncryptedData);
 
         if (request.IsDataPtrSet)
         {
-            if (request.PullDataLen < chiperTextLen)
+            if (request.PullDataLen < plainTextLen)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Decrypt data buffer is small ({request.PullDataLen}, required is {chiperTextLen}).");
+                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Decrypt data buffer is small ({request.PullDataLen}, required is {plainTextLen}).");
             }
 
             byte[] plainText = decryptSessionState.Update(request.EncryptedData);
@@ -57,7 +57,7 @@ public partial class DecryptUpdateHandler : IRpcRequestHandler<DecryptUpdateRequ
                 Data = new DecryptData()
                 {
                     Data = Array.Empty<byte>(),
-                    PullDataLen = chiperTextLen
+                    PullDataLen = plainTextLen
                 }
             });
         }

@@ -3,7 +3,7 @@ namespace BouncyHsm.Services.Configuration;
 
 public class BouncyHsmSetup
 {
-    public TcpEnspointSetup? TcpEnspoint
+    public TcpEndpointSetup? TcpEndpoint
     {
         get;
         set;
