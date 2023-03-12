@@ -25,7 +25,7 @@ or during network calls.
 * [Suports mechanisms](/Doc/SuportedAlgorithms.md)
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permision configuration).
-* _BouncyHsm_ runs on _Raspberry Pi Zero 2 W_.
+* _BouncyHsm_ runs on _Raspberry Pi Zero 2 W_, or as [Windows service](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-6.0&tabs=netcore-cli).
 
 ## Contributing and issues
 Pull requests are welcome. If you are not sure about the change, open an issue first.

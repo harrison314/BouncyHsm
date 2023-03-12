@@ -2,6 +2,7 @@
 using BouncyHsm.Infrastructure;
 using BouncyHsm.Infrastructure.Application;
 using BouncyHsm.Services.Configuration;
+using Microsoft.Extensions.Hosting.WindowsServices;
 using Serilog;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -12,7 +13,14 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        WebApplicationOptions webApplicationOptions = new WebApplicationOptions()
+        {
+            Args = args,
+            ContentRootPath = WindowsServiceHelpers.IsWindowsService()
+                                     ? AppContext.BaseDirectory : default
+        };
+
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(webApplicationOptions);
 #if DEBUG
         builder.Host.UseDefaultServiceProvider((hotBuilder, options) =>
         {
@@ -48,6 +56,7 @@ public class Program
             cfg.UseRouteNameAsOperationId = true;
         });
 
+        builder.Host.UseWindowsService();
 
         builder.Services.AddP11Handlers();
         builder.Services.AddHostedService<Infrastructure.HostedServices.TcpHostedService>();
