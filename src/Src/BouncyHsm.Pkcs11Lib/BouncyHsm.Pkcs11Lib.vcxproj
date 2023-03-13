@@ -147,7 +147,7 @@
     <ClInclude Include="bouncy-pkcs11.h" />
     <ClInclude Include="globalContext.h" />
     <ClInclude Include="logger.h" />
-    <ClInclude Include="platform_helper.h" />
+    <ClInclude Include="platformHelper.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="rpc\rpc.h" />
     <ClInclude Include="rpc\tcpTransport.h" />
@@ -159,6 +159,7 @@
     <ClCompile Include="bouncy-pkcs11.c" />
     <ClCompile Include="globalContext.c" />
     <ClCompile Include="logger.c" />
+    <ClCompile Include="platformHelper.c" />
     <ClCompile Include="rpc\rpc.c" />
     <ClCompile Include="rpc\tcpTransport.c" />
     <ClCompile Include="timer.c" />

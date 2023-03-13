@@ -1,11 +1,16 @@
 #ifndef TCP_TRANSPORT_HEADER
 #define TCP_TRANSPORT_HEADER
 
-
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
+#else
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
 
 int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_size);
 int sock_flush(void* user_ctx);
@@ -14,7 +19,11 @@ int readclose(void* user_ctx);
 
 
 typedef struct _sockContext {
+#ifdef _WIN32
     SOCKET s;
+#else
+    int s;
+#endif
     struct sockaddr_in server;
     int isInitialized;
 

@@ -134,11 +134,13 @@ static int cmph_read_nullable_binary(cmp_ctx_t* ctx, Binary** ptr)
 
 static int nmrpc_flush_empty(void* user_ctx)
 {
+    USE_VARIABLE(user_ctx);
     return NMRPC_OK;
 }
 
 static int nmrpc_close_empty(void* user_ctx)
 {
+    USE_VARIABLE(user_ctx);
     return NMRPC_OK;
 }
 

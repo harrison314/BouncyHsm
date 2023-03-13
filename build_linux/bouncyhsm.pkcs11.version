@@ -1,0 +1,6 @@
+BOUNCYHSMPKCS11 {
+  global:
+	C_*;
+  local:
+	*;
+};

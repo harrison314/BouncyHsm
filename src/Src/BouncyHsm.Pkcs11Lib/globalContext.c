@@ -7,7 +7,7 @@
 
 #ifndef _WIN32
 #define FMT_HEADER_ONLY
-#include <fmt/format.h>
+//#include <fmt/format.h>
 #endif // !_WIN32
 
 #ifdef _WIN32
@@ -17,6 +17,7 @@
 #include <unistd.h>
 #endif // __WIN32
 
+#include "platformHelper.h"
 
 void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
 {
@@ -122,9 +123,9 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 		log_message(LOG_LEVEL_ERROR, "Can not open /proc/self/comm.");
 		return false;
 	}
-	size_t readChars = fread(buff, sizeof(char), maxSize - 1, procFile);
-	buff[readChars] = 0;
-	fclose(f);
+	size_t readChars = fread(buffer, sizeof(char), maxSize - 1, procFile);
+	buffer[readChars] = 0;
+	fclose(procFile);
 
 	return (readChars > 0);
 }
@@ -369,7 +370,11 @@ void GlobalContextInit()
 		if (portBufferSize != 0)
 		{
 			int portValue;
+			#ifdef _WIN32
 			int rv = sscanf_s(portBuffer, "%i", &portValue);
+			#else
+			int rv = sscanf(portBuffer, "%i", &portValue);
+			#endif
 			if (rv == 0)
 			{
 				log_message(LOG_LEVEL_ERROR, "Error during reading Port. Is not number.");

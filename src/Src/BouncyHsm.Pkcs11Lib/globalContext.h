@@ -26,4 +26,4 @@ void GlobalContextInit();
 #define BOUNCY_HSM_DEFAULT_PORT 8765
 #define PKCS11_LIB_DESCRIPTION "BouncyHsm.Pkcs11 library"
 
-#endif GLOBAL_CONTEXT
+#endif //GLOBAL_CONTEXT

@@ -165,11 +165,13 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
             static int nmrpc_flush_empty(void* user_ctx)
             {
+                USE_VARIABLE(user_ctx);
                 return NMRPC_OK;
             }
 
             static int nmrpc_close_empty(void* user_ctx)
             {
+                USE_VARIABLE(user_ctx);
                 return NMRPC_OK;
             }
 

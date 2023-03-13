@@ -1,31 +1,43 @@
-#include "logger.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
 #ifdef _WIN32
 #include <Windows.h>
+#include <stdio.h>
 #endif
 
 #ifdef __linux__
-#include<syslog.h>
+#define __STDC_WANT_LIB_EXT2__ 1
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <syslog.h>
+#include <stdarg.h>
 #endif
 
-#include "platform_helper.h"
+#include "logger.h"
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include "platformHelper.h"
+#define USE_VARIABLE(x) (void)(x)
 
 static void send_log_message_None(int level, const char* levelText, const char* message)
 {
-
+   USE_VARIABLE(level);
+   USE_VARIABLE(levelText);
+   USE_VARIABLE(message);
 }
 
 static void send_log_message_console(int level, const char* levelText, const char* message)
 {
+	USE_VARIABLE(level);
+
 	printf("%s: %s" NEW_LINE_STR, levelText, message);
 	fflush(stdout);
 }
 
 static void send_log_message_errconsole(int level, const char* levelText, const char* message)
 {
+	USE_VARIABLE(level);
+
 	fprintf(stderr, "%s: %s" NEW_LINE_STR, levelText, message);
 	fflush(stderr);
 }
@@ -33,6 +45,8 @@ static void send_log_message_errconsole(int level, const char* levelText, const 
 #ifdef _WIN32
 static void send_log_message_debug_static256(int level, const char* levelText, const char* message)
 {
+	USE_VARIABLE(level);
+
 	char buffer[256];
 	int rc = sprintf_s(buffer, sizeof(buffer), "%s: %s", levelText, message);
 	if (rc == -1)
@@ -69,16 +83,22 @@ static void send_log_message_debug(int level, const char* levelText, const char*
 
 	OutputDebugStringA(buffer);
 	free(buffer);
+#else
+    USE_VARIABLE(level);
+    USE_VARIABLE(levelText);
+    USE_VARIABLE(message);
 #endif
 }
 
 static void send_log_message_syslog(int level, const char* levelText, const char* message)
 {
 #ifdef __linux__
+    USE_VARIABLE(levelText);
+
 	int syslogLevel = LOG_DEBUG;
 	if (level == LOG_LEVEL_INFO)
 	{
-		syslogLevel = INFOLOG_INFO;
+		syslogLevel = LOG_INFO;
 	}
 	else if (level == LOG_LEVEL_ERROR)
 	{
@@ -203,7 +223,7 @@ void log_message(int level, const char* format, ...)
 	va_list ap;
 	char* strp = NULL;
 	va_start(ap, format);
-	int retval = vasprintf(&strp, format, ap);
+	vasprintf(&strp, format, ap);
 	va_end(ap);
 
 	const char* levelText = "NONE";
