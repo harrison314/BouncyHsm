@@ -1,15 +1,15 @@
 <Project>
  <PropertyGroup>
-  <Authors>harrison314 - Jozef Gajdoö</Authors>
+  <Authors>harrison314 - Jozef Gajdos</Authors>
   <Description></Description>
   <RepositoryType>git</RepositoryType>
   <PackageTags></PackageTags>
   <RepositoryUrl></RepositoryUrl>
   <PackageProjectUrl></PackageProjectUrl>
   <Product>BouncyHsm</Product>
-  <Copyright>Copyright (c) $([System.DateTime]::Now.ToString('yyyy')), Jozef Gajdoö</Copyright>
+  <Copyright>Copyright (c) $([System.DateTime]::Now.ToString('yyyy')), Jozef Gajdo≈°</Copyright>
   <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-  <Version>0.1.0</Version>
+  <Version>0.1.1</Version>
  </PropertyGroup>
 </Project>
