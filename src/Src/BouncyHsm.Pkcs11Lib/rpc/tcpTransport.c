@@ -22,7 +22,7 @@
 
 #define USE_VARIABLE(x) (void)(x)
 
-#ifdef __WIN32
+#ifdef _WIN32
 static int isGlobalInit = 0;
 
 void SockContext_init(SockContext_t* ctx, const char* host, int port)
@@ -90,7 +90,7 @@ int sock_flush(void* user_ctx)
 
     if (shutdown(ctx->s, SD_SEND) == SOCKET_ERROR)
     {
-        printf("shutdown failed : %d", WSAGetLastError());
+        log_message(LOG_LEVEL_ERROR, "shutdown failed : %d", WSAGetLastError());
         return NMRPC_FATAL_ERROR;
     }
 
@@ -145,6 +145,7 @@ void SockContext_init(SockContext_t* ctx, const char* host, int port)
     log_message(LOG_LEVEL_TRACE, "Init socket context with host: %s port: %d", host, port);
 
     ctx->isInitialized = 0;
+    ctx->s = -1;
     ctx->server.sin_addr.s_addr = inet_addr(host);
     ctx->server.sin_family = AF_INET;
     ctx->server.sin_port = htons(port);
@@ -196,7 +197,7 @@ int sock_flush(void* user_ctx)
     int flag = 1;
     if (setsockopt(ctx->s, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
     {
-        printf("shutdown failed");
+        log_message(LOG_LEVEL_ERROR, "setsockopt failed");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -228,7 +229,15 @@ int readclose(void* user_ctx)
 {
     log_message(LOG_LEVEL_TRACE, "Entering to %s", __FUNCTION__);
 
-    USE_VARIABLE(user_ctx);
+    SockContext_t* ctx = (SockContext_t*)user_ctx;
+    if (ctx->isInitialized)
+    {
+        int rv = close(ctx->s);
+        if (rv != 0)
+        {
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Close socket.", __FUNCTION__, __LINE__);
+        }
+    }
 
     return NMRPC_OK;
 }
