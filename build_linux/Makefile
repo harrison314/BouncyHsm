@@ -1,6 +1,7 @@
 SRC_DIR=../src/Src/BouncyHsm.Pkcs11Lib
 
-CC= gcc
+CC= clang
+#CC= gcc
 ARCH_FLAGS=
 CFLAGS= $(ARCH_FLAGS) -Wall -Wextra -O2 -I$(SRC_DIR)
 # -Werror
@@ -8,7 +9,9 @@ HEADERFILES=$(SRC_DIR)/*.h $(SRC_DIR)/rpc/*.h $(SRC_DIR)/utils/*.h
 LIBNAME=BouncyHsm.Pkcs11Lib-x86.so
 
 
-all: build64 
+all: ARCH_FLAGS += -m64
+all: LIBNAME=BouncyHsm.Pkcs11Lib-x64.so
+all: build
 
 build64: ARCH_FLAGS += -m64
 build64: LIBNAME=BouncyHsm.Pkcs11Lib-x64.so
