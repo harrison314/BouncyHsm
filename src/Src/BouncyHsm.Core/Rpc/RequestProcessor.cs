@@ -33,10 +33,7 @@ public static partial class RequestProcessor
 
         HeaderStructure header = MessagePackSerializer.Deserialize<HeaderStructure>(requestHeader);
 
-        using IDisposable logScope = logger.BeginScope(new Dictionary<string, object>()
-        {
-            { "Operation", header.Operation }
-        });
+        using IDisposable logScope = logger.BeginScope(CreateContextScope(header));
 
         IMemoryOwner<byte> responseBody = await ProcessRequestInternal(scopeProvider, header, requestBody, logger, cancellationToken);
 
@@ -50,6 +47,21 @@ public static partial class RequestProcessor
         //#endif
 
         return new ResponseValue(headerWriter, responseBody);
+    }
+
+    private static Dictionary<string, object> CreateContextScope(HeaderStructure header)
+    {
+        Dictionary<string, object> context = new Dictionary<string, object>()
+        {
+            { "Operation", header.Operation }
+        };
+
+        if (!string.IsNullOrEmpty(header.Tag))
+        {
+            context.Add("Tag", header.Tag);
+        }
+
+        return context;
     }
 
     private static async ValueTask<IMemoryOwner<byte>> ProcessRequestBody<TRequest, TResponse>(IServiceProvider scopeProvider, string operation, ReadOnlyMemory<byte> requestBody, Func<uint, TResponse> nonOkResponseFactory, ILogger logger, CancellationToken cancellationToken)

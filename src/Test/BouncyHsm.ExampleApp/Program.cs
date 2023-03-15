@@ -17,7 +17,7 @@ public static class Program
         Console.WriteLine(new string('=', 80));
         Console.WriteLine();
 
-        Environment.SetEnvironmentVariable("BOUNCY_HSM_CFG_STRING", "Server=127.0.0.1; Port=8765; LogTarget=Console; LogLevel=TRACE;");
+        Environment.SetEnvironmentVariable("BOUNCY_HSM_CFG_STRING", "Server=127.0.0.1; Port=8765; LogTarget=Console; LogLevel=TRACE; Tag=MyExampleApp;");
 
         //CrateObjectExample();
         EncryptAndDecrypt();

@@ -7,6 +7,10 @@
 #include "timer.h"
 #include "logger.h"
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 // https://github.com/Pkcs11Interop/pkcs11-mock/blob/master/src/pkcs11-mock.c
 // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
 
@@ -510,6 +514,25 @@ void MechanismValue_Destroy(MechanismValue* value)
     }
 }
 
+void InitCallContext(nmrpc_global_context_t *ctxPtr, AppIdentification *appId)
+{
+    (void)(ctxPtr);
+    *appId = globalContext.appId;
+    
+    if (globalContext.tag[0] != 0)
+    {
+        ctxPtr->tag = globalContext.tag;
+    }
+    else
+    {
+        ctxPtr->tag = NULL;
+    }
+
+#ifndef _WIN32
+    appId->Pid = (uint64_t)getpid();
+#endif
+}
+
 
 CK_FUNCTION_LIST empty_pkcs11_functions =
 {
@@ -624,9 +647,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
-
-
-    request.AppId = globalContext.appId;
+    InitCallContext(&ctx, &request.AppId);
 
     if (NULL == pInitArgs)
     {
@@ -690,9 +711,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Finalize)(CK_VOID_PTR pReserved)
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-
-    request.AppId = globalContext.appId;
     request.IsPtrSet = pReserved != NULL;
 
     int rv = nmrpc_call_Finalize(&ctx, &request, &envelope);
@@ -724,8 +744,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
-
-    request.AppId = globalContext.appId;
+    InitCallContext(&ctx, &request.AppId);
 
 
     int rv = nmrpc_call_GetInfo(&ctx, &request, &envelope);
@@ -789,8 +808,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR p
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.IsTokenPresent = (bool)tokenPresent;
     request.IsSlotListPointerPresent = pSlotList != NULL;
     request.PullCount = (uint32_t)*pulCount;
@@ -839,8 +858,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pIn
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SlotId = (uint64_t)slotID;
 
     int rv = nmrpc_call_GetSlotInfo(&ctx, &request, &envelope);
@@ -891,8 +910,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR p
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SlotId = (uint64_t)slotID;
 
     int rv = nmrpc_call_GetTokenInfo(&ctx, &request, &envelope);
@@ -947,8 +966,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TY
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SlotId = (uint32_t)slotID;
     request.IsMechanismListPointerPresent = pMechanismList != NULL;
     request.PullCount = (uint32_t)*pulCount;
@@ -997,8 +1016,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismInfo)(CK_SLOT_ID slotID, CK_MECHANISM_TY
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SlotId = (uint32_t)slotID;
     request.MechanismType = type;
 
@@ -1063,8 +1082,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_V
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SlotId = (uint32_t)slotID;
     request.Flags = (uint32_t)flags;
     request.IsPtrApplicationSet = pApplication != NULL;
@@ -1100,8 +1119,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_CloseSession)(CK_SESSION_HANDLE hSession)
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
 
     int rv = nmrpc_call_CloseSession(&ctx, &request, &envelope);
@@ -1129,8 +1148,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_CloseAllSessions)(CK_SLOT_ID slotID)
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SlotId = (uint32_t)slotID;
 
     int rv = nmrpc_call_CloseAllSessions(&ctx, &request, &envelope);
@@ -1163,8 +1182,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSessionInfo)(CK_SESSION_HANDLE hSession, CK_SESSI
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
 
     int rv = nmrpc_call_GetSessionInfo(&ctx, &request, &envelope);
@@ -1217,8 +1236,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Login)(CK_SESSION_HANDLE hSession, CK_USER_TYPE user
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.UserType = (uint32_t)userType;
     request.Utf8Pin = NULL;
@@ -1256,8 +1275,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Logout)(CK_SESSION_HANDLE hSession)
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
 
     int rv = nmrpc_call_Logout(&ctx, &request, &envelope);
@@ -1297,8 +1316,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Template.array = attrTemplate;
     request.Template.length = (int)ulCount;
@@ -1351,8 +1370,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DestroyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.ObjectHandle = (uint32_t)hObject;
 
@@ -1386,8 +1405,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetObjectSize)(CK_SESSION_HANDLE hSession, CK_OBJECT
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.ObjectHandle = (uint32_t)hObject;
 
@@ -1426,8 +1445,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.ObjectHandle = (uint32_t)hObject;
 
@@ -1587,8 +1606,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Template.array = attrTemplate;
     request.Template.length = (int)ulCount;
@@ -1633,8 +1652,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_H
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.MaxObjectCount = (uint32_t)ulMaxObjectCount;
 
@@ -1674,8 +1693,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
 
     int rv = nmrpc_call_FindObjectsFinal(&ctx, &request, &envelope);
@@ -1708,8 +1727,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -1749,8 +1768,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDa
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Data.data = (uint8_t*)pData;
     request.Data.size = (size_t)ulDataLen;
@@ -1800,8 +1819,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.PartData.data = (uint8_t*)pPart;
     request.PartData.size = (size_t)ulPartLen;
@@ -1846,8 +1865,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.IsEncryptedDataPtrSet = pLastEncryptedPart != NULL;
     request.EncryptedDataLen = (uint32_t)*pulLastEncryptedPartLen;
@@ -1895,8 +1914,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -1936,8 +1955,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEn
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.EncryptedData.data = (uint8_t*)pEncryptedData;
     request.EncryptedData.size = (size_t)ulEncryptedDataLen;
@@ -1986,8 +2005,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.EncryptedData.data = (uint8_t*)pEncryptedPart;
     request.EncryptedData.size = (size_t)ulEncryptedPartLen;
@@ -2036,8 +2055,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.IsDataPtrSet = pLastPart != NULL;
     request.PullDataLen = (uint32_t)*pulLastPartLen;
@@ -2085,8 +2104,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (NMRPC_OK != MechanismValue_Create(&request.Mechanism, pMechanism))
     {
@@ -2126,8 +2145,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Data.data = (uint8_t*)pData;
     request.Data.size = (size_t)ulDataLen;
@@ -2177,8 +2196,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Data.data = (uint8_t*)pPart;
     request.Data.size = (size_t)ulPartLen;
@@ -2208,8 +2227,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestKey)(CK_SESSION_HANDLE hSession, CK_OBJECT_HAN
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.ObjectHandle = (uint32_t)hKey;
 
@@ -2238,8 +2257,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.IsDigestPtrSet = pDigest != NULL;
     request.PulDigestLen = (uint32_t)*pulDigestLen;
@@ -2287,8 +2306,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -2327,8 +2346,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData,
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Data.data = (uint8_t*)pData;
     request.Data.size = (size_t)ulDataLen;
@@ -2378,8 +2397,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Data.data = (uint8_t*)pPart;
     request.Data.size = (size_t)ulPartLen;
@@ -2409,8 +2428,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.IsSignaturePtrSet = pSignature != NULL;
     request.PullSignatureLen = (uint32_t)*pulSignatureLen;
@@ -2469,8 +2488,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -2515,8 +2534,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Data.data = (uint8_t*)pData;
     request.Data.size = (size_t)ulDataLen;
@@ -2553,8 +2572,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Data.data = (uint8_t*)pPart;
     request.Data.size = (size_t)ulPartLen;
@@ -2591,8 +2610,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Signature.data = (uint8_t*)pSignature;
     request.Signature.size = (size_t)ulSignatureLen;
@@ -2676,8 +2695,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANIS
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -2754,8 +2773,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECH
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -2829,8 +2848,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -2889,8 +2908,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -2957,8 +2976,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
@@ -3024,8 +3043,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_SeedRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.Seed.data = pSeed;
     request.Seed.size = ulSeedLen;
@@ -3060,8 +3079,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_
 
     P11SocketInit(&tcp);
     nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
 
-    request.AppId = globalContext.appId;
     request.SessionId = (uint32_t)hSession;
     request.RandomLen = (uint32_t)ulRandomLen;
 

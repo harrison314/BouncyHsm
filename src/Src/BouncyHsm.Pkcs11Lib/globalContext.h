@@ -12,6 +12,7 @@ typedef struct _globalContext {
 	AppIdentification appId;
 
 	char server[64];
+    char tag[32];
 	int port;
 
 } GlobalContext_t;

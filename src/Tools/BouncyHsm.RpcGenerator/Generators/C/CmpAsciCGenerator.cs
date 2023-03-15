@@ -187,9 +187,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 ctx->flush = (flush != NULL)? flush : &nmrpc_flush_empty;
                 ctx->close = (close != NULL)? close : &nmrpc_close_empty;
 
-                ctx->mallocPtr = &malloc;
-                ctx->freePtr = &free;
-                ctx->reallocPtr = &realloc;
+                ctx->tag = NULL;
 
                 return NMRPC_OK;
             }
@@ -857,9 +855,17 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
              cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-             //TODO: tag, nonce,...
-             cmp_write_array(&write_head_ctx, 1);
+             cmp_write_array(&write_head_ctx, 2);
              cmp_write_str(&write_head_ctx, "{{rpcName}}", {{rpcName.Length}});
+             if (ctx->tag != NULL)
+             {
+                  cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+             }
+             else
+             {
+                  cmp_write_nil(&write_head_ctx);
+             }
+
 
              result = {{this.GetSerializeFnName(crequestType)}}(&write_body_ctx, request);
              if (result != NMRPC_OK)

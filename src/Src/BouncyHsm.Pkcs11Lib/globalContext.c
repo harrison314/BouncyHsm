@@ -228,7 +228,7 @@ bool parseConnectionString(const char* connectionString, const char* name, char*
 	if (startValue == NULL)
 	{
 		*sizePtr = 0;
-		rv = false;
+		rv = true;
 	}
 	else
 	{
@@ -323,23 +323,17 @@ void GlobalContextInit()
 
 	myRandChars(&generator, globalContext.appIdRandomChars, 24);
 
-#ifdef _MSC_VER
-	if (!GetCurrentProgramName(globalContext.appIdName, sizeof(globalContext.appIdName)))
-	{
-		strcpy_s(globalContext.appIdName, sizeof(globalContext.appIdName), "unknown");
-	}
-#elif defined(_GNU_SOURCE)
-	strcpy_s(globalContext.appIdName, sizeof(globalContext.appIdName), program_invocation_name);
-#else
-	strcpy(globalContext.appIdName, "unknown");
-#endif // #ifdef _MSC_VER
+    if (!GetCurrentProgramName(globalContext.appIdName, sizeof(globalContext.appIdName)))
+    {
+        strcpy_s(globalContext.appIdName, sizeof(globalContext.appIdName), "unknown");
+    }
 
 	globalContext.appId.Pid = pid;
 	globalContext.appId.AppName = globalContext.appIdName;
 	globalContext.appId.AppNonce = globalContext.appIdRandomChars;
 
-
-	strcpy_s(globalContext.server, sizeof(globalContext.server), BOUNCY_HSM_DEFAULT_SERVER);
+    strcpy_s(globalContext.server, sizeof(globalContext.server), BOUNCY_HSM_DEFAULT_SERVER);
+    strcpy_s(globalContext.tag, sizeof(globalContext.tag), "");
 	globalContext.port = BOUNCY_HSM_DEFAULT_PORT;
 
 	logger_init(LOG_LEVEL_ERROR_NAME, LOG_TARGET_ERR_CONSOLE);
@@ -384,11 +378,18 @@ void GlobalContextInit()
 			globalContext.port = portValue;
 		}
 
+        if (!parseConnectionStringOrDefault(cfgString, "Tag", globalContext.tag, sizeof(globalContext.tag), ""))
+        {
+            log_message(LOG_LEVEL_ERROR, "Error during reading Tag.");
+            return;
+        }
+
 		configureLogging(cfgString);
 	}
 
 	log_message(LOG_LEVEL_INFO, "Successful initialized PKCS11 library.");
 	log_message(LOG_LEVEL_INFO, "Config - pid %i AppName: %s Nonce: %s", globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
-	log_message(LOG_LEVEL_INFO, "Config - Server: %s Port: %i", globalContext.server, globalContext.port);
+    log_message(LOG_LEVEL_INFO, "Config - Server: %s Port: %i", globalContext.server, globalContext.port);
+    log_message(LOG_LEVEL_INFO, "Config - Tag: %s", globalContext.tag);
  }
 

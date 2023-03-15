@@ -156,9 +156,7 @@ int nmrpc_global_context_init(nmrpc_global_context_t* ctx, void* user_ctx, nmrpc
     ctx->flush = (flush != NULL)? flush : &nmrpc_flush_empty;
     ctx->close = (close != NULL)? close : &nmrpc_close_empty;
 
-    ctx->mallocPtr = &malloc;
-    ctx->freePtr = &free;
-    ctx->reallocPtr = &realloc;
+    ctx->tag = NULL;
 
     return NMRPC_OK;
 }
@@ -8766,9 +8764,17 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Ping", 4);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = PingRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -8928,9 +8934,17 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Initialize", 10);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = InitializeRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -9090,9 +9104,17 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Finalize", 8);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = FinalizeRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -9252,9 +9274,17 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetInfo", 7);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -9414,9 +9444,17 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetSlotList", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetSlotListRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -9576,9 +9614,17 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetSlotInfo", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetSlotInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -9738,9 +9784,17 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetTokenInfo", 12);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetTokenInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -9900,9 +9954,17 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetMechanismList", 16);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetMechanismListRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -10062,9 +10124,17 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetMechanismInfo", 16);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetMechanismInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -10224,9 +10294,17 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "OpenSession", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = OpenSessionRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -10386,9 +10464,17 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "CloseSession", 12);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = CloseSessionRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -10548,9 +10634,17 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "CloseAllSessions", 16);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = CloseAllSessionsRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -10710,9 +10804,17 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetSessionInfo", 14);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetSessionInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -10872,9 +10974,17 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Login", 5);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = LoginRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -11034,9 +11144,17 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Logout", 6);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = LogoutRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -11196,9 +11314,17 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "SeedRandom", 10);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = SeedRandomRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -11358,9 +11484,17 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GenerateRandom", 14);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GenerateRandomRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -11520,9 +11654,17 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DigestInit", 10);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DigestInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -11682,9 +11824,17 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Digest", 6);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DigestRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -11844,9 +11994,17 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DigestUpdate", 12);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DigestUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -12006,9 +12164,17 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DigestKey", 9);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DigestKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -12168,9 +12334,17 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DigestFinal", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DigestFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -12330,9 +12504,17 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "CreateObject", 12);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = CreateObjectRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -12492,9 +12674,17 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DestroyObject", 13);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DestroyObjectRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -12654,9 +12844,17 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "FindObjectsInit", 15);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = FindObjectsInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -12816,9 +13014,17 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "FindObjects", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = FindObjectsRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -12978,9 +13184,17 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "FindObjectsFinal", 16);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = FindObjectsFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -13140,9 +13354,17 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetObjectSize", 13);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetObjectSizeRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -13302,9 +13524,17 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GetAttributeValue", 17);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GetAttributeValueRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -13464,9 +13694,17 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GenerateKeyPair", 15);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GenerateKeyPairRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -13626,9 +13864,17 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "SignInit", 8);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = SignInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -13788,9 +14034,17 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Sign", 4);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = SignRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -13950,9 +14204,17 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "SignUpdate", 10);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = SignUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -14112,9 +14374,17 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "SignFinal", 9);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = SignFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -14274,9 +14544,17 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "VerifyInit", 10);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = VerifyInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -14436,9 +14714,17 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Verify", 6);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = VerifyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -14598,9 +14884,17 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "VerifyUpdate", 12);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = VerifyUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -14760,9 +15054,17 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "VerifyFinal", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = VerifyFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -14922,9 +15224,17 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "GenerateKey", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = GenerateKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -15084,9 +15394,17 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DeriveKey", 9);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DeriveKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -15246,9 +15564,17 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "EncryptInit", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = EncryptInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -15408,9 +15734,17 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Encrypt", 7);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = EncryptRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -15570,9 +15904,17 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "EncryptUpdate", 13);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = EncryptUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -15732,9 +16074,17 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "EncryptFinal", 12);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = EncryptFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -15894,9 +16244,17 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DecryptInit", 11);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DecryptInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -16056,9 +16414,17 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "Decrypt", 7);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DecryptRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -16218,9 +16584,17 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DecryptUpdate", 13);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DecryptUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -16380,9 +16754,17 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "DecryptFinal", 12);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = DecryptFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -16542,9 +16924,17 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "WrapKey", 7);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = WrapKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
@@ -16704,9 +17094,17 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    //TODO: tag, nonce,...
-    cmp_write_array(&write_head_ctx, 1);
+    cmp_write_array(&write_head_ctx, 2);
     cmp_write_str(&write_head_ctx, "UnwrapKey", 9);
+    if (ctx->tag != NULL)
+    {
+         cmp_write_str(&write_head_ctx,ctx->tag, (uint32_t)strlen(ctx->tag));
+    }
+    else
+    {
+         cmp_write_nil(&write_head_ctx);
+    }
+
 
     result = UnwrapKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)

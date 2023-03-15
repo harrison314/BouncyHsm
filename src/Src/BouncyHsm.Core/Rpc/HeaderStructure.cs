@@ -17,6 +17,12 @@ public class HeaderStructure
         set;
     } = string.Empty;
 
+    [Key(1)]
+    public string? Tag
+    {
+        get;
+        set;
+    }
 
     public HeaderStructure()
     {

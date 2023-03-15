@@ -402,14 +402,12 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
             typedef struct _nmrpc_global_context {
                 void* user_ctx;
 
-                nmrpc_malloc_fn_t mallocPtr;
-                nmrpc_free_fn_t freePtr;
-                nmrpc_realloc_fn_t reallocPtr;
-
                 nmrpc_writerequest_fn_t write;
                 nmrpc_readresponse_fn_t read;
                 nmrpc_flush_fn_t flush;
                 nmrpc_readclose_fn_t close;
+
+                char *tag;
             } nmrpc_global_context_t;
 
 
