@@ -43,9 +43,10 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: linux-native-libs
+          path: build_linux
       - name: Run './build.cmd BuildAll'
         run: ./build.cmd BuildAll
       - uses: actions/upload-artifact@v3
         with:
-          name: artifacts
+          name: Bouncy-Hsm-Artifacts
           path: artifacts/*.zip

@@ -23,7 +23,7 @@ using Nuke.Common.CI.GitHubActions;
 [GitHubActions(
     "BuildBouncyHsm",
     GitHubActionsImage.WindowsLatest,
-    On = new[] { GitHubActionsTrigger.Push },
+    On = new[] { GitHubActionsTrigger.WorkflowDispatch },
     InvokedTargets = new[] { nameof(BuildAll) })]
 public partial class Build : NukeBuild
 {
@@ -86,6 +86,36 @@ public partial class Build : NukeBuild
                 "0.1.0.0", //TODO
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Winx86.zip");
 
+            AbsolutePath linuxNativeLibx64 = RootDirectory / "linux_build" / "BouncyHsm.Pkcs11Lib-x64.so";
+            if (linuxNativeLibx64.Exists())
+            {
+                CopyFile(linuxNativeLibx64, ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
+
+                CreateZip(linuxNativeLibx64,
+                "Linux X64",
+                "0.1.0.0", //TODO
+                ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Linuxx64.zip");
+            }
+            else
+            {
+                Log.Warning("Native lib {0} not found.", linuxNativeLibx64);
+            }
+
+            AbsolutePath linuxNativeLibx32 = RootDirectory / "linux_build" / "BouncyHsm.Pkcs11Lib-x32.so";
+            if (linuxNativeLibx32.Exists())
+            {
+                CopyFile(linuxNativeLibx32, ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
+
+                CreateZip(linuxNativeLibx32,
+               "Linux X86",
+               "0.1.0.0", //TODO
+               ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Linuxx84.zip");
+            }
+            else
+            {
+                Log.Warning("Native lib {0} not found.", linuxNativeLibx32);
+            }
+
             CopyLicenses(ArtifactsTmpDirectory / "BouncyHsm");
 
             Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm",
@@ -98,7 +128,7 @@ public partial class Build : NukeBuild
         Log.Debug("Copy license files");
 
         AbsolutePath licensesFilePath = bouncyHsmPath / "LicensesThirdParty.txt";
-        DotnetProjectLicenses($"--input \"{RootDirectory/ "src" / "BouncyHsm.sln"}\" -o -t --outfile \"{licensesFilePath}\" -p false");
+        DotnetProjectLicenses($"--input \"{RootDirectory / "src" / "BouncyHsm.sln"}\" -o -t --outfile \"{licensesFilePath}\" -p false");
         CopyFile("LICENSE", bouncyHsmPath / "License.txt");
     }
 
