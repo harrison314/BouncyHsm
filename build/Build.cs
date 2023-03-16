@@ -21,7 +21,7 @@ using Serilog;
 using Nuke.Common.CI.GitHubActions;
 
 [GitHubActions(
-    "BuildBouncyHsm",
+    "Nuke Build",
     GitHubActionsImage.WindowsLatest,
     On = new[] { GitHubActionsTrigger.WorkflowDispatch },
     InvokedTargets = new[] { nameof(BuildAll) })]
