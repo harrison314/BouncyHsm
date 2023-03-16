@@ -58,6 +58,8 @@
         {
             (DownloadPlatform.Windows, "x64") => "BouncyHsm.Pkcs11Lib-Winx64.zip",
             (DownloadPlatform.Windows, "x86") => "BouncyHsm.Pkcs11Lib-Winx86.zip",
+            (DownloadPlatform.Linux, "x64") => "BouncyHsm.Pkcs11Lib-Linuxx64.zip",
+            (DownloadPlatform.Linux, "x86") => "BouncyHsm.Pkcs11Lib-Linuxx84.zip",
 
             _ => throw new InvalidProgramException($"Unsuported platform {this.Platform} and architecture {this.Architecture}.")
         };
