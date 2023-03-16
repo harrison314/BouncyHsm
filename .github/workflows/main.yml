@@ -11,10 +11,14 @@ jobs:
         run: |
           cd build_linux
           make build64
+          rm -f *.o
+          make build32
       - name: Upload linux native artifacts
         uses: actions/upload-artifact@v3
         with:
           name: linux-native-libs
           path: |
             build_linux/*.so
+          retention-days: 1
+
 
