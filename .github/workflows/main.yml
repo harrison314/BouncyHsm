@@ -12,13 +12,13 @@ jobs:
           cd build_linux
           make build64
           rm -f *.o
-      - name: Build application x32
-        run: |
-          sudo apt-get update
-          sudo apt-get install libc6-dev
-          cd build_linux
-          make build32
-          rm -f *.o
+      # - name: Build application x32
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install libc6-dev
+      #     cd build_linux
+      #     make build32
+      #     rm -f *.o
       - name: Upload linux native artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -27,4 +27,25 @@ jobs:
             build_linux/*.so
           retention-days: 1
 
-
+  Build-Bouncy-Hsm:
+    name: Build-Bouncy-Hsm
+    runs-on: windows-latest
+    needs: Build-linux-libs
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache .nuke/temp, ~/.nuget/packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            .nuke/temp
+            ~/.nuget/packages
+          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: linux-native-libs
+      - name: Run './build.cmd BuildAll'
+        run: ./build.cmd BuildAll
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: artifacts/*.zip

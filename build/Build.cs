@@ -18,7 +18,13 @@ using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using System.Text;
 using Serilog;
+using Nuke.Common.CI.GitHubActions;
 
+[GitHubActions(
+    "BuildBouncyHsm",
+    GitHubActionsImage.WindowsLatest,
+    On = new[] { GitHubActionsTrigger.Push },
+    InvokedTargets = new[] { nameof(BuildAll) })]
 public partial class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.BuildAll);
@@ -67,6 +73,7 @@ public partial class Build : NukeBuild
         .DependsOn(BuildPkcs11LibWin32)
         .DependsOn(BuildPkcs11LibX64)
         .DependsOn(BuildBouncyHsm)
+        .Produces(ArtifactsDirectory / "*.zip")
         .Executes(() =>
         {
             CopyDirectoryRecursively(ArtifactsTmpDirectory / "native", ArtifactsTmpDirectory / "BouncyHsm" / "native");
