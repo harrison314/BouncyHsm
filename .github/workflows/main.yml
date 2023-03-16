@@ -7,9 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cd build_linux
       - name: Build application
-        run: make build64
+        run: |
+          cd build_linux
+          make build64
       - name: Upload linux native artifacts
         uses: actions/upload-artifact@v3
         with:
