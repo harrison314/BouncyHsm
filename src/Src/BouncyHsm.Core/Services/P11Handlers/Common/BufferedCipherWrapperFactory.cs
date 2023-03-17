@@ -53,6 +53,8 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_RSA_PKCS => this.CreateRsaPkcs(mechanism),
             CKM.CKM_RSA_PKCS_OAEP => this.CreateRsaOaep(mechanism),
 
+            CKM.CKM_AES_KEY_WRAP_PAD => this.CreateAesKeyWrap(ckMechanism),
+
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
     }
@@ -205,4 +207,10 @@ internal class BufferedCipherWrapperFactory
         }
     }
 
+    private Rfc5649BufferedCipherWrapper CreateAesKeyWrap(CKM ckMechanism)
+    {
+        return new Rfc5649BufferedCipherWrapper(AesUtilities.CreateEngine(),
+            ckMechanism,
+            this.loggerFactory.CreateLogger<Rfc5649BufferedCipherWrapper>());
+    }
 }

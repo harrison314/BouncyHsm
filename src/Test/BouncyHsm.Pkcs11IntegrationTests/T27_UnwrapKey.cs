@@ -130,6 +130,30 @@ public class T27_UnwrapKey
     }
 
     [TestMethod]
+    public void Unwrap_AesKeyWrapPad_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] nonce = session.GenerateRandom(8);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_WRAP_PAD);
+        byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
+    }
+
+    [TestMethod]
     public void Unwrap_RSAPkcs1_Success()
     {
         byte[] plainText = new byte[64];
