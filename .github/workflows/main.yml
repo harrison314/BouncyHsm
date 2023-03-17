@@ -7,15 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build application x64
+      - name: Build PKCS11 lib x64
         run: |
           cd build_linux
           make build64
           rm -f *.o
-      # - name: Build application x32
+      # - name: Instal 32bit tooling
       #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install libc6-dev
+      #     apt-get update -qq
+      #     apt-get install gcc-multilib -q -y
+      # - name: Build PKCS11 lib x32
+      #   run: |
       #     cd build_linux
       #     make build32
       #     rm -f *.o
