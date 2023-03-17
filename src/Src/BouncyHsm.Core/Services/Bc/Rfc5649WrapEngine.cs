@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 
 namespace BouncyHsm.Core.Services.Bc;
 
@@ -68,9 +69,7 @@ public class Rfc5649WrapEngine : IWrapper
         Array.Copy(this.preIv, iv, this.preIv.Length);
         BinaryPrimitives.WriteUInt32BigEndian(iv.AsSpan(this.preIv.Length), (uint)length);
 
-        byte[] relevantPlaintext = new byte[length];
-        Array.Copy(input, inOff, relevantPlaintext, 0, length);
-        byte[] paddedPlaintext = this.PadPlaintext(relevantPlaintext);
+        byte[] paddedPlaintext = this.PadPlaintext(input.AsSpan(inOff, length));
 
         if (paddedPlaintext.Length == 8)
         {
@@ -99,7 +98,6 @@ public class Rfc5649WrapEngine : IWrapper
             wrapper.Init(true, paramsWithIV);
             return wrapper.Wrap(paddedPlaintext, 0, paddedPlaintext.Length);
         }
-
     }
 
     public byte[] Unwrap(byte[] input, int inOff, int length)
@@ -121,8 +119,8 @@ public class Rfc5649WrapEngine : IWrapper
             throw new InvalidCipherTextException("unwrap data must be at least 16 bytes");
         }
 
-        byte[] relevantCiphertext = new byte[length];
-        Array.Copy(input, inOff, relevantCiphertext, 0, length);
+        Span<byte> relevantCiphertext = input.AsSpan(inOff, length);
+
         byte[] decrypted = new byte[length];
         byte[] paddedPlaintext;
         byte[] extractedAIV;
@@ -134,7 +132,7 @@ public class Rfc5649WrapEngine : IWrapper
             this.engine.Init(false, this.param);
             for (int i = 0; i < relevantCiphertext.Length; i += this.engine.GetBlockSize())
             {
-                this.engine.ProcessBlock(relevantCiphertext, i, decrypted, i);
+                this.engine.ProcessBlock(relevantCiphertext.Slice(i), decrypted.AsSpan().Slice(i));
             }
 
             // extract the AIV
@@ -151,10 +149,8 @@ public class Rfc5649WrapEngine : IWrapper
         }
 
         // Decompose the extracted AIV to the fixed portion and the MLI
-        byte[] extractedHighOrderAIV = new byte[4];
-        byte[] mliBytes = new byte[4];
-        Array.Copy(extractedAIV, 0, extractedHighOrderAIV, 0, extractedHighOrderAIV.Length);
-        Array.Copy(extractedAIV, extractedHighOrderAIV.Length, mliBytes, 0, mliBytes.Length);
+        Span<byte> extractedHighOrderAIV = extractedAIV.AsSpan(0, 4);
+        Span<byte> mliBytes = extractedAIV.AsSpan(4, 4);
         int mli = (int)BinaryPrimitives.ReadUInt32BigEndian(mliBytes);
         // Even if a check fails we still continue and check everything 
         // else in order to avoid certain timing based side-channel attacks.
@@ -187,9 +183,9 @@ public class Rfc5649WrapEngine : IWrapper
             expectedZeros = 4;
         }
 
-        byte[] zeros = new byte[expectedZeros];
-        byte[] pad = new byte[expectedZeros];
-        Array.Copy(paddedPlaintext, paddedPlaintext.Length - expectedZeros, pad, 0, expectedZeros);
+        Span<byte> zeros = stackalloc byte[expectedZeros];
+        zeros.Fill(0);
+        Span<byte> pad = paddedPlaintext.AsSpan(paddedPlaintext.Length - expectedZeros, expectedZeros);
         if (!Arrays.FixedTimeEquals(pad, zeros))
         {
             isValid = false;
@@ -207,18 +203,17 @@ public class Rfc5649WrapEngine : IWrapper
         return plaintext;
     }
 
-    private byte[] PadPlaintext(byte[] plaintext)
+    private byte[] PadPlaintext(Span<byte> plaintext)
     {
         int plaintextLength = plaintext.Length;
         int numOfZerosToAppend = (8 - (plaintextLength % 8)) % 8;
         byte[] paddedPlaintext = new byte[plaintextLength + numOfZerosToAppend];
-        Array.Copy(plaintext, 0, paddedPlaintext, 0, plaintextLength);
+        plaintext.CopyTo(paddedPlaintext);
         if (numOfZerosToAppend != 0)
         {
             // plaintext (i.e., key to be wrapped) does not have
             // a multiple of 8 octet blocks so it must be padded
-            byte[] zeros = new byte[numOfZerosToAppend];
-            Array.Copy(zeros, 0, paddedPlaintext, plaintextLength, numOfZerosToAppend);
+            paddedPlaintext.AsSpan(plaintextLength, numOfZerosToAppend).Fill(0);
         }
 
         return paddedPlaintext;
@@ -226,13 +221,12 @@ public class Rfc5649WrapEngine : IWrapper
 
     private byte[] Rfc3394UnwrapNoIvCheck(byte[] input, int inOff, int length, out byte[] extractedAIV)
     {
-        byte[] iv = new byte[8];
-        byte[] block = new byte[length - iv.Length];
-        byte[] a = new byte[iv.Length];
-        byte[] buf = new byte[8 + iv.Length];
+        const int ivLenght = 8;
+        byte[] block = new byte[length - ivLenght];
+        byte[] buf = new byte[8 + ivLenght];
 
-        Array.Copy(input, inOff, a, 0, iv.Length);
-        Array.Copy(input, inOff + iv.Length, block, 0, length - iv.Length);
+        Span<byte> a = input.AsSpan(inOff, ivLenght);
+        Array.Copy(input, inOff + ivLenght, block, 0, length - ivLenght);
 
         this.engine.Init(false, this.param);
 
@@ -243,31 +237,32 @@ public class Rfc5649WrapEngine : IWrapper
         {
             for (int i = n; i >= 1; i--)
             {
-                Array.Copy(a, 0, buf, 0, iv.Length);
-                Array.Copy(block, 8 * (i - 1), buf, iv.Length, 8);
+                a.CopyTo(buf);
+                Array.Copy(block, 8 * (i - 1), buf, ivLenght, 8);
 
                 int t = n * j + i;
                 for (int k = 1; t != 0; k++)
                 {
                     byte v = (byte)t;
 
-                    buf[iv.Length - k] ^= v;
+                    buf[ivLenght - k] ^= v;
 
                     t = UnsignedRightShift(t, 8);
                 }
 
                 this.engine.ProcessBlock(buf, 0, buf, 0);
-                Array.Copy(buf, 0, a, 0, 8);
+                buf.AsSpan(0, 8).CopyTo(a);
                 Array.Copy(buf, 8, block, 8 * (i - 1), 8);
             }
         }
 
         // set the extracted AIV
-        extractedAIV = a;
+        extractedAIV = a.ToArray();
 
         return block;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int UnsignedRightShift(int value, int places)
     {
         unchecked
