@@ -81,6 +81,19 @@ public class SlotFacade : ISlotFacade
         return new DomainResult<IReadOnlyList<SlotEntity>>.Ok(result);
     }
 
+    public async ValueTask<DomainResult<SlotEntity>> GetSlotById(uint slotId, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GetSlotById with slotId {slotId}.", slotId);
+
+        SlotEntity? result = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (result == null)
+        {
+            return new DomainResult<SlotEntity>.NotFound();
+        }
+
+        return new DomainResult<SlotEntity>.Ok(result);
+    }
+
     public async ValueTask<VoidDomainResult> DeleteSlot(uint slotId, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to DeleteSlot with slotId {slotId}.", slotId);

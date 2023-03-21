@@ -42,6 +42,17 @@ public class SlotController : Controller
         return result.MapOk(SlotControllerMapper.ToDto).ToActionResult();
     }
 
+    [HttpGet("{slotId}", Name = nameof(GetSlot))]
+    [ProducesResponseType(typeof(SlotDto), 200)]
+    public async Task<IActionResult> GetSlot(int slotId)
+    {
+        this.logger.LogTrace("Entering to GetAllSlots with slotId {slotId}.", slotId);
+
+        DomainResult<Core.Services.Contracts.Entities.SlotEntity> result = await this.slotFacade.GetSlotById((uint)slotId, this.HttpContext.RequestAborted);
+
+        return result.MapOk(SlotControllerMapper.ToDto).ToActionResult();
+    }
+
     [HttpDelete("{slotId}", Name = nameof(DeleteSlot))]
     [ProducesResponseType(typeof(void), 200)]
     public async Task<IActionResult> DeleteSlot(uint slotId)

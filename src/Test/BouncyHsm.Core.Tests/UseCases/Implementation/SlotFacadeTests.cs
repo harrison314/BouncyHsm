@@ -86,6 +86,41 @@ public class SlotFacadeTests
     }
 
     [TestMethod]
+    public async Task GetSlotById_Call_Success()
+    {
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new SlotEntity()
+            {
+                Description = "description",
+                Id = Guid.NewGuid(),
+                IsHwDevice = true,
+                SlotId = 12,
+                Token = new TokenInfo()
+                {
+                    IsSoPinLocked = false,
+                    IsUserPinLocked = false,
+                    Label = "Label",
+                    SerialNumber = "000011",
+                    SimulateHwMechanism = true,
+                    SimulateHwRng = false,
+                    SimulateQualifiedArea = false
+                }
+            })
+            .Verifiable();
+
+        SlotFacade slotFacade = new SlotFacade(repository.Object, new NullLogger<SlotFacade>());
+
+        DomainResult<SlotEntity> result = await slotFacade.GetSlotById(12, default);
+
+        SlotEntity value = result.AssertOkValue();
+        Assert.AreEqual(value.SlotId, 12U);
+        Assert.IsNotNull(value.Token);
+        Assert.IsNotNull(value.Token?.SerialNumber);
+        Assert.IsNotNull(value.Token?.Label);
+    }
+
+    [TestMethod]
     public async Task DeleteSlot_Call_Success()
     {
         Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
