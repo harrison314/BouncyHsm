@@ -2367,6 +2367,12 @@ namespace BouncyHsm.Spa.Services.Client
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public bool SimulateQualifiedArea { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("SpeedMode")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public SpeedMode SpeedMode { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("UserPin")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
@@ -2386,6 +2392,21 @@ namespace BouncyHsm.Spa.Services.Client
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         [System.ComponentModel.DataAnnotations.StringLength(120, MinimumLength = 1)]
         public string? SignaturePin { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpeedMode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WithoutRestriction")]
+        WithoutRestriction = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Hsm")]
+        Hsm = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SmardCard")]
+        SmardCard = 2,
 
     }
 
@@ -2458,6 +2479,12 @@ namespace BouncyHsm.Spa.Services.Client
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public bool IsSoPinLocked { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SpeedMode")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public SpeedMode SpeedMode { get; set; } = default!;
 
     }
 

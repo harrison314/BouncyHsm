@@ -40,7 +40,8 @@ public class SlotFacade : ISlotFacade
                 SerialNumber = createSlotData.Token.SerialNumber?.Trim() ?? this.CreateSerial(),
                 SimulateHwMechanism = createSlotData.Token.SimulateHwMechanism,
                 SimulateHwRng = createSlotData.Token.SimulateHwRng,
-                SimulateQualifiedArea = createSlotData.Token.SimulateQualifiedArea
+                SimulateQualifiedArea = createSlotData.Token.SimulateQualifiedArea,
+                SpeedMode = createSlotData.Token.SpeedMode
             }
         };
 

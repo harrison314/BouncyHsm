@@ -25,6 +25,7 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
+        DateTime utcStartTime = this.hwServices.Time.UtcNow;
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
@@ -47,6 +48,9 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
         keyObject.CkaLocal = true;
         keyObject.ReComputeAttributes();
         keyObject.Validate();
+
+        ISpeedAwaiter speedAwaiter = await this.hwServices.CreateSpeedAwaiter(p11Session.SlotId, this.loggerFactory, cancellationToken);
+        await speedAwaiter.AwaitKeyGeneration(keyObject, utcStartTime, cancellationToken);
 
         uint handle = await this.hwServices.StoreObject(memorySession,
             p11Session,

@@ -4,17 +4,22 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Utilities.IO.Pem;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
 public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequest, DestroyObjectEnvelope>
 {
     private readonly IP11HwServices hwServices;
+    private readonly ILoggerFactory loggerFactory;
     private readonly ILogger<DestroyObjectHandler> logger;
 
-    public DestroyObjectHandler(IP11HwServices hwServices, ILogger<DestroyObjectHandler> logger)
+    public DestroyObjectHandler(IP11HwServices hwServices,
+        ILoggerFactory loggerFactory,
+        ILogger<DestroyObjectHandler> logger)
     {
         this.hwServices = hwServices;
+        this.loggerFactory = loggerFactory;
         this.logger = logger;
     }
 
@@ -22,6 +27,7 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
+        DateTime utcStartTime = this.hwServices.Time.UtcNow;
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
@@ -50,6 +56,9 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         {
             memorySession.DestroyObjectHandle(storageObject.Id);
             await this.hwServices.Persistence.DestroyObject(p11Session.SlotId, storageObject, cancellationToken);
+
+            ISpeedAwaiter speedAwaiter = await this.hwServices.CreateSpeedAwaiter(p11Session.SlotId, this.loggerFactory, cancellationToken);
+            await speedAwaiter.AwaitDestroy(storageObject, utcStartTime, cancellationToken);
         }
         else
         {

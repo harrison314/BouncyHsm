@@ -1,5 +1,7 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.P11Handlers.SpeedAwaiters;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,5 +90,30 @@ internal static class P11HwServicesExtensions
         }
 
         return handle;
+    }
+
+    public static async ValueTask<ISpeedAwaiter> CreateSpeedAwaiter(this IP11HwServices hwServices,
+        uint slotId,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        SlotEntity? slot = await hwServices.Persistence.GetSlot(slotId, cancellationToken);
+        if (slot == null)
+        {
+            throw new ArgumentException("Slot not found"); //TODO
+        }
+
+        if (slot.Token == null)
+        {
+            throw new ArgumentException("Token not found"); //TODO
+        }
+
+        return slot.Token.SpeedMode switch
+        {
+            SpeedMode.WithoutRestriction => new WithoutRestrictionSpeedAwaiter(),
+            SpeedMode.Hsm => new HsmSpeedAwaiter(hwServices.Time, loggerFactory.CreateLogger<HsmSpeedAwaiter>()),
+            SpeedMode.SmardCard => new SmardCardSpeedAwaiter(hwServices.Time, loggerFactory.CreateLogger<SmardCardSpeedAwaiter>()),
+            _ => throw new InvalidProgramException($"Enum value {slot.Token.SpeedMode} is not supported.")
+        };
     }
 }

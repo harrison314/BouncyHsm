@@ -43,7 +43,8 @@ internal class MemoryPersistentRepository : IPersistentRepository
 
                     UserPin = "123456",
                     SoPin = "12345678",
-                    SignaturePin = null
+                    SignaturePin = null,
+                    SpeedMode = SpeedMode.WithoutRestriction
                 }
             }
         };

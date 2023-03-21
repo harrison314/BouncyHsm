@@ -44,10 +44,16 @@ public class TokenInfo
         set;
     }
 
+    public SpeedMode SpeedMode
+    {
+        get;
+        set;
+    }
 
     public TokenInfo()
     {
         this.Label = string.Empty;
         this.SerialNumber = string.Empty;
+        this.SpeedMode = SpeedMode.WithoutRestriction;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace BouncyHsm.Core.UseCases.Contracts;
+﻿using BouncyHsm.Core.Services.Contracts.Entities;
+
+namespace BouncyHsm.Core.UseCases.Contracts;
 
 public class CreateTokenData
 {
@@ -45,6 +47,12 @@ public class CreateTokenData
     }
 
     public string? SignaturePin
+    {
+        get;
+        set;
+    }
+
+    public SpeedMode SpeedMode
     {
         get;
         set;

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BouncyHsm.Core.Services.Contracts.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace BouncyHsm.Models.Slot;
 
@@ -35,6 +36,12 @@ public class CreateTokenDto
     }
 
     public bool SimulateQualifiedArea
+    {
+        get;
+        set;
+    }
+
+    public SpeedMode SpeedMode
     {
         get;
         set;

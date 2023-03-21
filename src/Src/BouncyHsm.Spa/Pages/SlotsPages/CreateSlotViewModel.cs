@@ -1,3 +1,4 @@
+using BouncyHsm.Spa.Services.Client;
 using System.ComponentModel.DataAnnotations;
 
 namespace BouncyHsm.Spa.Pages.SlotsPages;
@@ -67,6 +68,12 @@ public class CreateSlotViewModel : IValidatableObject
     }
 
     public bool TokenSimulateQualifiedArea
+    {
+        get;
+        set;
+    }
+
+    public SpeedMode SpeedMode
     {
         get;
         set;

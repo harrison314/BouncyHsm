@@ -62,6 +62,16 @@
                 <label class="form-check-label" for="i-tokenSimQa">Simulare qualified area on token</label>
                 <ValidationMessage For="() => this.model.TokenSimulateQualifiedArea" />
             </div>
+            <div class="mb-1">
+                <label for="i-speedMode" class="form-label">Speed mode</label>
+                <InputSelect class="form-select" @bind-Value="this.model.SpeedMode" id="i-speedMode">
+                    <option value="@SpeedMode.WithoutRestriction">Without speed restrictions</option>
+                    <option value="@SpeedMode.Hsm">As HSM</option>
+                    <option value="@SpeedMode.SmardCard">As Smard card</option>
+                </InputSelect>
+
+                <ValidationMessage For="() => this.model.SpeedMode" />
+            </div>
 
             <div class="mb-1">
                 <label for="i-tokenUserPin" class="form-label">User PIN (in UTF8 encoding)</label>
@@ -120,6 +130,7 @@
                     SimulateHwMechanism = this.model.TokenSimulateHwMechanism,
                     SimulateHwRng = this.model.TokenSimulateHwRng,
                     SimulateQualifiedArea = this.model.TokenSimulateQualifiedArea,
+                    SpeedMode = this.model.SpeedMode,
                     SoPin = this.model.TokenSoPin.Trim(),
                     UserPin = this.model.TokenUserPin.Trim(),
                     SignaturePin = this.model.TokenSimulateQualifiedArea

@@ -1,4 +1,6 @@
-﻿namespace BouncyHsm.Infrastructure.Storage.LiteDbFile.DbModels;
+﻿using BouncyHsm.Core.Services.Contracts.Entities;
+
+namespace BouncyHsm.Infrastructure.Storage.LiteDbFile.DbModels;
 
 public class TokenInfoModel
 {
@@ -39,6 +41,12 @@ public class TokenInfoModel
     }
 
     public bool IsSoPinLocked
+    {
+        get;
+        set;
+    }
+
+    public SpeedMode SpeedMode
     {
         get;
         set;
