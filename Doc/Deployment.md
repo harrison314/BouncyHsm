@@ -40,9 +40,9 @@ Update security policy:
 1. Open the _Log on as a service policy_.
 1. Select _Add User or Group_.
 1. Provide the object name (user account) using either of the following approaches:
-  1. Type the user account `BouncyHsm` in the object name field and select _OK_ to add the user to the policy.
-  1. Select _Advanced_. Select _Find Now_. Select the user account from the list. Select _OK_. Select _OK_ again to add the user to the policy.
-  1. Select _OK_ or _Apply_ to accept the changes.
+    1. Type the user account `BouncyHsm` in the object name field and select _OK_ to add the user to the policy.
+    1. Select _Advanced_. Select _Find Now_. Select the user account from the list. Select _OK_. Select _OK_ again to add the user to the policy.
+    1. Select _OK_ or _Apply_ to accept the changes.
 
 ### Create a service
 Set ACL:
