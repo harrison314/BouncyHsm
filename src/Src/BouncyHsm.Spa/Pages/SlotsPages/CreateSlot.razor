@@ -2,6 +2,7 @@
 @using BouncyHsm.Spa.Services.Client
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
+@inject ILogger<CreateSlot> logger
 
 <PageTitle>Create slot with token</PageTitle>
 
@@ -147,7 +148,7 @@
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
             this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
-            Console.WriteLine(ex);
+            this.logger.LogError(ex, "Error during CreateSlotAsync.");
         }
     }
 }

@@ -4,6 +4,7 @@
 @using BouncyHsm.Spa.Utils;
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
+@inject ILogger<ImportCert> logger
 
 <PageTitle>Upload certificate</PageTitle>
 
@@ -25,8 +26,6 @@
                 <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
             </div>
         }
-
-
 
         <div class="mb-1">
             <label for="i-p12file" class="form-label">P12/PFX file</label>
@@ -116,7 +115,7 @@
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
             this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
-            Console.WriteLine(ex);
+            this.logger.LogError(ex, "Error during call ImportX509CertificateAsync.");
         }
     }
 }

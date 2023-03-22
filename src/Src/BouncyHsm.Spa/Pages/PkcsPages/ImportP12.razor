@@ -4,6 +4,7 @@
 @using BouncyHsm.Spa.Utils;
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
+@inject ILogger<ImportP12> logger
 
 <PageTitle>Import P12 file</PageTitle>
 
@@ -19,85 +20,93 @@
     <div class="col-6">
         <p>Import P12/PFX file into current slot as private key, public key, certificate and eventauly cetificate chain.</p>
 
-
-        @if (this.errorMessage != null)
+        @if (this.slot == null)
         {
-            <div class="mb-6">
-                <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
-            </div>
+            <LoadingIndicator />
         }
+        else
+        {
+            <p>Import into token with label <em>@this.slot.Token!.Label</em> and serial <em>@this.slot.Token!.SerialNumber</em>.</p>
 
-        <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" />
+            @if (this.errorMessage != null)
+            {
+                <div class="mb-6">
+                    <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+                </div>
+            }
 
-            <div class="mb-1">
-                <label for="i-ckalabel" class="form-label">CKA Label</label>
-                <InputText id="i-ckalabel" class="form-control" @bind-Value="this.model.CkaLabel" />
-                <div class="form-text">Value of CKA_LABEL.</div>
-                <ValidationMessage For="() => this.model.CkaLabel" />
-            </div>
+            <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
 
-            <div class="row mb-1">
-                <label for="i-ckaid" class="form-label">CKA ID</label>
-
-                <div class="row">
-                    <div class="col-9">
-                        <InputText id="i-ckaid" class="form-control" @bind-Value="this.model.CkaIdText" />
-                    </div>
-                    <div class="col-3">
-                        <InputSelect class="form-select" @bind-Value="this.model.CkaIdForm">
-                            <option value="@BinaryForm.Utf8">UTF-8</option>
-                            <option value="@BinaryForm.Hex">HEX</option>
-                            <option value="@BinaryForm.Base64">Base64</option>
-                        </InputSelect>
-                    </div>
+                <div class="mb-1">
+                    <label for="i-ckalabel" class="form-label">CKA Label</label>
+                    <InputText id="i-ckalabel" class="form-control" @bind-Value="this.model.CkaLabel" />
+                    <div class="form-text">Value of CKA_LABEL.</div>
+                    <ValidationMessage For="() => this.model.CkaLabel" />
                 </div>
 
-                <div class="form-text">Value for CKA_ID.</div>
-                <ValidationMessage For="() => this.model.CkaIdText" />
-            </div>
+                <div class="row mb-1">
+                    <label for="i-ckaid" class="form-label">CKA ID</label>
 
-            <div class="mb-1">
-                <label for="i-importmode" class="form-label">Import mode</label>
-                <InputSelect class="form-select" @bind-Value="this.model.ImportMode" id="i-importmode">
-                    <option value="@P12ImportMode.Imported">Standard import</option>
-                    <option value="@P12ImportMode.Local">Import as local objects</option>
-                    <option value="@P12ImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
-                </InputSelect>
+                    <div class="row">
+                        <div class="col-9">
+                            <InputText id="i-ckaid" class="form-control" @bind-Value="this.model.CkaIdText" />
+                        </div>
+                        <div class="col-3">
+                            <InputSelect class="form-select" @bind-Value="this.model.CkaIdForm">
+                                <option value="@BinaryForm.Utf8">UTF-8</option>
+                                <option value="@BinaryForm.Hex">HEX</option>
+                                <option value="@BinaryForm.Base64">Base64</option>
+                            </InputSelect>
+                        </div>
+                    </div>
 
-                <ValidationMessage For="() => this.model.ImportMode" />
-            </div>
+                    <div class="form-text">Value for CKA_ID.</div>
+                    <ValidationMessage For="() => this.model.CkaIdText" />
+                </div>
 
-            <div class="mb-1 form-check">
-                <InputCheckbox class="form-check-input" id="i-importchain" @bind-Value="this.model.ImportChain" />
-                <label class="form-check-label" for="i-importchain">Import certificate chain</label>
-                <ValidationMessage For="() => this.model.ImportChain" />
-            </div>
+                <div class="mb-1">
+                    <label for="i-importmode" class="form-label">Import mode</label>
+                    <InputSelect class="form-select" @bind-Value="this.model.ImportMode" id="i-importmode">
+                        <option value="@P12ImportMode.Imported">Standard import</option>
+                        <option value="@P12ImportMode.Local">Import as local objects</option>
+                        @if (this.slot.Token!.SimulateQualifiedArea)
+                        {
+                            <option value="@P12ImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
+                        }
+                    </InputSelect>
 
-            <hr />
-            <div class="mb-1">
-                <label for="i-p12file" class="form-label">P12/PFX file</label>
-                <InputFile id="i-p12file" OnChange="LoadFiles" class="form-control" accept=".p12, .pfx" />
-                <div class="form-text">Certificate file.</div>
-            </div>
+                    <ValidationMessage For="() => this.model.ImportMode" />
+                </div>
 
-            <div class="mb-1">
-                <label for="i-password" class="form-label">Password</label>
-                <InputText type="password" id="i-password" class="form-control" @bind-Value="this.model.Password" />
-                <div class="form-text">Password for P12/PFX file.</div>
-                <ValidationMessage For="() => this.model.Password" />
-            </div>
+                <div class="mb-1 form-check">
+                    <InputCheckbox class="form-check-input" id="i-importchain" @bind-Value="this.model.ImportChain" />
+                    <label class="form-check-label" for="i-importchain">Import certificate chain</label>
+                    <ValidationMessage For="() => this.model.ImportChain" />
+                </div>
 
-            <div class="justify-content-end">
-                <button type="submit" class="btn btn-primary"><span class="icon-upload3 icon-1x"></span> Submit</button>
-            </div>
-        </EditForm>
+                <hr />
+                <div class="mb-1">
+                    <label for="i-p12file" class="form-label">P12/PFX file</label>
+                    <InputFile id="i-p12file" OnChange="LoadFiles" class="form-control" accept=".p12, .pfx" />
+                    <div class="form-text">Certificate file.</div>
+                </div>
 
+                <div class="mb-1">
+                    <label for="i-password" class="form-label">Password</label>
+                    <InputText type="password" id="i-password" class="form-control" @bind-Value="this.model.Password" />
+                    <div class="form-text">Password for P12/PFX file.</div>
+                    <ValidationMessage For="() => this.model.Password" />
+                </div>
+
+                <div class="justify-content-end">
+                    <button type="submit" class="btn btn-primary"><span class="icon-upload3 icon-1x"></span> Submit</button>
+                </div>
+            </EditForm>
+        }
     </div>
 </div>
-
-
 
 @code {
 
@@ -112,10 +121,20 @@
     private EditContext? editContext;
     private string? errorMessage = null;
     private IBrowserFile? file = null;
+    private SlotDto? slot = null;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         this.editContext = new EditContext(this.model);
+        try
+        {
+            this.slot = await this.bouncyHsmClient.GetSlotAsync(this.SlotId);
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.logger.LogError(ex, "Error during call GetSlotAsync.");
+        }
     }
 
     private void LoadFiles(InputFileChangeEventArgs e)
@@ -152,14 +171,14 @@
         }
 
         ImportP12RequestDto request = new ImportP12RequestDto()
-        {
-            CkaLabel = this.model.CkaLabel.Trim(),
-            CkaId = this.GetCkaId(this.model.CkaIdForm, this.model.CkaIdText.Trim()),
-            ImportChain = this.model.ImportChain,
-            ImportMode = this.model.ImportMode,
-            Password = this.model.Password,
-            Pkcs12Content = p12Content
-        };
+            {
+                CkaLabel = this.model.CkaLabel.Trim(),
+                CkaId = this.GetCkaId(this.model.CkaIdForm, this.model.CkaIdText.Trim()),
+                ImportChain = this.model.ImportChain,
+                ImportMode = this.model.ImportMode,
+                Password = this.model.Password,
+                Pkcs12Content = p12Content
+            };
 
         try
         {
@@ -169,7 +188,7 @@
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
             this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
-            Console.WriteLine(ex);
+            this.logger.LogError(ex, "Error during call ImportP12Async.");
         }
     }
 

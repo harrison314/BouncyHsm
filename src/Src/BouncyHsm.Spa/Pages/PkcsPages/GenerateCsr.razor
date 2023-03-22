@@ -4,6 +4,7 @@
 @using BouncyHsm.Spa.Utils;
 @inject IBouncyHsmClient bouncyHsmClient
 @inject IJSRuntime JS
+@inject ILogger<GenerateCsr> logger
 
 <PageTitle>Generate PKCS#10 request</PageTitle>
 
@@ -109,7 +110,7 @@
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
             this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
-            Console.WriteLine(ex);
+            this.logger.LogError(ex, "Error during call Pkcs_GetPkcsObjectsAsync.");
         }
     }
 }
