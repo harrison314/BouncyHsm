@@ -9,7 +9,7 @@ func toCheck(b)
 end
 ~}}
 
-Supported algorithms for _Bouncy Hsm_ verison {{ Versions.Version }} (commit _{{Versions.Commit}}_).
+Supported algorithms for _Bouncy Hsm_ version {{ Versions.Version }} (commit _{{Versions.Commit}}_).
 
 ## Mechanisms
 _Bouncy Hsm_ supports {{ MechanismsCount }} mechanisms.

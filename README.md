@@ -27,6 +27,10 @@ or during network calls.
 * Native PKCS#11 library without dependencies (no dependency hell, no permision configuration).
 * _BouncyHsm_ runs on _Raspberry Pi Zero 2 W_, or as [Windows service](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-6.0&tabs=netcore-cli).
 
+## Quick start and deployment  guide
+* Quick start
+* [Deployment guide](/Doc/Deployment.md)
+
 ## Contributing and issues
 Pull requests are welcome. If you are not sure about the change, open an issue first.
 
