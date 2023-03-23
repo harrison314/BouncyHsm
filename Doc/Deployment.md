@@ -45,6 +45,8 @@ Update security policy:
     1. Select _OK_ or _Apply_ to accept the changes.
 
 ### Create a service
+Add access for directory `D:\BouncyHsm` for new user.
+
 Set ACL:
 
 ```powershell

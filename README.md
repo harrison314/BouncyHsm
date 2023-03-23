@@ -18,7 +18,7 @@ or during network calls.
   * Generate CSR, import certificate file.
   * ...
 * Possibility to simulate cards with a qualified area and a signature pin.
-* Suports RSA keys (with size 1-10K).
+* Suports RSA keys (with size 2-10K).
 * Suports 80 named eliptic curves.
 * Suports secrets (HMAC, derive,...)
 * Suports AES keys.
@@ -28,7 +28,7 @@ or during network calls.
 * _BouncyHsm_ runs on _Raspberry Pi Zero 2 W_, or as [Windows service](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-6.0&tabs=netcore-cli).
 
 ## Quick start and deployment  guide
-* Quick start
+* [Quick start gude](/Doc/QuickstartGuide.md)
 * [Deployment guide](/Doc/Deployment.md)
 
 ## Contributing and issues
