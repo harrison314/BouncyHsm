@@ -1,0 +1,16 @@
+﻿@if(!string.IsNullOrEmpty(this.Text))
+{
+    @foreach (string line in this.Text.Split(new string[] { "\r\n", "\n", "\r" }, StringSplitOptions.None))
+    {
+        @(line)<br />
+    }
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public string? Text
+    {
+        get;
+        set;
+    }
+}

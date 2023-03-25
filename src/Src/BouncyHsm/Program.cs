@@ -1,4 +1,3 @@
-
 using BouncyHsm.Infrastructure;
 using BouncyHsm.Infrastructure.Application;
 using BouncyHsm.Services.Configuration;
@@ -30,6 +29,7 @@ public class Program
         builder.Host.UseSerilog((context, services, configuration) => configuration
                .ReadFrom.Configuration(context.Configuration)
                .ReadFrom.Services(services)
+               .WriteTo.Sink<BouncyHsm.Infrastructure.LogPropagation.SignalrLogEventSink>()
                .Enrich.FromLogContext());
 
         builder.Services.Configure<Services.Configuration.BouncyHsmSetup>(builder.Configuration.GetSection("BouncyHsmSetup"));
@@ -82,6 +82,8 @@ public class Program
             options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
         });
 
+        builder.Services.AddSignalR();
+
         WebApplication app = builder.Build();
 
         app.UseForwardedHeaders();
@@ -106,7 +108,7 @@ public class Program
 
         app.UseAuthorization();
 
-
+        app.MapHub<BouncyHsm.Infrastructure.LogPropagation.LogHub>("/loghub");
         app.MapControllers();
         app.MapFallbackToFile("index.html");
 

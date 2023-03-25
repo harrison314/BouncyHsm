@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.14" PrivateAssets="all" />
     <PackageReference Include="BlazorStrap.V5" Version="5.1.100" />
     <PackageReference Include="BlazorStrap" Version="5.1.100" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.15" />
   </ItemGroup>
 
 </Project>

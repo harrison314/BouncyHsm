@@ -1,0 +1,160 @@
+﻿@page "/LogViewer"
+@using BouncyHsm.Spa.Client.Services.Client;
+@using BouncyHsm.Spa.Client;
+@using BouncyHsm.Spa.Services.Client
+@using Microsoft.AspNetCore.SignalR.Client
+@using BouncyHsm.Spa.Shared.ForLogViewer
+@implements IAsyncDisposable
+@inject NavigationManager Navigation
+@inject ILogger<LogViewer> logger
+
+<PageTitle>Log live viewer</PageTitle>
+
+<h1>Log live viewer</h1>
+
+<div class="row">
+    <div class="col">
+
+        <div class="row mb-1">
+            <div class="row">
+                <div class="col-6">
+                    <label for="" class="form-label">Tag filter</label>
+                </div>
+                <div class="col-3">
+                    <label for="" class="form-label">Min. level</label>
+                </div>
+                <div class="col-3">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <input type="text" class="form-control" @bind="this.tag" disabled="@this.isRunning" />
+                </div>
+                <div class="col-3">
+                    <select class="form-select" @bind="this.logLevel" disabled="@this.isRunning">
+                        <option value="@LogLevel.Trace">Trace</option>
+                        <option value="@LogLevel.Debug">Debug</option>
+                        <option value="@LogLevel.Information">Information</option>
+                        <option value="@LogLevel.Warning">Warning</option>
+                        <option value="@LogLevel.Error">Error</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    @if (this.isRunning)
+                    {
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                            @onclick="this.Stop">
+                            <span class="spinner-border text-danger spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Stop
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn btn-outline-primary"
+                            @onclick="this.Start">
+                            <span class="icon-feed icon-1x"></span>
+                            Start
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        @foreach (LogDto log in this.logBuffer)
+        {
+            <LogRow Log="@log" />
+        }
+    </div>
+</div>
+
+@code {
+    private HubConnection? hubConnection;
+    private CircularBuffer<LogDto> logBuffer = new CircularBuffer<LogDto>(52);
+    private CancellationTokenSource cts = new CancellationTokenSource();
+    private string tag = string.Empty;
+    private LogLevel logLevel = LogLevel.Trace;
+    private string? lastTag = string.Empty;
+    private bool isRunning = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/loghub"))
+            .Build();
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task Start()
+    {
+        this.lastTag = string.IsNullOrWhiteSpace(this.tag)
+        ? null
+        : this.tag.Trim();
+
+        await this.StartInternal(this.lastTag, this.logLevel);
+    }
+
+    private Task Stop()
+    {
+        this.cts.Cancel();
+        return Task.CompletedTask;
+    }
+
+    private async Task StartInternal(string? currentTag, LogLevel minLogLevel)
+    {
+        this.cts.Cancel();
+        this.cts.Dispose();
+        this.cts = new CancellationTokenSource();
+
+        this.logBuffer.Clear();
+        this.StateHasChanged();
+
+        try
+        {
+            this.isRunning = true;
+            var stream = this.hubConnection!.StreamAsync<LogDto>("GetLogStream",
+             currentTag,
+             minLogLevel,
+             this.cts.Token);
+
+            await foreach (LogDto log in stream)
+            {
+                if (this.cts.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                this.logBuffer.PushFront(log);
+                this.StateHasChanged();
+                await Task.Delay(5);
+            }
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in StartInternal.");
+        }
+        finally
+        {
+            this.isRunning = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        this.cts.Cancel();
+        this.cts.Dispose();
+
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

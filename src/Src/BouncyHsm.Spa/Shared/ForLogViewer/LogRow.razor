@@ -1,0 +1,27 @@
+﻿@using BouncyHsm.Spa.Client.Services.Client;
+
+<div class="row bg-white smallest-font">
+    <div class="col-2 pointer-cursor">@this.Log.Timestamp</div>
+    <div class="col-1 pointer-cursor"><LogLevelBadge Level="@this.Log.Level" /></div>
+    <div class="col-9 text-break">
+        @this.Log.Message
+        @if (this.Log.Exception != null)
+        {
+            <br />
+            <Nl2Br Text="@this.Log.Exception" />
+        }
+
+        <br />
+        <em>@this.Log.Context</em>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public LogDto Log
+    {
+        get;
+        set;
+    } = null!;
+}
