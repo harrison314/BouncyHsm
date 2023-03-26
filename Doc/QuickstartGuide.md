@@ -1,5 +1,10 @@
 # Quick start guide for local use
-To use Bouncy Hsm, you need to have [Net 6.0 Runtime and ASP.NET Core Runtime 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed.
+To use _Bouncy Hsm_, you need to have [Net 6.0 Runtime and ASP.NET Core Runtime 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed.
+
+_Bouncy Hsm_ is standard ASP.NET Core application with native shared library implements PKCS#11 interface.
+The following diagram shows usage:
+
+![Overview Diagram](OverviewDiagram.png)
 
 1. Download `BouncyHsm.zip` from [releases](https://github.com/harrison314/BouncyHsm/releases).
 1. Extract `BouncyHsm.zip` into folder.
