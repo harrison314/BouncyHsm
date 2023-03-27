@@ -12,7 +12,7 @@ internal class ListObjectsCommand : AsyncCommand<ListObjectsCommand.Settings>
 {
     internal sealed class Settings : BaseSettings
     {
-        [CommandArgument(0, "SlotId")]
+        [CommandArgument(0, "[SlotId]")]
         public int SlotId
         {
             get;

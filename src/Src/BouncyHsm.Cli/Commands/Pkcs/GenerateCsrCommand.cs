@@ -6,21 +6,21 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
 {
     internal sealed class Settings : BaseSettings
     {
-        [CommandArgument(0, "SlotId")]
+        [CommandArgument(0, "[SlotId]")]
         public int SlotId
         {
             get;
             set;
         }
 
-        [CommandArgument(1, "PrivateKeyId")]
+        [CommandArgument(1, "[PrivateKeyId]")]
         public Guid PrivateKeyId
         {
             get;
             set;
         }
 
-        [CommandArgument(2, "SubjectName")]
+        [CommandArgument(2, "[SubjectName]")]
         public string? SubjectName
         {
             get;

@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\BouncyHsm.Spa\Client\Services\Client\BouncyHsmClient.cs" Link="BouncyHsmClient.cs" />
+    <Compile Include="..\BouncyHsm.Spa\Client\Services\Client\Client.cs" Link="Client.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
       <PackageReference Include="Spectre.Console" Version="0.46.0" />
       <PackageReference Include="Spectre.Console.Cli" Version="0.46.0" />
   </ItemGroup>
