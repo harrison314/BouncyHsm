@@ -27,4 +27,6 @@ public interface IPersistentRepository
     ValueTask<StorageObject?> TryLoadObject(uint slotId, Guid id, CancellationToken cancellationToken);
 
     ValueTask DestroyObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken);
+
+    ValueTask<PersistentRepositoryStats> GetStats(CancellationToken cancellationToken);
 }

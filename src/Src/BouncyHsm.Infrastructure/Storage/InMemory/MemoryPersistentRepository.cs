@@ -126,7 +126,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
             return new ValueTask<IReadOnlyList<SlotEntity>>(result);
         }
 
-        return new ValueTask<IReadOnlyList<SlotEntity>>(slots);
+        return new ValueTask<IReadOnlyList<SlotEntity>>(this.slots);
     }
 
     public ValueTask StoreObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
@@ -189,5 +189,18 @@ internal class MemoryPersistentRepository : IPersistentRepository
         }
 
         return new ValueTask();
+    }
+
+    public ValueTask<PersistentRepositoryStats> GetStats(CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GetStats");
+
+        int privateKeys = this.storageObjects.Values.Count(t => t.CkaClass == CKO.CKO_PRIVATE_KEY);
+        int certificates = this.storageObjects.Values.OfType<X509CertificateObject>().Count();
+
+        return new ValueTask<PersistentRepositoryStats>(new PersistentRepositoryStats(this.slots.Count,
+            this.storageObjects.Count,
+            privateKeys,
+            certificates));
     }
 }

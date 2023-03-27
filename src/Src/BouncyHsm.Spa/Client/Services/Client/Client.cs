@@ -114,6 +114,13 @@ namespace BouncyHsm.Spa.Services.Client
         System.Threading.Tasks.Task DeleteSlotAsync(int slotId, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OverviewStatsDto> GetOverviewStatsAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OverviewStatsDto> GetOverviewStatsAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<StorageObjectsListDto> GetStorageObjectsAsync(int slotId, int? skip, int? take);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1424,6 +1431,98 @@ namespace BouncyHsm.Spa.Services.Client
         }
 
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<OverviewStatsDto> GetOverviewStatsAsync()
+        {
+            return GetOverviewStatsAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<OverviewStatsDto> GetOverviewStatsAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Stats");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<OverviewStatsDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiBouncyHsmException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<StorageObjectsListDto> GetStorageObjectsAsync(int slotId, int? skip, int? take)
         {
             return GetStorageObjectsAsync(slotId, skip, take, System.Threading.CancellationToken.None);
@@ -2588,6 +2687,47 @@ namespace BouncyHsm.Spa.Services.Client
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public SpeedMode SpeedMode { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class OverviewStatsDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConnectedApplications")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int ConnectedApplications { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RoSessionCount")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int RoSessionCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RwSessionCount")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int RwSessionCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SlotCount")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int SlotCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TotalObjectCount")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int TotalObjectCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrivateKeys")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int PrivateKeys { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("X509Certificates")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int X509Certificates { get; set; } = default!;
 
     }
 

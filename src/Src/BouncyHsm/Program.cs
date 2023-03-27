@@ -76,6 +76,7 @@ public class Program
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IHsmInfoFacade, BouncyHsm.Core.UseCases.Implementation.HsmInfoFacade>();
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IStorageObjectsFacade, BouncyHsm.Core.UseCases.Implementation.StorageObjectsFacade>();
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IPkcsFacade, BouncyHsm.Core.UseCases.Implementation.PkcsFacade>();
+        builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IStatsFacade, BouncyHsm.Core.UseCases.Implementation.StatsFacade>();
 
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {

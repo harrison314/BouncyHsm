@@ -38,4 +38,23 @@ public class ClientApplicationContext : IClientApplicationContext
         memorySession = ms;
         return result;
     }
+
+    public ClientApplicationContextStats GetStats()
+    {
+        int totalCount = 0;
+        int rwSessionCount = 0;
+        int roSessionCount = 0;
+
+        foreach (MemorySession ms in this.apps.Values)
+        {
+            MemorySessionStatus status = ms.GetStatus();
+            rwSessionCount += status.RwSessionCount;
+            roSessionCount += status.RoSessionCount;
+            totalCount++;
+        }
+
+        return new ClientApplicationContextStats(totalCount,
+            roSessionCount,
+            rwSessionCount);
+    }
 }
