@@ -9,6 +9,8 @@ _Bouncy Hsm_ can also be used by just running it under the current user (non-pri
 ## Deploy as Windows service
 _Bouncy Hsm_ can be deployed as a Windows service. All the following commands are executed using _PowerShell_ and privileged user.
 
+For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-6.0&tabs=netcore-cli>.
+
 We will install the application in the directory `D:\BouncyHsm` (for example).
 
 ### Extract application
@@ -52,11 +54,11 @@ Set ACL:
 ```powershell
 $cn = Get-WmiObject -Namespace root\cimv2 -Class Win32_ComputerSystem | Select Name
 $user = "{0}\BouncyHsm" -f $cn.Name
-$acl = Get-Acl "D:\BouncyHsm\bin\BouncyHsm.exe"
+$acl = Get-Acl "D:\BouncyHsm"
 $aclRuleArgs = $user, "Read,Write,ReadAndExecute", "ContainerInherit,ObjectInherit", "None", "Allow"
 $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($aclRuleArgs)
 $acl.SetAccessRule($accessRule)
-$acl | Set-Acl "D:\BouncyHsm\bin\BouncyHsm.exe"
+$acl | Set-Acl "D:\BouncyHsm"
 ```
 Error _Exception calling "SetAccessRule" with "1" argument(s): "No flags can be set._ can by ignored.
 
@@ -101,7 +103,7 @@ Remove a user:
 Remove-LocalUser -Name "BouncyHsm"
 ```
 
-For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-6.0&tabs=netcore-cli>.
+Another option is to use `NT Service` account for service.
 
 
 ## Deploy as Linux daemon
@@ -188,4 +190,4 @@ Or view console logs:
 sudo journalctl -fu bouncyhsm
 ```
 
-Or see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-6.0>.
+For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-6.0>.
