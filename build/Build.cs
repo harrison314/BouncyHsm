@@ -68,11 +68,26 @@ public partial class Build : NukeBuild
             .SetOutput(outputDir));
         });
 
+    Target BuildBouncyHsmCli => _ => _
+        .DependsOn(Clean)
+        .Executes(() =>
+        {
+            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Cli" / "BouncyHsm.cli.csproj";
+            AbsolutePath outputDir = ArtifactsTmpDirectory / "BouncyHsm.Cli";
+
+            DotNetPublish(_ => _
+            .SetConfiguration(Configuration)
+            .AddProperty("GitCommit", Repository.Commit)
+            .SetProject(projectFile)
+            .SetOutput(outputDir));
+        });
+
     Target BuildAll => _ => _
         .DependsOn(Clean)
         .DependsOn(BuildPkcs11LibWin32)
         .DependsOn(BuildPkcs11LibX64)
         .DependsOn(BuildBouncyHsm)
+        .DependsOn(BuildBouncyHsmCli)
         .Produces(ArtifactsDirectory / "*.zip")
         .Executes(() =>
         {
@@ -121,6 +136,10 @@ public partial class Build : NukeBuild
             Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm",
                 ArtifactsDirectory / "BouncyHsm.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep");
+
+            Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm.Cli",
+               ArtifactsDirectory / "BouncyHsm.Cli.zip",
+               t => t.Extension != ".pdb" && t.Name != ".gitkeep");
         });
 
     private void CopyLicenses(AbsolutePath bouncyHsmPath)

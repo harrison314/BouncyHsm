@@ -74,6 +74,7 @@
             "enum": [
               "BuildAll",
               "BuildBouncyHsm",
+              "BuildBouncyHsmCli",
               "BuildPkcs11LibWin32",
               "BuildPkcs11LibX64",
               "Clean",
@@ -89,6 +90,7 @@
             "enum": [
               "BuildAll",
               "BuildBouncyHsm",
+              "BuildBouncyHsmCli",
               "BuildPkcs11LibWin32",
               "BuildPkcs11LibX64",
               "Clean",
