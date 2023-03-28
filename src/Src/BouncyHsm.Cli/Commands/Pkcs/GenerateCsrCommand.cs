@@ -26,6 +26,13 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
             get;
             set;
         }
+
+        [CommandOption("-o|--outputPath <Outputpath>")]
+        public string Outputpath
+        {
+            get;
+            set;
+        } = default!;
     }
 
     public override Task<int> ExecuteAsync(CommandContext context, Settings settings)

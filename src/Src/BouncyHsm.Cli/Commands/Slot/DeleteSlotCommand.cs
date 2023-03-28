@@ -27,9 +27,9 @@ internal class DeleteSlotCommand : AsyncCommand<DeleteSlotCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        Spa.Services.Client.BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
-        if (settings.Confirm)
+        if (!settings.Confirm)
         {
             SlotDto slot = default!;
             await AnsiConsole.Status()
