@@ -4,5 +4,5 @@ public enum SpeedMode
 {
     WithoutRestriction,
     Hsm,
-    SmardCard
+    SmartCard
 }

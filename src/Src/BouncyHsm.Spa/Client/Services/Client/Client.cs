@@ -2607,8 +2607,8 @@ namespace BouncyHsm.Spa.Services.Client
         [System.Runtime.Serialization.EnumMember(Value = @"Hsm")]
         Hsm = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"SmardCard")]
-        SmardCard = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"SmartCard")]
+        SmartCard = 2,
 
     }
 
