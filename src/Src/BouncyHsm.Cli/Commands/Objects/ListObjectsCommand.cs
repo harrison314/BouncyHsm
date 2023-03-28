@@ -4,6 +4,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,17 @@ internal class ListObjectsCommand : AsyncCommand<ListObjectsCommand.Settings>
     internal sealed class Settings : BaseSettings
     {
         [CommandArgument(0, "[SlotId]")]
+        [Description("Slot Id.")]
         public int SlotId
+        {
+            get;
+            set;
+        }
+
+        [CommandOption("-t|--typeFilter <CKO>")]
+        [DefaultValue(null)]
+        [Description("Filter for object type, value is CKO name. (Optional parameter)")]
+        public CKO? FilterType
         {
             get;
             set;
@@ -41,7 +52,7 @@ internal class ListObjectsCommand : AsyncCommand<ListObjectsCommand.Settings>
         table.AddColumn("CKK");
         table.AddColumn("Description");
 
-        foreach (StorageObjectInfoDto info in objects.Objects)
+        foreach (StorageObjectInfoDto info in objects.Objects.Where(t => !settings.FilterType.HasValue || t.Type == settings.FilterType.Value))
         {
             table.AddRow(new Markup($"[green]{info.Id}[/]"),
                 new Markup(Markup.Escape(info.CkLabel)),

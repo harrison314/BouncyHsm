@@ -32,7 +32,7 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
         table.AddColumn("Token Label");
         table.AddColumn("Token SerialNumber");
         table.AddColumn("With HW RNG");
-        table.AddColumn("With QualifiedArea");
+        table.AddColumn("With Qualified Area");
 
         foreach (Spa.Services.Client.SlotDto slot in slots)
         {

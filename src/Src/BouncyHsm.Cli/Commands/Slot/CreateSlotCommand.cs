@@ -15,7 +15,8 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
 {
     internal sealed class Settings : BaseSettings
     {
-        [CommandOption("-d|--slotDecsription <SlotDescription>")]
+        [CommandOption("-d|--slotDescription <SlotDescription>")]
+        [Description("Slot description.")]
         public string SlotDescription
         {
             get;
@@ -23,6 +24,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         } = default!;
 
         [CommandOption("-l|--tokenLabel <TokenLabel>")]
+        [Description("Token label.")]
         public string TokenLabel
         {
             get;
@@ -30,6 +32,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         } = default!;
 
         [CommandOption("-s|--tokenSerial <TokenSerial>")]
+        [Description("Token serial number. If not set it is created automatically. (Optional parameter)")]
         public string? TokenSerial
         {
             get;
@@ -38,6 +41,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
 
         [CommandOption("--simulateHwMechanism")]
         [DefaultValue(true)]
+        [Description("If set to true, then the slot and token is presented as a HW device.")]
         public bool TokenSimulateHwMechanism
         {
             get;
@@ -46,6 +50,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
 
         [CommandOption("--simulateHwRng")]
         [DefaultValue(true)]
+        [Description("If set to true, then the token simulate HW RNG.")]
         public bool TokenSimulateHwRng
         {
             get;
@@ -54,6 +59,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
 
         [CommandOption("--qualifiedArea")]
         [DefaultValue(false)]
+        [Description("If set to true, the token allows you to use a signature PIN.")]
         public bool TokenSimulateQualifiedArea
         {
             get;
@@ -62,6 +68,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
 
         [CommandOption("--speedMode <SpeedMode>")]
         [DefaultValue(SpeedMode.WithoutRestriction)]
+        [Description("Speed mode. Allowed values are WithoutRestriction, Hsm and SmartCard.")]
         public SpeedMode SpeedMode
         {
             get;
@@ -69,24 +76,26 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         }
 
         [CommandOption("-u|--userPin <UserPin>")]
-        [Required]
-        [MinLength(4)]
-        public string TokenUserPin
+        [DefaultValue(null)]
+        [Description("User PIN for token. (Optional parameter)")]
+        public string? TokenUserPin
         {
             get;
             set;
-        } = default!;
+        }
 
         [CommandOption("-q|--soPin <UserPin>")]
-        [Required]
-        [MinLength(4)]
-        public string TokenSoPin
+        [DefaultValue(null)]
+        [Description("SO PIN for token. (Optional parameter)")]
+        public string? TokenSoPin
         {
             get;
             set;
-        } = default!;
+        }
 
         [CommandOption("--signaturePin <SignaturePin>")]
+        [DefaultValue(null)]
+        [Description("Signature PIN for token. (Optional parameter)")]
         public string? TokenSignaturePin
         {
             get;
@@ -111,7 +120,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
             userPin = settings.TokenUserPin;
         }
 
-        if (string.IsNullOrEmpty(settings.TokenUserPin))
+        if (string.IsNullOrEmpty(settings.TokenSoPin))
         {
             soPin = AnsiConsole.Prompt(new TextPrompt<string>("Enter [green]so PIN[/]:").Secret());
         }
