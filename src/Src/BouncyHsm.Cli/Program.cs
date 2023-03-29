@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Cli.Commands.Objects;
 using BouncyHsm.Cli.Commands.Pkcs;
 using BouncyHsm.Cli.Commands.Slot;
+using BouncyHsm.Cli.Commands.Stats;
 using Spectre.Console.Cli;
 
 namespace BouncyHsm.Cli;
@@ -37,6 +38,13 @@ public static class Program
                 slot.AddCommand<ImportCertificateCommand>("importCert").WithDescription("Import certificate file into token.");
 
                 slot.SetDescription("PKCS objects manipulation.");
+            });
+
+            config.AddBranch("stats", stats =>
+            {
+                stats.AddCommand<GetOverviewStatsCommand>("overview").WithDescription("Get overview stats.");
+
+                stats.SetDescription("Display of statistical data.");
             });
         });
 
