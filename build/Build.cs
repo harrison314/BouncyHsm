@@ -32,6 +32,9 @@ public partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+    [Parameter("Net runtime for compilation for specific target.")]
+    readonly NetRuntime NetRuntime = NetRuntime.None;
+
     [GitRepository]
     readonly GitRepository Repository;
 
@@ -64,6 +67,7 @@ public partial class Build : NukeBuild
             DotNetPublish(_ => _
             .SetConfiguration(Configuration)
             .AddProperty("GitCommit", Repository.Commit)
+            .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
             .SetProject(projectFile)
             .SetOutput(outputDir));
         });
@@ -78,6 +82,7 @@ public partial class Build : NukeBuild
             DotNetPublish(_ => _
             .SetConfiguration(Configuration)
             .AddProperty("GitCommit", Repository.Commit)
+            .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
             .SetProject(projectFile)
             .SetOutput(outputDir));
         });

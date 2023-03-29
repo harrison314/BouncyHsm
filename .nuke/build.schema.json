@@ -43,6 +43,23 @@
             "VSCode"
           ]
         },
+        "NetRuntime": {
+          "type": "string",
+          "description": "Net runtime for compilation for specific target",
+          "enum": [
+            "linux_arm",
+            "linux_arm64",
+            "linux_musl_x64",
+            "linux_x64",
+            "None",
+            "win_arm64",
+            "win_x64",
+            "win_x86",
+            "win10_arm64",
+            "win10_x64",
+            "win10_x86"
+          ]
+        },
         "NoLogo": {
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
