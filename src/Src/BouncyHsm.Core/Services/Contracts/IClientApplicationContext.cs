@@ -9,4 +9,6 @@ public interface IClientApplicationContext
     void ReleaseMemorySession(string key);
 
     bool TryGetMemorySession(string key, [NotNullWhen(true)] out IMemorySession? memorySession);
+
+    ClientApplicationContextStats GetStats();
 }

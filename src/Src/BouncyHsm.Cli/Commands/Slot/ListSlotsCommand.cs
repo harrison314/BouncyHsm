@@ -1,0 +1,50 @@
+﻿using Spectre.Console;
+using Spectre.Console.Cli;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BouncyHsm.Cli.Commands.Slot;
+
+internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
+{
+    internal sealed class Settings : BaseSettings
+    {
+
+    }
+
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    {
+        Spa.Services.Client.BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IList<Spa.Services.Client.SlotDto> slots = default!;
+
+        await AnsiConsole.Status()
+            .StartAsync("Loading...", async ctx =>
+            {
+                slots = await client.GetAllSlotsAsync();
+            });
+
+        Table table = new Table();
+        table.AddColumn("Id");
+        table.AddColumn("Description");
+        table.AddColumn("Token Label");
+        table.AddColumn("Token SerialNumber");
+        table.AddColumn("With HW RNG");
+        table.AddColumn("With Qualified Area");
+
+        foreach (Spa.Services.Client.SlotDto slot in slots)
+        {
+            table.AddRow(new Markup($"[green]{slot.SlotId}[/]"),
+                new Markup(Markup.Escape(slot.Description)),
+                new Markup(Markup.Escape(slot.Token!.Label)),
+                new Markup(Markup.Escape(slot.Token!.SerialNumber)),
+                new Markup(slot.Token!.SimulateHwRng ? "[green]yes[/]" : "[yellow]no[/]"),
+                new Markup(slot.Token!.SimulateQualifiedArea ? "[green]yes[/]" : "[yellow]no[/]"));
+        }
+
+        AnsiConsole.Write(table);
+        return 0;
+    }
+}

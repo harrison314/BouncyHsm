@@ -32,6 +32,9 @@ public partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+    [Parameter("Net runtime for compilation for specific target.")]
+    readonly NetRuntime NetRuntime = NetRuntime.None;
+
     [GitRepository]
     readonly GitRepository Repository;
 
@@ -64,6 +67,22 @@ public partial class Build : NukeBuild
             DotNetPublish(_ => _
             .SetConfiguration(Configuration)
             .AddProperty("GitCommit", Repository.Commit)
+            .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
+            .SetProject(projectFile)
+            .SetOutput(outputDir));
+        });
+
+    Target BuildBouncyHsmCli => _ => _
+        .DependsOn(Clean)
+        .Executes(() =>
+        {
+            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Cli" / "BouncyHsm.cli.csproj";
+            AbsolutePath outputDir = ArtifactsTmpDirectory / "BouncyHsm.Cli";
+
+            DotNetPublish(_ => _
+            .SetConfiguration(Configuration)
+            .AddProperty("GitCommit", Repository.Commit)
+            .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
             .SetProject(projectFile)
             .SetOutput(outputDir));
         });
@@ -73,6 +92,7 @@ public partial class Build : NukeBuild
         .DependsOn(BuildPkcs11LibWin32)
         .DependsOn(BuildPkcs11LibX64)
         .DependsOn(BuildBouncyHsm)
+        .DependsOn(BuildBouncyHsmCli)
         .Produces(ArtifactsDirectory / "*.zip")
         .Executes(() =>
         {
@@ -121,6 +141,10 @@ public partial class Build : NukeBuild
             Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm",
                 ArtifactsDirectory / "BouncyHsm.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep");
+
+            Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm.Cli",
+               ArtifactsDirectory / "BouncyHsm.Cli.zip",
+               t => t.Extension != ".pdb" && t.Name != ".gitkeep");
         });
 
     private void CopyLicenses(AbsolutePath bouncyHsmPath)

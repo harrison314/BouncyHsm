@@ -147,7 +147,7 @@
         if (this.server != DefaltServer || this.port != DefaltPort)
         {
             sb.Append("Server=");
-            sb.Append(this.server.Trim());
+            sb.Append(this.ToMaxLen(this.server.Trim(), 63));
             sb.Append("; ");
 
             sb.Append("Port=");
@@ -172,7 +172,7 @@
         if (this.tag != DefaltTag)
         {
             sb.Append("Tag=");
-            sb.Append(this.tag);
+            sb.Append(this.ToMaxLen(this.tag, 31));
             sb.Append("; ");
         }
 
@@ -182,5 +182,10 @@
         }
 
         return sb.ToString();
+    }
+
+    private string ToMaxLen(string text, int maxLen)
+    {
+        return (text.Length > maxLen) ? text.Substring(0, maxLen) : text;
     }
 }

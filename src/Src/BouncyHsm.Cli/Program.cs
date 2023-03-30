@@ -1,0 +1,53 @@
+﻿using BouncyHsm.Cli.Commands.Objects;
+using BouncyHsm.Cli.Commands.Pkcs;
+using BouncyHsm.Cli.Commands.Slot;
+using BouncyHsm.Cli.Commands.Stats;
+using Spectre.Console.Cli;
+
+namespace BouncyHsm.Cli;
+
+public static class Program
+{
+    public static async Task<int> Main(string[] args)
+    {
+        CommandApp app = new CommandApp();
+        app.Configure(config =>
+        {
+            config.SetApplicationName("BouncyHsm.Cli");
+            config.AddBranch("slot", slot =>
+            {
+                slot.AddCommand<ListSlotsCommand>("list").WithDescription("List all slots and tokens.");
+                slot.AddCommand<CreateSlotCommand>("create").WithDescription("Create a new slot with token.");
+                slot.AddCommand<DeleteSlotCommand>("delete").WithDescription("Delete slot with token.");
+
+                slot.SetDescription("Slot manipulation.");
+            });
+
+            config.AddBranch("objects", slot =>
+            {
+                slot.AddCommand<ListObjectsCommand>("list").WithDescription("List all objects in token.");
+
+                slot.SetDescription("Crypto objects manipulation.");
+            });
+
+            config.AddBranch("pkcs", slot =>
+            {
+                slot.AddCommand<ListPkcsObjectCommand>("list").WithDescription("List all objects in token.");
+                slot.AddCommand<ImportP12Command>("importP12").WithDescription("Import P12/PFX file into token.");
+                slot.AddCommand<GenerateCsrCommand>("generateCsr").WithDescription("Generate CSR (PKCS#10 request).");
+                slot.AddCommand<ImportCertificateCommand>("importCert").WithDescription("Import certificate file into token.");
+
+                slot.SetDescription("PKCS objects manipulation.");
+            });
+
+            config.AddBranch("stats", stats =>
+            {
+                stats.AddCommand<GetOverviewStatsCommand>("overview").WithDescription("Get overview stats.");
+
+                stats.SetDescription("Display of statistical data.");
+            });
+        });
+
+        return await app.RunAsync(args);
+    }
+}

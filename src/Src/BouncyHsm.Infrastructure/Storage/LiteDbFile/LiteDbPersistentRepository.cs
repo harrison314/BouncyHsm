@@ -467,6 +467,24 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
     #endregion
 
+    public ValueTask<PersistentRepositoryStats> GetStats(CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GetStats");
+
+        ILiteCollection<SlotModel> collection = this.database.GetCollection<SlotModel>();
+        ILiteCollection<StorageObjectInfo> objectCollection = this.database.GetCollection<StorageObjectInfo>();
+
+       int privateKeys=  objectCollection.Count(t => t.CkaClass == (uint)CKO.CKO_PRIVATE_KEY);
+       int certificates= objectCollection.Count(t => t.CkaClass == (uint)CKO.CKO_CERTIFICATE 
+           && t.CertType.HasValue
+           && t.CertType.Value == (uint)CKC.CKC_X_509);
+
+        return new ValueTask<PersistentRepositoryStats>(new PersistentRepositoryStats(collection.Count(),
+           objectCollection.Count(),
+           privateKeys,
+           certificates));
+    }
+
     private ulong CalculateXxxHash(ReadOnlySpan<byte> data)
     {
         this.logger.LogTrace("Entering to CalculateXxxHash.");

@@ -1,11 +1,13 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
+using System.Net.Http.Headers;
 
 namespace BouncyHsm.Core.Services.Bc;
 
@@ -79,6 +81,16 @@ public class X509CertificateWrapper
     public P11KeyUsages GetKeyUsage()
     {
         bool[] keyUsage = this.certificate.GetKeyUsage();
+        if (keyUsage == null)
+        {
+            P11KeyUsages? usage = this.TryGetKeyUsageFromExtendedKeyUsage();
+            if (usage != null)
+            {
+                return usage;
+            }
+
+            return new P11KeyUsages(true, true, true);
+        }
 
         bool canSign = keyUsage[KeyUsageBitsIndex.CRLSign]
             || keyUsage[KeyUsageBitsIndex.DigitalSignature]
@@ -137,5 +149,42 @@ public class X509CertificateWrapper
             DsaPublicKeyParameters _ => CKK.CKK_DSA,
             _ => throw new NotSupportedException($"Not supported public key in certificate {publicKey.GetType().Name}.")
         };
+    }
+
+    private P11KeyUsages? TryGetKeyUsageFromExtendedKeyUsage()
+    {
+        bool canSign = false;
+        bool canEncrypt = false;
+
+        IList<DerObjectIdentifier> usageOids = this.certificate.GetExtendedKeyUsage();
+        if (usageOids == null)
+        {
+            return null;
+        }
+
+        foreach (DerObjectIdentifier usageOid in usageOids)
+        {
+            if (usageOid.Equals(Org.BouncyCastle.Asn1.X509.KeyPurposeID.id_kp_serverAuth)
+                || usageOid.Equals(Org.BouncyCastle.Asn1.X509.KeyPurposeID.id_kp_clientAuth)
+                || usageOid.Equals(Org.BouncyCastle.Asn1.X509.KeyPurposeID.id_kp_emailProtection)
+                || usageOid.Id == "1.3.6.1.5.5.7.3.17")
+            {
+                canSign = true;
+                canEncrypt = true;
+            }
+            else if (usageOid.Equals(Org.BouncyCastle.Asn1.X509.KeyPurposeID.id_kp_codeSigning)
+                || usageOid.Equals(Org.BouncyCastle.Asn1.X509.KeyPurposeID.id_kp_timeStamping)
+                || usageOid.Equals(Org.BouncyCastle.Asn1.X509.KeyPurposeID.id_kp_OCSPSigning))
+            {
+                canSign = true;
+            }
+        }
+
+        if (canSign || canEncrypt)
+        {
+            return new P11KeyUsages(canSign, canEncrypt, false);
+        }
+
+        return null;
     }
 }

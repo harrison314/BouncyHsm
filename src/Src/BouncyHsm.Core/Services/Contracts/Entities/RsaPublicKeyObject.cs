@@ -55,8 +55,11 @@ public sealed class RsaPublicKeyObject : PublicKeyObject
 
         RsaKeyParameters rsaKey = (RsaKeyParameters)publicKey;
 
-        this.CkaModulus = rsaKey.Modulus.ToByteArrayUnsigned();
+        byte[] modulus = rsaKey.Modulus.ToByteArrayUnsigned(); ;
+
+        this.CkaModulus = modulus;
         this.CkaPublicExponent = rsaKey.Exponent.ToByteArrayUnsigned();
+        this.CkaModulusBits = (uint)(modulus.Length * 8);
     }
 
     public override void Accept(ICryptoApiObjectVisitor visitor)
@@ -75,5 +78,11 @@ public sealed class RsaPublicKeyObject : PublicKeyObject
 
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_MODULUS, this.CkaModulus);
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_PUBLIC_EXPONENT, this.CkaPublicExponent);
+
+        if ((uint)(this.CkaModulus.Length * 8) != this.CkaModulusBits)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+               $"Attribute {CKA.CKA_MODULUS_BITS} has invalid value (not match with bit lenght of {CKA.CKA_MODULUS}).");
+        }
     }
 }

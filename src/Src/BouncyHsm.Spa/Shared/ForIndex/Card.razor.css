@@ -1,0 +1,15 @@
+﻿.align-self-center {
+    -webkit-align-self: center !important;
+    -ms-flex-item-align: center !important;
+    align-self: center !important;
+}
+
+.icon-pos {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.card {
+    border-width: 1px 6px 1px 1px;
+    border-radius: 6px;
+}
