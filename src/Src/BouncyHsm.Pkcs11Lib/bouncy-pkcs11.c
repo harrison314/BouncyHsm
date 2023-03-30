@@ -665,7 +665,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
 
     request.ClientInfo.CkUlongSize = sizeof(CK_ULONG);
     request.ClientInfo.PointerSize = sizeof(void*);
-    request.ClientInfo.LibVersion = "1.0.0"; //TODO
+    request.ClientInfo.LibVersion = BOUNCY_HSM_LIBVERSION;
     request.ClientInfo.Platform = "Unknown";
 
 #if defined(_WIN32) || defined(__CYGWIN__)

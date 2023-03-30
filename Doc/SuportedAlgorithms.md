@@ -1,9 +1,9 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 0.1.0.0 (commit _2633fe5187b9bc95258318bb6a795e7209ff6e58_).
+Supported algorithms for _Bouncy Hsm_ version 0.2.0.0 (commit _7811585b6178e9dfed4584bc1aa7ca5f6d52983a_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 91 mechanisms.
+_Bouncy Hsm_ supports 92 mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign, Verify | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -98,6 +98,7 @@ _Bouncy Hsm_ supports 91 mechanisms.
 | `CKM_AES_CFB8` | 16  | 32 |   |   |   | ✓ |   |   |   |
 | `CKM_AES_CFB128` | 16  | 32 |   |   |   | ✓ |   |   |   |
 | `CKM_AES_CFB1` | 16  | 32 |   |   |   | ✓ |   |   |   |
+| `CKM_AES_KEY_WRAP_PAD` | 16  | 32 |   |   |   |   |   |   | ✓ |
 
 ## Elitic curves
 _Bouncy Hsm_ supports 80 different named elliptic curves.

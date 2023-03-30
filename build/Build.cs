@@ -99,11 +99,11 @@ public partial class Build : NukeBuild
             CopyDirectoryRecursively(ArtifactsTmpDirectory / "native", ArtifactsTmpDirectory / "BouncyHsm" / "native");
             CreateZip(ArtifactsTmpDirectory / "native" / "Win-x64" / "BouncyHsm.Pkcs11Lib.dll",
                 "Win X64",
-                "0.1.0.0", //TODO
+                "0.2.0.0", //TODO
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Winx64.zip");
             CreateZip(ArtifactsTmpDirectory / "native" / "Win-x86" / "BouncyHsm.Pkcs11Lib.dll",
                 "Win X86",
-                "0.1.0.0", //TODO
+                "0.2.0.0", //TODO
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Winx86.zip");
 
             AbsolutePath linuxNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64.so";
@@ -113,7 +113,7 @@ public partial class Build : NukeBuild
 
                 CreateZip(linuxNativeLibx64,
                 "Linux X64",
-                "0.1.0.0", //TODO
+                "0.2.0.0", //TODO
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Linuxx64.zip");
             }
             else
@@ -128,7 +128,7 @@ public partial class Build : NukeBuild
 
                 CreateZip(linuxNativeLibx32,
                "Linux X86",
-               "0.1.0.0", //TODO
+               "0.2.0.0", //TODO
                ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Linuxx84.zip");
             }
             else
