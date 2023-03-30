@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row mb-1">
                 <div class="col-6">
                     <input type="text" class="form-control" @bind="this.tag" disabled="@this.isRunning" />
                 </div>
@@ -61,6 +61,12 @@
                     }
                 </div>
             </div>
+
+            <div class="row mb-1">
+                <div class="col-6">
+                    <input type="text" class="form-control form-control-sm" @bind="this.localFilter" placeholder="Local filter" />
+                </div>
+            </div>
         </div>
 
     </div>
@@ -68,7 +74,7 @@
 
 <div class="row">
     <div class="col">
-        @foreach (LogDto log in this.logBuffer)
+        @foreach (LogDto log in this.logBuffer.Where(this.Filter))
         {
             <LogRow Log="@log" />
         }
@@ -83,6 +89,7 @@
     private LogLevel logLevel = LogLevel.Trace;
     private string? lastTag = string.Empty;
     private bool isRunning = false;
+    private string localFilter = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -156,5 +163,37 @@
         {
             await hubConnection.DisposeAsync();
         }
+    }
+
+    private bool Filter(LogDto logDto)
+    {
+        if (string.IsNullOrEmpty(this.localFilter))
+        {
+            return true;
+        }
+
+        ReadOnlySpan<char> trimmed = this.localFilter.AsSpan().Trim();
+
+        if (logDto.Message.AsSpan().Contains(trimmed, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (logDto.Context.AsSpan().Contains(trimmed, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (logDto.Exception != null && logDto.Exception.AsSpan().Contains(trimmed, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (logDto.Timestamp.AsSpan().Contains(trimmed, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
     }
 }
