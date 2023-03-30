@@ -25,11 +25,14 @@ public partial class FinalizeHandler : IRpcRequestHandler<FinalizeRequest, Final
         string key = DataTransform.GetApplicationKey(request.AppId);
         this.clientApplicationContext.ReleaseMemorySession(key);
 
-        FinalizeEnvelope envelope = new FinalizeEnvelope()
+        this.logger.LogInformation("Successfully finalize memory session for application {appName} pid {pid} and nonce {appNonce}.",
+            request.AppId.AppName,
+            request.AppId.Pid,
+            request.AppId.AppNonce);
+
+        return new ValueTask<FinalizeEnvelope>(new FinalizeEnvelope()
         {
             Rv = (uint)CKR.CKR_OK
-        };
-
-        return new ValueTask<FinalizeEnvelope>(envelope);
+        });
     }
 }
