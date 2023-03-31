@@ -45,7 +45,7 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         IWrapperSigner signerWrapper = signerFactory.CreateSignatureAlgorithm(request.Mechanism);
         AuthenticatedSigner signer = signerWrapper.IntoSigningSigner(objectInstance, p11Session.SecureRandom);
 
-        p11Session.State = new SignState(signer.Signer, signer.RequireSignaturePin, objectInstance.CkaPrivate);
+        p11Session.State = new SignState(signer.Signer, objectInstance.Id, signer.RequireSignaturePin, objectInstance.CkaPrivate);
 
         return new SignInitEnvelope()
         {

@@ -25,11 +25,18 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
         get;
     }
 
-    public SignState(ISigner signer, bool alwaysAuthenticated, bool isObjectPrivate)
+    public Guid PrivateKeyId
+    {
+        get;
+    }
+
+    public SignState(ISigner signer, Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate)
     {
         System.Diagnostics.Debug.Assert(signer != null);
+        System.Diagnostics.Debug.Assert(privateKeyId != Guid.Empty);
 
         this.signer = signer;
+        this.PrivateKeyId = privateKeyId;
         this.RequireContextPin = alwaysAuthenticated;
         this.IsContextPinHasSet = false;
         this.isEmpty = true;
