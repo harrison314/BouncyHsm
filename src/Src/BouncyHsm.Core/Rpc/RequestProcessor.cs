@@ -72,11 +72,13 @@ public static partial class RequestProcessor
         IRpcRequestHandler<TRequest, TResponse> handler = (IRpcRequestHandler<TRequest, TResponse>)(scopeProvider.GetService(typeof(IRpcRequestHandler<TRequest, TResponse>))
               ?? throw new InvalidProgramException($"RPC request handler with request type {typeof(TRequest).FullName} and response type {typeof(TResponse).FullName} not found."));
 
-#if DEBUG
-        logger.LogInformation("Executing operation {operationName} with parameters {request}.",
-            operation,
-            System.Text.Json.JsonSerializer.Serialize<TRequest>(request));
-#endif
+        logger.LogInformation("Executing operation {operationName}.", operation);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Executing operation {operationName} with parameters {request}.",
+               operation,
+               System.Text.Json.JsonSerializer.Serialize<TRequest>(request));
+        }
 
         try
         {
