@@ -63,6 +63,7 @@ internal static class AttributeValueExtensions
             CKA.CKA_MECHANISM_TYPE => ((CKM)value).ToString(),
             CKA.CKA_KEY_TYPE => ((CKK)value).ToString(),
             CKA.CKA_NAME_HASH_ALGORITHM => ((CKM)value).ToString(),
+            CKA.CKA_CERTIFICATE_CATEGORY => ((CKCertificateCategory)value).ToString(),
 
             _ => value.ToString()
         };
