@@ -27,7 +27,7 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
-        DateTime utcStartTime = DateTime.UtcNow;
+        DateTime utcStartTime = this.hwServices.Time.UtcNow;
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
