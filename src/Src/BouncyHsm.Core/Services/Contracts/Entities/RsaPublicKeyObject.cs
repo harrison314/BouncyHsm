@@ -85,4 +85,14 @@ public sealed class RsaPublicKeyObject : PublicKeyObject
                $"Attribute {CKA.CKA_MODULUS_BITS} has invalid value (not match with bit lenght of {CKA.CKA_MODULUS}).");
         }
     }
+
+    public override void ReComputeAttributes()
+    {
+        base.ReComputeAttributes();
+
+        if (this.CkaModulusBits == 0U)
+        {
+            this.CkaModulusBits = (uint)(this.CkaModulus.Length * 8);
+        }
+    }
 }
