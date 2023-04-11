@@ -16,12 +16,12 @@ internal class MemoryPersistentRepository : IPersistentRepository
     private readonly ILogger<MemoryPersistentRepository> logger;
 
     private List<SlotEntity> slots;
-    private ConcurrentDictionary<StorageObjectId, StorageObject> storageObjects;
+    private ConcurrentDictionary<StorageObjectId, StorageObjectMemento> storageObjects;
 
     public MemoryPersistentRepository(ILogger<MemoryPersistentRepository> logger)
     {
         this.logger = logger;
-        this.storageObjects = new ConcurrentDictionary<StorageObjectId, StorageObject>();
+        this.storageObjects = new ConcurrentDictionary<StorageObjectId, StorageObjectMemento>();
 
         this.slots = new List<SlotEntity>()
         {
@@ -138,7 +138,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
             storageObject.Id = Guid.NewGuid();
         }
 
-        this.storageObjects[new StorageObjectId(storageObject.Id, slotId)] = storageObject;
+        this.storageObjects[new StorageObjectId(storageObject.Id, slotId)] = storageObject.ToMemento();
 
         return new ValueTask();
     }
@@ -147,7 +147,9 @@ internal class MemoryPersistentRepository : IPersistentRepository
     {
         this.logger.LogTrace("Entering to FindObjects with slotId {slotId}.", slotId);
 
-        List<StorageObject> result = this.storageObjects.Values.Where(t => (specification.IsUserLogged || !t.CkaPrivate) && t.IsMatch(specification.Template)).ToList();
+        List<StorageObject> result = this.storageObjects.Values.Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
+            .Select(t => StorageObjectFactory.CreateFromMemento(t))
+            .ToList();
 
         return new ValueTask<IReadOnlyList<StorageObject>>(result);
     }
@@ -173,10 +175,14 @@ internal class MemoryPersistentRepository : IPersistentRepository
     {
         this.logger.LogTrace("Entering to TryLoadObject with slotId {slotId}, object id {objectId}.", slotId, id);
 
-        StorageObject? storageObject = null;
-        this.storageObjects.TryGetValue(new StorageObjectId(id, slotId), out storageObject);
-
-        return new ValueTask<StorageObject?>(storageObject);
+        if (this.storageObjects.TryGetValue(new StorageObjectId(id, slotId), out StorageObjectMemento? storageObjectMemento))
+        {
+            return new ValueTask<StorageObject?>(StorageObjectFactory.CreateFromMemento(storageObjectMemento, false));
+        }
+        else
+        {
+            return new ValueTask<StorageObject?>(null as StorageObject);
+        }
     }
 
     public ValueTask DestroyObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
@@ -195,8 +201,8 @@ internal class MemoryPersistentRepository : IPersistentRepository
     {
         this.logger.LogTrace("Entering to GetStats");
 
-        int privateKeys = this.storageObjects.Values.Count(t => t.CkaClass == CKO.CKO_PRIVATE_KEY);
-        int certificates = this.storageObjects.Values.OfType<X509CertificateObject>().Count();
+        int privateKeys = this.storageObjects.Values.Count(t => t.IsPrivateKey());
+        int certificates = this.storageObjects.Values.Count(t => t.IsX509Certificate());
 
         return new ValueTask<PersistentRepositoryStats>(new PersistentRepositoryStats(this.slots.Count,
             this.storageObjects.Count,
