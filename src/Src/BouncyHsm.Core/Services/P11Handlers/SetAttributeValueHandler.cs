@@ -42,10 +42,17 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
 
         Dictionary<CKA, IAttributeValue> dictionaryTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 
-        foreach ((CKA attributeType, IAttributeValue value) in dictionaryTemplate)
+        try
         {
-            this.logger.LogDebug("Updating object {objectId} with type {attributeType} value {attributeValue}.", storageObject.Id, attributeType, value);
-            storageObject.SetValue(attributeType, value, true);
+            foreach ((CKA attributeType, IAttributeValue value) in dictionaryTemplate)
+            {
+                this.logger.LogDebug("Updating object {objectId} with type {attributeType} value {attributeValue}.", storageObject.Id, attributeType, value);
+                storageObject.SetValue(attributeType, value, true);
+            }
+        }
+        catch (RpcPkcs11Exception ex) when (ex.ReturnValue == CKR.CKR_ATTRIBUTE_TYPE_INVALID)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"SetAttributeValue is inconsistent with object with id {storageObject.Id}.", ex);
         }
 
         if (storeOnToken != storageObject.CkaToken)
