@@ -94,9 +94,4 @@ public partial class SignHandler : IRpcRequestHandler<SignRequest, SignEnvelope>
             };
         }
     }
-
-    private async ValueTask UseAwaiter(DateTime utcStartTime)
-    {
-
-    }
 }

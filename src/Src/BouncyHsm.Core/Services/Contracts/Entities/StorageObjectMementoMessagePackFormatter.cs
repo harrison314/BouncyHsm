@@ -91,7 +91,7 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                 AttrTypeTag.CkBool => AttributeValue.Create(reader.ReadBoolean()),
                 AttrTypeTag.CkUint => AttributeValue.Create(reader.ReadUInt32()),
                 AttrTypeTag.DateTime => AttributeValue.Create(CkDate.Parse(reader.ReadString())),
-                AttrTypeTag.String => AttributeValue.Create(reader.ReadString()),
+                AttrTypeTag.String => AttributeValue.Create(reader.ReadString() ?? string.Empty),
                 _ => throw new InvalidProgramException($"Enum value {typeTag} is not supported.")
             };
 
