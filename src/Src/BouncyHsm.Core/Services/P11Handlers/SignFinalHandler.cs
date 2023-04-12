@@ -51,6 +51,11 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
             }
 
             StorageObject? storageObject = await this.hwServices.Persistence.TryLoadObject(p11Session.SlotId, state.PrivateKeyId, cancellationToken);
+            if (storageObject == null)
+            {
+                storageObject = p11Session.TryLoadObject(state.PrivateKeyId);
+            }
+
             if (storageObject is KeyObject privateKeyObject)
             {
                 ISpeedAwaiter speedAwaiter = await this.hwServices.CreateSpeedAwaiter(p11Session.SlotId, this.loggerFactory, cancellationToken);
