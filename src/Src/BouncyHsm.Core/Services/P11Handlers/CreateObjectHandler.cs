@@ -79,7 +79,7 @@ public partial class CreateObjectHandler : IRpcRequestHandler<CreateObjectReques
 
         foreach ((CKA attributeType, IAttributeValue value) in template)
         {
-            storageObject.SetValue(attributeType, value);
+            storageObject.SetValue(attributeType, value, false);
         }
     }
 }

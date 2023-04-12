@@ -97,6 +97,13 @@ public class P11Session : IP11Session
         this.objects.Add(storageObject.ToMemento());
     }
 
+    public void UpdateObject(StorageObject storageObject)
+    {
+        int count = this.objects.RemoveAll(t => t.Id == storageObject.Id);
+        System.Diagnostics.Debug.Assert(count != 1);
+        this.objects.Add(storageObject.ToMemento());
+    }
+
     public StorageObject? TryLoadObject(Guid id)
     {
         StorageObjectMemento? memnto = this.objects.FirstOrDefault(t => t.Id == id);

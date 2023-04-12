@@ -166,6 +166,11 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
    // Implement in another class
 }
 
+public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeValueRequest, SetAttributeValueEnvelope>
+{
+   // Implement in another class
+}
+
 public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignInitEnvelope>
 {
    // Implement in another class
@@ -305,6 +310,7 @@ public static partial class RpcDefinitionUtils
          { typeof(IRpcRequestHandler<GetObjectSizeRequest, GetObjectSizeEnvelope>), typeof(GetObjectSizeHandler)},
          { typeof(IRpcRequestHandler<GetAttributeValueRequest, GetAttributeValueEnvelope>), typeof(GetAttributeValueHandler)},
          { typeof(IRpcRequestHandler<GenerateKeyPairRequest, GenerateKeyPairEnvelope>), typeof(GenerateKeyPairHandler)},
+         { typeof(IRpcRequestHandler<SetAttributeValueRequest, SetAttributeValueEnvelope>), typeof(SetAttributeValueHandler)},
          { typeof(IRpcRequestHandler<SignInitRequest, SignInitEnvelope>), typeof(SignInitHandler)},
          { typeof(IRpcRequestHandler<SignRequest, SignEnvelope>), typeof(SignHandler)},
          { typeof(IRpcRequestHandler<SignUpdateRequest, SignUpdateEnvelope>), typeof(SignUpdateHandler)},

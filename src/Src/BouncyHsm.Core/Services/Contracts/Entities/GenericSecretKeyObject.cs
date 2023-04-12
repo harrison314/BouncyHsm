@@ -79,7 +79,7 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
         return this.CkaSensitive && attributeType == CKA.CKA_VALUE;
     }
 
-    public override void SetValue(CKA attributeType, IAttributeValue value)
+    public override void SetValue(CKA attributeType, IAttributeValue value, bool isUpdating)
     {
         if (attributeType == CKA.CKA_KEY_TYPE)
         {
@@ -93,7 +93,7 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
             return;
         }
 
-        base.SetValue(attributeType, value);
+        base.SetValue(attributeType, value, isUpdating);
     }
 
     public override byte[] GetSecret()

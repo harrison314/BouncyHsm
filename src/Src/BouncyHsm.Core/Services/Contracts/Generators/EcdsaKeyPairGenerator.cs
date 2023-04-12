@@ -91,7 +91,7 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
                 continue;
             }
 
-            privateKeyObject.SetValue(attrType, attrValue);
+            privateKeyObject.SetValue(attrType, attrValue, false);
         }
 
         privateKeyObject.SetPrivateKey(privateKey);
@@ -112,7 +112,7 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
                 continue;
             }
 
-            ecdsaPublicKeyObject.SetValue(attrType, attrValue);
+            ecdsaPublicKeyObject.SetValue(attrType, attrValue, false);
         }
 
         ecdsaPublicKeyObject.SetPublicKey(publicKey);

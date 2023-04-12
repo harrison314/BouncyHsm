@@ -33,13 +33,13 @@ internal class ConcatBaseAndKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
         generalSecretKeyObject.CkaSensitive = baseKey.CkaSensitive && this.otherKey.CkaSensitive;
         if (!generalSecretKeyObject.CkaSensitive && template.TryGetValue(CKA.CKA_SENSITIVE, out IAttributeValue? attrValue))
         {
-            generalSecretKeyObject.SetValue(CKA.CKA_SENSITIVE, attrValue);
+            generalSecretKeyObject.SetValue(CKA.CKA_SENSITIVE, attrValue, false);
         }
 
         generalSecretKeyObject.CkaExtractable = baseKey.CkaExtractable && this.otherKey.CkaExtractable;
         if (!generalSecretKeyObject.CkaExtractable && template.TryGetValue(CKA.CKA_EXTRACTABLE, out IAttributeValue? extractableAttrValue))
         {
-            generalSecretKeyObject.SetValue(CKA.CKA_EXTRACTABLE, extractableAttrValue);
+            generalSecretKeyObject.SetValue(CKA.CKA_EXTRACTABLE, extractableAttrValue, false);
         }
 
         generalSecretKeyObject.CkaNewerExtractable = baseKey.CkaNewerExtractable && this.otherKey.CkaNewerExtractable;

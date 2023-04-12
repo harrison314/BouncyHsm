@@ -15,7 +15,6 @@ public class T18_CreateObject
         set;
     }
 
-
     [TestMethod]
     public void CreateObject_DataObject_Success()
     {

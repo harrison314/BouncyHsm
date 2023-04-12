@@ -40,7 +40,7 @@ internal class AesKeyGenerator : IKeyGenerator
                 continue;
             }
 
-            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value);
+            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value, false);
         }
 
         int valueLen = (int)generalSecretKeyObject.CkaValueLen;

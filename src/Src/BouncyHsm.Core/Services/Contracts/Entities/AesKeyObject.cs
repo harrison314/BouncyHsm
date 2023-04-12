@@ -95,7 +95,7 @@ public sealed class AesKeyObject : SecretKeyObject
         return 16;
     }
 
-    public override void SetValue(CKA attributeType, IAttributeValue value)
+    public override void SetValue(CKA attributeType, IAttributeValue value, bool isUpdating)
     {
         if (attributeType == CKA.CKA_KEY_TYPE)
         {
@@ -110,7 +110,7 @@ public sealed class AesKeyObject : SecretKeyObject
             }
         }
 
-        base.SetValue(attributeType, value);
+        base.SetValue(attributeType, value, isUpdating);
     }
 
     public override string ToString()

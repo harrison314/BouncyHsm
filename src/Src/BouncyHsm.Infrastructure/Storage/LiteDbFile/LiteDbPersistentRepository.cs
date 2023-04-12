@@ -247,32 +247,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         ILiteCollection<StorageObjectInfo> collection = this.database.GetCollection<StorageObjectInfo>();
 
-        StorageObjectInfo info = new StorageObjectInfo()
-        {
-            Id = storageObject.Id,
-            CkaClass = (uint)storageObject.CkaClass,
-            LabelHash = this.CalculateXxxHash(storageObject.CkaLabel),
-            IsPrivate = storageObject.CkaPrivate,
-            SlotId = slotId,
-            Created = DateTime.UtcNow
-        };
-
-        StorageObjectMemento memento = storageObject.ToMemento();
-
-        if (memento.Values.TryGetValue(CKA.CKA_CERTIFICATE_TYPE, out IAttributeValue? attributeValue))
-        {
-            info.CertType = attributeValue.AsUint();
-        }
-
-        if (memento.Values.TryGetValue(CKA.CKA_KEY_TYPE, out IAttributeValue? attrKeyValue))
-        {
-            info.KeyType = attrKeyValue.AsUint();
-        }
-
-        if (memento.Values.TryGetValue(CKA.CKA_ID, out IAttributeValue? idValue))
-        {
-            info.IdHash = this.CalculateXxxHash(idValue.AsByteArray());
-        }
+        (StorageObjectInfo info, StorageObjectMemento memento) = this.BuildMemento(slotId, storageObject);
 
         this.database.ExecuteInTransaction(_ =>
         {
@@ -289,6 +264,37 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         return new ValueTask();
     }
 
+    public ValueTask UpdateObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to UpdateObject with slotId {slotId}, storageObject {storageObject}.", slotId, storageObject);
+
+        ILiteCollection<StorageObjectInfo> collection = this.database.GetCollection<StorageObjectInfo>();
+        (StorageObjectInfo info, StorageObjectMemento memento) = this.BuildMemento(slotId, storageObject);
+
+        this.database.ExecuteInTransaction(_ =>
+        {
+            if (!collection.Delete(storageObject.Id))
+            {
+                throw new BouncyHsmStorageException($"Not found object with id {storageObject.Id}");
+            }
+
+            if (!this.database.GetStorage<Guid>().Delete(storageObject.Id))
+            {
+                throw new BouncyHsmStorageException($"Not found object with id {storageObject.Id}");
+            }
+
+            using (MemoryStream ms = new MemoryStream(memento.ToByteArray(), false))
+            {
+                this.database.GetStorage<Guid>().Upload(memento.Id,
+                    $"{memento.Id:D}.dat",
+                    ms);
+            }
+
+            collection.Insert(info);
+        });
+
+        return new ValueTask();
+    }
 
     public ValueTask DestroyObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
     {
@@ -362,6 +368,37 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         }
 
         return new ValueTask<IReadOnlyList<StorageObject>>(result);
+    }
+
+    private (StorageObjectInfo info, StorageObjectMemento memento) BuildMemento(uint slotId, StorageObject storageObject)
+    {
+        StorageObjectInfo info = new StorageObjectInfo()
+        {
+            Id = storageObject.Id,
+            CkaClass = (uint)storageObject.CkaClass,
+            LabelHash = this.CalculateXxxHash(storageObject.CkaLabel),
+            IsPrivate = storageObject.CkaPrivate,
+            SlotId = slotId,
+            Created = DateTime.UtcNow
+        };
+
+        StorageObjectMemento memento = storageObject.ToMemento();
+        if (memento.Values.TryGetValue(CKA.CKA_CERTIFICATE_TYPE, out IAttributeValue? attributeValue))
+        {
+            info.CertType = attributeValue.AsUint();
+        }
+
+        if (memento.Values.TryGetValue(CKA.CKA_KEY_TYPE, out IAttributeValue? attrKeyValue))
+        {
+            info.KeyType = attrKeyValue.AsUint();
+        }
+
+        if (memento.Values.TryGetValue(CKA.CKA_ID, out IAttributeValue? idValue))
+        {
+            info.IdHash = this.CalculateXxxHash(idValue.AsByteArray());
+        }
+
+        return (info, memento);
     }
 
     private BsonExpression BuildQuery(uint slotId, FindObjectSpecification specification)
@@ -439,7 +476,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!this.disposedValue)
         {
             if (disposing)
             {

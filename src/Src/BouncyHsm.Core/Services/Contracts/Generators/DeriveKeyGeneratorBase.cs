@@ -49,7 +49,7 @@ internal abstract class DeriveKeyGeneratorBase : IDeriveKeyGenerator
                 continue;
             }
 
-            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value);
+            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value, false);
         }
 
         byte[] secret = this.DeriveSecret(generalSecretKeyObject, sBaseKey, this.template);

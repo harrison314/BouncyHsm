@@ -98,7 +98,7 @@ internal class RsaKeyPairGenerator : IKeyPairGenerator
                 continue;
             }
 
-            publicKeyObject.SetValue(attrType, attrValue);
+            publicKeyObject.SetValue(attrType, attrValue, false);
         }
 
         publicKeyObject.SetPublicKey(publicKey);
@@ -119,7 +119,7 @@ internal class RsaKeyPairGenerator : IKeyPairGenerator
                 continue;
             }
 
-            privateKeyObject.SetValue(attrType, attrValue);
+            privateKeyObject.SetValue(attrType, attrValue, false);
         }
 
         privateKeyObject.SetPrivateKey(privateKey);

@@ -40,6 +40,8 @@ public interface IP11Session
 
     void StoreObject(StorageObject storageObject);
 
+    void UpdateObject(StorageObject storageObject);
+
     StorageObject? TryLoadObject(Guid id);
 
     void DestroyObject(StorageObject storageObject);

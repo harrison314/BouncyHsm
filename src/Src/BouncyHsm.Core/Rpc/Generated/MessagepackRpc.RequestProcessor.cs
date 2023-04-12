@@ -56,6 +56,7 @@ public static partial class RequestProcessor
         "GetObjectSize" => ProcessRequestBody<GetObjectSizeRequest, GetObjectSizeEnvelope>(serviceProvider, "GetObjectSize", requestBody, static ckRv => new GetObjectSizeEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "GetAttributeValue" => ProcessRequestBody<GetAttributeValueRequest, GetAttributeValueEnvelope>(serviceProvider, "GetAttributeValue", requestBody, static ckRv => new GetAttributeValueEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "GenerateKeyPair" => ProcessRequestBody<GenerateKeyPairRequest, GenerateKeyPairEnvelope>(serviceProvider, "GenerateKeyPair", requestBody, static ckRv => new GenerateKeyPairEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "SetAttributeValue" => ProcessRequestBody<SetAttributeValueRequest, SetAttributeValueEnvelope>(serviceProvider, "SetAttributeValue", requestBody, static ckRv => new SetAttributeValueEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "SignInit" => ProcessRequestBody<SignInitRequest, SignInitEnvelope>(serviceProvider, "SignInit", requestBody, static ckRv => new SignInitEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "Sign" => ProcessRequestBody<SignRequest, SignEnvelope>(serviceProvider, "Sign", requestBody, static ckRv => new SignEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "SignUpdate" => ProcessRequestBody<SignUpdateRequest, SignUpdateEnvelope>(serviceProvider, "SignUpdate", requestBody, static ckRv => new SignUpdateEnvelope(){ Rv = ckRv }, logger, cancellationToken),

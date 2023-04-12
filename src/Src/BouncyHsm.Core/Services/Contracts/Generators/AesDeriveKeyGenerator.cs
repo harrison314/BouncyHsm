@@ -65,7 +65,7 @@ internal class AesDeriveKeyGenerator : IDeriveKeyGenerator
                 continue;
             }
 
-            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value);
+            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value, false);
         }
 
 

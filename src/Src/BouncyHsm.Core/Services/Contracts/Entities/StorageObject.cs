@@ -69,7 +69,7 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         this.values = new Dictionary<CKA, IAttributeValue>(memento.Values);
     }
 
-    public virtual void SetValue(CKA attributeType, IAttributeValue value)
+    public virtual void SetValue(CKA attributeType, IAttributeValue value, bool isUpdating)
     {
         if (!this.values.ContainsKey(attributeType))
         {
@@ -88,6 +88,10 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
         }
 
+        if (isUpdating && this.IsSensitiveAttribute(attributeType) && this.values.ContainsKey(CKA.CKA_SENSITIVE))
+        {
+            this.values[CKA.CKA_SENSITIVE] = AttributeValue.Create(false);
+        }
 
         this.values[attributeType] = value;
     }

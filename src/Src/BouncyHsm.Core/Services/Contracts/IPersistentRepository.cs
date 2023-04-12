@@ -21,7 +21,9 @@ public interface IPersistentRepository
     ValueTask<bool> ValidatePin(SlotEntity slot, CKU userType, string pin, object? context, CancellationToken cancellationToken);
    
     ValueTask StoreObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken);
-   
+
+    ValueTask UpdateObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken);
+
     ValueTask<IReadOnlyList<StorageObject>> FindObjects(uint slotId, FindObjectSpecification specification, CancellationToken cancellationToken);
    
     ValueTask<StorageObject?> TryLoadObject(uint slotId, Guid id, CancellationToken cancellationToken);

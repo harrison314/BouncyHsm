@@ -136,6 +136,8 @@ typedef struct _WrapKeyEnvelope WrapKeyEnvelope;
 typedef struct _UnwrapKeyRequest UnwrapKeyRequest;
 typedef struct _UnwrapKeyData UnwrapKeyData;
 typedef struct _UnwrapKeyEnvelope UnwrapKeyEnvelope;
+typedef struct _SetAttributeValueRequest SetAttributeValueRequest;
+typedef struct _SetAttributeValueEnvelope SetAttributeValueEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1535,6 +1537,27 @@ int UnwrapKeyEnvelope_Serialize(cmp_ctx_t* ctx, UnwrapKeyEnvelope* value);
 int UnwrapKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, UnwrapKeyEnvelope* value);
 int UnwrapKeyEnvelope_Release(UnwrapKeyEnvelope* value);
 
+typedef struct _SetAttributeValueRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    uint32_t ObjectHandle;
+    ArrayOfAttrValueFromNative Template;
+} SetAttributeValueRequest;
+
+int SetAttributeValueRequest_Serialize(cmp_ctx_t* ctx, SetAttributeValueRequest* value);
+int SetAttributeValueRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SetAttributeValueRequest* value);
+int SetAttributeValueRequest_Release(SetAttributeValueRequest* value);
+
+typedef struct _SetAttributeValueEnvelope
+{
+    uint32_t Rv;
+} SetAttributeValueEnvelope;
+
+int SetAttributeValueEnvelope_Serialize(cmp_ctx_t* ctx, SetAttributeValueEnvelope* value);
+int SetAttributeValueEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SetAttributeValueEnvelope* value);
+int SetAttributeValueEnvelope_Release(SetAttributeValueEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1703,6 +1726,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
 int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* request, GetObjectSizeEnvelope* response);
 int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueRequest* request, GetAttributeValueEnvelope* response);
 int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairRequest* request, GenerateKeyPairEnvelope* response);
+int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueRequest* request, SetAttributeValueEnvelope* response);
 int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, SignInitEnvelope* response);
 int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvelope* response);
 int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* request, SignUpdateEnvelope* response);

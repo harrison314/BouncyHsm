@@ -3149,6 +3149,53 @@ public partial class UnwrapKeyEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class SetAttributeValueRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public uint ObjectHandle
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public AttrValueFromNative[] Template
+    {
+        get;
+        set;
+    } = Array.Empty<AttrValueFromNative>();
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class SetAttributeValueEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public partial class CkP_MacGeneralParams
 {
     [Key(0)]

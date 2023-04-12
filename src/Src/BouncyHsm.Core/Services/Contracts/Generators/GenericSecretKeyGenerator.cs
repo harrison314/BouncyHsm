@@ -39,7 +39,7 @@ internal class GenericSecretKeyGenerator : IKeyGenerator
                 continue;
             }
 
-            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value);
+            generalSecretKeyObject.SetValue(kvp.Key, kvp.Value, false);
         }
 
         byte[] value = new byte[generalSecretKeyObject.CkaValueLen];

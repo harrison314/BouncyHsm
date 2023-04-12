@@ -143,6 +143,21 @@ internal class MemoryPersistentRepository : IPersistentRepository
         return new ValueTask();
     }
 
+    public ValueTask UpdateObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to UpdateObject with slotId {slotId}.", slotId);
+
+        StorageObjectId id = new StorageObjectId(storageObject.Id, slotId);
+        if (!this.storageObjects.ContainsKey(id))
+        {
+            throw new BouncyHsmStorageException($"Object with id {storageObject.Id} in slot {slotId} not found.");
+        }
+
+        this.storageObjects[id] = storageObject.ToMemento();
+
+        return new ValueTask();
+    }
+
     public ValueTask<IReadOnlyList<StorageObject>> FindObjects(uint slotId, FindObjectSpecification specification, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to FindObjects with slotId {slotId}.", slotId);

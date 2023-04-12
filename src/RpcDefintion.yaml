@@ -124,6 +124,10 @@ Rpc:
     Summary: Call for C_GenerateKeyPair
     Request: GenerateKeyPairRequest
     Response: GenerateKeyPairEnvelope
+  SetAttributeValue:
+    Summary: Call for C_SetAttributeValue
+    Request: SetAttributeValueRequest
+    Response: SetAttributeValueEnvelope
 
   SignInit:
     Summary: Call for C_SignInit
@@ -1049,6 +1053,19 @@ Messages:
       Rv: uint32
       Data: UnwrapKeyData?
   
+  SetAttributeValueRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      ObjectHandle: uint32
+      Template: AttrValueFromNative[]
+
+  SetAttributeValueEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

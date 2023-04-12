@@ -46,7 +46,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         StorageObject storageObject = StorageObjectFactory.CreateEmpty(template);
         foreach ((CKA attrType, IAttributeValue attrValue) in template)
         {
-            storageObject.SetValue(attrType, attrValue);
+            storageObject.SetValue(attrType, attrValue, false);
         }
 
         byte[] unwrappedKey = unwrapper.Unwrap(request.WrappedKeyData, 0, request.WrappedKeyData.Length);

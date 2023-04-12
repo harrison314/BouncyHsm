@@ -1579,7 +1579,53 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    if (NULL == pTemplate || ulCount == 0)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    SetAttributeValueRequest request;
+    SetAttributeValueEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    AttrValueFromNative* attrTemplate = NULL;
+
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
+    if (NULL == attrTemplate)
+    {
+        return CKR_GENERAL_ERROR;
+    }
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    request.ObjectHandle = (uint32_t)hObject;
+    request.Template.array = attrTemplate;
+    request.Template.length = (int)ulCount;
+
+    int rv = nmrpc_call_SetAttributeValue(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+        return CKR_DEVICE_ERROR;
+    }
+
+    if (NULL != attrTemplate)
+    {
+        AttrValueFromNative_Destroy(attrTemplate, ulCount);
+    }
+
+    SetAttributeValueEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
