@@ -8,7 +8,7 @@ namespace BouncyHsm.Infrastructure.Cap.InMemory;
 public class P11Session : IP11Session
 {
     private LoggedUser loggedUser;
-    private List<StorageObject> objects;
+    private List<StorageObjectMemento> objects;
 
     public uint SlotId
     {
@@ -45,7 +45,7 @@ public class P11Session : IP11Session
         this.loggedUser = LoggedUser.None;
         this.SecureRandom = secureRandom;
         this.State = EmptySessionState.Instance;
-        this.objects = new List<StorageObject>();
+        this.objects = new List<StorageObjectMemento>();
     }
 
     public bool IsLogged(CKU userType)
@@ -82,21 +82,30 @@ public class P11Session : IP11Session
 
     public IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)
     {
-        return this.objects.Where(t => (specification.IsUserLogged || !t.CkaPrivate) && t.IsMatch(specification.Template)).ToList();
+        return this.objects.Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
+            .Select(t => StorageObjectFactory.CreateFromMemento(t))
+            .ToList();
     }
 
     public void StoreObject(StorageObject storageObject)
     {
-        this.objects.Add(storageObject);
+        if (storageObject.Id == Guid.Empty)
+        {
+            storageObject.Id = Guid.NewGuid();
+        }
+
+        this.objects.Add(storageObject.ToMemento());
     }
 
     public StorageObject? TryLoadObject(Guid id)
     {
-        return this.objects.FirstOrDefault(t => t.Id == id);
+        StorageObjectMemento? memnto = this.objects.FirstOrDefault(t => t.Id == id);
+        return (memnto != null) ? StorageObjectFactory.CreateFromMemento(memnto) : null;
     }
 
     public void DestroyObject(StorageObject storageObject)
     {
-        this.objects.RemoveAll(t => t.Id == storageObject.Id);
+        int count = this.objects.RemoveAll(t => t.Id == storageObject.Id);
+        System.Diagnostics.Debug.Assert(count != 1);
     }
 }
