@@ -128,6 +128,10 @@ Rpc:
     Summary: Call for C_SetAttributeValue
     Request: SetAttributeValueRequest
     Response: SetAttributeValueEnvelope
+  CopyObject:
+    Summary: Call for C_CopyObject
+    Request: CopyObjectRequest
+    Response: CopyObjectEnvelope
 
   SignInit:
     Summary: Call for C_SignInit
@@ -1066,6 +1070,24 @@ Messages:
     Fields:
       Rv: uint32
 
+  CopyObjectRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      ObjectHandle: uint32
+      Template: AttrValueFromNative[]
+
+  CopyObjectData:
+    Summary:
+    Fields:
+      ObjectHandle: uint32
+
+  CopyObjectEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: CopyObjectData?
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

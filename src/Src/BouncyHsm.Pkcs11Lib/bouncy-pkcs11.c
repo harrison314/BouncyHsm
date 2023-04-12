@@ -514,11 +514,11 @@ void MechanismValue_Destroy(MechanismValue* value)
     }
 }
 
-void InitCallContext(nmrpc_global_context_t *ctxPtr, AppIdentification *appId)
+void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 {
     (void)(ctxPtr);
     *appId = globalContext.appId;
-    
+
     if (globalContext.tag[0] != 0)
     {
         ctxPtr->tag = globalContext.tag;
@@ -1354,7 +1354,63 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    if (NULL == pTemplate && ulCount > 0)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (NULL == phNewObject)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    CopyObjectRequest request;
+    CopyObjectEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    AttrValueFromNative* attrTemplate = NULL;
+
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
+    if (NULL == attrTemplate)
+    {
+        return CKR_GENERAL_ERROR;
+    }
+
+    P11SocketInit(&tcp);
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    request.ObjectHandle = (uint32_t)hObject;
+    request.Template.array = attrTemplate;
+    request.Template.length = (int)ulCount;
+
+    int rv = nmrpc_call_CopyObject(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+        return CKR_DEVICE_ERROR;
+    }
+
+    if (envelope.Rv == CKR_OK)
+    {
+        *phNewObject = (CK_OBJECT_HANDLE)envelope.Data->ObjectHandle;
+    }
+
+    if (NULL != attrTemplate)
+    {
+        AttrValueFromNative_Destroy(attrTemplate, ulCount);
+    }
+
+    CopyObjectEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

@@ -138,6 +138,9 @@ typedef struct _UnwrapKeyData UnwrapKeyData;
 typedef struct _UnwrapKeyEnvelope UnwrapKeyEnvelope;
 typedef struct _SetAttributeValueRequest SetAttributeValueRequest;
 typedef struct _SetAttributeValueEnvelope SetAttributeValueEnvelope;
+typedef struct _CopyObjectRequest CopyObjectRequest;
+typedef struct _CopyObjectData CopyObjectData;
+typedef struct _CopyObjectEnvelope CopyObjectEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1558,6 +1561,37 @@ int SetAttributeValueEnvelope_Serialize(cmp_ctx_t* ctx, SetAttributeValueEnvelop
 int SetAttributeValueEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SetAttributeValueEnvelope* value);
 int SetAttributeValueEnvelope_Release(SetAttributeValueEnvelope* value);
 
+typedef struct _CopyObjectRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    uint32_t ObjectHandle;
+    ArrayOfAttrValueFromNative Template;
+} CopyObjectRequest;
+
+int CopyObjectRequest_Serialize(cmp_ctx_t* ctx, CopyObjectRequest* value);
+int CopyObjectRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, CopyObjectRequest* value);
+int CopyObjectRequest_Release(CopyObjectRequest* value);
+
+typedef struct _CopyObjectData
+{
+    uint32_t ObjectHandle;
+} CopyObjectData;
+
+int CopyObjectData_Serialize(cmp_ctx_t* ctx, CopyObjectData* value);
+int CopyObjectData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, CopyObjectData* value);
+int CopyObjectData_Release(CopyObjectData* value);
+
+typedef struct _CopyObjectEnvelope
+{
+    uint32_t Rv;
+    CopyObjectData* Data;
+} CopyObjectEnvelope;
+
+int CopyObjectEnvelope_Serialize(cmp_ctx_t* ctx, CopyObjectEnvelope* value);
+int CopyObjectEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, CopyObjectEnvelope* value);
+int CopyObjectEnvelope_Release(CopyObjectEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1727,6 +1761,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
 int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueRequest* request, GetAttributeValueEnvelope* response);
 int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairRequest* request, GenerateKeyPairEnvelope* response);
 int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueRequest* request, SetAttributeValueEnvelope* response);
+int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* request, CopyObjectEnvelope* response);
 int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, SignInitEnvelope* response);
 int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvelope* response);
 int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* request, SignUpdateEnvelope* response);

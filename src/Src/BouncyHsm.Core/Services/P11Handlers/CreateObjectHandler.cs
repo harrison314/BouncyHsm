@@ -50,6 +50,8 @@ public partial class CreateObjectHandler : IRpcRequestHandler<CreateObjectReques
             storageObject,
             cancellationToken);
 
+        this.logger.LogInformation("Store new object {storageObject} with Id {objectId}.", storageObject, storageObject.Id);
+
         return new CreateObjectEnvelope()
         {
             Rv = (uint)CKR.CKR_OK,
