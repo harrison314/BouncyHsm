@@ -100,7 +100,7 @@ public class P11Session : IP11Session
     public void UpdateObject(StorageObject storageObject)
     {
         int count = this.objects.RemoveAll(t => t.Id == storageObject.Id);
-        System.Diagnostics.Debug.Assert(count != 1);
+        System.Diagnostics.Debug.Assert(count == 1);
         this.objects.Add(storageObject.ToMemento());
     }
 
@@ -113,6 +113,6 @@ public class P11Session : IP11Session
     public void DestroyObject(StorageObject storageObject)
     {
         int count = this.objects.RemoveAll(t => t.Id == storageObject.Id);
-        System.Diagnostics.Debug.Assert(count != 1);
+        System.Diagnostics.Debug.Assert(count == 1);
     }
 }

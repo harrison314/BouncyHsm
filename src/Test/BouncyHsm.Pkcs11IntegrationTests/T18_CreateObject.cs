@@ -30,7 +30,7 @@ public class T18_CreateObject
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
 
-        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
