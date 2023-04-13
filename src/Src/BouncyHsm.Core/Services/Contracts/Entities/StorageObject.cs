@@ -88,9 +88,17 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
         }
 
-        if (isUpdating && this.IsSensitiveAttribute(attributeType) && this.values.ContainsKey(CKA.CKA_SENSITIVE))
+        if (isUpdating && this.IsSensitiveAttribute(attributeType))
         {
-            this.values[CKA.CKA_SENSITIVE] = AttributeValue.Create(false);
+            if (this.values.ContainsKey(CKA.CKA_ALWAYS_SENSITIVE))
+            {
+                this.values[CKA.CKA_ALWAYS_SENSITIVE] = AttributeValue.Create(false);
+            }
+
+            if (this.values.ContainsKey(CKA.CKA_LOCAL))
+            {
+                this.values[CKA.CKA_LOCAL] = AttributeValue.Create(false);
+            }
         }
 
         this.values[attributeType] = value;
