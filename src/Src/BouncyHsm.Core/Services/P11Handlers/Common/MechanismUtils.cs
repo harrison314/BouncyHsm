@@ -235,4 +235,9 @@ internal static class MechanismUtils
             }
         }
     }
+
+    public static bool IsVendorDefined(CKM mechanismType)
+    {
+        return (CKM.CKM_VENDOR_DEFINED & mechanismType) == CKM.CKM_VENDOR_DEFINED;
+    }
 }
