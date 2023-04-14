@@ -18,7 +18,10 @@
 void SetPaddedStrSafe(char* destination, size_t destinationSize, const char* src)
 {
     size_t copySize = strlen(src);
-    if (copySize > destinationSize) copySize = destinationSize;
+    if (copySize > destinationSize)
+    {
+        copySize = destinationSize;
+    }
 
     memset(destination, ' ', destinationSize);
     memcpy(destination, src, copySize);
@@ -516,7 +519,6 @@ void MechanismValue_Destroy(MechanismValue* value)
 
 void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 {
-    (void)(ctxPtr);
     *appId = globalContext.appId;
 
     if (globalContext.tag[0] != 0)
@@ -1398,7 +1400,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
         return CKR_DEVICE_ERROR;
     }
 
-    if (envelope.Rv == CKR_OK)
+    if ((CK_RV)envelope.Rv == CKR_OK)
     {
         *phNewObject = (CK_OBJECT_HANDLE)envelope.Data->ObjectHandle;
     }
