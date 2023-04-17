@@ -765,8 +765,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 
         SetPaddedStrSafe(pInfo->libraryDescription, sizeof(pInfo->libraryDescription), PKCS11_LIB_DESCRIPTION);
 
-        pInfo->libraryVersion.major = 1;
-        pInfo->libraryVersion.minor = 0;
+        pInfo->libraryVersion.major = BOUNCY_HSM_LIBVERSION_MAJOR;
+        pInfo->libraryVersion.minor = BOUNCY_HSM_LIBVERSION_MINOR;
 
         memset(pInfo->manufacturerID, ' ', sizeof(pInfo->manufacturerID));
         memcpy(pInfo->manufacturerID, envelope.ManufacturerID, strlen(envelope.ManufacturerID));
