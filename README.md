@@ -10,21 +10,21 @@ or during network calls.
 
 ## Features
 * Multiple application access using PKCS#11 interface.
-* Slot and crypto object management using web interface and REST API.
+* Slot and crypto object management using web interface, CLI tool and REST API.
   * Create/remove slots.
   * Import P12/PFX files.
-  * Generate CSR, import certificate file.
-  * ...
+  * Generate CSR (PKCS#10).
+  * Import and export certificates, public keys, private keys.
 * Possibility to simulate cards with a qualified area and a signature pin.
-* Supports RSA keys (with size 2-10K).
-* Supports 80 named elliptic curves.
-* Supports secrets (HMAC, derive,...)
-* Supports AES keys.
 * [Supports mechanisms](/Doc/SuportedAlgorithms.md)
+  * Many hash algorithms. 
+  * Supports RSA keys (with size 2-10K).
+  * Supports 80 named elliptic curves.
+  * Supports secrets (HMAC, derive,...)
+  * Supports AES keys.
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
-* Native PKCS#11 library without dependencies (no dependency hell, no permission configuration).
+* Native PKCS#11 library without dependencies (no dependency hell, no external config as file, no permission configuration).
 * _BouncyHsm_ runs on all platform supported [.Net 6.0](https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64.
-* CLI tool for management.
 
 ## Quick start and deployment  guide
 * [Quick start guide](/Doc/QuickstartGuide.md)
