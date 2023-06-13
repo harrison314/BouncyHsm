@@ -18,7 +18,10 @@
 void SetPaddedStrSafe(char* destination, size_t destinationSize, const char* src)
 {
     size_t copySize = strlen(src);
-    if (copySize > destinationSize) copySize = destinationSize;
+    if (copySize > destinationSize)
+    {
+        copySize = destinationSize;
+    }
 
     memset(destination, ' ', destinationSize);
     memcpy(destination, src, copySize);
@@ -516,7 +519,6 @@ void MechanismValue_Destroy(MechanismValue* value)
 
 void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 {
-    (void)(ctxPtr);
     *appId = globalContext.appId;
 
     if (globalContext.tag[0] != 0)
@@ -763,8 +765,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 
         SetPaddedStrSafe(pInfo->libraryDescription, sizeof(pInfo->libraryDescription), PKCS11_LIB_DESCRIPTION);
 
-        pInfo->libraryVersion.major = 1;
-        pInfo->libraryVersion.minor = 0;
+        pInfo->libraryVersion.major = BOUNCY_HSM_LIBVERSION_MAJOR;
+        pInfo->libraryVersion.minor = BOUNCY_HSM_LIBVERSION_MINOR;
 
         memset(pInfo->manufacturerID, ' ', sizeof(pInfo->manufacturerID));
         memcpy(pInfo->manufacturerID, envelope.ManufacturerID, strlen(envelope.ManufacturerID));
@@ -1398,7 +1400,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
         return CKR_DEVICE_ERROR;
     }
 
-    if (envelope.Rv == CKR_OK)
+    if ((CK_RV)envelope.Rv == CKR_OK)
     {
         *phNewObject = (CK_OBJECT_HANDLE)envelope.Data->ObjectHandle;
     }
