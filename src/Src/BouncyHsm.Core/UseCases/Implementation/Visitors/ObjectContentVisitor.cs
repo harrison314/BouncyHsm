@@ -75,15 +75,6 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
 
     private DomainResult<ObjectContent> CreatePemResult(string fileName, object pemObject)
     {
-        if (pemObject is SubjectPublicKeyInfo spki)
-        {
-            string content = string.Concat("-----BEGIN PUBLIC KEY-----\r\n",
-                Convert.ToBase64String(spki.GetEncoded(), Base64FormattingOptions.InsertLineBreaks),
-                "\r\n-----END PUBLIC KEY-----\r\n");
-
-            return new DomainResult<ObjectContent>.Ok(new ObjectContent(fileName, Encoding.ASCII.GetBytes(content)));
-        }
-
         using MemoryStream ms = new MemoryStream();
         using StreamWriter sw = new StreamWriter(ms);
         PemWriter pemWriter = new PemWriter(sw);

@@ -16,7 +16,7 @@ or during network calls.
   * Generate CSR, import certificate file.
   * ...
 * Possibility to simulate cards with a qualified area and a signature pin.
-* Supports RSA keys (with size 2-10K).
+* Supports RSA keys (with size 2-6K).
 * Supports 80 named elliptic curves.
 * Supports secrets (HMAC, derive,...)
 * Supports AES keys.
