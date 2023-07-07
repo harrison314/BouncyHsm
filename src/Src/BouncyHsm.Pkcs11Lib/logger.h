@@ -23,6 +23,7 @@ typedef void (*send_log_message_ptr)(int level, const char* levelText, const cha
 
 bool logger_init(const char* level, const char* target);
 void log_message(int level, const char* format, ...);
+bool log_level_is_enabled(int level);
 
 #define LOG_ENTERING_TO_FUNCTION() log_message(LOG_LEVEL_INFO, "Entering to function %s", __FUNCTION__)
 #define LOG_FAILED_CALL_RPC() log_message(LOG_LEVEL_ERROR, "Failed call remote endpoint in function %s", __FUNCTION__);

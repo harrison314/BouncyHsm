@@ -252,3 +252,8 @@ void log_message(int level, const char* format, ...)
 		free((void*)strp);
 	}
 }
+
+bool log_level_is_enabled(int level)
+{
+    return (level <= globalLogLevelLevel);
+}

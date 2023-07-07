@@ -67,7 +67,7 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
 
         if (connect(ctx->s, (struct sockaddr*)&(ctx->server), sizeof(struct sockaddr)) < 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error.", __FUNCTION__, __LINE__);
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. WSA error: %d", __FUNCTION__, __LINE__, WSAGetLastError());
             return NMRPC_FATAL_ERROR;
         }
 
@@ -143,7 +143,7 @@ int readclose(void* user_ctx)
 
 static const char* getErrorD()
 {
-    switch(errno)
+    switch (errno)
     {
         case EBADF:
            return "EBADF (bad descriptor)";
