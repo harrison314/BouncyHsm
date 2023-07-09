@@ -38,7 +38,7 @@ If the found error or changes refer to the PKCS#11 standard, please complete the
 ## Links
 
 ### Technology
-* [Dotnet 6.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6)
+* [Dotnet 7.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-7)
 * [BouncyCastle](https://github.com/bcgit/bc-csharp)
 * [Pkcs11Interop](https://github.com/Pkcs11Interop)
 * [LiteDb](https://www.litedb.org/)
