@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <ctype.h>
 #include "bouncy-pkcs11.h"
 
 #include "rpc/rpc.h"
