@@ -624,7 +624,10 @@ void ExecutePing(void* pUserData)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
 
     request.AppId = globalContext.appId;
@@ -648,7 +651,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -712,7 +719,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Finalize)(CK_VOID_PTR pReserved)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -745,7 +755,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -809,7 +822,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR p
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -859,7 +876,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pIn
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -911,7 +931,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR p
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -967,7 +990,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TY
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1017,7 +1043,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismInfo)(CK_SLOT_ID slotID, CK_MECHANISM_TY
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1083,7 +1112,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_V
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1120,7 +1152,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_CloseSession)(CK_SESSION_HANDLE hSession)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1149,7 +1184,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_CloseAllSessions)(CK_SLOT_ID slotID)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1183,7 +1221,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSessionInfo)(CK_SESSION_HANDLE hSession, CK_SESSI
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1237,7 +1278,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Login)(CK_SESSION_HANDLE hSession, CK_USER_TYPE user
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1276,7 +1320,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Logout)(CK_SESSION_HANDLE hSession)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1317,7 +1364,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1381,7 +1431,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
         return CKR_GENERAL_ERROR;
     }
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1427,7 +1480,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DestroyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1462,7 +1518,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetObjectSize)(CK_SESSION_HANDLE hSession, CK_OBJECT
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1502,7 +1561,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1657,7 +1719,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
         return CKR_GENERAL_ERROR;
     }
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1709,7 +1774,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1755,7 +1823,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_H
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1796,7 +1867,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1830,7 +1904,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1871,7 +1948,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDa
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1922,7 +2002,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -1968,7 +2051,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2017,7 +2103,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2058,7 +2147,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEn
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2108,7 +2200,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2158,7 +2253,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2207,7 +2305,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2248,7 +2349,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2299,7 +2403,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2330,7 +2437,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestKey)(CK_SESSION_HANDLE hSession, CK_OBJECT_HAN
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2360,7 +2470,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2409,7 +2522,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2449,7 +2565,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData,
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2500,7 +2619,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2531,7 +2653,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2591,7 +2716,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2637,7 +2765,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2675,7 +2806,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2713,7 +2847,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2798,7 +2935,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     SockContext_t tcp;
     AttrValueFromNative* attrTemplate = NULL;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2876,7 +3016,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECH
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -2951,7 +3094,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -3011,7 +3157,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
     SockContext_t tcp;
     AttrValueFromNative* attrTemplate = NULL;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -3079,7 +3228,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
     SockContext_t tcp;
     AttrValueFromNative* attrTemplate = NULL;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -3146,7 +3298,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SeedRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
@@ -3182,7 +3337,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_
     nmrpc_global_context_t ctx;
     SockContext_t tcp;
 
-    P11SocketInit(&tcp);
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 

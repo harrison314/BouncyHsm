@@ -19,7 +19,7 @@
 
         <div class="row mb-2">
             <div class="col-2">
-                <label class="col-form-label">Server</label>
+                <label class="col-form-label">Server (IP or hostname)</label>
             </div>
             <div class="col-4">
                 <input type="text" class="form-control" @bind="this.server" @bind:event="oninput" />
@@ -147,7 +147,7 @@
         if (this.server != DefaltServer || this.port != DefaltPort)
         {
             sb.Append("Server=");
-            sb.Append(this.ToMaxLen(this.server.Trim(), 63));
+            sb.Append(this.ToMaxLen(this.server.Trim(), 255));
             sb.Append("; ");
 
             sb.Append("Port=");

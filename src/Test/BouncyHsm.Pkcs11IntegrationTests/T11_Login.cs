@@ -1,5 +1,6 @@
 ﻿using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.Common;
+using System;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 
@@ -33,7 +34,7 @@ public class T11_Login
         ISlot slot = slots.SelectTestSlot();
 
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
-        session.Login(CKU.CKU_SO, "12345678");
+        session.Login(CKU.CKU_SO, AssemblyTestConstants.SoPin);
     }
 
     //[TestMethod]

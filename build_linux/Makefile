@@ -26,7 +26,7 @@ build: globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs
 	-Wl,-soname,$(LIBNAME) \
 	-Wl,--version-script,bouncyhsm.pkcs11.version \
 	globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs11.o platformHelper.o \
-	-lc -ldl
+	-lc -ldl -lresolv
 	strip --strip-all $(LIBNAME)
 
 platformHelper.o: $(SRC_DIR)/platformHelper.c $(HEADERFILES)
