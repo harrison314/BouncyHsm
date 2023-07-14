@@ -18,8 +18,15 @@
     <PackageReference Include="PkcsExtensions" Version="1.2.2" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="Exists('../../x64/Debug/BouncyHsm.Pkcs11Lib.dll')">
     <None Include="../../x64/Debug/BouncyHsm.Pkcs11Lib.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('../../../build_linux/BouncyHsm.Pkcs11Lib-x64.so')">
+    <None Include="../../build_linux/BouncyHsm.Pkcs11Lib-x64.so">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

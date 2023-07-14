@@ -1,6 +1,10 @@
 ## How to run unit test
 
-1. Create empty slot if not exists with following parameters:
+1. Build native library
+  1.1 On WIndows using Vusial Studio
+  1.2 On Debian/Ubuntu use makefile
+2. Run Bouncy Hsm on localhost.
+3. Create empty slot if not exists with following parameters:
 
 ```json
 {
@@ -19,5 +23,8 @@
 }
 ```
 
-2. Run Bouncy Hsm on localhost.
-3. Run tests.
+3. Run tests using:
+```
+  dotnet clean
+  dotnet test
+```

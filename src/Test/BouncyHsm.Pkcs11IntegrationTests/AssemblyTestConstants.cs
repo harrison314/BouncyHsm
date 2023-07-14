@@ -1,8 +1,26 @@
-﻿namespace BouncyHsm.Pkcs11IntegrationTests;
+﻿using System.Runtime.InteropServices;
+
+namespace BouncyHsm.Pkcs11IntegrationTests;
 
 internal static class AssemblyTestConstants
 {
-    public const string P11LibPath = "BouncyHsm.Pkcs11Lib.dll";
+    public static string P11LibPath
+    {
+        get
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return "BouncyHsm.Pkcs11Lib.dll";
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return "BouncyHsm.Pkcs11Lib-x64.so";
+            }
+
+            throw new PlatformNotSupportedException();
+        }
+    }
 
     public const string UserPin = "123456";
 
