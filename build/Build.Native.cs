@@ -23,7 +23,7 @@ public partial class Build
             BuildBouncyHsmPkcs11Lib(MSBuildTargetPlatform.Win32);
             AbsolutePath nativeLib = SourceDirectory / "BouncyHsm.Pkcs11Lib" / Configuration / "BouncyHsm.Pkcs11Lib.dll";
             AbsolutePath destination = ArtifactsTmpDirectory / "native" / "Win-x86";
-            EnsureCleanDirectory(destination);
+            destination.CreateOrCleanDirectory();
             CopyFileToDirectory(nativeLib, destination);
         });
 
@@ -34,7 +34,7 @@ public partial class Build
             BuildBouncyHsmPkcs11Lib(MSBuildTargetPlatform.x64);
             AbsolutePath nativeLib = SourceDirectory / "BouncyHsm.Pkcs11Lib" / "x64" / Configuration / "BouncyHsm.Pkcs11Lib.dll";
             AbsolutePath destination = ArtifactsTmpDirectory / "native" / "Win-x64";
-            EnsureCleanDirectory(destination);
+            destination.CreateOrCleanDirectory();
             CopyFileToDirectory(nativeLib, destination);
         });
 

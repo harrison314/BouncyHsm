@@ -42,7 +42,7 @@ public partial class Build : NukeBuild
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
     AbsolutePath ArtifactsTmpDirectory => RootDirectory / "artifacts" / ".tmp";
 
-    [PackageExecutable(
+    [NuGetPackage(
         packageId: "dotnet-project-licenses",
         packageExecutable: "NugetUtility.dll",
         Framework = "net6.0")]
@@ -51,10 +51,10 @@ public partial class Build : NukeBuild
     Target Clean => _ => _
         .Executes(() =>
         {
-            GlobDirectories(SourceDirectory, "**/bin", "**/obj").ForEach(DeleteDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(t => t.DeleteDirectory());
             //TODO: delete native directories
 
-            EnsureCleanDirectory(ArtifactsDirectory);
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target BuildBouncyHsm => _ => _
@@ -138,12 +138,10 @@ public partial class Build : NukeBuild
 
             CopyLicenses(ArtifactsTmpDirectory / "BouncyHsm");
 
-            Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm",
-                ArtifactsDirectory / "BouncyHsm.zip",
+            (ArtifactsTmpDirectory / "BouncyHsm").ZipTo(ArtifactsDirectory / "BouncyHsm.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep");
 
-            Nuke.Common.IO.CompressionTasks.CompressZip(ArtifactsTmpDirectory / "BouncyHsm.Cli",
-               ArtifactsDirectory / "BouncyHsm.Cli.zip",
+            (ArtifactsTmpDirectory / "BouncyHsm.Cli").ZipTo(ArtifactsDirectory / "BouncyHsm.Cli.zip",
                t => t.Extension != ".pdb" && t.Name != ".gitkeep");
         });
 
