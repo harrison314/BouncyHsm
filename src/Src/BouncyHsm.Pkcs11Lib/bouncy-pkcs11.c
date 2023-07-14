@@ -626,8 +626,10 @@ void ExecutePing(void* pUserData)
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
-        return CKR_DEVICE_ERROR;
+        log_message(LOG_LEVEL_ERROR, "P11SocketInit failed in line %i in function %s.",  __LINE__, __FUNCTION__);
+        return;
     }
+
     nmrpc_global_context_tcp_init(&ctx, &tcp);
 
     request.AppId = globalContext.appId;
@@ -635,7 +637,7 @@ void ExecutePing(void* pUserData)
     int rv = nmrpc_call_Ping(&ctx, &request, &envelope);
     if (rv != NMRPC_OK)
     {
-        return;;
+        return;
     }
 
     PingEnvelope_Release(&envelope);
