@@ -90,11 +90,11 @@ public struct CkDate : IEquatable<CkDate>
     {
         if (this.HasValue)
         {
-            return 0;
+            return this.value.GetHashCode();
         }
         else
         {
-            return this.value.GetHashCode();
+            return 0;
         }
     }
 
