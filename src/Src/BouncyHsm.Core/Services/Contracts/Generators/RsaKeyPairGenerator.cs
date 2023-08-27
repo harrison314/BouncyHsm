@@ -46,7 +46,7 @@ internal class RsaKeyPairGenerator : IKeyPairGenerator
         byte[] publicExponent = this.publicKeyTemplate.GetAttributeBytes(CKA.CKA_PUBLIC_EXPONENT, new byte[] { 0x01, 0x00, 0x01 });
         uint modulusBits = this.publicKeyTemplate.GetRequiredAttributeUint(CKA.CKA_MODULUS_BITS);
 
-        (RsaKeyParameters publicKey, RsaPrivateCrtKeyParameters privateKey) = GenerateInternal(secureRandom, publicExponent, modulusBits);
+        (RsaKeyParameters publicKey, RsaPrivateCrtKeyParameters privateKey) = this.GenerateInternal(secureRandom, publicExponent, modulusBits);
 
         RsaPublicKeyObject publicKeyObject = this.CreatePublicKeyObject(this.publicKeyTemplate, publicKey);
         RsaPrivateKeyObject privateKeyObject = this.CreatePrivateKeyObject(this.privateKeyTemplate, privateKey);

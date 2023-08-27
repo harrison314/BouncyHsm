@@ -67,6 +67,31 @@ internal static class EcdsaUtils
         return ECNamedCurveTable.GetName(namedCurve);
     }
 
+    public static DerObjectIdentifier GetEcOidFromNameOrOid(string nameOrOid)
+    {
+        if (string.IsNullOrEmpty(nameOrOid)) throw new ArgumentException("Parameter is null or empty.", nameof(nameOrOid));
+
+        if (char.IsDigit(nameOrOid[0]))
+        {
+            try
+            {
+                return new DerObjectIdentifier(nameOrOid);
+            }
+            catch (FormatException)
+            {
+                //NOP
+            }
+        }
+
+        DerObjectIdentifier? identifier = ECNamedCurveTable.GetOid(nameOrOid);
+        if (identifier == null)
+        {
+            throw new ArgumentException("Parameter is not oid or supported named curve.", nameof(nameOrOid));
+        }
+
+        return identifier;
+    }
+
     public static IEnumerable<SupportedNameCurve> GetCurveNames()
     {
         foreach (string name in X962NamedCurves.Names)
