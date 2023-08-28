@@ -2,6 +2,7 @@
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.Generators;
 using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.UseCases.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
@@ -33,7 +34,8 @@ public class KeysGenerationFacade : IKeysGenerationFacade
     {
         this.logger.LogTrace("Entering to GenerateRsaKeyPair with slotId {slotId}, keySize {keySize}, label {label}.", slotId, request.KeySize, request.KeyAttributes.CkaLabel);
 
-        if (await this.persistentRepository.GetSlot(slotId, cancellationToken) == null)
+        SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (slotEntity == null)
         {
             this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
             return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid slotId.");
@@ -82,6 +84,8 @@ public class KeysGenerationFacade : IKeysGenerationFacade
 
         (PublicKeyObject publicKey, PrivateKeyObject privateKey) = rsaGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
 
+        this.UpdateKeys(slotEntity, publicKey, privateKey);
+
         publicKey.Validate();
         privateKey.Validate();
 
@@ -95,7 +99,8 @@ public class KeysGenerationFacade : IKeysGenerationFacade
     {
         this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}, keySize {keySize}, OID or name {oidOrName}.", slotId, request.OidOrName, request.KeyAttributes.CkaLabel);
 
-        if (await this.persistentRepository.GetSlot(slotId, cancellationToken) == null)
+        SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (slotEntity == null)
         {
             this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
             return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid slotId.");
@@ -146,6 +151,8 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         ecdsaKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
         (PublicKeyObject publicKey, PrivateKeyObject privateKey) = ecdsaKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
 
+        this.UpdateKeys(slotEntity, publicKey, privateKey);
+
         publicKey.Validate();
         privateKey.Validate();
 
@@ -193,6 +200,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         generator.Init(template);
         SecretKeyObject secretKeyObject = generator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
 
+        this.UpdateKey(secretKeyObject);
         secretKeyObject.Validate();
 
         await this.persistentRepository.StoreObject(slotId, secretKeyObject, cancellationToken);
@@ -236,10 +244,50 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         generator.Init(template);
         SecretKeyObject secretKeyObject = generator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
 
+        this.UpdateKey(secretKeyObject);
         secretKeyObject.Validate();
 
         await this.persistentRepository.StoreObject(slotId, secretKeyObject, cancellationToken);
 
         return new DomainResult<GeneratedSecretId>.Ok(new GeneratedSecretId(secretKeyObject.Id));
+    }
+
+    private void UpdatePrivateKey(bool simulateQualifiedArea, PrivateKeyObject privateKeyObject)
+    {
+        privateKeyObject.CkaLocal = true;
+        privateKeyObject.CkaAlwaysSensitive = privateKeyObject.CkaSensitive;
+
+        if (simulateQualifiedArea)
+        {
+            if (PrivateKeyHelper.ComputeCkaAlwaysAuthenticate(privateKeyObject))
+            {
+                privateKeyObject.CkaAlwaysAuthenticate = true;
+                this.logger.LogInformation("Private key mark as AlwaysAuthenticate.");
+            }
+            else
+            {
+                privateKeyObject.CkaAlwaysAuthenticate = false;
+            }
+        }
+    }
+
+    private void UpdatePublicObject(PublicKeyObject publicKeyObject)
+    {
+        publicKeyObject.CkaLocal = true;
+    }
+
+    private void UpdateKeys(SlotEntity slotEntity, PublicKeyObject publicKeyObject, PrivateKeyObject privateKeyObject)
+    {
+        this.UpdatePublicObject(publicKeyObject);
+        this.UpdatePrivateKey(slotEntity.Token!.SimulateQualifiedArea, privateKeyObject);
+
+        publicKeyObject.ReComputeAttributes();
+        privateKeyObject.ReComputeAttributes();
+    }
+
+    private void UpdateKey(SecretKeyObject secretKeyObject)
+    {
+        secretKeyObject.CkaLocal = true;
+        secretKeyObject.ReComputeAttributes();
     }
 }

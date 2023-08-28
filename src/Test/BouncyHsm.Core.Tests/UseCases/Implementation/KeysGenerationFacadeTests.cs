@@ -3,7 +3,6 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Core.UseCases.Implementation;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ public class KeysGenerationFacadeTests
             .Verifiable();
 
         repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SlotEntity())
+            .ReturnsAsync(this.GetClotEnity())
             .Verifiable();
 
         KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
@@ -59,7 +58,7 @@ public class KeysGenerationFacadeTests
             .Verifiable();
 
         repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SlotEntity())
+            .ReturnsAsync(this.GetClotEnity())
             .Verifiable();
 
         KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
@@ -93,7 +92,7 @@ public class KeysGenerationFacadeTests
             .Verifiable();
 
         repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SlotEntity())
+            .ReturnsAsync(this.GetClotEnity())
             .Verifiable();
 
         KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
@@ -126,8 +125,8 @@ public class KeysGenerationFacadeTests
             .Returns(new ValueTask())
             .Verifiable();
 
-        repository.Setup(t=>t.GetSlot(12U, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new SlotEntity())
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(this.GetClotEnity())
             .Verifiable();
 
         KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
@@ -150,5 +149,27 @@ public class KeysGenerationFacadeTests
 
         DomainResult<GeneratedSecretId> result = await pkcsFacade.GenerateAesKey(12U, request, default);
         Assert.IsTrue(result.MatchOk(_ => true, () => false));
+    }
+
+    private SlotEntity GetClotEnity()
+    {
+        return new SlotEntity()
+        {
+            Description = "d",
+            Id = Guid.NewGuid(),
+            IsHwDevice = true,
+            SlotId = 12U,
+            Token = new TokenInfo()
+            {
+                IsSoPinLocked = false,
+                IsUserPinLocked = false,
+                Label = "test label",
+                SerialNumber = "0000000000001",
+                SimulateHwMechanism = true,
+                SimulateHwRng = true,
+                SimulateQualifiedArea = true,
+                SpeedMode = SpeedMode.WithoutRestriction
+            }
+        };
     }
 }

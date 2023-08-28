@@ -114,11 +114,7 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
 
         if (slot.Token.SimulateQualifiedArea)
         {
-            if (privateKeyObject.CkaPrivate
-                && privateKeyObject.CkaSign
-                && !privateKeyObject.CkaDecrypt
-                && !privateKeyObject.CkaExtractable
-                && privateKeyObject.CkaSensitive)
+            if (PrivateKeyHelper.ComputeCkaAlwaysAuthenticate(privateKeyObject))
             {
                 privateKeyObject.CkaAlwaysAuthenticate = true;
                 this.logger.LogInformation("Private key mark as AlwaysAuthenticate.");
@@ -130,7 +126,7 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
         }
     }
 
-    public void UpdatePublicObject(PublicKeyObject publicKeyObject)
+    private void UpdatePublicObject(PublicKeyObject publicKeyObject)
     {
         publicKeyObject.CkaLocal = true;
     }
