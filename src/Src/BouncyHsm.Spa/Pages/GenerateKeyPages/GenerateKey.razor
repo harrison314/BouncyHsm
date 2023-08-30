@@ -1,0 +1,90 @@
+﻿@page "/Slots/{SlotId:int}/GenerateKey"
+@using BouncyHsm.Spa.Services.Client;
+@using BouncyHsm.Spa.Shared.ForGenerateKey
+@inject IBouncyHsmClient bouncyHsmClient
+@inject ILogger<GenerateKey> logger
+
+<PageTitle>Generate a new key/keys</PageTitle>
+
+<h1>Generate a new key/keys</h1>
+
+<div class="row">
+    <div class="col d-flex justify-content-end pb-3">
+        <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+    </div>
+</div>
+
+@if (this.slot == null)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <div class="row">
+        <div class="col-6">
+            <p>Generate key or key pair in token with label <em>@this.slot.Token!.Label</em> and serial <em>@this.slot.Token!.SerialNumber</em>.</p>
+
+            <div class="row mb-2">
+                <div class="col-2">
+                    <label class="col-form-label">Key type</label>
+                </div>
+                <div class="col-12">
+                    <select @bind="this.KeyType" class="form-select" disabled="@this.isInLoading">
+                        <option value="@GeneratedKeyType.None">Select key type...</option>
+                        <option value="@GeneratedKeyType.Rsa">RSA key pair</option>
+                        <option value="@GeneratedKeyType.Ec">EC key pair</option>
+                        <option value="@GeneratedKeyType.Aes">AES key</option>
+                        <option value="@GeneratedKeyType.Secret">Secret key</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr />
+
+            @if (this.KeyType == GeneratedKeyType.Rsa)
+            {
+                <GenerateRsaKeys SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+            }
+            else if (this.KeyType == GeneratedKeyType.Ec)
+            {
+                <GenerateEcKeys SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+            }
+            else if (this.KeyType == GeneratedKeyType.Aes)
+            {
+                <GenerateAesKey SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+            }
+            else if (this.KeyType == GeneratedKeyType.Secret)
+            {
+                <GenerateSecretKey SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+            }
+        </div>
+    </div>
+}
+
+@code {
+    internal enum GeneratedKeyType { None, Rsa, Ec, Aes, Secret }
+
+    [Parameter]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+
+    private GeneratedKeyType KeyType = GeneratedKeyType.None;
+    private SlotDto? slot = null;
+    private bool isInLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            this.slot = await this.bouncyHsmClient.GetSlotAsync(this.SlotId);
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.logger.LogError(ex, "Error during call GetSlotAsync.");
+        }
+    }
+}

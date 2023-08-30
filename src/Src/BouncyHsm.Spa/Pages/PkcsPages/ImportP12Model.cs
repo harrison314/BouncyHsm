@@ -1,4 +1,5 @@
 using BouncyHsm.Spa.Services.Client;
+using BouncyHsm.Spa.Shared;
 
 namespace BouncyHsm.Spa.Pages.Pkcs;
 

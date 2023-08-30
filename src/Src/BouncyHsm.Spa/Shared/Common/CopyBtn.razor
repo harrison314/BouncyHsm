@@ -35,10 +35,10 @@
         }
         catch (JSException ex) when (ex.Message.Contains("navigator.clipboard.writeText"))
         {
-            this.blazorStrap.Toaster.Add("Copied to clipboard", "Copy to clipboard failed in browser.", o =>
+            this.blazorStrap.Toaster.Add("Copied to clipboard", "Copy to clipboard failed in browser.", opt =>
            {
-               o.Color = BSColor.Danger;
-               o.CloseAfter = 2_000;
+               opt.Color = BSColor.Danger;
+               opt.CloseAfter = 2_000;
                opt.ContentClass = "small";
            });
         }

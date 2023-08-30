@@ -173,7 +173,7 @@
         ImportP12RequestDto request = new ImportP12RequestDto()
             {
                 CkaLabel = this.model.CkaLabel.Trim(),
-                CkaId = this.GetCkaId(this.model.CkaIdForm, this.model.CkaIdText.Trim()),
+                CkaId = this.model.CkaIdForm.GetCkaId(this.model.CkaIdText.Trim()),
                 ImportChain = this.model.ImportChain,
                 ImportMode = this.model.ImportMode,
                 Password = this.model.Password,
@@ -190,16 +190,5 @@
             this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
             this.logger.LogError(ex, "Error during call ImportP12Async.");
         }
-    }
-
-    private byte[] GetCkaId(BinaryForm form, string value)
-    {
-        return form switch
-        {
-            BinaryForm.Utf8 => System.Text.Encoding.UTF8.GetBytes(value),
-            BinaryForm.Base64 => Convert.FromBase64String(value),
-            BinaryForm.Hex => HexConvertorSlim.FromHex(value),
-            _ => throw new InvalidProgramException($"Enum value {form} is not supported.")
-        };
     }
 }

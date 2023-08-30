@@ -47,6 +47,12 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid key size.");
         }
 
+        if (request.KeyAttributes.ForDerivation)
+        {
+            this.logger.LogError("RSA keca can nit suuport derivation.");
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("RSA keca can nit suuport derivation.");
+        }
+
         byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
 
         Dictionary<CKA, IAttributeValue> publicKeyTemplate = new Dictionary<CKA, IAttributeValue>()
@@ -145,6 +151,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
         };
 
         EcdsaKeyPairGenerator ecdsaKeyPairGenerator = new EcdsaKeyPairGenerator(this.loggerFactory.CreateLogger<EcdsaKeyPairGenerator>());
@@ -194,6 +201,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
 
             { CKA.CKA_VALUE_LEN, AttributeValue.Create((uint) request.Size) },
+            { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
         };
 
         GenericSecretKeyGenerator generator = new GenericSecretKeyGenerator(this.loggerFactory.CreateLogger<GenericSecretKeyGenerator>());
@@ -216,6 +224,12 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         {
             this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
             return new DomainResult<GeneratedSecretId>.InvalidInput("Invalid slotId.");
+        }
+
+        if (request.KeyAttributes.ForDerivation)
+        {
+            this.logger.LogError("RSA keca can nit suuport derivation.");
+            return new DomainResult<GeneratedSecretId>.InvalidInput("RSA keca can nit suuport derivation.");
         }
 
         byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
