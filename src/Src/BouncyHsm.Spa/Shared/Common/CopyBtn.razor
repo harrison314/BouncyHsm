@@ -16,19 +16,31 @@
 
     private async Task CopyToClipboard()
     {
-        await this.JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", this.Text);
-
-        string shortedText = this.Text;
-        if (shortedText.Length > 34)
+        try
         {
-            shortedText = string.Concat(shortedText.AsSpan(0, 35), "…");
+            await this.JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", this.Text);
+
+            string shortedText = this.Text;
+            if (shortedText.Length > 34)
+            {
+                shortedText = string.Concat(shortedText.AsSpan(0, 35), "…");
+            }
+
+            this.blazorStrap.Toaster.Add("Copied to clipboard", shortedText, opt =>
+            {
+                opt.Color = BSColor.Primary;
+                opt.CloseAfter = 2_000;
+                opt.ContentClass = "small";
+            });
         }
-
-        this.blazorStrap.Toaster.Add("Copied to clipboard", shortedText, opt =>
+        catch (JSException ex) when (ex.Message.Contains("navigator.clipboard.writeText"))
         {
-            opt.Color = BSColor.Primary;
-            opt.CloseAfter = 2_000;
-            opt.ContentClass = "small";
-        });
+            this.blazorStrap.Toaster.Add("Copied to clipboard", "Copy to clipboard failed in browser.", o =>
+           {
+               o.Color = BSColor.Danger;
+               o.CloseAfter = 2_000;
+               opt.ContentClass = "small";
+           });
+        }
     }
 }
