@@ -14,9 +14,9 @@ else
         <ValidationSummary class="text-danger" />
 
         <div class="mb-1">
-            <label for="i-importmode" class="form-label">Key size</label>
+            <label for="i-importmode" class="form-label">EC name or OID</label>
             <InputText class="form-control" @bind-Value="this.model.OidOrName" list="curves" />
-
+            <div class="form-text">A complete list of supported curves can be found in <NavLink href="/SupportedAlgorithms">Supported algorithms</NavLink>.</div>
             <ValidationMessage For="() => this.model.OidOrName" />
         </div>
         <datalist id="curves">
