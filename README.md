@@ -8,6 +8,8 @@ _Bouncy Hsm_ was created to facilitate the development and testing of applicatio
 It is not intended for production data, as it does not implement any data and key protection in storage
 or during network calls.
 
+![Screenshots - BouncyHsm web UI](Doc/Screenshots.gif)
+
 ## Features
 * Multiple application access using PKCS#11 interface.
 * Slot and crypto object management using web interface and REST API.
