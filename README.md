@@ -25,7 +25,7 @@ or during network calls.
 * [Supports mechanisms](/Doc/SuportedAlgorithms.md)
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permission configuration).
-* _BouncyHsm_ runs on all platform supported [.Net 6.0](https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64.
+* _BouncyHsm_ runs on all platform supported [.Net 7.0](https://github.com/dotnet/core/blob/main/release-notes/7.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64.
 * CLI tool for management.
 
 ## Quick start and deployment  guide
