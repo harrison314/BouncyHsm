@@ -5,11 +5,16 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>BouncyHsm.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\BouncyHsm.Spa\Client\Services\Client\BouncyHsmClient.cs" Link="BouncyHsmClient.cs" />
     <Compile Include="..\BouncyHsm.Spa\Client\Services\Client\Client.cs" Link="Client.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="BouncyHsm.ico" />
   </ItemGroup>
 
   <ItemGroup>
