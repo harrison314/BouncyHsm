@@ -30,14 +30,24 @@ public static class Program
                 slot.SetDescription("Crypto objects manipulation.");
             });
 
-            config.AddBranch("pkcs", slot =>
+            config.AddBranch("pkcs", pkcs =>
             {
-                slot.AddCommand<ListPkcsObjectCommand>("list").WithDescription("List all objects in token.");
-                slot.AddCommand<ImportP12Command>("importP12").WithDescription("Import P12/PFX file into token.");
-                slot.AddCommand<GenerateCsrCommand>("generateCsr").WithDescription("Generate CSR (PKCS#10 request).");
-                slot.AddCommand<ImportCertificateCommand>("importCert").WithDescription("Import certificate file into token.");
+                pkcs.AddCommand<ListPkcsObjectCommand>("list").WithDescription("List all objects in token.");
+                pkcs.AddCommand<ImportP12Command>("importP12").WithDescription("Import P12/PFX file into token.");
+                pkcs.AddCommand<GenerateCsrCommand>("generateCsr").WithDescription("Generate CSR (PKCS#10 request).");
+                pkcs.AddCommand<ImportCertificateCommand>("importCert").WithDescription("Import certificate file into token.");
 
-                slot.SetDescription("PKCS objects manipulation.");
+                pkcs.AddBranch("generate", generate =>
+                {
+                    generate.AddCommand<GenerateRsaKeyPairCommand>("rsa").WithDescription("Generate RSA key pair.");
+                    generate.AddCommand<GenerateEcKeyPairCommand>("ec").WithDescription("Generate EC key pair.");
+                    generate.AddCommand<GenerateAesKeyCommand>("aes").WithDescription("Generate AES key.");
+                    generate.AddCommand<GenerateSecretKeyCommand>("secret").WithDescription("Generate secret key.");
+
+                    generate.SetDescription("Generating keys.");
+                });
+
+                pkcs.SetDescription("PKCS objects manipulation.");
             });
 
             config.AddBranch("stats", stats =>
