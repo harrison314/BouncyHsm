@@ -33,7 +33,7 @@ public static partial class RequestProcessor
 
         HeaderStructure header = MessagePackSerializer.Deserialize<HeaderStructure>(requestHeader);
 
-        using IDisposable logScope = logger.BeginScope(CreateContextScope(header));
+        using IDisposable? logScope = logger.BeginScope(CreateContextScope(header));
 
         IMemoryOwner<byte> responseBody = await ProcessRequestInternal(scopeProvider, header, requestBody, logger, cancellationToken);
 

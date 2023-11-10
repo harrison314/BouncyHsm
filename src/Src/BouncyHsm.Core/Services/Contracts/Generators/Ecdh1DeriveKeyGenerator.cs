@@ -44,7 +44,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
 
         EcdsaPrivateKeyObject sBaseKey = (EcdsaPrivateKeyObject)baseKey;
 
-        SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(template);
+        SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(this.template);
         generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
         generalSecretKeyObject.CkaExtractable = sBaseKey.CkaExtractable;
 

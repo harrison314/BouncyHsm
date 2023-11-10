@@ -58,7 +58,7 @@ internal sealed class TcpHostedService : BackgroundService
     {
         await Task.Yield();
 
-        using IDisposable logScope = this.logger.BeginScope(new Dictionary<string, object>()
+        using IDisposable? logScope = this.logger.BeginScope(new Dictionary<string, object>()
         {
             { "RequestId", Guid.NewGuid() }
         });
