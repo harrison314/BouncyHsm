@@ -14,7 +14,9 @@ public class LogHub : Hub<ILogHubClient>
         this.logger = logger;
     }
 
+#pragma warning disable CS8424 // The EnumeratorCancellationAttribute will have no effect. The attribute is only effective on a parameter of type CancellationToken in an async-iterator method returning IAsyncEnumerable
     public IAsyncEnumerable<LogDto> GetLogStream(string? tagFilter, LogLevel minLogLevel, [EnumeratorCancellation] CancellationToken cancellationToken)
+#pragma warning restore CS8424 // The EnumeratorCancellationAttribute will have no effect. The attribute is only effective on a parameter of type CancellationToken in an async-iterator method returning IAsyncEnumerable
     {
         this.logger.LogTrace("Entering to GetLogStream with tagFilter {tagFilter}, minLogLevel {minLogLevel}.", tagFilter, minLogLevel);
 

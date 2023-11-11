@@ -64,7 +64,7 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
         if (this.logger.IsEnabled(LogLevel.Trace))
         {
             this.logger.LogTrace("Entering to GenerateInternal with CKA_EC_PARAMS {ecParamsBin}.",
-                BitConverter.ToString(ecParams));
+                Convert.ToHexString(ecParams));
         }
 
         DerObjectIdentifier namedCurve = EcdsaUtils.ParseEcParamsOid(ecParams);

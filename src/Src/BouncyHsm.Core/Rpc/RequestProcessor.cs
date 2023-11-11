@@ -27,8 +27,8 @@ public static partial class RequestProcessor
 
         //#if DEBUG
         //        logger.LogDebug("Request low-level info:\nHead: {0}\nBody:{1}",
-        //            BitConverter.ToString(requestHeader.ToArray()),
-        //            BitConverter.ToString(requestBody.ToArray()));
+        //            Convert.ToHexString(requestHeader.ToArray()),
+        //            Convert.ToHexString(requestBody.ToArray()));
         //#endif
 
         HeaderStructure header = MessagePackSerializer.Deserialize<HeaderStructure>(requestHeader);
@@ -42,8 +42,8 @@ public static partial class RequestProcessor
 
         //#if DEBUG
         //        logger.LogDebug("Response low-level info:\nHead: {0}\nBody:{1}",
-        //            BitConverter.ToString(responseHeader.ToArray()),
-        //            BitConverter.ToString(responseBody.ToArray()));
+        //            Convert.ToHexString(responseHeader.ToArray()),
+        //            Convert.ToHexString(responseBody.ToArray()));
         //#endif
 
         return new ResponseValue(headerWriter, responseBody);

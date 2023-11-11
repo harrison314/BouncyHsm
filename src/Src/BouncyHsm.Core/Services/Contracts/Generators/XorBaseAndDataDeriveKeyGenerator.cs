@@ -16,7 +16,7 @@ internal class XorBaseAndDataDeriveKeyGenerator : DeriveKeyGeneratorBase
 
     public override string ToString()
     {
-        return $"XorBaseAndDataDeriveKeyGenerator with data {BitConverter.ToString(this.data)}";
+        return $"XorBaseAndDataDeriveKeyGenerator with data {Convert.ToHexString(this.data)}";
     }
 
     protected override byte[] DeriveSecret(SecretKeyObject generatedKey, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)

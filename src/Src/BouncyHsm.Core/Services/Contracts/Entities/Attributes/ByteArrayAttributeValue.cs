@@ -25,7 +25,7 @@ internal class ByteArrayAttributeValue : IAttributeValue
 
     public byte[] AsByteArray()
     {
-        return value;
+        return this.value;
     }
 
     public string AsString()
@@ -45,7 +45,7 @@ internal class ByteArrayAttributeValue : IAttributeValue
 
     public override string ToString()
     {
-        return $"{GetType().Name}: {BitConverter.ToString(value)}";
+        return $"{this.GetType().Name}: {Convert.ToHexString(this.value)}";
     }
 
     public bool Equals(IAttributeValue? other)
@@ -55,7 +55,7 @@ internal class ByteArrayAttributeValue : IAttributeValue
             return false;
         }
 
-        return value.SequenceEqual(other.AsByteArray());
+        return this.value.SequenceEqual(other.AsByteArray());
     }
 
     public bool Equals(uint other)
@@ -65,6 +65,6 @@ internal class ByteArrayAttributeValue : IAttributeValue
 
     public uint GuessSize()
     {
-        return (uint)value.Length;
+        return (uint)this.value.Length;
     }
 }

@@ -106,7 +106,7 @@ public class T23_DeriveKey
         session.DestroyObject(handle);
         session.DestroyObject(derivedHandle);
 
-        Assert.AreEqual(BitConverter.ToString(exceptedResult), BitConverter.ToString(result));
+        Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
     }
 
     // Toto preverit s jarom https://www.cryptsoft.com/pkcs11doc/v210/group__SEC__12__37__1__CONCATENATION__OF__A__BASE__KEY__AND__ANOTHER__KEY.html
@@ -159,7 +159,7 @@ public class T23_DeriveKey
     //    session.DestroyObject(handle);
     //    session.DestroyObject(derivedHandle);
 
-    //    Assert.AreEqual(BitConverter.ToString(exceptedResult), BitConverter.ToString(result));
+    //    Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
     //}
 
     [DataTestMethod]
@@ -208,7 +208,7 @@ public class T23_DeriveKey
         session.DestroyObject(handle);
         session.DestroyObject(derivedHandle);
 
-        Assert.AreEqual(BitConverter.ToString(exceptedResult), BitConverter.ToString(result));
+        Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
     }
 
     private IObjectHandle CreateSecret(ISession session, byte[] data)

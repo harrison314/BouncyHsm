@@ -68,10 +68,10 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
             this.logger.LogInformation("Create new key pair using {generator}. Public key <Id: {publicKeyId}, CK_ID: {publicKeyCkId}, CK_LABEL: {publicKeyCkLabel}>, private key: <Id: {publicKeyId}, CK_ID: {privateKeyCkId}, CK_LABEL: {privateKeyCkLabel}>",
                 generator.ToString(),
                 publicKeyObject.Id,
-                BitConverter.ToString(publicKeyObject.CkaId),
+                Convert.ToHexString(publicKeyObject.CkaId),
                 publicKeyObject.CkaLabel,
                 privateKeyObject.Id,
-                BitConverter.ToString(privateKeyObject.CkaId),
+                Convert.ToHexString(privateKeyObject.CkaId),
                 privateKeyObject.CkaLabel);
         }
 

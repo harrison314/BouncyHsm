@@ -62,7 +62,7 @@ public class T20_SignHmac
             _ => throw new InvalidOperationException()
         };
 
-        Assert.AreEqual(BitConverter.ToString(dotnetSignature), BitConverter.ToString(signature));
+        Assert.AreEqual(Convert.ToHexString(dotnetSignature), Convert.ToHexString(signature));
     }
 
     private void GenerateSeecret(CKK type, int size, Pkcs11InteropFactories factories, ISession session, string label, byte[] ckId)

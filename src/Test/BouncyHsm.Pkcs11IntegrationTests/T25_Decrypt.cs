@@ -38,7 +38,7 @@ public class T25_Decrypt
         byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
-        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+        Assert.AreEqual(Convert.ToHexString(plainText), Convert.ToHexString(decrypted));
     }
 
     [TestMethod]
@@ -105,7 +105,7 @@ public class T25_Decrypt
         byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
-        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+        Assert.AreEqual(Convert.ToHexString(plainText), Convert.ToHexString(decrypted));
     }
 
     [TestMethod]
@@ -139,7 +139,7 @@ public class T25_Decrypt
         byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
-        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+        Assert.AreEqual(Convert.ToHexString(plainText), Convert.ToHexString(decrypted));
     }
 
     [TestMethod]
@@ -172,7 +172,7 @@ public class T25_Decrypt
         byte[] decrypted = session.Decrypt(mechanism, key, cipherText);
 
         Assert.IsNotNull(decrypted);
-        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+        Assert.AreEqual(Convert.ToHexString(plainText), Convert.ToHexString(decrypted));
     }
 
     [TestMethod]
@@ -199,7 +199,7 @@ public class T25_Decrypt
         byte[] decrypted = session.Decrypt(mechanism, privateKey, cipherText);
 
         Assert.IsNotNull(decrypted);
-        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+        Assert.AreEqual(Convert.ToHexString(plainText), Convert.ToHexString(decrypted));
     }
 
     [DataTestMethod]
@@ -236,7 +236,7 @@ public class T25_Decrypt
         byte[] decrypted = session.Decrypt(mechanism, privateKey, chiperText);
 
         Assert.IsNotNull(decrypted);
-        Assert.AreEqual(BitConverter.ToString(plainText), BitConverter.ToString(decrypted));
+        Assert.AreEqual(Convert.ToHexString(plainText), Convert.ToHexString(decrypted));
     }
 
     public IObjectHandle GenerateAesKey(ISession session, int size)

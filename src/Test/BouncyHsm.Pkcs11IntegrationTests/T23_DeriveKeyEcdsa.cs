@@ -132,7 +132,7 @@ public class T23_DeriveKeyEcdsa
         byte[] derivedValue = this.GetValue(session, derivedKey);
         byte[] exceptedDerivedKey = HexConvertor.GetBytes(P256_1And2_DerivedNullValue);
 
-        Assert.AreEqual(BitConverter.ToString(exceptedDerivedKey), BitConverter.ToString(derivedValue));
+        Assert.AreEqual(Convert.ToHexString(exceptedDerivedKey), Convert.ToHexString(derivedValue));
     }
 
     [DataTestMethod]

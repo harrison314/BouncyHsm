@@ -70,7 +70,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             this.logger.LogInformation("Create new symmetric key using {generator}. Key <Id: {publicKeyId}, CK_ID: {publicKeyCkId}, CK_LABEL: {publicKeyCkLabel}>",
                 generator.ToString(),
                 keyObject.Id,
-                BitConverter.ToString(keyObject.CkaId),
+                Convert.ToHexString(keyObject.CkaId),
                 keyObject.CkaLabel);
         }
 

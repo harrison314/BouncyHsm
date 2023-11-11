@@ -62,7 +62,7 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
             this.logger.LogInformation("Create new symmetric key using {generator}. Key <Id: {publicKeyId}, CK_ID: {publicKeyCkId}, CK_LABEL: {publicKeyCkLabel}>",
                 generator.ToString(),
                 keyObject.Id,
-                BitConverter.ToString(keyObject.CkaId),
+                Convert.ToHexString(keyObject.CkaId),
                 keyObject.CkaLabel);
         }
 
