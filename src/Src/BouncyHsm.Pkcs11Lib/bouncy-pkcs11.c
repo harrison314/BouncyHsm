@@ -74,7 +74,6 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
         ptr[i].ValueBool = false;
         ptr[i].ValueCkUlong = 0;
 
-
         ptr[i].AttributeType = (uint32_t)pTemplate[i].type;
         ptr[i].ValueTypeHint = AttrValueFromNative_TypeHint_Binary;
         ptr[i].ValueRawBytes.data = (uint8_t*)pTemplate[i].pValue;
@@ -146,9 +145,10 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
     CK_ULONG i;
     for (i = 0; i < ulCount; i++)
     {
-        if (ptr[i].ValueCkDate != NULL)
+        void* datePtr = ptr[i].ValueCkDate;
+        if (datePtr != NULL)
         {
-            free((void*)ptr[i].ValueCkDate);
+            free(datePtr);
         }
     }
 
@@ -1671,9 +1671,9 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                         date->month[0] = (CK_CHAR)outAttrPtr->ValueCkDate[3];
                         date->month[1] = (CK_CHAR)outAttrPtr->ValueCkDate[4];
                         date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[5];
-                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
-                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
-                        date->year[4] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
+                        date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
+                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
+                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
                     }
                 }
                 else
