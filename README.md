@@ -8,14 +8,17 @@ _Bouncy Hsm_ was created to facilitate the development and testing of applicatio
 It is not intended for production data, as it does not implement any data and key protection in storage
 or during network calls.
 
+The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoing problems I had using it.
+
 ![Screenshots - BouncyHsm web UI](Doc/Screenshots.gif)
 
 ## Features
-* Multiple application access using PKCS#11 interface.
+* Multiple application and users access using PKCS#11 interface.
 * Slot and crypto object management using web interface and REST API.
   * Create/remove slots.
   * Import P12/PFX files.
   * Generate CSR, import certificate file.
+  * Generate keys.
   * ...
 * Possibility to simulate cards with a qualified area and a signature pin.
 * Supports RSA keys (with size 2-6K).
