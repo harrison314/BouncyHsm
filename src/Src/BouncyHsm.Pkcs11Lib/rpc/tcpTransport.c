@@ -101,7 +101,7 @@ int SockContext_init(SockContext_t* ctx, const char* host, int port)
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         {
             log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) WSA error: %d", __FUNCTION__, __LINE__, WSAGetLastError());
-            return;
+            return NMRPC_FATAL_ERROR;
         }
     }
 
@@ -111,7 +111,6 @@ int SockContext_init(SockContext_t* ctx, const char* host, int port)
     {
         log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) can not translate hostname", __FUNCTION__, __LINE__);
         return NMRPC_FATAL_ERROR;
-
     }
 
     return NMRPC_OK;
