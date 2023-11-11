@@ -28,8 +28,9 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
         string key = DataTransform.GetApplicationKey(request.AppId);
         this.clientApplicationContext.RegisterMemorySession(key);
 
-        this.logger.LogInformation("Initialized client with nonce: {nonce} pid: {pid}, CK_ULONG size {ckUlongSize}b, pointer size {pointerSize}b, platform: {Platform}, client version {clientVersion}.",
+        this.logger.LogInformation("Initialized client with nonce: {nonce} machine: {machine} pid: {pid}, CK_ULONG size {ckUlongSize}b, pointer size {pointerSize}b, platform: {Platform}, client version {clientVersion}.",
             request.AppId.AppNonce,
+            request.ClientInfo.CompiuterName,
             request.AppId.Pid,
             request.ClientInfo.CkUlongSize * 8,
             request.ClientInfo.PointerSize * 8,

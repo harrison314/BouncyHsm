@@ -73,4 +73,36 @@ int memcpy_s(void* restrictDest, size_t destsz, const void* restrictSrc, size_t 
 
 #endif
 
+bool GetCurrentCompiuterName(char* buffer, size_t maxSize)
+{
+    int result = gethostname(buffer, maxSize);
+    return result == 0;
+}
+
 #endif
+
+#ifdef _WIN32
+
+#include <Windows.h>
+
+bool GetCurrentCompiuterName(char* buffer, size_t maxSize)
+{
+    DWORD size = (DWORD)maxSize;
+    return (bool)GetComputerNameA(buffer, &size);
+}
+#endif
+
+const char* GetPlatformName()
+{
+#if defined(_WIN32) || defined(__CYGWIN__)
+    return  "Windows";
+#elif defined(__linux__)
+    return  "Linux";
+#elif defined(__APPLE__) && defined(__MACH__)
+    return  "MacOS";
+#elif defined(unix) || defined(__unix__) || defined(__unix)
+    return  "Unix";
+#else
+    return  "Unknown";
+#endif
+}

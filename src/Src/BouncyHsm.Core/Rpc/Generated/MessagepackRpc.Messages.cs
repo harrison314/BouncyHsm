@@ -62,13 +62,20 @@ public partial class ExtendedClientInfo
     }
 
     [Key(2)]
-    public string Platform
+    public string CompiuterName
     {
         get;
         set;
     } = string.Empty;
 
     [Key(3)]
+    public string Platform
+    {
+        get;
+        set;
+    } = string.Empty;
+
+    [Key(4)]
     public string LibVersion
     {
         get;

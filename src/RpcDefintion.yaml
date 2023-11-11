@@ -233,6 +233,7 @@ Messages:
     Fields:
       CkUlongSize: uint32
       PointerSize: uint32
+      CompiuterName: string
       Platform: string
       LibVersion: string
 

@@ -681,13 +681,16 @@ int ExtendedClientInfo_Serialize(cmp_ctx_t* ctx, ExtendedClientInfo* value)
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 4);
+    result = cmp_write_array(ctx, 5);
    if (!result) return NMRPC_FATAL_ERROR;
 
   result = cmp_write_uinteger(ctx, value->CkUlongSize);
    if (!result) return NMRPC_FATAL_ERROR;
 
   result = cmp_write_uinteger(ctx, value->PointerSize);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmp_write_str(ctx, value->CompiuterName, (uint32_t)strlen(value->CompiuterName));
    if (!result) return NMRPC_FATAL_ERROR;
 
   result = cmp_write_str(ctx, value->Platform, (uint32_t)strlen(value->Platform));
@@ -716,13 +719,17 @@ int ExtendedClientInfo_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 5) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = cmp_read_uint(ctx, &value->CkUlongSize);
    if (!result) return NMRPC_FATAL_ERROR;
 
   result = cmp_read_uint(ctx, &value->PointerSize);
    if (!result) return NMRPC_FATAL_ERROR;
+
+  result = cmph_read_nullable_str(ctx, &value->CompiuterName);
+   if (result != NMRPC_OK) return result;
+   if (value->CompiuterName == NULL) return NMRPC_DESERIALIZE_ERR;
 
   result = cmph_read_nullable_str(ctx, &value->Platform);
    if (result != NMRPC_OK) return result;
@@ -739,6 +746,11 @@ int ExtendedClientInfo_Release(ExtendedClientInfo* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
+ if (value->CompiuterName != NULL)
+ {
+     free((void*) value->CompiuterName);
+     value->CompiuterName = NULL;
+ }
  if (value->Platform != NULL)
  {
      free((void*) value->Platform);

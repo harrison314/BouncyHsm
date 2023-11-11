@@ -7,6 +7,7 @@
 #include "globalContext.h"
 #include "timer.h"
 #include "logger.h"
+#include "platformHelper.h"
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -679,18 +680,15 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
     request.ClientInfo.PointerSize = sizeof(void*);
     request.ClientInfo.LibVersion = BOUNCY_HSM_LIBVERSION;
     request.ClientInfo.Platform = "Unknown";
+    request.ClientInfo.CompiuterName = "";
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-    request.ClientInfo.Platform = "Windows";
-#elif defined(__linux__)
-    request.ClientInfo.Platform = "Linux";
-#elif defined(__APPLE__) && defined(__MACH__)
-    request.ClientInfo.Platform = "MacOS";
-#elif defined(unix) || defined(__unix__) || defined(__unix)
-    request.ClientInfo.Platform = "Unix";
-#else
-    request.ClientInfo.Platform = "Unknown";
-#endif
+    char compiuterName[256];
+    if (GetCurrentCompiuterName(compiuterName, sizeof(compiuterName)))
+    {
+        request.ClientInfo.CompiuterName = compiuterName;
+    }
+
+    request.ClientInfo.Platform = GetPlatformName();
 
     int rv = nmrpc_call_Initialize(&ctx, &request, &envelope);
     if (rv != NMRPC_OK)

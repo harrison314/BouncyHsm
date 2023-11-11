@@ -2,6 +2,7 @@
 #define PLATFORM_HELPER_H
 
 #include<stdint.h>
+#include<stdbool.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -29,5 +30,7 @@ int memcpy_s(void* restrictDest, size_t destsz, const void* restrictSrc, size_t 
 
 #endif
 
+bool GetCurrentCompiuterName(char* buffer, size_t maxSize);
+const char* GetPlatformName();
 
 #endif //PLATFORM_HELPER_H
