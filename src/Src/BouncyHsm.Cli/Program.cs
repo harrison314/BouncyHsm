@@ -2,6 +2,7 @@
 using BouncyHsm.Cli.Commands.Pkcs;
 using BouncyHsm.Cli.Commands.Slot;
 using BouncyHsm.Cli.Commands.Stats;
+using BouncyHsm.Cli.Commands.Stats.AppConnections;
 using Spectre.Console.Cli;
 
 namespace BouncyHsm.Cli;
@@ -48,6 +49,14 @@ public static class Program
                 });
 
                 pkcs.SetDescription("PKCS objects manipulation.");
+            });
+
+            config.AddBranch("appConnections", stats =>
+            {
+                stats.AddCommand<ListAppConnectionsCommand>("list").WithDescription("Display application connections.");
+                stats.AddCommand<RemoveAppConnectionsCommand>("remove").WithDescription("Remove application connection.");
+
+                stats.SetDescription("Manage application connections.");
             });
 
             config.AddBranch("stats", stats =>

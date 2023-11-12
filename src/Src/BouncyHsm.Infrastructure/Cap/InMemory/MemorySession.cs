@@ -12,12 +12,40 @@ public class MemorySession : IMemorySession
     private readonly ConcurrentDictionary<uint, P11Session> sessions;
     private readonly ConcurrentDictionary<Guid, uint> objectHandlesToGuid;
     private readonly ConcurrentDictionary<uint, Guid> objectHandlesToHandles;
+    private DateTime lastActivity;
 
-    public MemorySession()
+    public Guid Id
+    {
+        get;
+    }
+
+    public MemorySessionData Data
+    {
+        get;
+    }
+
+    public DateTime StartAt
+    {
+        get;
+    }
+
+    public DateTime LastActivity
+    {
+        get => this.lastActivity;
+        set => this.lastActivity = (value >= this.lastActivity) 
+            ? value 
+            : throw new ArgumentException("The last activity must be later than the start and the last activity.", nameof(this.LastActivity));
+    }
+
+    public MemorySession(MemorySessionData sessionData, DateTime startAt)
     {
         this.sessions = new ConcurrentDictionary<uint, P11Session>();
         this.objectHandlesToGuid = new ConcurrentDictionary<Guid, uint>();
         this.objectHandlesToHandles = new ConcurrentDictionary<uint, Guid>();
+        this.Id = Guid.NewGuid();
+        this.Data = sessionData;
+        this.StartAt = startAt;
+        this.lastActivity = startAt;
     }
 
     public uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom)
@@ -33,7 +61,7 @@ public class MemorySession : IMemorySession
             }
         }
 
-        throw new RpcPkcs11Exception(Core.Services.Contracts.P11.CKR.CKR_SESSION_COUNT, "All session is ");
+        throw new RpcPkcs11Exception(CKR.CKR_SESSION_COUNT, "The maximum number of sessions has been reached.");
     }
 
     public bool DestroySession(uint sessionId)
@@ -121,7 +149,7 @@ public class MemorySession : IMemorySession
             }
         }
 
-        throw new Exception("Maximum handlers");
+        throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "The maximum number of object handles has been reached.");
     }
 
     public Guid? FindObjectHandle(uint objectHandle)

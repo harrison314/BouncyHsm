@@ -1,0 +1,110 @@
+﻿@page "/ApplicationConnections"
+@using BouncyHsm.Spa.Services.Client
+@inject IBouncyHsmClient bouncyHsmClient
+
+<PageTitle>Application connections</PageTitle>
+<h1>Application connections</h1>
+
+<div class="d-flex justify-content-end pb-3">
+    <button type="button" class="btn btn-outline-primary btn-w-tm" @onclick="ReloadConnections"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
+</div>
+
+@if (this.appSessions == null)
+{
+    <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+}
+else
+{
+    @foreach (ApplicationSessionDto appSession in this.appSessions)
+    {
+        <div class="card mb-2">
+            <div class="card-header">
+                @appSession.ApplicationName
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+
+                    <div class="col-1 d-flex align-items-center">
+                        <div class="align-self-center">
+                            <span class="icon-tree  icon-4x"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <table class="table table-borderless table-sm">
+                            <colgroup>
+                                <col class="col-1 col-sm-2 col-xs-3" />
+                                <col class="col-10 col-sm-9 col-xs-7" />
+                                <col class="col-1 col-sm-1 col-xs-2" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>Machine:</td>
+                                    <td class="text-break">@appSession.CompiuterName</td>
+                                    <td><CopyBtn Text="@appSession.CompiuterName" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Application:</td>
+                                    <td class="text-break">@appSession.ApplicationName</td>
+                                    <td><CopyBtn Text="@appSession.ApplicationName" /></td>
+                                </tr>
+                                <tr>
+                                    <td>PID:</td>
+                                    <td class="text-break">@appSession.Pid</td>
+                                    <td><CopyBtn Text="@appSession.Pid.ToString()" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-3">
+                        <table class="table table-borderless table-sm">
+                            <colgroup>
+                                <col class="col-1 col-sm-2 col-xs-3" />
+                                <col class="col-11 col-sm-10 col-xs-9" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>Connected at:</td>
+                                    <td class="text-break">@appSession.StartAt</td>
+                                </tr>
+                                <tr>
+                                    <td>Last interaction:</td>
+                                    <td class="text-break">@appSession.LastInteraction</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-2">
+                        <DangerOperationBtn IconClass="icon-cross icon-1x"
+                                            Text="Remove connection"
+                                            AdditionalClass="btn-w-action"
+                                            ConfirmText="@($"Remove connection to {appSession.CompiuterName}/{appSession.ApplicationName} (PID: {appSession.Pid})?")"
+                                            OnConfirm="() => this.RemoveConnection(appSession.ApplicationSessionId)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private IList<ApplicationSessionDto>? appSessions = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.appSessions = await this.bouncyHsmClient.GetApplicationConnectionsAsync();
+    }
+
+    private async Task ReloadConnections()
+    {
+        this.appSessions = null;
+        await Task.Yield();
+        this.appSessions = await this.bouncyHsmClient.GetApplicationConnectionsAsync();
+    }
+
+    private async Task RemoveConnection(Guid sessionId)
+    {
+        await this.bouncyHsmClient.RemoveApplicationConnectionAsync(sessionId);
+        await this.ReloadConnections();
+    }
+}

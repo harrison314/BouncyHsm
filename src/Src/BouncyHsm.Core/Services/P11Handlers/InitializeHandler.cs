@@ -24,9 +24,13 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
             request.LibraryCantCreateOsThreads,
             request.OsLockingOk);
 
-
+        MemorySessionData sessionData = new MemorySessionData(request.ClientInfo.CompiuterName,
+            request.AppId.AppName,
+            request.AppId.Pid,
+            request.ClientInfo.PointerSize,
+            request.ClientInfo.CkUlongSize);
         string key = DataTransform.GetApplicationKey(request.AppId);
-        this.clientApplicationContext.RegisterMemorySession(key);
+        this.clientApplicationContext.RegisterMemorySession(key, sessionData);
 
         this.logger.LogInformation("Initialized client with nonce: {nonce} machine: {machine} pid: {pid}, CK_ULONG size {ckUlongSize}b, pointer size {pointerSize}b, platform: {Platform}, client version {clientVersion}.",
             request.AppId.AppNonce,

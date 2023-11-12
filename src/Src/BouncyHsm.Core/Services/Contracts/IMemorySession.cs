@@ -6,6 +6,27 @@ namespace BouncyHsm.Core.Services.Contracts;
 
 public interface IMemorySession
 {
+    Guid Id
+    {
+        get;
+    }
+
+    MemorySessionData Data
+    {
+        get;
+    }
+
+    DateTime StartAt
+    {
+        get;
+    }
+
+    DateTime LastActivity
+    {
+        get;
+        set;
+    }
+
     MemorySessionStatus GetStatus();
 
     uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom);
