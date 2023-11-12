@@ -100,6 +100,8 @@ const char* GetPlatformName()
     return  "Linux";
 #elif defined(__APPLE__) && defined(__MACH__)
     return  "MacOS";
+#elif defined(__FreeBSD__)
+    return "FreeBSD";
 #elif defined(unix) || defined(__unix__) || defined(__unix)
     return  "Unix";
 #else
