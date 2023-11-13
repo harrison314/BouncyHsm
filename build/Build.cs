@@ -27,6 +27,7 @@ using Nuke.Common.CI.GitHubActions;
     InvokedTargets = new[] { nameof(BuildAll) })]
 public partial class Build : NukeBuild
 {
+    private static string ThisVersion = "0.3.0";
     public static int Main() => Execute<Build>(x => x.BuildAll);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -45,7 +46,7 @@ public partial class Build : NukeBuild
     [NuGetPackage(
         packageId: "dotnet-project-licenses",
         packageExecutable: "NugetUtility.dll",
-        Framework = "net6.0")]
+        Framework = "net7.0")]
     readonly Tool DotnetProjectLicenses;
 
     Target Clean => _ => _
@@ -85,6 +86,8 @@ public partial class Build : NukeBuild
             .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
             .SetProject(projectFile)
             .SetOutput(outputDir));
+
+            CopyLicenses(outputDir);
         });
 
     Target BuildAll => _ => _
@@ -99,21 +102,21 @@ public partial class Build : NukeBuild
             CopyDirectoryRecursively(ArtifactsTmpDirectory / "native", ArtifactsTmpDirectory / "BouncyHsm" / "native");
             CreateZip(ArtifactsTmpDirectory / "native" / "Win-x64" / "BouncyHsm.Pkcs11Lib.dll",
                 "Win X64",
-                "0.3.0.0", //TODO
+                ThisVersion,
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Winx64.zip");
             CreateZip(ArtifactsTmpDirectory / "native" / "Win-x86" / "BouncyHsm.Pkcs11Lib.dll",
                 "Win X86",
-                "0.3.0.0", //TODO
+                ThisVersion,
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Winx86.zip");
 
             AbsolutePath linuxNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64.so";
-            if (linuxNativeLibx64.Exists())
+            if (linuxNativeLibx64.Exists("file"))
             {
                 CopyFile(linuxNativeLibx64, ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
 
                 CreateZip(linuxNativeLibx64,
                 "Linux X64",
-                "0.3.0.0", //TODO
+                ThisVersion,
                 ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Linuxx64.zip");
             }
             else
@@ -122,13 +125,13 @@ public partial class Build : NukeBuild
             }
 
             AbsolutePath linuxNativeLibx32 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x32.so";
-            if (linuxNativeLibx32.Exists())
+            if (linuxNativeLibx32.Exists("file"))
             {
                 CopyFile(linuxNativeLibx32, ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
 
                 CreateZip(linuxNativeLibx32,
                "Linux X86",
-               "0.3.0.0", //TODO
+               ThisVersion,
                ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-Linuxx84.zip");
             }
             else
@@ -137,6 +140,7 @@ public partial class Build : NukeBuild
             }
 
             CopyLicenses(ArtifactsTmpDirectory / "BouncyHsm");
+            
 
             (ArtifactsTmpDirectory / "BouncyHsm").ZipTo(ArtifactsDirectory / "BouncyHsm.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep");
@@ -150,8 +154,8 @@ public partial class Build : NukeBuild
         Log.Debug("Copy license files");
 
         AbsolutePath licensesFilePath = bouncyHsmPath / "LicensesThirdParty.txt";
-        DotnetProjectLicenses($"--input \"{RootDirectory / "src" / "BouncyHsm.sln"}\" -o -t --outfile \"{licensesFilePath}\" -p false");
-        CopyFile("LICENSE", bouncyHsmPath / "License.txt");
+       // DotnetProjectLicenses($"--input \"{RootDirectory / "src" / "BouncyHsm.sln"}\" -o -t --outfile \"{licensesFilePath}\" -p false");
+        CopyFile(RootDirectory / "LICENSE", bouncyHsmPath / "License.txt");
     }
 
     private void CreateZip(AbsolutePath dllFile, string platform, string version, AbsolutePath destination)
