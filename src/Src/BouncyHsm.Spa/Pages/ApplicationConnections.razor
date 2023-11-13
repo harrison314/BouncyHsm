@@ -9,6 +9,12 @@
     <button type="button" class="btn btn-outline-primary btn-w-tm" @onclick="ReloadConnections"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
 </div>
 
+<p>
+    This page displays information about applications that communicate with Bouncy Hsm through the PKCS#11 library.<br />
+    In the event that the application crashes and does not call the <code>C_Finalize</code> function,
+    it is possible to manually remove its connection data on <em>BouncyHsm</em>.
+</p>
+
 @if (this.appSessions == null)
 {
     <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
