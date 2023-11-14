@@ -4,12 +4,12 @@ This document describes the deployment for the supported platforms.
 _Bouncy Hsm_ can also be used by just running it under the current user (non-privileged user).
 
 ## Prerequisites
-- [Net 7.0 Runtime and ASP.NET Core Runtime 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+- [Net 8.0 Runtime and ASP.NET Core Runtime 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ## Deploy as Windows service
 _Bouncy Hsm_ can be deployed as a Windows service. All the following commands are executed using _PowerShell_ and privileged user.
 
-For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-7.0&tabs=netcore-cli>.
+For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-8.0&tabs=netcore-cli>.
 
 We will install the application in the directory `D:\BouncyHsm` (for example).
 
@@ -190,4 +190,4 @@ Or view console logs:
 sudo journalctl -fu bouncyhsm
 ```
 
-For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-6.0>.
+For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-8.0>.

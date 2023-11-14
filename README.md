@@ -28,7 +28,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 * [Supports mechanisms](/Doc/SuportedAlgorithms.md)
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permission configuration).
-* _BouncyHsm_ runs on all platform supported [.Net 7.0](https://github.com/dotnet/core/blob/main/release-notes/7.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64.
+* _BouncyHsm_ runs on all platform supported [.Net 8.0](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64.
 * CLI tool for management.
 
 ## Quick start and deployment  guide
@@ -43,7 +43,7 @@ If the found error or changes refer to the PKCS#11 standard, please complete the
 ## Links
 
 ### Technology
-* [Dotnet 7.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-7)
+* [Dotnet 8.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8)
 * [BouncyCastle](https://github.com/bcgit/bc-csharp)
 * [Pkcs11Interop](https://github.com/Pkcs11Interop)
 * [LiteDb](https://www.litedb.org/)
