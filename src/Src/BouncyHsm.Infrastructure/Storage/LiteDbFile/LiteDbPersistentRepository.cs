@@ -50,6 +50,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         this.logger = logger;
 
         this.InitAllIndex();
+        this.InitVersionRecord();
     }
 
     #region Slot Management
@@ -474,6 +475,30 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         }
     }
 
+    private void InitVersionRecord()
+    {
+        this.logger.LogTrace("Entering to InitVersionRecord");
+
+        string? version = this.GetType().Assembly.GetName().Version?.ToString();
+        System.Diagnostics.Debug.Assert(version != null);
+
+        ILiteCollection<VersionModel> collection = this.database.GetCollection<VersionModel>();
+        // TODO: Check migrations
+
+        VersionModel? currentVersion = collection.FindById(version);
+        if (currentVersion == null)
+        {
+            currentVersion = new VersionModel()
+            {
+                Id = version,
+                MigrationTime = DateTime.UtcNow
+            };
+
+            collection.Insert(currentVersion);
+            this.logger.LogInformation("Insert new version recored with version {version}.", version);
+        }
+    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (!this.disposedValue)
@@ -511,10 +536,10 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         ILiteCollection<SlotModel> collection = this.database.GetCollection<SlotModel>();
         ILiteCollection<StorageObjectInfo> objectCollection = this.database.GetCollection<StorageObjectInfo>();
 
-       int privateKeys=  objectCollection.Count(t => t.CkaClass == (uint)CKO.CKO_PRIVATE_KEY);
-       int certificates= objectCollection.Count(t => t.CkaClass == (uint)CKO.CKO_CERTIFICATE 
-           && t.CertType.HasValue
-           && t.CertType.Value == (uint)CKC.CKC_X_509);
+        int privateKeys = objectCollection.Count(t => t.CkaClass == (uint)CKO.CKO_PRIVATE_KEY);
+        int certificates = objectCollection.Count(t => t.CkaClass == (uint)CKO.CKO_CERTIFICATE
+            && t.CertType.HasValue
+            && t.CertType.Value == (uint)CKC.CKC_X_509);
 
         return new ValueTask<PersistentRepositoryStats>(new PersistentRepositoryStats(collection.Count(),
            objectCollection.Count(),
