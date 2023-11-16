@@ -100,7 +100,7 @@ public class Program
             || app.Configuration.GetValue<bool>($"{nameof(BouncyHsmSetup)}:{nameof(BouncyHsmSetup.EnableSwagger)}"))
         {
             app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwaggerUi();
         }
 
         app.UseHttpsRedirection();

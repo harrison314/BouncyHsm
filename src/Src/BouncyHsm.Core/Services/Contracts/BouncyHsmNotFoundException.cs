@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿namespace BouncyHsm.Core.Services.Contracts;
 
-namespace BouncyHsm.Core.Services.Contracts;
-
-[Serializable]
 public class BouncyHsmNotFoundException : BouncyHsmException
 {
     public BouncyHsmNotFoundException()
@@ -16,11 +13,6 @@ public class BouncyHsmNotFoundException : BouncyHsmException
 
     public BouncyHsmNotFoundException(string? message, Exception? innerException) 
         : base(message, innerException)
-    {
-    }
-
-    protected BouncyHsmNotFoundException(SerializationInfo info, StreamingContext context) 
-        : base(info, context)
     {
     }
 }

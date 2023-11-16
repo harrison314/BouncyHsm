@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿namespace BouncyHsm.Core.Services.Contracts;
 
-namespace BouncyHsm.Core.Services.Contracts;
-
-[Serializable]
 public class BouncyHsmInvalidInputException : ApplicationException
 {
     public BouncyHsmInvalidInputException()
@@ -16,11 +13,6 @@ public class BouncyHsmInvalidInputException : ApplicationException
 
     public BouncyHsmInvalidInputException(string? message, Exception? innerException)
         : base(message, innerException)
-    {
-    }
-
-    protected BouncyHsmInvalidInputException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
     {
     }
 }

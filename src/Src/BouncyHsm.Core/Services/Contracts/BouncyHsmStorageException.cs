@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿namespace BouncyHsm.Core.Services.Contracts;
 
-namespace BouncyHsm.Core.Services.Contracts;
-
-[Serializable]
 public class BouncyHsmStorageException : BouncyHsmException
 {
     public BouncyHsmStorageException()
@@ -14,10 +11,6 @@ public class BouncyHsmStorageException : BouncyHsmException
     }
 
     public BouncyHsmStorageException(string? message, Exception? innerException) : base(message, innerException)
-    {
-    }
-
-    protected BouncyHsmStorageException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
 }
