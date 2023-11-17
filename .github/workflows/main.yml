@@ -46,6 +46,10 @@ jobs:
         with:
           name: linux-native-libs
           path: build_linux
+      - name: Setup dotnet 8.0
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0'
       - name: Run './build.cmd BuildAll'
         run: ./build.cmd BuildAll
       - uses: actions/upload-artifact@v3
