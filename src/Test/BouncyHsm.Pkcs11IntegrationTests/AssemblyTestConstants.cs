@@ -15,7 +15,7 @@ internal static class AssemblyTestConstants
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return "BouncyHsm.Pkcs11Lib-x64.so";
+                return "./BouncyHsm.Pkcs11Lib-x64.so";
             }
 
             throw new PlatformNotSupportedException();

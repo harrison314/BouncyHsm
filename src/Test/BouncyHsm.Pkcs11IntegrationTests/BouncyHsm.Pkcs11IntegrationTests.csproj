@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="Exists('../../../build_linux/BouncyHsm.Pkcs11Lib-x64.so')">
-    <None Include="../../build_linux/BouncyHsm.Pkcs11Lib-x64.so">
+    <None Include="../../../build_linux/BouncyHsm.Pkcs11Lib-x64.so">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{6f83b51b-8fda-40f2-88b5-f1e415918ba8}</ProjectGuid>
     <RootNamespace>BouncyHsmPkcs11Lib</RootNamespace>
