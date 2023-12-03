@@ -320,6 +320,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     break;
 
     case CKM_ECDH1_DERIVE:
+    case CKM_ECDH1_COFACTOR_DERIVE:
     {
         if (pMechanism->ulParameterLen != sizeof(CK_ECDH1_DERIVE_PARAMS))
         {

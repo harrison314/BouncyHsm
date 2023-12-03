@@ -110,6 +110,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             CKM.CKM_EXTRACT_KEY_FROM_KEY => this.CreateExtractKeyGenerator(mechanism),
 
             CKM.CKM_ECDH1_DERIVE => this.CreateEcdh1DeriveGenerator(mechanism),
+            CKM.CKM_ECDH1_COFACTOR_DERIVE => this.CreateEcdh1DeriveGenerator(mechanism),
 
             CKM.CKM_AES_ECB_ENCRYPT_DATA => new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>()),
             CKM.CKM_AES_CBC_ENCRYPT_DATA => this.CreateAesCbcEncryptionGenerator(mechanism),
@@ -145,7 +146,12 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
                 deriveParams.PublicData,
                 deriveParams.SharedData);
 
-            return new Ecdh1DeriveKeyGenerator(ecDeriveParams, this.loggerFactory.CreateLogger<Ecdh1DeriveKeyGenerator>());
+            return ((CKM)mechanism.MechanismType) switch
+            {
+                CKM.CKM_ECDH1_DERIVE => new Ecdh1DeriveKeyGenerator(ecDeriveParams, this.loggerFactory.CreateLogger<Ecdh1DeriveKeyGenerator>()),
+                CKM.CKM_ECDH1_COFACTOR_DERIVE => new Ecdh1CofactorDeriveKeyGenerator(ecDeriveParams, this.loggerFactory.CreateLogger<Ecdh1CofactorDeriveKeyGenerator>()),
+                _ => throw new InvalidParameterException($"Enum value {(CKM)mechanism.MechanismType} is not supported.")
+            };
         }
         catch (Exception ex)
         {

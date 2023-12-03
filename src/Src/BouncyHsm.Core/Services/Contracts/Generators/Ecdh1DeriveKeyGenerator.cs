@@ -2,6 +2,7 @@
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -86,7 +87,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         this.logger.LogTrace("Entering to DeriveSecret");
 
         uint minKeySize = template.GetAttributeUint(CKA.CKA_VALUE_LEN, generalSecretKeyObject.GetMinimalSecretLen());
-        ECDHBasicAgreement agreement = this.CreateAgreement(this.ecdh1Params.Kdf,
+        IBasicAgreement agreement = this.CreateAgreement(this.ecdh1Params.Kdf,
             (int)minKeySize,
             this.ecdh1Params.SharedData);
 
@@ -118,7 +119,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         }
     }
 
-    private ECDHBasicAgreement CreateAgreement(CKD kdfFunction, int minKeySize, byte[]? sharedData)
+    protected virtual IBasicAgreement CreateAgreement(CKD kdfFunction, int minKeySize, byte[]? sharedData)
     {
         this.logger.LogTrace("Entering to CreateAgreement with KDF {Kdf}, minKeySize {minKeySize}, contains sharedData {containsSharedData}.",
             kdfFunction,
@@ -128,11 +129,11 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         return kdfFunction switch
         {
             CKD.CKD_NULL => new ECDHBasicAgreement(),
-            CKD.CKD_SHA1_KDF => new ECDH1WithKdf1Agreement(minKeySize, new Sha1Digest(), sharedData),
-            CKD.CKD_SHA224_KDF => new ECDH1WithKdf1Agreement(minKeySize, new Sha224Digest(), sharedData),
-            CKD.CKD_SHA256_KDF => new ECDH1WithKdf1Agreement(minKeySize, new Sha256Digest(), sharedData),
-            CKD.CKD_SHA384_KDF => new ECDH1WithKdf1Agreement(minKeySize, new Sha384Digest(), sharedData),
-            CKD.CKD_SHA512_KDF => new ECDH1WithKdf1Agreement(minKeySize, new Sha512Digest(), sharedData),
+            CKD.CKD_SHA1_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha1Digest(), sharedData),
+            CKD.CKD_SHA224_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha224Digest(), sharedData),
+            CKD.CKD_SHA256_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha256Digest(), sharedData),
+            CKD.CKD_SHA384_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha384Digest(), sharedData),
+            CKD.CKD_SHA512_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha512Digest(), sharedData),
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"kdf {kdfFunction} from CK_ECDH1_DERIVE_PARAMS is not supported or invalid.")
         };
     }

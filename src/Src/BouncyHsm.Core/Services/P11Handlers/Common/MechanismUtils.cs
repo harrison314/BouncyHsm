@@ -134,6 +134,7 @@ internal static class MechanismUtils
             {CKM.CKM_EXTRACT_KEY_FROM_KEY, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE)},
 
             {CKM.CKM_ECDH1_DERIVE, new MechanismInfo(EcMinKeySize, EcMaxKeySize, MechanismCkf.CKF_DERIVE | MechanismCkf.CKF_EC_NAMEDCURVE, MechanismCkf.CKF_DERIVE)},
+            {CKM.CKM_ECDH1_COFACTOR_DERIVE, new MechanismInfo(EcMinKeySize, EcMaxKeySize, MechanismCkf.CKF_DERIVE | MechanismCkf.CKF_EC_NAMEDCURVE, MechanismCkf.CKF_DERIVE)},
 
             // Derive using AES
             {CKM.CKM_AES_ECB_ENCRYPT_DATA,  new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE)},
