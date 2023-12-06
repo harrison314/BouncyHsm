@@ -1,4 +1,7 @@
 # Bouncy Hsm
+![GitHub License](https://img.shields.io/github/license/harrison314/BouncyHsm)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/harrison314/BouncyHsm)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/harrison314/BouncyHsm/main)
 
 _Bouncy Hsm_ is an developer friendly implementation of a cryptographic store accessible through a PKCS#11 interface.
 It can simulate HSM (hardware security module) and smart cards (also with a qualified area), 
