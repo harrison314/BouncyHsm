@@ -34,6 +34,12 @@ public class CreateTokenData
         set;
     }
 
+    public bool SimulateProtectedAuthPath
+    {
+        get;
+        set;
+    }
+
     public string UserPin
     {
         get;

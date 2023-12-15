@@ -41,6 +41,7 @@ public class SlotFacade : ISlotFacade
                 SimulateHwMechanism = createSlotData.Token.SimulateHwMechanism,
                 SimulateHwRng = createSlotData.Token.SimulateHwRng,
                 SimulateQualifiedArea = createSlotData.Token.SimulateQualifiedArea,
+                SimulateProtectedAuthPath = createSlotData.Token.SimulateProtectedAuthPath,
                 SpeedMode = createSlotData.Token.SpeedMode
             }
         };

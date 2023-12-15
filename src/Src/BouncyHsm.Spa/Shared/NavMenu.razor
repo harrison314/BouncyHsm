@@ -3,7 +3,7 @@
         <a class="navbar-brand" href="">
             <img src="BouncyHsm64x64.png?v=1" style="width:2em; height: 2em;" />
             Bouncy Hsm
-         </a>
+        </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -53,6 +53,20 @@
             </NavLink>
         </div>
     </nav>
+    <div class="navbar-nav me-auto mt-5 mt-sm-1 mt-lg-5 mb-lg-0 navbar-dark">
+        <hr class="text-white ms-4 me-4" />
+        <ErrorBoundary>
+            <ChildContent>
+                <BouncyHsm.Spa.Shared.ProtectedAuthPath.ProtectedAuthPathSwitch />
+            </ChildContent>
+            <ErrorContent>
+                <div class="text-danger">
+                    Problem with protected authorization path.
+                </div>
+            </ErrorContent>
+        </ErrorBoundary>
+    </div>
+
 </div>
 
 @code {

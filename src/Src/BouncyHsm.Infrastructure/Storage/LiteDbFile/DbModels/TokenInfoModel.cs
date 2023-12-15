@@ -34,6 +34,12 @@ public class TokenInfoModel
         set;
     }
 
+    public bool SimulateProtectedAuthPath
+    {
+        get;
+        set;
+    }
+
     public bool IsUserPinLocked
     {
         get;

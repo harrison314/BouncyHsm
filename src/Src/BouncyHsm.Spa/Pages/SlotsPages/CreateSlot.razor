@@ -63,6 +63,18 @@
                 <label class="form-check-label" for="i-tokenSimQa">Simulare qualified area on token</label>
                 <ValidationMessage For="() => this.model.TokenSimulateQualifiedArea" />
             </div>
+            <div class="mb-1 form-check">
+                <InputCheckbox class="form-check-input" id="i-tokenSimPap" @bind-Value="@this.model.TokenSimulateProtectedAuthPath" />
+                <label class="form-check-label" for="i-tokenSimPap">Simulare protected authentication path</label>
+                <ValidationMessage For="() => this.model.TokenSimulateProtectedAuthPath" />
+                @if (this.model.TokenSimulateProtectedAuthPath)
+                {
+                    <div class="form-text">
+                        <span class="icon-warning fs-6"></span>
+                        This functionality is dangerous and can lead to errors, for proper functioning at least one web interface must be open with the use of "protected authentication path" enabled.
+                    </div>
+                }
+            </div>
             <div class="mb-1">
                 <label for="i-speedMode" class="form-label">Speed mode</label>
                 <InputSelect class="form-select" @bind-Value="this.model.SpeedMode" id="i-speedMode">
@@ -131,12 +143,13 @@
                     SimulateHwMechanism = this.model.TokenSimulateHwMechanism,
                     SimulateHwRng = this.model.TokenSimulateHwRng,
                     SimulateQualifiedArea = this.model.TokenSimulateQualifiedArea,
+                    SimulateProtectedAuthPath = this.model.TokenSimulateProtectedAuthPath,
                     SpeedMode = this.model.SpeedMode,
                     SoPin = this.model.TokenSoPin.Trim(),
                     UserPin = this.model.TokenUserPin.Trim(),
                     SignaturePin = this.model.TokenSimulateQualifiedArea
-                                        ? this.model.TokenSignaturePin.Trim()
-                                        : null
+                                            ? this.model.TokenSignaturePin.Trim()
+                                            : null
                 }
             };
 

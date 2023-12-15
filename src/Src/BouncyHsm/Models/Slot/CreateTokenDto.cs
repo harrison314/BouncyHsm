@@ -41,6 +41,12 @@ public class CreateTokenDto
         set;
     }
 
+    public bool SimulateProtectedAuthPath
+    {
+        get;
+        set;
+    }
+
     public SpeedMode SpeedMode
     {
         get;

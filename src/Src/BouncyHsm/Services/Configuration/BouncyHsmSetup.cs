@@ -15,6 +15,12 @@ public class BouncyHsmSetup
         set;
     }
 
+    public TimeSpan ProtectedAuthPathTimeout
+    {
+        get;
+        set;
+    }
+
     public BouncyHsmSetup()
     {
 

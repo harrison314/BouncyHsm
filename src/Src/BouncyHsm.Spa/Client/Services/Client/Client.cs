@@ -2662,27 +2662,27 @@ namespace BouncyHsm.Spa.Services.Client
     public partial class ProblemDetails
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        [System.Text.Json.Serialization.JsonPropertyName("Type")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public string? Type { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("title")]
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public string? Title { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public int? Status { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("detail")]
+        [System.Text.Json.Serialization.JsonPropertyName("Detail")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public string? Detail { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("instance")]
+        [System.Text.Json.Serialization.JsonPropertyName("Instance")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public string? Instance { get; set; } = default!;
@@ -3377,6 +3377,11 @@ namespace BouncyHsm.Spa.Services.Client
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public bool SimulateQualifiedArea { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateProtectedAuthPath")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool SimulateProtectedAuthPath { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("SpeedMode")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
@@ -3479,6 +3484,11 @@ namespace BouncyHsm.Spa.Services.Client
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public bool SimulateQualifiedArea { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SimulateProtectedAuthPath")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool SimulateProtectedAuthPath { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("IsUserPinLocked")]
 
@@ -3606,10 +3616,10 @@ namespace BouncyHsm.Spa.Services.Client
         [System.Runtime.Serialization.EnumMember(Value = @"CKK_DH")]
         CKK_DH = 2,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_EC")]
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_ECDSA")]
         CKK_ECDSA = 3,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"CKK_EC")]
+        [System.Runtime.Serialization.EnumMember(Value = @"CKK_ECDSA")]
         CKK_EC = 4,
 
         [System.Runtime.Serialization.EnumMember(Value = @"CKK_X9_42_DH")]

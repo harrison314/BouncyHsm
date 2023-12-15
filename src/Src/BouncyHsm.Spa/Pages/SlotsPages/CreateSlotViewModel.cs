@@ -73,6 +73,12 @@ public class CreateSlotViewModel : IValidatableObject
         set;
     }
 
+    public bool TokenSimulateProtectedAuthPath
+    {
+        get;
+        set;
+    }
+
     public SpeedMode SpeedMode
     {
         get;

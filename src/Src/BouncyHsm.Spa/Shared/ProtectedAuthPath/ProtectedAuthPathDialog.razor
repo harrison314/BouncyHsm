@@ -1,0 +1,136 @@
+﻿@using BlazorStrap
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Components.Sections
+@implements IAsyncDisposable
+@inject NavigationManager Navigation
+
+<SectionContent SectionName="botton-area">
+    <BSModal DataId="modalLogDialog" Size="Size.Medium" @ref="modal" HasCloseButton="false">
+        <Header>
+            <h4>PAP Login - @this.loginType</h4>
+        </Header>
+        <Content>
+            <p>@this.loginText</p>
+            <div class="row">
+                <div class="col-2 d-flex align-items-center">
+                    <div class="align-self-center">
+                        <span class="icon-Sim-Card-Chip icon-4x"></span>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="mb-1 form-check">
+                        <input type="password"
+                               class="form-control"
+                               @bind-Value="this.pin"
+                               @bind-Value:event="oninput"
+                               @onkeyup="PinKeyHandler"
+                               autofocus="@true"
+                               autocomplete="off"
+                               />
+                    </div>
+                </div>
+            </div>
+        </Content>
+        <Footer Context="modal">
+            <button class="btn btn-outline-primary mb-1 btn-w-action" @onclick="this.SendPin">
+                <span class="icon-forward fs-6"></span>
+                Login
+            </button>
+            <button class="btn btn-outline-primary mb-1 btn-w-action" @onclick="this.SendCancell">
+                <span class="icon-cross fs-6"></span>
+                Cancell
+            </button>
+            <button class="btn btn-outline-dark mb-1 btn-w-action" @onclick="this.Ignore">
+                <span class="icon-exit fs-6"></span>
+                Ignore
+            </button>
+        </Footer>
+    </BSModal>
+</SectionContent>
+
+@code {
+    private HubConnection? hubConnection;
+    private BSModal modal = default!;
+    private string? activeLogSession = null;
+    private string loginType = string.Empty;
+    private string loginText = string.Empty;
+    private string pin = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/paphub"))
+            .Build();
+
+        this.hubConnection.On<LoginInitData>("NotifyLoginInit", this.NotifyLoginInit);
+        this.hubConnection.On<string>("NotifyLoginCancel", this.NotifyLoginCancel);
+        await this.hubConnection.StartAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+    private async Task NotifyLoginInit(LoginInitData data)
+    {
+        if (this.activeLogSession != null || this.modal.Shown)
+        {
+            return;
+        }
+
+        this.activeLogSession = data.LoginSession;
+        this.loginType = data.LoginType;
+        this.loginText = data.TokenInfo;
+        this.pin = string.Empty;
+
+        await this.modal.ShowAsync();
+    }
+
+    private async Task NotifyLoginCancel(string loginSession)
+    {
+        if (this.modal.Shown && string.Equals(this.activeLogSession, loginSession, StringComparison.Ordinal))
+        {
+            this.activeLogSession = null;
+            await this.modal.HideAsync();
+        }
+    }
+
+    private async Task SendPin()
+    {
+        if (this.activeLogSession == null) throw new InvalidOperationException("Log session must be set.");
+        if (this.hubConnection == null) throw new InvalidProgramException("Hub must by connected.");
+
+        await this.hubConnection.InvokeAsync("SetLogin", this.activeLogSession, this.pin);
+    }
+
+    private async Task PinKeyHandler(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await this.SendPin();
+        }
+    }
+
+    private async Task SendCancell()
+    {
+        if (this.activeLogSession == null) throw new InvalidOperationException("Log session must be set.");
+        if (this.hubConnection == null) throw new InvalidProgramException("Hub must by connected.");
+
+        await this.hubConnection.InvokeAsync("CancellLogin", this.activeLogSession);
+    }
+
+    private async Task Ignore()
+    {
+        if (this.modal.Shown && this.activeLogSession != null)
+        {
+            this.activeLogSession = null;
+            await this.modal.HideAsync();
+        }
+    }
+
+    public record LoginInitData(string LoginSession, string LoginType, string TokenInfo);
+}

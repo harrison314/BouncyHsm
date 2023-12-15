@@ -1,3 +1,4 @@
+using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Infrastructure;
 using BouncyHsm.Infrastructure.Application;
 using BouncyHsm.Services.Configuration;
@@ -80,6 +81,9 @@ public class Program
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IKeysGenerationFacade, BouncyHsm.Core.UseCases.Implementation.KeysGenerationFacade>();
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IApplicationConnectionsFacade, BouncyHsm.Core.UseCases.Implementation.ApplicationConnectionsFacade>();
 
+        builder.Services.AddSingleton<BouncyHsm.Infrastructure.PapServices.IPapLoginMemoryContext, BouncyHsm.Infrastructure.PapServices.PapLoginMemoryContext>();
+        builder.Services.AddTransient<IProtectedAuthPathProvider, BouncyHsm.Infrastructure.PapServices.SignalrProtectedAuthPathProvider>();
+
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
@@ -112,6 +116,7 @@ public class Program
         app.UseAuthorization();
 
         app.MapHub<BouncyHsm.Infrastructure.LogPropagation.LogHub>("/loghub");
+        app.MapHub<BouncyHsm.Infrastructure.PapServices.PapHub>("/paphub");
         app.MapControllers();
         app.MapFallbackToFile("index.html");
 

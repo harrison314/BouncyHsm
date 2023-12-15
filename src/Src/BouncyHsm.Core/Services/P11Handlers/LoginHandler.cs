@@ -10,13 +10,14 @@ namespace BouncyHsm.Core.Services.P11Handlers;
 
 public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelope>
 {
-
     private readonly IP11HwServices hwServices;
+    private readonly IProtectedAuthPathProvider protectedAuthPathProvider;
     private readonly ILogger<LoginHandler> logger;
 
-    public LoginHandler(IP11HwServices hwServices, ILogger<LoginHandler> logger)
+    public LoginHandler(IP11HwServices hwServices, IProtectedAuthPathProvider protectedAuthPathProvider, ILogger<LoginHandler> logger)
     {
         this.hwServices = hwServices;
+        this.protectedAuthPathProvider = protectedAuthPathProvider;
         this.logger = logger;
     }
 
@@ -120,16 +121,33 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
 
     private async Task<bool> ExecuteLogin(LoginRequest request, SlotEntity slot, IP11Session session, CancellationToken cancellationToken)
     {
-        if (request.Utf8Pin == null)
+        byte[]? utf8Pin = request.Utf8Pin;
+        if (utf8Pin == null)
         {
-            //TODO: implement using eg. SignalR
-            this.logger.LogError("Side channel authentication is not supported yet.");
-            throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Side channel authentication is not supported yet.");
+            if (slot.Token!.SimulateProtectedAuthPath)
+            {
+                utf8Pin = await this.protectedAuthPathProvider.TryLoginProtected((CKU)request.UserType,
+                    slot,
+                    cancellationToken);
+
+                if (utf8Pin == null)
+                {
+                    this.logger.LogError("Login canceled using protected authorization path.");
+                    throw new RpcPkcs11Exception(CKR.CKR_FUNCTION_CANCELED, "Login canceled using protected authorization path.");
+                }
+            }
+            else
+            {
+                this.logger.LogError("Protected authorization path is not enabled in slot id {slotId} and token {tokenLabel}.",
+                    slot.SlotId,
+                    slot.Token.Label);
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"Protected authorization path is not enabled in slot id {slot.SlotId} and token {slot.Token.Label}.");
+            }
         }
 
         bool pinIsValid = await this.hwServices.Persistence.ValidatePin(slot,
             (CKU)request.UserType,
-            Encoding.UTF8.GetString(request.Utf8Pin),
+            Encoding.UTF8.GetString(utf8Pin),
             null,
             cancellationToken);
 

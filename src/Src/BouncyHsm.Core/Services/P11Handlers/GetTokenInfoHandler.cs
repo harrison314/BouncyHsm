@@ -127,6 +127,11 @@ public partial class GetTokenInfoHandler : IRpcRequestHandler<GetTokenInfoReques
             flags |= CKF.CKF_SO_PIN_LOCKED;
         }
 
+        if (token.SimulateProtectedAuthPath)
+        {
+            flags |= CKF.CKF_PROTECTED_AUTHENTICATION_PATH;
+        }
+
         return flags;
     }
 }

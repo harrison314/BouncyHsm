@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.Sections
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -15,4 +16,5 @@
             @Body
         </article>
     </main>
+    <SectionOutlet SectionName="botton-area" />
 </div>
