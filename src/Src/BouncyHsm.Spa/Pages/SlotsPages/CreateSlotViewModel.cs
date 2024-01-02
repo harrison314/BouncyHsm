@@ -1,4 +1,4 @@
-using BouncyHsm.Spa.Services.Client;
+using BouncyHsm.Client;
 using System.ComponentModel.DataAnnotations;
 
 namespace BouncyHsm.Spa.Pages.SlotsPages;

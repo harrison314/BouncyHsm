@@ -14,4 +14,8 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BouncyHsm.Client\BouncyHsm.Client.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using BouncyHsm.Client;
+using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
 
@@ -26,7 +27,7 @@ internal class RemoveAppConnectionsCommand : AsyncCommand<RemoveAppConnectionsCo
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        Spa.Services.Client.BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
         if (!settings.Confirm)
         {

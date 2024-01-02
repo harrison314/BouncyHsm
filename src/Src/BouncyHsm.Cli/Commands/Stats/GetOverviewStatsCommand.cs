@@ -1,5 +1,5 @@
 ﻿using BouncyHsm.Cli.Commands.Slot;
-using BouncyHsm.Spa.Services.Client;
+using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
@@ -19,7 +19,7 @@ internal class GetOverviewStatsCommand : AsyncCommand<GetOverviewStatsCommand.Se
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
         OverviewStatsDto stats = default!;
 
         await AnsiConsole.Status()

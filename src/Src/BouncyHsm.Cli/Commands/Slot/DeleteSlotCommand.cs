@@ -1,4 +1,4 @@
-﻿using BouncyHsm.Spa.Services.Client;
+﻿using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -27,7 +27,7 @@ internal class DeleteSlotCommand : AsyncCommand<DeleteSlotCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
         if (!settings.Confirm)
         {

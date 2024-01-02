@@ -1,4 +1,5 @@
 ﻿using BouncyHsm.Cli.Commands.Pkcs;
+using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
@@ -17,8 +18,8 @@ internal class ListAppConnectionsCommand : AsyncCommand<ListAppConnectionsComman
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        Spa.Services.Client.BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
-        IList<Spa.Services.Client.ApplicationSessionDto> sessions = default!;
+        IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IList<ApplicationSessionDto> sessions = default!;
 
         await AnsiConsole.Status()
             .StartAsync("Loading...", async ctx =>
@@ -34,7 +35,7 @@ internal class ListAppConnectionsCommand : AsyncCommand<ListAppConnectionsComman
         table.AddColumn("Connected at");
         table.AddColumn("Last interaction");
 
-        foreach (Spa.Services.Client.ApplicationSessionDto session in sessions)
+        foreach (ApplicationSessionDto session in sessions)
         {
             table.AddRow(new Markup($"[green]{session.ApplicationSessionId}[/]"),
                 new Markup(Markup.Escape(session.CompiuterName)),

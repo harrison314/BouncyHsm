@@ -1,4 +1,4 @@
-﻿using BouncyHsm.Spa.Services.Client;
+﻿using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
@@ -103,7 +103,7 @@ internal class GenerateRsaKeyPairCommand : AsyncCommand<GenerateRsaKeyPairComman
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
         await AnsiConsole.Status()
            .StartAsync("Generating...", async ctx =>

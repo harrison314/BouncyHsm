@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using BouncyHsm.Client;
+using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,8 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        Spa.Services.Client.BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
-        IList<Spa.Services.Client.SlotDto> slots = default!;
+        IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IList<SlotDto> slots = default!;
 
         await AnsiConsole.Status()
             .StartAsync("Loading...", async ctx =>
@@ -34,7 +35,7 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
         table.AddColumn("With HW RNG");
         table.AddColumn("With Qualified Area");
 
-        foreach (Spa.Services.Client.SlotDto slot in slots)
+        foreach (SlotDto slot in slots)
         {
             table.AddRow(new Markup($"[green]{slot.SlotId}[/]"),
                 new Markup(Markup.Escape(slot.Description)),

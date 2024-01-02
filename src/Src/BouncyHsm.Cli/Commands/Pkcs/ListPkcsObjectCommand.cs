@@ -1,5 +1,4 @@
-﻿using BouncyHsm.Cli.Commands.Objects;
-using BouncyHsm.Spa.Services.Client;
+﻿using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
@@ -26,7 +25,7 @@ internal class ListPkcsObjectCommand : AsyncCommand<ListPkcsObjectCommand.Settin
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        BouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
+        IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
         PkcsObjectsDto objects = default!;
 
         await AnsiConsole.Status()

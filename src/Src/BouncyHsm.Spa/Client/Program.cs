@@ -1,9 +1,8 @@
 using BlazorStrap;
+using BouncyHsm.Client;
 using BouncyHsm.Spa;
-using BouncyHsm.Spa.Services.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BouncyHsm.Spa;
 
