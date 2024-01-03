@@ -1,13 +1,10 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
-using BouncyHsm.Infrastructure.Storage.InMemory;
 using BouncyHsm.Infrastructure.Storage.LiteDbFile.DbModels;
 using LiteDB;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Tls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
