@@ -54,7 +54,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
     {
         this.logger.LogTrace("Entering to CreateSlot.");
 
-        if (slot.Token == null) throw new ArgumentNullException("Token is null");
+        if (slot == null) throw new ArgumentNullException(nameof(slot));
         if (pins == null) throw new ArgumentNullException(nameof(pins));
 
         SlotEntity slotEntity = new SlotEntity()
@@ -79,7 +79,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
             }
         };
 
-        if (this.slots.Any(t => string.Equals(t.Token?.SerialNumber, slot.Token.SerialNumber, StringComparison.OrdinalIgnoreCase)))
+        if (this.slots.Any(t => string.Equals(t.Token.SerialNumber, slot.Token.SerialNumber, StringComparison.OrdinalIgnoreCase)))
         {
             this.logger.LogError("Token serial {TokenSerial} already exists.", slot.Token.SerialNumber);
             throw new BouncyHsmStorageException($"Token serial {slot.Token.SerialNumber} already exists.");
@@ -122,7 +122,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
         if (specification.WithTokenPresent)
         {
             List<SlotEntity> result = new List<SlotEntity>();
-            result.AddRange(this.slots.Where(t => t.Token != null));
+            result.AddRange(this.slots);
             return new ValueTask<IReadOnlyList<SlotEntity>>(result);
         }
 
@@ -175,12 +175,12 @@ internal class MemoryPersistentRepository : IPersistentRepository
 
         if (userType == CKU.CKU_USER)
         {
-            return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token!).UserPin == pin);
+            return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token).UserPin == pin);
         }
 
         if (userType == CKU.CKU_SO)
         {
-            return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token!).SoPin == pin);
+            return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token).SoPin == pin);
         }
 
         throw new NotSupportedException();

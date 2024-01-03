@@ -103,11 +103,6 @@ internal static class P11HwServicesExtensions
             throw new ArgumentException("Slot not found"); //TODO
         }
 
-        if (slot.Token == null)
-        {
-            throw new ArgumentException("Token not found"); //TODO
-        }
-
         return slot.Token.SpeedMode switch
         {
             SpeedMode.WithoutRestriction => new WithoutRestrictionSpeedAwaiter(),

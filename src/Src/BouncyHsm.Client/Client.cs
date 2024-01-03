@@ -3452,7 +3452,7 @@ namespace BouncyHsm.Client
         [System.Text.Json.Serialization.JsonPropertyName("Token")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public TokenDto? Token { get; set; } = default!;
+        public TokenDto Token { get; set; } = default!;
 
     }
 

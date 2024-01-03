@@ -32,15 +32,6 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
         IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
         SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
 
-        if (slot.Token == null)
-        {
-            this.logger.LogError("Slot {SlotId} can not contains token", session.SlotId);
-            return new LoginEnvelope()
-            {
-                Rv = (uint)CKR.CKR_TOKEN_NOT_PRESENT
-            };
-        }
-
         CKU userType = (CKU)request.UserType;
         if (!Enum.IsDefined(userType))
         {
@@ -124,7 +115,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
         byte[]? utf8Pin = request.Utf8Pin;
         if (utf8Pin == null)
         {
-            if (slot.Token!.SimulateProtectedAuthPath)
+            if (slot.Token.SimulateProtectedAuthPath)
             {
                 utf8Pin = await this.protectedAuthPathProvider.TryLoginProtected((CKU)request.UserType,
                     slot,

@@ -39,10 +39,10 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
         {
             table.AddRow(new Markup($"[green]{slot.SlotId}[/]"),
                 new Markup(Markup.Escape(slot.Description)),
-                new Markup(Markup.Escape(slot.Token!.Label)),
-                new Markup(Markup.Escape(slot.Token!.SerialNumber)),
-                new Markup(slot.Token!.SimulateHwRng ? "[green]yes[/]" : "[yellow]no[/]"),
-                new Markup(slot.Token!.SimulateQualifiedArea ? "[green]yes[/]" : "[yellow]no[/]"));
+                new Markup(Markup.Escape(slot.Token.Label)),
+                new Markup(Markup.Escape(slot.Token.SerialNumber)),
+                new Markup(slot.Token.SimulateHwRng ? "[green]yes[/]" : "[yellow]no[/]"),
+                new Markup(slot.Token.SimulateQualifiedArea ? "[green]yes[/]" : "[yellow]no[/]"));
         }
 
         AnsiConsole.Write(table);

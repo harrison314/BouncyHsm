@@ -20,8 +20,6 @@ public class SignalrProtectedAuthPathProvider : IProtectedAuthPathProvider
     {
         this.logger.LogTrace("Entering to TryLoginProtected.");
 
-        System.Diagnostics.Debug.Assert(slot.Token != null);
-
         string tolkenInfo = $"Login to: {slot.Token.Label}";
         byte[]? loginValue = await this.context.PerformLogin(
             userType.ToString(),

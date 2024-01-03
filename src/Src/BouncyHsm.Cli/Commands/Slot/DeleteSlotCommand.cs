@@ -38,7 +38,7 @@ internal class DeleteSlotCommand : AsyncCommand<DeleteSlotCommand.Settings>
                    slot = await client.GetSlotAsync(settings.SlotId);
                });
 
-            if (!AnsiConsole.Confirm($"Do you really want to delete the slot [green]{settings.SlotId}[/] with token label '[green]{slot.Token!.Label}[/]' and serial '[green]{slot.Token!.SerialNumber}[/]'?"))
+            if (!AnsiConsole.Confirm($"Do you really want to delete the slot [green]{settings.SlotId}[/] with token label '[green]{slot.Token.Label}[/]' and serial '[green]{slot.Token.SerialNumber}[/]'?"))
             {
                 return 0;
             }

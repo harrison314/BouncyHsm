@@ -26,7 +26,7 @@
         }
         else
         {
-            <p>Import into token with label <em>@this.slot.Token!.Label</em> and serial <em>@this.slot.Token!.SerialNumber</em>.</p>
+            <p>Import into token with label <em>@this.slot.Token.Label</em> and serial <em>@this.slot.Token.SerialNumber</em>.</p>
 
             @if (this.errorMessage != null)
             {
@@ -71,7 +71,7 @@
                     <InputSelect class="form-select" @bind-Value="this.model.ImportMode" id="i-importmode">
                         <option value="@P12ImportMode.Imported">Standard import</option>
                         <option value="@P12ImportMode.Local">Import as local objects</option>
-                        @if (this.slot.Token!.SimulateQualifiedArea)
+                        @if (this.slot.Token.SimulateQualifiedArea)
                         {
                             <option value="@P12ImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
                         }

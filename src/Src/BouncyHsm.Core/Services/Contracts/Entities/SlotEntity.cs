@@ -26,7 +26,7 @@ public class SlotEntity : Entity
         set;
     }
 
-    public TokenInfo? Token
+    public required TokenInfo Token
     {
         get;
         set;

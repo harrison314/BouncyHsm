@@ -64,7 +64,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         ILiteCollection<SlotSequence> slotSequence = this.database.GetCollection<SlotSequence>();
 
         if (pins == null) throw new ArgumentNullException(nameof(pins));
-        if (slot.Token == null) throw new ArgumentNullException(nameof(slot.Token));
+        if (slot == null) throw new ArgumentNullException(nameof(slot));
 
         SlotMapper mapper = new SlotMapper();
         SlotModel slotModel = mapper.MapSlot(slot);

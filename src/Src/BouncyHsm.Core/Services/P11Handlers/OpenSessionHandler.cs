@@ -27,14 +27,6 @@ public partial class OpenSessionHandler : IRpcRequestHandler<OpenSessionRequest,
             request.IsNotifySet);
 
         Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(request.SlotId, cancellationToken);
-        if (slot.Token == null)
-        {
-            return new OpenSessionEnvelope()
-            {
-                Rv = (uint)CKR.CKR_TOKEN_NOT_PRESENT,
-                SessionId = 0
-            };
-        }
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
 

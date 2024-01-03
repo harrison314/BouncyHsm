@@ -27,7 +27,7 @@ public class SlotDto
         set;
     }
 
-    public TokenDto? Token
+    public TokenDto Token
     {
         get;
         set;
@@ -36,5 +36,6 @@ public class SlotDto
     public SlotDto()
     {
         this.Description = string.Empty;
+        this.Token = default!;
     }
 }

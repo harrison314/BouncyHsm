@@ -81,8 +81,8 @@ public class SlotFacadeTests
         IReadOnlyList<SlotEntity> value = result.AssertOkValue();
         Assert.AreEqual(value[0].SlotId, 12U);
         Assert.IsNotNull(value[0].Token);
-        Assert.IsNotNull(value[0].Token?.SerialNumber);
-        Assert.IsNotNull(value[0].Token?.Label);
+        Assert.IsNotNull(value[0].Token.SerialNumber);
+        Assert.IsNotNull(value[0].Token.Label);
     }
 
     [TestMethod]
@@ -116,8 +116,8 @@ public class SlotFacadeTests
         SlotEntity value = result.AssertOkValue();
         Assert.AreEqual(value.SlotId, 12U);
         Assert.IsNotNull(value.Token);
-        Assert.IsNotNull(value.Token?.SerialNumber);
-        Assert.IsNotNull(value.Token?.Label);
+        Assert.IsNotNull(value.Token.SerialNumber);
+        Assert.IsNotNull(value.Token.Label);
     }
 
     [TestMethod]

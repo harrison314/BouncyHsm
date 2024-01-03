@@ -107,7 +107,7 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
         privateKeyObject.CkaAlwaysSensitive = privateKeyObject.CkaSensitive;
 
         SlotEntity? slot = await this.hwServices.Persistence.GetSlot(p11Session.SlotId, cancellationToken);
-        if (slot == null || slot.Token == null)
+        if (slot == null)
         {
             throw new InvalidOperationException("Invalid slotId.");
         }

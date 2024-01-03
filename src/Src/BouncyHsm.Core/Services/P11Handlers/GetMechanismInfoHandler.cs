@@ -26,11 +26,6 @@ public partial class GetMechanismInfoHandler : IRpcRequestHandler<GetMechanismIn
         _ = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(request.SlotId, cancellationToken);
 
-        if (slot.Token == null)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_TOKEN_NOT_PRESENT, $"Token in slotId {request.SlotId} is not present.");
-        }
-
         if (MechanismUtils.TryGetMechanismInfo(request.MechanismType, out Common.MechanismInfo mechanismInfo))
         {
             return new GetMechanismInfoEnvelope()

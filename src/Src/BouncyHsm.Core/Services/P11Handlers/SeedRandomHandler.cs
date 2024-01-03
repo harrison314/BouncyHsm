@@ -23,16 +23,6 @@ public partial class SeedRandomHandler : IRpcRequestHandler<SeedRandomRequest, S
 
         IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
         Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
-        if (slot.Token == null)
-        {
-            if (slot.Token == null)
-            {
-                return new SeedRandomEnvelope()
-                {
-                    Rv = (uint)CKR.CKR_TOKEN_NOT_PRESENT
-                };
-            }
-        }
 
         if (slot.Token.SimulateHwRng)
         {

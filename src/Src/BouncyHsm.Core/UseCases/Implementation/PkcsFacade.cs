@@ -36,12 +36,6 @@ public class PkcsFacade : IPkcsFacade
             return new DomainResult<Guid>.InvalidInput("SlotId not found.");
         }
 
-        if (slot.Token == null)
-        {
-            this.logger.LogError("SlotId {slotId} canot contains token.", request.SlotId);
-            return new DomainResult<Guid>.InvalidInput("Slot can not contains token.");
-        }
-
         if (request.ImportMode == P12ImportMode.LocalInQualifiedArea && !slot.Token.SimulateQualifiedArea)
         {
             this.logger.LogError("SlotId {slotId} not contains token with qualified area.", request.SlotId);

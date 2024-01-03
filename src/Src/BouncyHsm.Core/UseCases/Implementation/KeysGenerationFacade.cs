@@ -293,7 +293,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
     private void UpdateKeys(SlotEntity slotEntity, PublicKeyObject publicKeyObject, PrivateKeyObject privateKeyObject)
     {
         this.UpdatePublicObject(publicKeyObject);
-        this.UpdatePrivateKey(slotEntity.Token!.SimulateQualifiedArea, privateKeyObject);
+        this.UpdatePrivateKey(slotEntity.Token.SimulateQualifiedArea, privateKeyObject);
 
         publicKeyObject.ReComputeAttributes();
         privateKeyObject.ReComputeAttributes();

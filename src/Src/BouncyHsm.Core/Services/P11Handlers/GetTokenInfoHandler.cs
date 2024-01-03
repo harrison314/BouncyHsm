@@ -36,16 +36,6 @@ public partial class GetTokenInfoHandler : IRpcRequestHandler<GetTokenInfoReques
             };
         }
 
-        if (slot.Token == null)
-        {
-            this.logger.LogDebug("Not found token for slotId {SlotId}.", request.SlotId);
-            return new GetTokenInfoEnvelope()
-            {
-                Rv = (uint)CKR.CKR_TOKEN_NOT_PRESENT,
-                Data = null
-            };
-        }
-
         CkVersion currentVersion = DataTransform.GetCurrentVersion();
         CkSpecialUint unknown = new CkSpecialUint()
         {

@@ -25,14 +25,6 @@ public partial class GenerateRandomHandler : IRpcRequestHandler<GenerateRandomRe
         IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
         Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
 
-        if (slot.Token == null)
-        {
-            return new GenerateRandomEnvelope()
-            {
-                Rv = (uint)CKR.CKR_TOKEN_NOT_PRESENT,
-            };
-        }
-
         int length = Convert.ToInt32(request.RandomLen);
         byte[] data = new byte[length];
 
