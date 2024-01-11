@@ -12,7 +12,7 @@ internal static class FindObjectSpecificationExtensions
 {
     public static uint? TryGetUintValue(this FindObjectSpecification specification, CKA attributeType)
     {
-        if(specification.Template.TryGetValue(attributeType, out Core.Services.Contracts.Entities.IAttributeValue? attributeValue))
+        if (specification.Template.TryGetValue(attributeType, out Core.Services.Contracts.Entities.IAttributeValue? attributeValue))
         {
             return attributeValue.AsUint();
         }
