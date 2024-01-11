@@ -32,6 +32,7 @@ public class SlotFacade : ISlotFacade
         {
             Description = createSlotData.Description.Trim(),
             IsHwDevice = createSlotData.IsHwDevice,
+            IsRemovableDevice = createSlotData.IsRemovableDevice,
             Token = new TokenInfo()
             {
                 IsSoPinLocked = false,

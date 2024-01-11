@@ -44,7 +44,7 @@ public partial class GetSlotInfoHandler : IRpcRequestHandler<GetSlotInfoRequest,
                 SlotDescription = slot.Description,
                 ManufacturerID = P11Constants.ManufacturerId,
                 FlagsHwSlot = slot.IsHwDevice,
-                FlagsRemovableDevice = false,
+                FlagsRemovableDevice = slot.IsRemovableDevice,
                 FlagsTokenPresent = true, //TODO
                 FirmwareVersion = version,
                 HardwareVersion = version

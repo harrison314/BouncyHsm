@@ -101,6 +101,15 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
             get;
             set;
         }
+
+        [CommandOption("--removableDevice")]
+        [DefaultValue(false)]
+        [Description("If set to true, then the token is removable device.")]
+        public bool IsRemovableDevice
+        {
+            get;
+            init;
+        }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
@@ -149,6 +158,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
               result = await client.CreateSlotAsync(new CreateSlotDto()
               {
                   IsHwDevice = settings.TokenSimulateHwMechanism,
+                  IsRemovableDevice = settings.IsRemovableDevice,
                   Description = settings.SlotDescription.Trim(),
                   Token = new CreateTokenDto()
                   {

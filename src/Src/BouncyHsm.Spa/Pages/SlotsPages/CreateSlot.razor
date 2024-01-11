@@ -33,6 +33,11 @@
                 <label class="form-check-label" for="i-simulateHwSlot">Simulare HW slot</label>
                 <ValidationMessage For="() => this.model.SimulateHwSlot" />
             </div>
+            <div class="mb-1 form-check">
+                <InputCheckbox class="form-check-input" id="i-simulateHwSlot" @bind-Value="this.model.IsRemovableDevice" />
+                <label class="form-check-label" for="i-simulateHwSlot">Is removable device</label>
+                <ValidationMessage For="() => this.model.IsRemovableDevice" />
+            </div>
 
             <hr />
             <div class="mb-1">
@@ -136,6 +141,7 @@
             {
                 Description = this.model.Description.Trim(),
                 IsHwDevice = this.model.SimulateHwSlot,
+                IsRemovableDevice = this.model.IsRemovableDevice,
                 Token = new CreateTokenDto()
                 {
                     Label = this.model.TokenLabel,

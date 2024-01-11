@@ -20,6 +20,12 @@ public class SlotModel
         set;
     }
 
+    public bool IsRemovableDevice
+    {
+        get;
+        set;
+    }
+
     public string Description
     {
         get;

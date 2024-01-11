@@ -16,6 +16,12 @@ public class CreateSlotDto
         set;
     }
 
+    public bool IsRemovableDevice
+    {
+        get;
+        set;
+    }
+
     [Required]
     [MinLength(1)]
     [MaxLength(512)]

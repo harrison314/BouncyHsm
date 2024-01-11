@@ -21,6 +21,12 @@ public class SlotDto
         set;
     }
 
+    public bool IsRemovableDevice
+    {
+        get;
+        set;
+    }
+
     public string Description
     {
         get;

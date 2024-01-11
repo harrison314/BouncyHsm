@@ -19,6 +19,12 @@ public class CreateSlotViewModel : IValidatableObject
         set;
     }
 
+    public bool IsRemovableDevice
+    {
+        get;
+        set;
+    }
+
     [Required]
     [MinLength(1)]
     public string TokenLabel

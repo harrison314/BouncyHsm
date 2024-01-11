@@ -26,6 +26,13 @@ public class SlotEntity : Entity
         set;
     }
 
+    public bool IsRemovableDevice
+    {
+        get;
+        set;
+    }
+
+
     public required TokenInfo Token
     {
         get;
