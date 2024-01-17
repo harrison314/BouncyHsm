@@ -1653,7 +1653,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
                 {
-                    *((CK_BBOOL*)pTemplate[i].pValue) = (CK_BBOOL)outAttrPtr->ValueBool;
+                    *((CK_BBOOL*)pTemplate[i].pValue) = (CK_BBOOL)(outAttrPtr->ValueBool ? CK_TRUE : CK_FALSE);
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkUlong)
                 {
