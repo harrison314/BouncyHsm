@@ -122,7 +122,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
         if (specification.WithTokenPresent)
         {
             List<SlotEntity> result = new List<SlotEntity>();
-            result.AddRange(this.slots);
+            result.AddRange(this.slots.Where(t => !t.IsUnplugged));
             return new ValueTask<IReadOnlyList<SlotEntity>>(result);
         }
 

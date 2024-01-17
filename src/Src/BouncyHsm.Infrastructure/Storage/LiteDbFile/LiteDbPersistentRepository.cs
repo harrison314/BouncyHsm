@@ -159,8 +159,16 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         ILiteCollection<SlotModel> collection = this.database.GetCollection<SlotModel>();
         SlotMapper mapper = new SlotMapper();
 
-        IReadOnlyList<SlotEntity> list = collection.FindAll().Select(t => mapper.MapSlot(t)).ToList();
-        return new ValueTask<IReadOnlyList<SlotEntity>>(list);
+        if (specification.WithTokenPresent)
+        {
+            IReadOnlyList<SlotEntity> list = collection.Find(t => !t.IsUnplugged).Select(t => mapper.MapSlot(t)).ToList();
+            return new ValueTask<IReadOnlyList<SlotEntity>>(list);
+        }
+        else
+        {
+            IReadOnlyList<SlotEntity> list = collection.FindAll().Select(t => mapper.MapSlot(t)).ToList();
+            return new ValueTask<IReadOnlyList<SlotEntity>>(list);
+        }
     }
 
     public ValueTask DeleteSlot(uint slotId, CancellationToken cancellationToken)

@@ -27,6 +27,12 @@ public class SlotDto
         set;
     }
 
+    public bool IsUnplugged
+    {
+        get;
+        set;
+    }
+
     public string Description
     {
         get;

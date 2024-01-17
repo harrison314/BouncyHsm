@@ -32,6 +32,11 @@ public class SlotEntity : Entity
         set;
     }
 
+    public bool IsUnplugged
+    {
+        get;
+        set;
+    }
 
     public required TokenInfo Token
     {

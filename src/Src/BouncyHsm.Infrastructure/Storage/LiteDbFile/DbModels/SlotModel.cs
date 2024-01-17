@@ -26,6 +26,12 @@ public class SlotModel
         set;
     }
 
+    public bool IsUnplugged
+    {
+        get;
+        set;
+    }
+
     public string Description
     {
         get;
