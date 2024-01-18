@@ -210,32 +210,6 @@ int readclose(void* user_ctx)
 
 #else
 
-static const char* getErrorD()
-{
-    switch (errno)
-    {
-    case EBADF:
-        return "EBADF (bad descriptor)";
-    case EFAULT:
-        return "EFAULT (bad adress)";
-    case ENOTSOCK:
-        return "ENOTSOCK";
-    case EISCONN:
-        return "EISCONN";
-    case ECONNREFUSED:
-        return "ECONNREFUSED";
-    case ETIMEDOUT:
-        return "ETIMEDOUT";
-    case ENETUNREACH:
-        return "ENETUNREACH";
-    case EADDRINUSE:
-        return "EADDRINUSE";
-    default:
-        return "unknown";
-    };
-}
-
-
 int translateHostName(const char* hostName, int port, SockContext_t* ctx)
 {
     struct addrinfo* addrInfo = NULL;
@@ -332,14 +306,14 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
     {
         if ((ctx->s = socket(ctx->addr.ai_family, ctx->addr.ai_socktype, ctx->addr.ai_protocol)) < 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Could not create socket. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, getErrorD());
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Could not create socket. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, strerror(errno));
             return NMRPC_FATAL_ERROR;
         }
 
 
         if (connect(ctx->s, ctx->addr.ai_addr, (int)ctx->addr.ai_addrlen) < 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, getErrorD());
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, strerror(errno));
             return NMRPC_FATAL_ERROR;
         }
 
@@ -348,7 +322,7 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
 
     if (send(ctx->s, (const char*)request_data, (int)request_data_size, 0) < 0)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, getErrorD());
+        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
         return NMRPC_FATAL_ERROR;
     }
 
@@ -364,7 +338,7 @@ int sock_flush(void* user_ctx)
     int flag = 1;
     if (setsockopt(ctx->s, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
     {
-        log_message(LOG_LEVEL_ERROR, "setsockopt failed. Error: %s", getErrorD());
+        log_message(LOG_LEVEL_ERROR, "setsockopt failed. Error: %s", strerror(errno));
         return NMRPC_FATAL_ERROR;
     }
 
@@ -385,7 +359,7 @@ size_t sock_readresponse(void* user_ctx, void* response_data, size_t response_da
     //Receive a reply from the server
     if ((recv_size = recv(ctx->s, response_data, (int)response_data_size, MSG_WAITALL)) < 0)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Received failed. Error: %s", __FUNCTION__, __LINE__, getErrorD());
+        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Received failed. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
         return 0;
     }
 
@@ -402,7 +376,7 @@ int readclose(void* user_ctx)
         int rv = close(ctx->s);
         if (rv != 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Close socket. Error: %s", __FUNCTION__, __LINE__, getErrorD());
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Close socket. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
         }
     }
 
