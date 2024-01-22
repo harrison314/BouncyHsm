@@ -1669,10 +1669,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                         date->day[1] = (CK_CHAR)outAttrPtr->ValueCkDate[1];
                         date->month[0] = (CK_CHAR)outAttrPtr->ValueCkDate[3];
                         date->month[1] = (CK_CHAR)outAttrPtr->ValueCkDate[4];
-                        date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[5];
-                        date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
-                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
-                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
+                        date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
+                        date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
+                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
+                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[9];
                     }
                 }
                 else
