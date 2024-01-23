@@ -82,6 +82,116 @@ public class T30_GetAttributeValue
         Assert.IsTrue(secret.SequenceEqual(attributes[5].GetValueAsByteArray()));
     }
 
+    [TestMethod]
+    public void GetAttributeValue_SecretKeyMoreValues_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)32),
+        };
+
+        using IMechanism keyGenMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+        IObjectHandle key = session.GenerateKey(keyGenMechanism, keyAttributes);
+
+        List<CKA> getTemplate = new List<CKA>()
+        {
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_DESTROYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_DECRYPT,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_ENCRYPT,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_KEY_TYPE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+            CKA.CKA_TOKEN,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+            CKA.CKA_LABEL,
+            CKA.CKA_VALUE_LEN,
+            CKA.CKA_ID,
+        };
+
+        List<IObjectAttribute> attributes = session.GetAttributeValue(key, getTemplate);
+
+        Assert.AreEqual(getTemplate.Count, attributes.Count);
+    }
+
     //[TestMethod]
     //public void GetAttributeValue_SensitiveValue_Success()
     //{

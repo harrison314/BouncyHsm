@@ -26,7 +26,7 @@ typedef struct _sockContext {
     int s;
 #endif
 
-    struct addrinfo addr;
+    struct addrinfo *addr;
     char ipAddress[INET6_ADDRSTRLEN];
     int isInitialized;
 } SockContext_t;

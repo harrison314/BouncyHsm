@@ -253,6 +253,7 @@ bool parseConnectionString(const char* connectionString, const char* name, char*
 			else
 			{
 				strncpy_s(outValue, *sizePtr, startValue, size);
+                outValue[size] = 0; // Fix strncpy
 				*sizePtr = size + 1;
 				rv = true;
 			}
