@@ -59,7 +59,7 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
 
     private double GetMultiplicator(int pi)
     {
-        if (pi > 0 && pi < this.polynomialMultiplication.Length)
+        if (pi < this.polynomialMultiplication.Length)
         {
             return this.polynomialMultiplication[pi];
         }

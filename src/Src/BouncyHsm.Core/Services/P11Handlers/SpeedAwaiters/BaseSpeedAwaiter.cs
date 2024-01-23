@@ -72,7 +72,7 @@ internal abstract class BaseSpeedAwaiter : ISpeedAwaiter
 
     private double GetMultiplicator(double[] mi, int pi)
     {
-        if (pi > 0 && pi < mi.Length)
+        if (pi < mi.Length)
         {
             return mi[pi];
         }

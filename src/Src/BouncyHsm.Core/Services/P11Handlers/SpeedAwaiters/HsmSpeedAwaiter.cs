@@ -12,6 +12,6 @@ internal class HsmSpeedAwaiter : BaseSpeedAwaiter
 
     protected override double[] GetMultiplicationVector()
     {
-        return new double[] { 2.3, 4.0, 1.2 };
+        return new double[] { 1.2, 2.0, 0.6 };
     }
 }
