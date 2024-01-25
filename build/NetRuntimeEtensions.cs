@@ -1,4 +1,0 @@
-﻿public static class NetRuntimeEtensions
-{
-
-}

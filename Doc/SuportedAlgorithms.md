@@ -1,9 +1,9 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 0.4.0.0 (commit _75691e8aed4eb1f2e54faf3a21fdbee014610b02_).
+Supported algorithms for _Bouncy Hsm_ version 0.5.0.0 (commit _b0e2c468127b40efe3c849511a0a20eb3d9e081c_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 92 mechanisms.
+_Bouncy Hsm_ supports 93 mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign, Verify | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -82,6 +82,7 @@ _Bouncy Hsm_ supports 92 mechanisms.
 | `CKM_ECDSA_SHA384` | 192  | 521 |   | ✓ |   |   |   |   |   |
 | `CKM_ECDSA_SHA512` | 192  | 521 |   | ✓ |   |   |   |   |   |
 | `CKM_ECDH1_DERIVE` | 192  | 521 |   |   | ✓ |   |   |   |   |
+| `CKM_ECDH1_COFACTOR_DERIVE` | 192  | 521 |   |   | ✓ |   |   |   |   |
 | `CKM_AES_KEY_GEN` | 16  | 32 |   |   |   |   |   | ✓ |   |
 | `CKM_AES_ECB` | 16  | 32 |   |   |   | ✓ |   |   |   |
 | `CKM_AES_CBC` | 16  | 32 |   |   |   | ✓ |   |   |   |
