@@ -26,7 +26,7 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
         result += ((21.0 * x * x * x) / 268435456.0) * this.GetMultiplicator(3);
         result += ((x * x) / 131072.0) * this.GetMultiplicator(2);
         result += ((52.0 * x) / 128.0) * this.GetMultiplicator(1);
-        result += 152.0 * this.GetMultiplicator(0);
+        result += 25.7 * this.GetMultiplicator(0);
 
         return TimeSpan.FromMilliseconds(result);
     }
@@ -40,7 +40,7 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
         double result = 0.0;
         result += ((115.0 * x * x) / 16384.0) * this.GetMultiplicator(2);
         result += ((-577.0 * x) / 256.0) * this.GetMultiplicator(1);
-        result += 260.0 * this.GetMultiplicator(0);
+        result += 24.0 * this.GetMultiplicator(0);
 
         return TimeSpan.FromMilliseconds(result);
     }
