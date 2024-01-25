@@ -14,6 +14,8 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 
 ![Screenshots - BouncyHsm web UI](Doc/Screenshots.gif)
 
+(Screenshots from version 0.4.0)
+
 ## Features
 * Multiple application and users access using PKCS#11 interface.
 * Slot and crypto object management using web interface and REST API.
