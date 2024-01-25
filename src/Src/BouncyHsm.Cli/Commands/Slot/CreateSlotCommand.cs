@@ -48,6 +48,15 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
             init;
         }
 
+        [CommandOption("--simulateProtectedAuthPath")]
+        [DefaultValue(false)]
+        [Description("If set to true, then the slot enabled protected authentification path.")]
+        public bool SimulateProtectedAuthPath
+        {
+            get;
+            init;
+        }
+
         [CommandOption("--simulateHwRng")]
         [DefaultValue(true)]
         [Description("If set to true, then the token simulate HW RNG.")]
@@ -160,7 +169,8 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
                       SpeedMode = settings.SpeedMode,
                       UserPin = userPin,
                       SoPin = soPin,
-                      SignaturePin = signaturePin
+                      SignaturePin = signaturePin,
+                      SimulateProtectedAuthPath = settings.SimulateProtectedAuthPath
                   }
               });
           });
