@@ -25,6 +25,7 @@ public class T21_VerifyRsa
     [DataRow(CKM.CKM_MD5_RSA_PKCS, false)]
     [DataRow(CKM.CKM_RIPEMD128_RSA_PKCS, false)]
     [DataRow(CKM.CKM_RIPEMD160_RSA_PKCS, false)]
+    [DataRow(CKM.CKM_SHA1_RSA_X9_31, false)]
     public void VerifyRsaPkcs_SignAndVerify_Success(CKM mechnism, bool createPkcs1DigestInfo)
     {
         byte[] dataToSign = new byte[412];
@@ -73,6 +74,50 @@ public class T21_VerifyRsa
         session.Verify(mechanism, pubKey, dataToSign, signature, out bool isNotValid);
         Assert.IsFalse(isNotValid, "Inconsistent signature is valid");
     }
+
+    //[TestMethod]
+    //public void VerifyRsaX9_31_SignAndVerify_Success()
+    //{
+    //    byte[] dataToSign = new byte[32];
+    //    Random.Shared.NextBytes(dataToSign);
+
+    //    Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+    //    using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+    //        AssemblyTestConstants.P11LibPath,
+    //        AppType.SingleThreaded);
+
+    //    List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+    //    ISlot slot = slots.SelectTestSlot();
+
+    //    using ISession session = slot.OpenSession(SessionType.ReadOnly);
+    //    session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+    //    string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+    //    byte[] ckId = session.GenerateRandom(32);
+
+    //    this.CreateRsaKeyPair(factories, slot, ckId, label);
+
+    //    IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
+
+    //    using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_SHA1_RSA_X9_31);
+
+    //    byte[] signature = session.Sign(mechanism, handle, dataToSign);
+
+
+    //    IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);
+
+    //    session.Verify(mechanism, pubKey, dataToSign, signature, out bool isValid);
+
+    //    Assert.IsTrue(isValid, "Signature must by valid");
+
+    //    unchecked
+    //    {
+    //        signature[2]++;
+    //    }
+
+    //    session.Verify(mechanism, pubKey, dataToSign, signature, out bool isNotValid);
+    //    Assert.IsFalse(isNotValid, "Inconsistent signature is valid");
+    //}
 
     [TestMethod]
     public void VerifyRsaPkcs_SignAndVerify_Success()

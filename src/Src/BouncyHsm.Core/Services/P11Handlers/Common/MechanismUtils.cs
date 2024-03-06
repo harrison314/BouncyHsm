@@ -68,6 +68,9 @@ internal static class MechanismUtils
 
             {CKM.CKM_RSA_PKCS_OAEP, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP) },
 
+            //CKM.CKM_SHA1_RSA_X9_31
+            //{CKM.CKM_RSA_X9_31, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize,  MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE) },
+            {CKM.CKM_SHA1_RSA_X9_31, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize,  MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE) },
 
             // RSA PSS
             {CKM.CKM_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY )},

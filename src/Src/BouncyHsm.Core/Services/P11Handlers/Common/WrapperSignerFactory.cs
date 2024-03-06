@@ -45,6 +45,9 @@ internal class WrapperSignerFactory
             CKM.CKM_RIPEMD128_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD128withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
             CKM.CKM_RIPEMD160_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD160withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 
+            CKM.CKM_SHA1_RSA_X9_31 => new RsaWrapperSigner(SignerUtilities.GetSigner("SHA1withRSA/X9.31"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            //CKM.CKM_RSA_X9_31 => new RsaWrapperSigner(new X931Signer(new RsaBlindedEngine(), new NullDigest(), true), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+
             CKM.CKM_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new NullDigest()),
             CKM.CKM_SHA1_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new Sha1Digest()),
             CKM.CKM_SHA224_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new Sha224Digest()),
