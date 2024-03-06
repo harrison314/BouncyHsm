@@ -5,6 +5,7 @@ using BouncyHsm.Core.Services.Contracts.Generators;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Crypto.Signers;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -95,7 +96,8 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
 
         return ckMechanism switch
         {
-            CKM.CKM_RSA_PKCS_KEY_PAIR_GEN => new RsaKeyPairGenerator(this.loggerFactory.CreateLogger<RsaKeyPairGenerator>()),
+            CKM.CKM_RSA_PKCS_KEY_PAIR_GEN => new RsaKeyPairGenerator(false, this.loggerFactory.CreateLogger<RsaKeyPairGenerator>()),
+            CKM.CKM_RSA_X9_31_KEY_PAIR_GEN => new RsaKeyPairGenerator(true, this.loggerFactory.CreateLogger<RsaKeyPairGenerator>()),
             CKM.CKM_ECDSA_KEY_PAIR_GEN => new EcdsaKeyPairGenerator(this.loggerFactory.CreateLogger<EcdsaKeyPairGenerator>()),
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for generate key pair.")
         };
