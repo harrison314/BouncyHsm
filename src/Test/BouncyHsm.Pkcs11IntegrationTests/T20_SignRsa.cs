@@ -204,6 +204,37 @@ public class T20_SignRsa
         Assert.IsTrue(verfied, "Signature inconsistent.");
     }
 
+    [TestMethod]
+    public void SignRsa9796_Success()
+    {
+        byte[] dataToSign = new byte[32];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        this.CreateRsaKeyPair(factories, slot, ckId, label);
+
+        IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
+
+        byte[] signature = session.Sign(mechanism, handle, dataToSign);
+
+        Assert.IsNotNull(signature);
+    }
+
     private RSA ExportPublicKey(ISession session, IObjectHandle pubKeyHandle)
     {
         List<CKA> attributes = new List<CKA>()
