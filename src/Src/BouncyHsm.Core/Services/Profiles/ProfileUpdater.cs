@@ -15,12 +15,22 @@ public static class ProfileUpdater
     {
         System.Diagnostics.Debug.Assert(stream != null);
 
-        Profile? profile = System.Text.Json.JsonSerializer.Deserialize<Profile>(stream,
-            new System.Text.Json.JsonSerializerOptions()
-            {
-                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() },
-                ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip
-            });
+        Profile? profile;
+
+        try
+        {
+            profile = System.Text.Json.JsonSerializer.Deserialize<Profile>(stream,
+                new System.Text.Json.JsonSerializerOptions()
+                {
+                    Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() },
+                    ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip,
+                    UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow
+                });
+        }
+        catch (Exception ex)
+        {
+            throw new BouncyHsmConfigurationException($"Problem with reading profile: {ex.Message}", ex);
+        }
 
         if (profile == null)
         {
