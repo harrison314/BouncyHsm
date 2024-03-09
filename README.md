@@ -31,6 +31,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 * Supports secrets (HMAC, derive,...)
 * Supports AES keys.
 * [Supports mechanisms](/Doc/SuportedAlgorithms.md)
+* Supports [custom profiles for mechanisms](/Doc/Profiles.md) (To limit mechanisms to simulate a specific type of HSM or card).
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permission configuration).
 * _BouncyHsm_ runs on all platform supported [.Net 8.0](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64.
