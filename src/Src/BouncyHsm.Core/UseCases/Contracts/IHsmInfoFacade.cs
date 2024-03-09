@@ -13,5 +13,5 @@ public interface IHsmInfoFacade
 
     BouncyHsmVersion GetVersions();
 
-    IEnumerable<MechanismInfoData> GetAllMechanism();
+    MechanismProfile GetAllMechanism();
 }

@@ -29,7 +29,7 @@ public static class Program
         DocModel model = new DocModel();
 
         model.Versions = infoFacade.GetVersions();
-        model.Mechanisms = Map(infoFacade.GetAllMechanism()).ToList();
+        model.Mechanisms = Map(infoFacade.GetAllMechanism().Mechanisms).ToList();
         model.Ec = infoFacade.GetCurves().ToList();
 
         return model;

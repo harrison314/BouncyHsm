@@ -21,6 +21,12 @@ public class BouncyHsmSetup
         set;
     }
 
+    public string? ProfileFilePath
+    {
+        get;
+        set;
+    }
+
     public BouncyHsmSetup()
     {
 
