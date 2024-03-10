@@ -7,7 +7,7 @@ When this value is set to `null`, no profile is applied, this is also the defaul
 Empty profile file:
 ```json
 {
-    "Name": "", //Name of profile (required)
+    "Name": "Null profile", //Name of profile (required)
     "Description": null, //Profile description - string or null (optional)
     "Author": null, // Autor of profile - string or null (optional)
     "Operations": [] // List of operations with mechanisms
