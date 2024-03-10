@@ -260,9 +260,9 @@ internal static class MechanismUtils
         return profileName;
     }
 
-    public static void UpdateMechanisms<T>(Func<Dictionary<CKM, MechanismInfo>, T, MechnismProfile> updateFunction, T context)
+    public static void UpdateMechanisms<T>(Func<Dictionary<CKM, MechanismInfo>, T, MechanismProfile> updateFunction, T context)
     {
-        MechnismProfile profile = updateFunction(originalMechanism, context);
+        MechanismProfile profile = updateFunction(originalMechanism, context);
         mechanism = profile.Mechanims;
         profileName = profile.Name;
     }

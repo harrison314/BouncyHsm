@@ -50,7 +50,7 @@ public static class ProfileUpdater
                 operation.Update(ref newDictionary, originalMechanisms);
             }
 
-            return new MechnismProfile(newDictionary, profile.Name);
+            return new MechanismProfile(newDictionary, profile.Name);
 
         },
         profile);

@@ -35,7 +35,7 @@ public class HsmInfoFacade : IHsmInfoFacade
             commitHashAttribute?.Value ?? "-");
     }
 
-    public MechanismProfile GetAllMechanism()
+    public Contracts.MechanismProfile GetAllMechanism()
     {
         uint[] mechanisms = MechanismUtils.GetMechanismAsUintArray();
 
@@ -49,7 +49,7 @@ public class HsmInfoFacade : IHsmInfoFacade
                 mechanismInfo.Flags));
         }
 
-        return new MechanismProfile(MechanismUtils.GetProfileName(),
+        return new Contracts.MechanismProfile(MechanismUtils.GetProfileName(),
             mechanimsData);
     }
 }
