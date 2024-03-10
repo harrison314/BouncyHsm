@@ -17,6 +17,7 @@ namespace BouncyHsm.Core.Services.Profiles;
 [JsonDerivedType(typeof(UpdateProfileOperation), typeDiscriminator: "Update")]
 [JsonDerivedType(typeof(RemoveUsingRegexProfileOperation), typeDiscriminator: "RemoveUsingRegex")]
 [JsonDerivedType(typeof(EnableUsingRegexProfileOperation), typeDiscriminator: "EnableUsingRegex")]
+[JsonDerivedType(typeof(FilterFipsProfileOperation), typeDiscriminator: "FilterFips")]
 public abstract class ProfileOperation
 {
     public abstract void Update(ref Dictionary<CKM, MechanismInfo> mechanisms, Dictionary<CKM, MechanismInfo> originalMechanisms);

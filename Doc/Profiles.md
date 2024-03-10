@@ -8,7 +8,7 @@ Empty profile file:
 ```json
 {
     "Name": "", //Name of profile (required)
-    "Description":null, //Profile description (optional)
+    "Description": null, //Profile description (optional)
     "Operations": [] // List of operations with mechanisms
 }
 ```
@@ -94,6 +94,15 @@ Enables mechanisms based on (C#) regular expression.
 }
 ```
 
+#### FilterFips
+The operation remove all non-FIPS mechanisms.
+
+```json
+{
+    "Operation": "FilterFips"
+}
+```
+
 ### Example profile
 Sample profile for Slovenian eID card issued in 2024 - only allows RSA PKCS1 signatures and SHA digests.
 
@@ -130,6 +139,20 @@ Sample profile for Slovenian eID card issued in 2024 - only allows RSA PKCS1 sig
         {
             "Operation": "Enable",
             "Mechanism": "CKM_SHA512"
+        }
+    ]
+}
+```
+
+Sample profile for FIPS mode.
+
+```json
+{
+    "Name": "FIPS mode",
+    "Description": "Profile for FIPS mode.",
+    "Operations": [
+        {
+            "Operation": "FilterFips"
         }
     ]
 }
