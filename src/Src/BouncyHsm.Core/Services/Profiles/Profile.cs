@@ -14,6 +14,12 @@ public class Profile
         set; 
     }
 
+    public string? Author
+    {
+        get;
+        set;
+    }
+
     public List<ProfileOperation> Operations
     {
         get;

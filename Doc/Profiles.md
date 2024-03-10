@@ -8,7 +8,8 @@ Empty profile file:
 ```json
 {
     "Name": "", //Name of profile (required)
-    "Description": null, //Profile description (optional)
+    "Description": null, //Profile description - string or null (optional)
+    "Author": null, // Autor of profile - string or null (optional)
     "Operations": [] // List of operations with mechanisms
 }
 ```
@@ -110,6 +111,7 @@ Sample profile for Slovenian eID card issued in 2024 - only allows RSA PKCS1 sig
 {
     "Name": "SVK eID",
     "Description": "Slovak eID card qualified electronic signature.",
+    "Author": null,
     "Operations": [
         {
             "Operation": "RemoveAll"
@@ -150,6 +152,7 @@ Sample profile for FIPS mode.
 {
     "Name": "FIPS mode",
     "Description": "Profile for FIPS mode.",
+    "Author": null,
     "Operations": [
         {
             "Operation": "FilterFips"
