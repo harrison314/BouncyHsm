@@ -266,4 +266,10 @@ internal static class MechanismUtils
         mechanism = profile.Mechanims;
         profileName = profile.Name;
     }
+
+    public static void ResetMechanism()
+    {
+        mechanism = originalMechanism;
+        profileName = null;
+    }
 }

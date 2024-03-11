@@ -1,4 +1,5 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
+using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using System;
@@ -54,5 +55,10 @@ public static class ProfileUpdater
 
         },
         profile);
+
+        if (profile.EnabledCurves != null)
+        {
+            EcdsaUtils.SetEnabledCurves(profile.EnabledCurves);
+        }
     }
 }

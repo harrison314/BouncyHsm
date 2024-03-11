@@ -26,6 +26,12 @@ public class Profile
         set;
     }
 
+    public List<string>? EnabledCurves
+    {
+        get;
+        set;
+    }
+
     public Profile()
     {
         this.Name = string.Empty;

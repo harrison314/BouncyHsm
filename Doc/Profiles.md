@@ -4,13 +4,14 @@ Profiles are used to disable or enable specific mechanisms, thereby enabling a m
 Profile is a JSON file, the path to it is set in the configuration `appsettings.json` in `BouncyHsmSetup::ProfileFilePath`.
 When this value is set to `null`, no profile is applied, this is also the default value.
 
-Empty profile file:
+File for profile without restrictions:
 ```json
 {
     "Name": "Null profile", //Name of profile (required)
     "Description": null, //Profile description - string or null (optional)
     "Author": null, // Autor of profile - string or null (optional)
-    "Operations": [] // List of operations with mechanisms
+    "Operations": [], // List of operations with mechanisms
+    "EnabledCurves": null // List of enabled EC curves (by name or OID) - array of strings or null (optional)
 }
 ```
 
@@ -142,7 +143,8 @@ Sample profile for Slovenian eID card issued in 2024 - only allows RSA PKCS1 sig
             "Operation": "Enable",
             "Mechanism": "CKM_SHA512"
         }
-    ]
+    ],
+    "EnabledCurves": []
 }
 ```
 
@@ -157,6 +159,23 @@ Sample profile for FIPS mode.
         {
             "Operation": "FilterFips"
         }
+    ],
+    "EnabledCurves": [
+        "P-192",
+        "P-224",
+        "P-256",
+        "P-384",
+        "P-521",
+        "B-163",
+        "B-283",
+        "B-233",
+        "B-409",
+        "B-571",
+        "K-163",
+        "K-233",
+        "K-283",
+        "K-409",
+        "K-571"
     ]
 }
 ```
