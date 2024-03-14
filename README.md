@@ -21,7 +21,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 * Slot and crypto object management using web interface and REST API.
   * Create/remove slots.
   * Import P12/PFX files.
-  * Generate CSR, import certificate file.
+  * Generate CSR, generate self-signed certificate, import certificate from file.
   * Generate keys.
   * ...
 * Possibility to simulate cards with a qualified area and a signature pin.
