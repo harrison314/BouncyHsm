@@ -94,7 +94,7 @@
 
         try
         {
-            Pkcs10Dto pkcs10 = await this.bouncyHsmClient.Pkcs_GetPkcsObjectsAsync(this.SlotId, new GeneratePkcs10RequestDto()
+            Pkcs10Dto pkcs10 = await this.bouncyHsmClient.Pkcs_GeneratePkcs10Async(this.SlotId, new GeneratePkcs10RequestDto()
                 {
                     PrivateKeyId = this.PrivateKeyId,
                     PublicKeyId = this.PublicKeyId,

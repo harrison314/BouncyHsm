@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "..\build\Build.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.Cli", "Src\BouncyHsm.Cli\BouncyHsm.Cli.csproj", "{B4593EFB-4DDE-47EA-A661-D010456A086B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyHsm.Client", "Src\BouncyHsm.Client\BouncyHsm.Client.csproj", "{2045BC8E-C3CC-4036-9B14-8CD3EAA4223A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.Client", "Src\BouncyHsm.Client\BouncyHsm.Client.csproj", "{2045BC8E-C3CC-4036-9B14-8CD3EAA4223A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
