@@ -12,6 +12,7 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace BouncyHsm.Core.UseCases.Implementation;
 
@@ -39,7 +40,7 @@ public class PkcsFacade : IPkcsFacade
             return new DomainResult<Guid>.InvalidInput("SlotId not found.");
         }
 
-        if (request.ImportMode == P12ImportMode.LocalInQualifiedArea && !slot.Token.SimulateQualifiedArea)
+        if (request.ImportMode == PrivateKeyImportMode.LocalInQualifiedArea && !slot.Token.SimulateQualifiedArea)
         {
             this.logger.LogError("SlotId {slotId} not contains token with qualified area.", request.SlotId);
             return new DomainResult<Guid>.InvalidInput("SlotId  not contains token with qualified area.");
@@ -423,6 +424,64 @@ public class PkcsFacade : IPkcsFacade
         };
 
         return new DomainResult<CertificateDetail>.Ok(result);
+    }
+
+    public async ValueTask<DomainResult<IReadOnlyList<Guid>>> ImportPem(ImportPemRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to ImportPem");
+
+        Services.Contracts.Entities.SlotEntity? slot = await this.persistentRepository.GetSlot(request.SlotId, cancellationToken);
+        if (slot == null)
+        {
+            this.logger.LogError("SlotId {slotId} not found.", request.SlotId);
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput("SlotId not found.");
+        }
+
+        if (request.Hints.ImportMode == PrivateKeyImportMode.LocalInQualifiedArea && !slot.Token.SimulateQualifiedArea)
+        {
+            this.logger.LogError("SlotId {slotId} not contains token with qualified area.", request.SlotId);
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput("SlotId  not contains token with qualified area.");
+        }
+
+        PemObjectGenerator pemObjectGenerator = new PemObjectGenerator(request.CkaId ?? RandomNumberGenerator.GetBytes(32),
+            request.CkaLabel);
+        pemObjectGenerator.ForWrap = request.Hints.ForWrap;
+        pemObjectGenerator.ForEncryption = request.Hints.ForEncryption;
+        pemObjectGenerator.ForDerivation = request.Hints.ForDerivation;
+        pemObjectGenerator.ForSigning = request.Hints.ForSigning;
+        pemObjectGenerator.ImportMode = request.Hints.ImportMode;
+
+        IReadOnlyList<StorageObject> storageObjects;
+        try
+        {
+            storageObjects = pemObjectGenerator.GenerateObjects(request.Pem, request.Password?.ToCharArray());
+        }
+        catch (IOException ex)
+        {
+            this.logger.LogError(ex, "PEM is invalid. {Description}", ex.Message);
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput($"PEM is invalid. {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "PEM is invalid.");
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput($"PEM is invalid.");
+        }
+
+        foreach (StorageObject storageObject in storageObjects)
+        {
+            storageObject.Validate();
+        }
+
+        foreach (StorageObject storageObject in storageObjects)
+        {
+            await this.persistentRepository.StoreObject(request.SlotId, storageObject, cancellationToken);
+            this.logger.LogInformation("Object from PEM {object} imported into slot {slotId} with object id {objectId}.",
+                storageObject,
+                request.SlotId,
+                storageObject.Id);
+        }
+
+        return new DomainResult<IReadOnlyList<Guid>>.Ok(storageObjects.Select(t => t.Id).ToList());
     }
 
     private KeyUsage CreateKeyUsage(PrivateKeyObject keyObject)

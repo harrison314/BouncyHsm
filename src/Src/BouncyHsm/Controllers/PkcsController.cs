@@ -66,6 +66,18 @@ public class PkcsController : Controller
         return privateKeyId.MapOk(t => new ImportP12ResponseDto() { PrivateKeyId = t }).ToActionResult();
     }
 
+    [HttpPost("{slotId}/ImportPem", Name = nameof(ImportPem))]
+    [ProducesResponseType(typeof(ImportPemResponseDto), 200)]
+    public async Task<IActionResult> ImportPem(uint slotId, [FromBody] ImportPemRequestDto model)
+    {
+        this.logger.LogTrace("Entering to ImportPem with slotId {slotId}.", slotId);
+
+        ImportPemRequest request = PkcsControllerMapper.FromDto(model, slotId);
+        DomainResult<IReadOnlyList<Guid>> objectIds = await this.pkcsFacade.ImportPem(request, this.HttpContext.RequestAborted);
+
+        return objectIds.MapOk(t => new ImportPemResponseDto(t)).ToActionResult();
+    }
+
     [HttpPost("{slotId}/ImportX509Certificate", Name = nameof(ImportX509Certificate))]
     [ProducesResponseType(typeof(void), 200)]
     public async Task<IActionResult> ImportX509Certificate(uint slotId, [FromBody] ImportX509CertificateRequestDto model)

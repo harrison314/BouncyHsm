@@ -15,4 +15,6 @@ public interface IPkcsFacade
     ValueTask<VoidDomainResult> DeleteAssociatedObjects(uint slotId, Guid objectId, CancellationToken cancellationToken);
 
     ValueTask<DomainResult<CertificateDetail>> ParseCertificate(uint slotId, Guid objectId, CancellationToken cancellationToken);
+
+    ValueTask<DomainResult<IReadOnlyList<Guid>>> ImportPem(ImportPemRequest request, CancellationToken cancellationToken);
 }

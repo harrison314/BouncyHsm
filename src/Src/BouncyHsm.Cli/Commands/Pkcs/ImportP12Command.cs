@@ -51,9 +51,9 @@ internal class ImportP12Command : AsyncCommand<ImportP12Command.Settings>
         }
 
         [CommandOption("-m|--importMode <ImportMode>")]
-        [DefaultValue(P12ImportMode.Imported)]
+        [DefaultValue(PrivateKeyImportMode.Imported)]
         [Description("Import mode.  Allowed values are Imported, Local and LocalInQualifiedArea. (Optional parameter)")]
-        public P12ImportMode ImportMode
+        public PrivateKeyImportMode ImportMode
         {
             get;
             set;
