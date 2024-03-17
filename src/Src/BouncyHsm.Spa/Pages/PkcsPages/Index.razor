@@ -11,6 +11,7 @@
     <div class="col d-flex justify-content-end pb-3">
         <button type="button" class="btn btn-outline-primary btn-w-tm" @onclick="Reload"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
         <NavLink href="@($"/Slots/{this.SlotId}/Pkcs/ImportP12")" class="btn btn-outline-primary btn-w-tm"><span class="icon-upload3 icon-1x"></span> Import P12</NavLink>
+        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs/ImportPem")" class="btn btn-outline-primary btn-w-tm"><span class="icon-upload3 icon-1x"></span> Import PEM</NavLink>
         <NavLink href="@($"/Slots/{this.SlotId}/GenerateKey")" class="btn btn-outline-primary btn-w-tm"><span class="icon-plus icon-1x"></span> Generate</NavLink>
         <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm"><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
     </div>
