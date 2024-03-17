@@ -259,6 +259,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             collection.Insert(info);
         });
 
+        this.database.Checkpoint();
+
         return new ValueTask();
     }
 
@@ -291,6 +293,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             collection.Insert(info);
         });
 
+        this.database.Checkpoint();
+
         return new ValueTask();
     }
 
@@ -312,6 +316,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
                 throw new BouncyHsmStorageException($"Not found object with id {storageObject.Id}");
             }
         });
+
+        this.database.Checkpoint();
 
         return new ValueTask();
     }
@@ -504,6 +510,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             {
                 try
                 {
+                    this.database.Checkpoint();
                     this.database.Dispose();
                     this.logger.LogDebug("Close database.");
                 }
