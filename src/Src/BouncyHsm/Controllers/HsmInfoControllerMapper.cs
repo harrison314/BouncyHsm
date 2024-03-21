@@ -22,6 +22,8 @@ internal static partial class HsmInfoControllerMapper
 
     public static partial IEnumerable<MechanismInfoDto> ToDto(IEnumerable<MechanismInfoData> mechanismInfoData);
 
+    public static partial MechanismProfileDto ToDto(MechanismProfile mechanismProfile);
+
     private static MechanismFlags MapFlags(MechanismCkf flags)
     {
         return new MechanismFlags()

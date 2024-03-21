@@ -45,6 +45,9 @@ internal class WrapperSignerFactory
             CKM.CKM_RIPEMD128_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD128withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
             CKM.CKM_RIPEMD160_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD160withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 
+            CKM.CKM_SHA1_RSA_X9_31 => new RsaWrapperSigner(SignerUtilities.GetSigner("SHA1withRSA/X9.31"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            //CKM.CKM_RSA_X9_31 => new RsaWrapperSigner(new X931Signer(new RsaBlindedEngine(), new NullDigest(), true), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+
             CKM.CKM_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new NullDigest()),
             CKM.CKM_SHA1_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new Sha1Digest()),
             CKM.CKM_SHA224_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new Sha224Digest()),
@@ -59,8 +62,9 @@ internal class WrapperSignerFactory
             CKM.CKM_ECDSA_SHA384 => this.CreateEcdsaSigner(ckMechanism, new Sha384Digest()),
             CKM.CKM_ECDSA_SHA512 => this.CreateEcdsaSigner(ckMechanism, new Sha512Digest()),
 
-            //TODO: Implement CKM_CMS_SIG 
+            CKM.CKM_RSA_9796 => new RsaWrapperSigner(new Iso9796d2Signer(new RsaBlindedEngine(), new NullDigest(), isImplicit: true), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 
+            //TODO: Implement CKM_CMS_SIG 
             CKM.CKM_MD2_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new MD2Digest(), null),
             CKM.CKM_MD5_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new MD5Digest(), CKK.CKK_MD5_HMAC),
             CKM.CKM_RIPEMD128_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new RipeMD128Digest(), CKK.CKK_RIPEMD128_HMAC),

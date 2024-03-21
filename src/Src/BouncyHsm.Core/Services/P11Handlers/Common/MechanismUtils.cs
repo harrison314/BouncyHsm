@@ -3,6 +3,7 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,12 +29,14 @@ internal static class MechanismUtils
         | MechanismCkf.CKF_EC_COMPRESS;
 
 
-    private static Dictionary<CKM, MechanismInfo> mechanism;
+    private readonly static Dictionary<CKM, MechanismInfo> originalMechanism;
+    private static IDictionary<CKM, MechanismInfo> mechanism;
+    private static string? profileName = null;
 
     // Another mechanisms https://nshielddocs.entrust.com/api-generic/12.80/pkcs11
     static MechanismUtils()
     {
-        mechanism = new Dictionary<CKM, MechanismInfo>()
+        originalMechanism = new Dictionary<CKM, MechanismInfo>()
         {
             // Digest algorithms
              { CKM.CKM_MD2, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE) },
@@ -52,6 +55,7 @@ internal static class MechanismUtils
 
             // Generate Key pairs
             {CKM.CKM_RSA_PKCS_KEY_PAIR_GEN, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR, MechanismCkf.NONE)},
+            {CKM.CKM_RSA_X9_31_KEY_PAIR_GEN, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR, MechanismCkf.NONE)},
              
             // RSA PKCS1 
             {CKM.CKM_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.NONE) },
@@ -67,6 +71,9 @@ internal static class MechanismUtils
 
             {CKM.CKM_RSA_PKCS_OAEP, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP) },
 
+            //CKM.CKM_SHA1_RSA_X9_31
+            //{CKM.CKM_RSA_X9_31, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize,  MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE) },
+            {CKM.CKM_SHA1_RSA_X9_31, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize,  MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE) },
 
             // RSA PSS
             {CKM.CKM_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY )},
@@ -75,6 +82,9 @@ internal static class MechanismUtils
             {CKM.CKM_SHA256_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY)},
             {CKM.CKM_SHA384_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY)},
             {CKM.CKM_SHA512_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY)},
+
+            //RSA ISO 9796-2
+            {CKM.CKM_RSA_9796, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE) },
 
             // Generate EC Key pair
             {CKM.CKM_ECDSA_KEY_PAIR_GEN, new MechanismInfo(EcMinKeySize, EcMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR|MechanismCkf.CKF_EC_NAMEDCURVE| MechanismCkf.CKF_EC_UNCOMPRESS, MechanismCkf.NONE)},
@@ -159,14 +169,17 @@ internal static class MechanismUtils
             {CKM.CKM_AES_KEY_WRAP_PAD, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.NONE)},
 
         };
+
+        mechanism = originalMechanism;
     }
 
     public static uint[] GetMechanismAsUintArray()
     {
-        uint[] array = new uint[mechanism.Count];
+        IDictionary<CKM, MechanismInfo> localMechanism = mechanism;
+        uint[] array = new uint[localMechanism.Count];
 
         int i = 0;
-        foreach (CKM mechanism in mechanism.Keys)
+        foreach (CKM mechanism in localMechanism.Keys)
         {
             array[i] = (uint)mechanism;
             i++;
@@ -240,5 +253,23 @@ internal static class MechanismUtils
     public static bool IsVendorDefined(CKM mechanismType)
     {
         return (CKM.CKM_VENDOR_DEFINED & mechanismType) == CKM.CKM_VENDOR_DEFINED;
+    }
+
+    public static string? GetProfileName()
+    {
+        return profileName;
+    }
+
+    public static void UpdateMechanisms<T>(Func<Dictionary<CKM, MechanismInfo>, T, MechanismProfile> updateFunction, T context)
+    {
+        MechanismProfile profile = updateFunction(originalMechanism, context);
+        mechanism = profile.Mechanims;
+        profileName = profile.Name;
+    }
+
+    public static void ResetMechanism()
+    {
+        mechanism = originalMechanism;
+        profileName = null;
     }
 }

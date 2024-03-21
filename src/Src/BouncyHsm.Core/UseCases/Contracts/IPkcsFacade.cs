@@ -8,9 +8,13 @@ public interface IPkcsFacade
 
     ValueTask<DomainResult<byte[]>> GeneratePkcs10(GeneratePkcs10Request request, CancellationToken cancellationToken);
 
+    ValueTask<DomainResult<Guid>> GenerateSelfSignedCert(GenerateSelfSignedCertRequest request, CancellationToken cancellationToken);
+    
     ValueTask<DomainResult<Guid>> ImportX509Certificate(ImportX509CertificateRequest request, CancellationToken cancellationToken);
 
     ValueTask<VoidDomainResult> DeleteAssociatedObjects(uint slotId, Guid objectId, CancellationToken cancellationToken);
 
     ValueTask<DomainResult<CertificateDetail>> ParseCertificate(uint slotId, Guid objectId, CancellationToken cancellationToken);
+
+    ValueTask<DomainResult<IReadOnlyList<Guid>>> ImportPem(ImportPemRequest request, CancellationToken cancellationToken);
 }

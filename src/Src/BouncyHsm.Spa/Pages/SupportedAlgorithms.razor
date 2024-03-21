@@ -16,6 +16,17 @@
 }
 else
 {
+    @if (this.profileName != null)
+    {
+        <div class="alert @* alert-success *@ alert alert-warning mt-1 mb-3" role="alert">
+            <h4 class="alert-heading">Profile: @this.profileName</h4>
+            <p>
+                The list of supported mechanisms and named eliptic curves was modified using the configuration in the <strong>@this.profileName</strong> profile.<br />
+                If you want to use <a href="https://github.com/harrison314/BouncyHsm/blob/main/Doc/SuportedAlgorithms.md" target="_blank">all mechanisms and named eliptic curves</a> provided by BouncyHsm, disable the profile in the configuration.
+            </p>
+        </div>
+    }
+
     <table class="table table-responsive-md table-striped table-bordered">
         <thead>
             <tr>
@@ -83,12 +94,16 @@ else
 
 @code {
     private IList<MechanismInfoDto>? mechanisms = null;
+    private string? profileName = null;
     private IList<EcCurveInfoDto>? curves = null;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1);
-        this.mechanisms = await this.bouncyHsmClient.GetMechanismAsync();
+        MechanismProfileDto profileInfo = await this.bouncyHsmClient.GetMechanismAsync();
+        this.mechanisms = profileInfo.Mechanisms.ToList();
+        this.profileName = profileInfo.ProfileName;
+
         await Task.Yield();
         this.curves = await this.bouncyHsmClient.GetSupportedEcCurvesAsync();
     }

@@ -90,6 +90,7 @@ public class Program
         });
 
         builder.Services.AddSignalR();
+        builder.TryUseProfileFromConfiguration();
 
         WebApplication app = builder.Build();
 

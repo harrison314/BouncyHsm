@@ -85,9 +85,14 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
             _ => throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, $"Key handle of wrapping key is invalid.")
         };
 
-        if(!extractable)
+        if (!extractable)
         {
             throw new RpcPkcs11Exception(CKR.CKR_KEY_NOT_WRAPPABLE, $"Key {key} can not enable CKA_EXTRACTABLE.");
+        }
+
+        if (key is SecretKeyObject genericSecret && genericSecret.CkaKeyType == CKK.CKK_GENERIC_SECRET)
+        {
+            this.logger.LogWarning("Secret key object CKO_SECRET_KEY of type CKK_GENERIC_SECRET many HSMs do not allow unwrap.");
         }
     }
 

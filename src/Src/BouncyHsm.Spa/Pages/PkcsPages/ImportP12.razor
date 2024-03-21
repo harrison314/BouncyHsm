@@ -69,11 +69,11 @@
                 <div class="mb-1">
                     <label for="i-importmode" class="form-label">Import mode</label>
                     <InputSelect class="form-select" @bind-Value="this.model.ImportMode" id="i-importmode">
-                        <option value="@P12ImportMode.Imported">Standard import</option>
-                        <option value="@P12ImportMode.Local">Import as local objects</option>
+                        <option value="@PrivateKeyImportMode.Imported">Standard import</option>
+                        <option value="@PrivateKeyImportMode.Local">Import as local objects</option>
                         @if (this.slot.Token.SimulateQualifiedArea)
                         {
-                            <option value="@P12ImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
+                            <option value="@PrivateKeyImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
                         }
                     </InputSelect>
 

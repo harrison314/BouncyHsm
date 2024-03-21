@@ -23,7 +23,7 @@ public class ImportP12RequestDto
     }
 
     [Required]
-    public P12ImportMode ImportMode
+    public PrivateKeyImportMode ImportMode
     {
         get;
         set;

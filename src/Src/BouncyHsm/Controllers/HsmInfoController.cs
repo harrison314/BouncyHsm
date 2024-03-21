@@ -39,7 +39,7 @@ public class HsmInfoController : Controller
     }
 
     [HttpGet("GetMechanism", Name = nameof(GetMechanism))]
-    [ProducesResponseType(typeof(IEnumerable<MechanismInfoDto>), 200)]
+    [ProducesResponseType(typeof(MechanismProfileDto), 200)]
     public IActionResult GetMechanism()
     {
         this.logger.LogTrace("Entering to GetMechanism");
