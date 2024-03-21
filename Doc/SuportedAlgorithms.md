@@ -1,20 +1,23 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 0.5.0.0 (commit _b0e2c468127b40efe3c849511a0a20eb3d9e081c_).
+Supported algorithms for _Bouncy Hsm_ version 0.6.0.0 (commit _2e4d1915492fd89498b7e9ee6fb71a5144daca1f_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 93 mechanisms.
+_Bouncy Hsm_ supports 96 mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign, Verify | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | `CKM_RSA_PKCS_KEY_PAIR_GEN` | 2048  | 6144 |   |   |   |   | ✓ |   |   |
 | `CKM_RSA_PKCS` | 2048  | 6144 |   | ✓ |   | ✓ |   |   | ✓ |
+| `CKM_RSA_9796` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_MD2_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_MD5_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_SHA1_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RIPEMD128_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RIPEMD160_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RSA_PKCS_OAEP` | 2048  | 6144 |   |   |   | ✓ |   |   | ✓ |
+| `CKM_RSA_X9_31_KEY_PAIR_GEN` | 2048  | 6144 |   |   |   |   | ✓ |   |   |
+| `CKM_SHA1_RSA_X9_31` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RSA_PKCS_PSS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_SHA1_RSA_PKCS_PSS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_SHA256_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
