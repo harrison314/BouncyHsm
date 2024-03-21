@@ -67,7 +67,7 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
         await AnsiConsole.Status()
            .StartAsync("Creating...", async ctx =>
            {
-               Pkcs10Dto result = await client.Pkcs_GetPkcsObjectsAsync(settings.SlotId, new GeneratePkcs10RequestDto()
+               Pkcs10Dto result = await client.Pkcs_GeneratePkcs10Async(settings.SlotId, new GeneratePkcs10RequestDto()
                {
                    PrivateKeyId = settings.PrivateKeyId,
                    PublicKeyId = settings.PublicKeyId,
