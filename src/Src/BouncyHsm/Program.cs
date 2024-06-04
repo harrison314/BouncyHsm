@@ -2,6 +2,7 @@ using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Infrastructure;
 using BouncyHsm.Infrastructure.Application;
 using BouncyHsm.Services.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Serilog;
 using System.Runtime.CompilerServices;
@@ -47,7 +48,7 @@ public class Program
                 cfg.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
                 cfg.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
-            
+
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApiDocument(cfg =>
@@ -93,6 +94,7 @@ public class Program
         builder.TryUseProfileFromConfiguration();
 
         WebApplication app = builder.Build();
+        UseBasePath(app);
 
         app.UseForwardedHeaders();
 
@@ -122,5 +124,15 @@ public class Program
         app.MapFallbackToFile("index.html");
 
         app.Run();
+    }
+
+    private static void UseBasePath(WebApplication app)
+    {
+        string? basePath = app.Configuration.GetValue<string>("AppBasePath");
+        if (!string.IsNullOrEmpty(basePath))
+        {
+            app.UsePathBase(basePath);
+            app.Logger.LogDebug("Start with base path {basePath}.", basePath);
+        }
     }
 }
