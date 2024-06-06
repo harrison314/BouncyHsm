@@ -6,7 +6,7 @@ Due to the mutual incompatibility of some Linux distributions, it will be necess
 - _make_
 - _git_
 
-## Example compilation for CentOs7
+## Example compilation for CentOs7/Rocky Linux 9
 Install prerequisites:
 
 ```

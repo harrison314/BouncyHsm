@@ -1,6 +1,6 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 0.6.0.0 (commit _2e4d1915492fd89498b7e9ee6fb71a5144daca1f_).
+Supported algorithms for _Bouncy Hsm_ version 0.7.0.0 (commit _64e8a7eb4271686bf9c6679e32c9ce32bb6701cd_).
 
 ## Mechanisms
 _Bouncy Hsm_ supports 96 mechanisms.
@@ -105,7 +105,7 @@ _Bouncy Hsm_ supports 96 mechanisms.
 | `CKM_AES_KEY_WRAP_PAD` | 16  | 32 |   |   |   |   |   |   | ✓ |
 
 ## Elitic curves
-_Bouncy Hsm_ supports 80 different named elliptic curves.
+_Bouncy Hsm_ supports 84 different named elliptic curves.
 
 | Kind | Curve | OID |
 | ---  | --- | --- |
@@ -201,9 +201,13 @@ _Bouncy Hsm_ supports 80 different named elliptic curves.
 | ECGost3410 | GostR3410-2001-CryptoPro-XchA | `1.2.643.2.2.36.0` |
 | ECGost3410 | GostR3410-2001-CryptoPro-XchB | `1.2.643.2.2.36.1` |
 | ECGost3410 | Tc26-Gost-3410-12-256-paramSetA | `1.2.643.7.1.2.1.1.1` |
+| ECGost3410 | Tc26-Gost-3410-12-256-paramSetB | `1.2.643.7.1.2.1.1.2` |
+| ECGost3410 | Tc26-Gost-3410-12-256-paramSetC | `1.2.643.7.1.2.1.1.3` |
+| ECGost3410 | Tc26-Gost-3410-12-256-paramSetD | `1.2.643.7.1.2.1.1.4` |
 | ECGost3410 | Tc26-Gost-3410-12-512-paramSetA | `1.2.643.7.1.2.1.2.1` |
 | ECGost3410 | Tc26-Gost-3410-12-512-paramSetB | `1.2.643.7.1.2.1.2.2` |
 | ECGost3410 | Tc26-Gost-3410-12-512-paramSetC | `1.2.643.7.1.2.1.2.3` |
 | GMN | wapip192v1 | `1.2.156.10197.1.301.101` |
+| GMN | wapi192v1 | `1.2.156.11235.1.1.1` |
 | GMN | sm2p256v1 | `1.2.156.10197.1.301` |
 
