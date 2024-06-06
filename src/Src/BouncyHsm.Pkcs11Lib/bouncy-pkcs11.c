@@ -195,7 +195,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         CkP_MacGeneralParams gp;
         gp.Value = (uint32_t)generalParamsValue;
 
-        result = nmrpc_writeAsBinary(&gp, CkP_MacGeneralParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&gp, (SerializeFnPtr_t)CkP_MacGeneralParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -223,7 +223,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         ckpPssParam.Mgf = (uint32_t)pssParam->mgf;
         ckpPssParam.SLen = (uint32_t)pssParam->sLen;
 
-        result = nmrpc_writeAsBinary(&ckpPssParam, CkP_RsaPkcsPssParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&ckpPssParam, (SerializeFnPtr_t)CkP_RsaPkcsPssParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -248,7 +248,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         derivationStringData.Data.size = (size_t)dsd->ulLen;
         derivationStringData.Len = (uint32_t)dsd->ulLen;
 
-        result = nmrpc_writeAsBinary(&derivationStringData, CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&derivationStringData, (SerializeFnPtr_t)CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -271,7 +271,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         cbcData.Data.data = (uint8_t*)cedp->pData;
         cbcData.Data.size = (size_t)cedp->length;
 
-        result = nmrpc_writeAsBinary(&cbcData, Ckp_CkAesCbcEnryptDataParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&cbcData, (SerializeFnPtr_t)Ckp_CkAesCbcEnryptDataParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -291,7 +291,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         CkP_CkObjectHandle handleParams;
         handleParams.Handle = (uint32_t)*handlePtr;
 
-        result = nmrpc_writeAsBinary(&handleParams, CkP_CkObjectHandle_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&handleParams, (SerializeFnPtr_t)CkP_CkObjectHandle_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -311,7 +311,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         CkP_ExtractParams ep;
         ep.Value = (uint32_t)extractParamsValue;
 
-        result = nmrpc_writeAsBinary(&ep, CkP_ExtractParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&ep, (SerializeFnPtr_t)CkP_ExtractParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -346,7 +346,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             deriveParams.SharedData = &sharedData;
         }
 
-        result = nmrpc_writeAsBinary(&deriveParams, Ckp_CkEcdh1DeriveParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&deriveParams, (SerializeFnPtr_t)Ckp_CkEcdh1DeriveParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -374,7 +374,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         rawData.Value.data = (uint8_t*)pMechanism->pParameter;
         rawData.Value.size = (size_t)pMechanism->ulParameterLen;
 
-        result = nmrpc_writeAsBinary(&rawData, CkP_RawDataParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&rawData, (SerializeFnPtr_t)CkP_RawDataParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -418,7 +418,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             gcmDerivedParams.Aad = &aadData;
         }
 
-        result = nmrpc_writeAsBinary(&gcmDerivedParams, Ckp_CkGcmParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&gcmDerivedParams, (SerializeFnPtr_t)Ckp_CkGcmParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -461,7 +461,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             ccmDerivedParams.Aad = &aadData;
         }
 
-        result = nmrpc_writeAsBinary(&ccmDerivedParams, Ckp_CkCcmParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&ccmDerivedParams, (SerializeFnPtr_t)Ckp_CkCcmParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -495,7 +495,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             oaepDervedParams.SourceData = &sourceData;
         }
 
-        result = nmrpc_writeAsBinary(&oaepDervedParams, Ckp_CkRsaPkcsOaepParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&oaepDervedParams, (SerializeFnPtr_t)Ckp_CkRsaPkcsOaepParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
