@@ -22,17 +22,28 @@ internal struct LabelIdPair : IEquatable<LabelIdPair>
         get;
     }
 
-    public LabelIdPair(string ckaLabel, byte[] ckaId)
+    public bool IsCaCert
+    {
+        get;
+    }
+
+    public LabelIdPair(string ckaLabel, byte[] ckaId, bool isCaCert)
     {
         this.CkaLabel = ckaLabel;
         this.CkaId = ckaId;
+        this.IsCaCert = isCaCert;
 
-        this.hashCode = ckaLabel.GetHashCode() ^ GetHashCodeInternal(ckaId);
+        this.hashCode = (ckaLabel.GetHashCode() + isCaCert.GetHashCode()) ^ GetHashCodeInternal(ckaId);
     }
 
     public bool Equals(LabelIdPair other)
     {
         if (this.hashCode != other.hashCode)
+        {
+            return false;
+        }
+
+        if (this.IsCaCert != other.IsCaCert)
         {
             return false;
         }
@@ -57,7 +68,7 @@ internal struct LabelIdPair : IEquatable<LabelIdPair>
 
     public override string ToString()
     {
-        return $"LabelIdPair {{ CkaLabel: {this.CkaLabel}, CkaId: {HexConvertor.GetString(this.CkaId)} }}";
+        return $"LabelIdPair {{ CkaLabel: {this.CkaLabel}, CkaId: {HexConvertor.GetString(this.CkaId)}, IsCaCert: {this.IsCaCert} }}";
     }
 
     private static int GetHashCodeInternal(ReadOnlySpan<byte> data)

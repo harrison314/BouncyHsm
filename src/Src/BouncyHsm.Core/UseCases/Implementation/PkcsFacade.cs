@@ -118,7 +118,7 @@ public class PkcsFacade : IPkcsFacade
 
         List<PkcsObjectInfo> objects = privateKeys.Select(t => new
         {
-            key = new LabelIdPair(t.CkaLabel, t.CkaId),
+            key = new LabelIdPair(t.CkaLabel, t.CkaId, false),
             type = CKO.CKO_PRIVATE_KEY,
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
@@ -127,7 +127,7 @@ public class PkcsFacade : IPkcsFacade
         })
             .Concat(publicKeys.Select(t => new
             {
-                key = new LabelIdPair(t.CkaLabel, t.CkaId),
+                key = new LabelIdPair(t.CkaLabel, t.CkaId, false),
                 type = CKO.CKO_PUBLIC_KEY,
                 id = t.Id,
                 alwaysAuthenticate = false,
@@ -136,7 +136,7 @@ public class PkcsFacade : IPkcsFacade
             }))
             .Concat(certificates.Select(t => new
             {
-                key = new LabelIdPair(t.CkaLabel, t.CkaId),
+                key = new LabelIdPair(t.CkaLabel, t.CkaId, t.CkaCertificateCategory == CKCertificateCategory.CK_CERTIFICATE_CATEGORY_AUTHORITY),
                 type = CKO.CKO_CERTIFICATE,
                 id = t.Id,
                 alwaysAuthenticate = false,

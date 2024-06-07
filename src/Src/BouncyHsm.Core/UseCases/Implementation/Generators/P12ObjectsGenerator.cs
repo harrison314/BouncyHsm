@@ -116,17 +116,22 @@ internal class P12ObjectsGenerator
             return Array.Empty<X509CertificateObject>();
         }
 
-        X509CertificateObject[] objects = new X509CertificateObject[chain.Length];
-        for (int i = 0; i < objects.Length; i++)
+        List<X509CertificateObject> objects = new List<X509CertificateObject>(chain.Length);
+        for (int i = 0; i < chain.Length; i++)
         {
+            if (chain[i].Certificate.Equals(this.p12.Certificate.Certificate))
+            {
+                continue;
+            }
+
             X509CertObjectGenerator generator = new X509CertObjectGenerator(chain[i],
                this.ckaId,
                this.ckaLabel);
 
-            objects[i] = generator.CreateCertificateObject(true);
+            objects.Add(generator.CreateCertificateObject(true));
         }
 
-        return objects;
+        return objects.ToArray();
     }
 
     private void UpdateAttributesByMode(PublicKeyObject publicKeyObject)
