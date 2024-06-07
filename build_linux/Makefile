@@ -3,7 +3,7 @@ SRC_DIR=../src/Src/BouncyHsm.Pkcs11Lib
 CC= clang
 #CC= gcc
 ARCH_FLAGS=
-CFLAGS= $(ARCH_FLAGS) -Wall -Wextra -O2 -I$(SRC_DIR) -Wno-incompatible-pointer-types
+CFLAGS= $(ARCH_FLAGS) -Wall -Wextra -O2 -I$(SRC_DIR)
 # -Werror
 HEADERFILES=$(SRC_DIR)/*.h $(SRC_DIR)/rpc/*.h $(SRC_DIR)/utils/*.h
 LIBNAME=BouncyHsm.Pkcs11Lib-x86.so
