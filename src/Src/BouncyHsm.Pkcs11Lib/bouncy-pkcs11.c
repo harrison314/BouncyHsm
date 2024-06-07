@@ -17,7 +17,7 @@
 // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
 
 
-void SetPaddedStrSafe(char* destination, size_t destinationSize, const char* src)
+void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const char* src)
 {
     size_t copySize = strlen(src);
     if (copySize > destinationSize)
@@ -25,8 +25,8 @@ void SetPaddedStrSafe(char* destination, size_t destinationSize, const char* src
         copySize = destinationSize;
     }
 
-    memset(destination, ' ', destinationSize);
-    memcpy(destination, src, copySize);
+    memset((void*)destination, ' ', destinationSize);
+    memcpy((void*)destination, src, copySize);
 }
 
 CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
@@ -120,6 +120,16 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
             {
                 ptr[i].ValueTypeHint |= AttrValueFromNative_TypeHint_CkDate;
                 char* date = (char*)malloc(12);
+                if (date == NULL)
+                {
+                    if (ptr != NULL)
+                    {
+                        free((void*)ptr);
+                    }
+
+                    return NULL;
+                }
+
                 date[0] = dateValue->day[0];
                 date[1] = dateValue->day[1];
                 date[2] = '.';
@@ -1846,7 +1856,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_H
         *pulObjectCount = (CK_ULONG)envelope.Data->PullObjectCount;
         size_t i;
 
-        for (i = 0; i < envelope.Data->Objects.length; i++)
+        for (i = 0; i < (size_t)envelope.Data->Objects.length; i++)
         {
             phObject[i] = (CK_ULONG)envelope.Data->Objects.array[i];
         }
