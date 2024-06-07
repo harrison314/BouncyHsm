@@ -59,7 +59,7 @@
     protected override async Task OnInitializedAsync()
     {
         this.hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/paphub"))
+            .WithUrl(Navigation.ToAbsoluteUri("paphub"))
             .Build();
 
         this.hubConnection.On<LoginInitData>("NotifyLoginInit", this.NotifyLoginInit);

@@ -16,7 +16,7 @@ else
         <div class="mb-1">
             <label for="i-importmode" class="form-label">EC name or OID</label>
             <InputText class="form-control" @bind-Value="this.model.OidOrName" list="curves" />
-            <div class="form-text">A complete list of supported curves can be found in <NavLink href="/SupportedAlgorithms">Supported algorithms</NavLink>.</div>
+            <div class="form-text">A complete list of supported curves can be found in <NavLink href="SupportedAlgorithms">Supported algorithms</NavLink>.</div>
             <ValidationMessage For="() => this.model.OidOrName" />
         </div>
         <datalist id="curves">
@@ -127,7 +127,7 @@ else
         try
         {
             _ = await this.bouncyHsmClient.GenerateEcKeyPairAsync(this.SlotId, this.model.ToDto());
-            this.Navigation.NavigateTo($"/Slots/{this.SlotId}/Pkcs");
+            this.Navigation.NavigateTo($"Slots/{this.SlotId}/Pkcs");
         }
         catch (Exception ex)
         {
