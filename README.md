@@ -47,6 +47,8 @@ Pull requests are welcome. If you are not sure about the change, open an issue f
 
 If the found error or changes refer to the PKCS#11 standard, please complete the link section of the standard.
 
+See more rules in [CONTRIBUTING](/.github/CONTRIBUTING.md).
+
 ## Links
 
 ### Technology
