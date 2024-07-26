@@ -57,7 +57,7 @@ The operation adds a mechanism with all its parameters.
     "Operation": "Add",
     "Mechanism": "CKM_RSA_PKCS", //Mechanism name (required)
     "MinKeySize": 2048, // Minimum key size (required)
-    "MaxKeySize":4096, // Maximum key size (required)
+    "MaxKeySize": 4096, // Maximum key size (required)
     "Flags": ["CKF_SIGN", "CKF_VERIFY", "CKF_ENCRYPT", "CKF_DECRYPT"] //CKF flags (required)
 }
 ```
@@ -72,7 +72,7 @@ Updates the available mechanism. This method is suitable, for example, for adjus
     "Operation": "Update",
     "Mechanism": "CKM_RSA_PKCS", //Mechanism name (required)
     "MinKeySize": null, // Minimum key size or null (optional)
-    "MaxKeySize":3072, // Maximum key size or null (optional)
+    "MaxKeySize": 3072, // Maximum key size or null (optional)
     "Flags": ["CKF_SIGN", "CKF_VERIFY" ] //CKF flags or null (optional)
 }
 ```
