@@ -131,6 +131,118 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 }
 #endif
 
+#ifdef _WIN32
+void GetTemporaryDirectoryPath(char* buffer, size_t size)
+{
+    const char* tmpDir = getenv("TEMP");
+    if (tmpDir == NULL)
+    {
+        fprintf(stdout, "TEMP environment variable is not set.\n");
+        return;
+    }
+
+    if (strlen(tmpDir) >= size)
+    {
+        fprintf(stdout, "Buffer size is too small to hold the temporary directory path.\n");
+        return;
+    }
+
+    strncpy(buffer, tmpDir, size - 1);
+    buffer[size - 1] = '\0'; // Ensure null-termination
+}
+
+void GetTempFilePath(char* buffer, size_t size, const char* fileName)
+{
+    char tempDir[MAX_PATH];
+    GetTemporaryDirectoryPath(tempDir, sizeof(tempDir));
+
+    // Ensure the temporary directory path ends with a backslash
+    size_t tempDirLen = strlen(tempDir);
+    if (tempDir[tempDirLen - 1] != '\\')
+    {
+        strncat(tempDir, "\\", sizeof(tempDir) - tempDirLen - 1);
+    }
+
+    // Concatenate the temporary directory path with the file name
+    snprintf(buffer, size, "%s%s", tempDir, fileName);
+}
+
+#else
+
+void GetTemporaryDirectoryPath(char* buffer, size_t size)
+{
+    const char* tmpDir = getenv("TMPDIR");
+    if (tmpDir == NULL)
+    {
+        tmpDir = P_tmpdir;
+    }
+
+    if (strlen(tmpDir) >= size)
+    {
+        fprintf(stdout, "Buffer size is too small to hold the temporary directory path.\n");
+        return;
+    }
+
+    strncpy(buffer, tmpDir, size - 1);
+    buffer[size - 1] = '\0'; // Ensure null-termination
+}
+
+void GetTempFilePath(char* buffer, size_t size, const char* fileName)
+{
+    char tempDir[256];
+    GetTemporaryDirectoryPath(tempDir, sizeof(tempDir));
+
+    // Ensure the temporary directory path ends with a slash
+    size_t tempDirLen = strlen(tempDir);
+    if (tempDir[tempDirLen - 1] != '/')
+    {
+        strncat(tempDir, "/", sizeof(tempDir) - tempDirLen - 1);
+    }
+
+    // Concatenate the temporary directory path with the file name
+    snprintf(buffer, size, "%s%s", tempDir, fileName);
+}
+#endif
+
+bool readVariableFromFile(const char* filePath, char** variableValuePtr)
+{    
+    // Open the file for reading
+    FILE* file = fopen(filePath, "r");
+    if (file == NULL)
+    {
+        fprintf(stdout, "Failed to open file: %s\n", filePath);
+        return false;
+    }
+
+    // Read data from the file
+    char buffer[256];
+    if (fgets(buffer, sizeof(buffer), file) != NULL)
+    {
+        // Allocate memory for the variable value
+        *variableValuePtr = (char*)malloc(strlen(buffer) + 1);
+        if (*variableValuePtr == NULL)
+        {
+            fprintf(stdout, "Failed to allocate memory\n");
+            fclose(file);
+            return false;
+        }
+
+        // Copy the data to the allocated memory
+        strcpy_s(*variableValuePtr, 256, buffer);
+    }
+    else
+    {
+        fprintf(stdout, "Failed to read data from file: %s\n", filePath);
+        fclose(file);
+        return false;
+    }
+
+    // Close the file
+    fclose(file);
+    return true;
+}
+
+
 bool envVariableDup(const char* name, char** variableValuePtr)
 {
 	if (variableValuePtr == NULL)
@@ -338,16 +450,23 @@ void GlobalContextInit()
 	globalContext.port = BOUNCY_HSM_DEFAULT_PORT;
 
 	logger_init(LOG_LEVEL_ERROR_NAME, LOG_TARGET_ERR_CONSOLE);
+    char configFilePath[MAX_PATH];
+    GetTempFilePath(configFilePath, sizeof(configFilePath), BOUNCY_HSM_CFG_FILE_NAME);
+    log_message(LOG_LEVEL_INFO, "Reading configuration from file: %s", configFilePath);
+    fprintf(stdout, "Reading configuration from file: %s\n", configFilePath);
 
-	char* cfgString;
-	if (!envVariableDup(BOUNCY_HSM_CFG_STRING, &cfgString))
-	{
-		log_message(LOG_LEVEL_ERROR, "Error during read environment variable.");
-		return;
-	}
-
+	char* cfgString;    
+    if (!readVariableFromFile(configFilePath, &cfgString))
+    {
+        log_message(LOG_LEVEL_ERROR, "Error during read configuration variable from the file.");
+        return;
+    }
+    
 	if (cfgString != NULL)
 	{
+        log_message(LOG_LEVEL_INFO, "Configuration string: %s", cfgString);
+        fprintf(stdout, "Configuration string: %s\n", cfgString);
+
 		if (!parseConnectionStringOrDefault(cfgString, "Server", globalContext.server, sizeof(globalContext.server), BOUNCY_HSM_DEFAULT_SERVER))
 		{
 			log_message(LOG_LEVEL_ERROR, "Error during reading Server.");
