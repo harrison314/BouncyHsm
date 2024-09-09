@@ -104,7 +104,7 @@ _Bouncy Hsm_ supports 96 mechanisms.
 | `CKM_AES_CFB1` | 16  | 32 |   |   |   | ✓ |   |   |   |
 | `CKM_AES_KEY_WRAP_PAD` | 16  | 32 |   |   |   |   |   |   | ✓ |
 
-## Elitic curves
+## Elliptic curves
 _Bouncy Hsm_ supports 84 different named elliptic curves.
 
 | Kind | Curve | OID |

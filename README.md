@@ -28,7 +28,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 * Possibility to simulate cards with a qualified area and a signature pin.
 * Possibility to simulate _protected authetification path_ using web interface.
 * Supports RSA keys (with size 2-6K).
-* Supports [80 named elliptic curves](/Doc/SuportedAlgorithms.md#elitic-curves).
+* Supports [80 named elliptic curves](/Doc/SuportedAlgorithms.md#elliptic-curves).
 * Supports secrets (HMAC, derive,...)
 * Supports AES keys.
 * [Supports mechanisms](/Doc/SuportedAlgorithms.md)
