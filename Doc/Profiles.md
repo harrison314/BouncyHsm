@@ -9,7 +9,7 @@ File for profile without restrictions:
 {
     "Name": "Null profile", //Name of profile (required)
     "Description": null, //Profile description - string or null (optional)
-    "Author": null, // Autor of profile - string or null (optional)
+    "Author": null, // Author of profile - string or null (optional)
     "Operations": [], // List of operations with mechanisms
     "EnabledCurves": null // List of enabled EC curves (by name or OID) - array of strings or null (optional)
 }
