@@ -27,7 +27,7 @@ using Nuke.Common.CI.GitHubActions;
     InvokedTargets = new[] { nameof(BuildAll) })]
 public partial class Build : NukeBuild
 {
-    private static string ThisVersion = "0.7.1";
+    private static string ThisVersion = "1.0.0";
     public static int Main() => Execute<Build>(x => x.BuildAll);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -46,7 +46,7 @@ public partial class Build : NukeBuild
     [NuGetPackage(
         packageId: "dotnet-project-licenses",
         packageExecutable: "NugetUtility.dll",
-        Framework = "net7.0")]
+        Framework = "net8.0")]
     readonly Tool DotnetProjectLicenses;
 
     Target Clean => _ => _
@@ -99,7 +99,7 @@ public partial class Build : NukeBuild
         .Produces(ArtifactsDirectory / "*.zip")
         .Executes(() =>
         {
-            CopyDirectoryRecursively(ArtifactsTmpDirectory / "native", ArtifactsTmpDirectory / "BouncyHsm" / "native");
+            (ArtifactsTmpDirectory / "native").Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native");
             CreateZip(ArtifactsTmpDirectory / "native" / "Win-x64" / "BouncyHsm.Pkcs11Lib.dll",
                 "Win X64",
                 ThisVersion,
@@ -112,8 +112,7 @@ public partial class Build : NukeBuild
             AbsolutePath linuxNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64.so";
             if (linuxNativeLibx64.Exists("file"))
             {
-                CopyFile(linuxNativeLibx64, ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
-
+                linuxNativeLibx64.Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
                 CreateZip(linuxNativeLibx64,
                 "Linux X64",
                 ThisVersion,
@@ -127,7 +126,7 @@ public partial class Build : NukeBuild
             AbsolutePath linuxNativeLibx32 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x32.so";
             if (linuxNativeLibx32.Exists("file"))
             {
-                CopyFile(linuxNativeLibx32, ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
+                linuxNativeLibx32.Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
 
                 CreateZip(linuxNativeLibx32,
                "Linux X86",
@@ -155,7 +154,7 @@ public partial class Build : NukeBuild
 
         AbsolutePath licensesFilePath = bouncyHsmPath / "LicensesThirdParty.txt";
        // DotnetProjectLicenses($"--input \"{RootDirectory / "src" / "BouncyHsm.sln"}\" -o -t --outfile \"{licensesFilePath}\" -p false");
-        CopyFile(RootDirectory / "LICENSE", bouncyHsmPath / "License.txt");
+        (RootDirectory / "LICENSE").Copy(bouncyHsmPath / "License.txt");
     }
 
     private void CreateZip(AbsolutePath dllFile, string platform, string version, AbsolutePath destination)
@@ -181,5 +180,4 @@ License: BSD 3 Clausule
         readmeStream.Write(content);
         readmeStream.Flush();
     }
-
 }
