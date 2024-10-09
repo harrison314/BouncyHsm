@@ -1,6 +1,7 @@
 # Bouncy Hsm
 ![GitHub release (with filter)](https://img.shields.io/github/v/release/harrison314/BouncyHsm)
 ![GitHub License](https://img.shields.io/github/license/harrison314/BouncyHsm)
+[![NuGet Status](http://img.shields.io/nuget/v/BouncyHsm.Client.svg?style=flat)](https://www.nuget.org/packages/BouncyHsm.Client/)
 
 _Bouncy Hsm_ is an developer friendly implementation of a cryptographic store accessible through a PKCS#11 interface.
 It can simulate HSM (hardware security module) and smart cards (also with a qualified area), 
