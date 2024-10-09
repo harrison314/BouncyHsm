@@ -54,6 +54,7 @@
         "BuildAll",
         "BuildBouncyHsm",
         "BuildBouncyHsmCli",
+        "BuildBouncyHsmClient",
         "BuildPkcs11LibWin32",
         "BuildPkcs11LibX64",
         "Clean",

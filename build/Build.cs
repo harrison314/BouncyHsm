@@ -90,12 +90,29 @@ public partial class Build : NukeBuild
             CopyLicenses(outputDir);
         });
 
+     Target BuildBouncyHsmClient => _ => _
+        .DependsOn(Clean)
+        .Executes(() =>
+        {
+            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Client" / "BouncyHsm.Client.csproj";
+            AbsolutePath outputDir = ArtifactsTmpDirectory;
+        
+            DotNetPack(_ => _
+            .SetConfiguration(Configuration)
+            .AddProperty("RepositoryCommit", Repository.Commit)
+            .AddProperty("RepositoryBranch", Repository.Branch)
+            .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
+            .SetProject(projectFile)
+            .SetOutputDirectory(outputDir));
+        });
+
     Target BuildAll => _ => _
         .DependsOn(Clean)
         .DependsOn(BuildPkcs11LibWin32)
         .DependsOn(BuildPkcs11LibX64)
         .DependsOn(BuildBouncyHsm)
         .DependsOn(BuildBouncyHsmCli)
+        .DependsOn(BuildBouncyHsmClient)
         .Produces(ArtifactsDirectory / "*.zip")
         .Executes(() =>
         {
