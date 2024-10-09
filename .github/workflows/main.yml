@@ -47,8 +47,10 @@ jobs:
           name: linux-native-libs
           path: build_linux
       - name: Run './build.cmd BuildAll'
-        run: ./build.cmd BuildAll
+        run: ./build.cmd BuildAll --configuration Release
       - uses: actions/upload-artifact@v4
         with:
           name: Bouncy-Hsm-Artifacts
-          path: artifacts/*.zip
+          path: |
+            artifacts/*.zip
+            artifacts/*.nupkg
