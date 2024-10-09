@@ -77,7 +77,7 @@ public partial class Build : NukeBuild
         .DependsOn(Clean)
         .Executes(() =>
         {
-            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Cli" / "BouncyHsm.cli.csproj";
+            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Cli" / "BouncyHsm.Cli.csproj";
             AbsolutePath outputDir = ArtifactsTmpDirectory / "BouncyHsm.Cli";
 
             DotNetPublish(_ => _
