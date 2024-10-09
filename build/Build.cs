@@ -95,7 +95,7 @@ public partial class Build : NukeBuild
         .Executes(() =>
         {
             AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Client" / "BouncyHsm.Client.csproj";
-            AbsolutePath outputDir = ArtifactsTmpDirectory;
+            AbsolutePath outputDir = ArtifactsDirectory;
         
             DotNetPack(_ => _
             .SetConfiguration(Configuration)
