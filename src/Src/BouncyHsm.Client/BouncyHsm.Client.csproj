@@ -27,4 +27,19 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(IncludeNativeLibs) == 'True'">
+    <None Include="..\..\..\artifacts\.tmp\native\Win-x86\BouncyHsm.Pkcs11Lib.dll">
+      <Pack>True</Pack>
+      <PackagePath>runtimes/win-x86/native/</PackagePath>
+    </None>
+    <None Include="..\..\..\artifacts\.tmp\native\Win-x64\BouncyHsm.Pkcs11Lib.dll">
+      <Pack>True</Pack>
+      <PackagePath>runtimes/win-x64/native/</PackagePath>
+    </None>
+    <None Include="..\..\..\artifacts\.tmp\native\Linux-x64\BouncyHsm.Pkcs11Lib.so" Condition="Exists('..\..\..\artifacts\.tmp\native\Linux-x64\BouncyHsm.Pkcs11Lib.so')">
+      <Pack>True</Pack>
+      <PackagePath>runtimes/linux-x64/native/</PackagePath>
+    </None>
+  </ItemGroup>
+
 </Project>

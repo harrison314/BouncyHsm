@@ -92,8 +92,16 @@ public partial class Build : NukeBuild
 
      Target BuildBouncyHsmClient => _ => _
         .DependsOn(Clean)
+        .DependsOn(BuildPkcs11LibWin32)
+        .DependsOn(BuildPkcs11LibX64)
         .Executes(() =>
         {
+            AbsolutePath linuxNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64.so";
+            if (linuxNativeLibx64.Exists("file"))
+            {
+                linuxNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so");
+            }
+
             AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Client" / "BouncyHsm.Client.csproj";
             AbsolutePath outputDir = ArtifactsDirectory;
         
@@ -101,6 +109,7 @@ public partial class Build : NukeBuild
             .SetConfiguration(Configuration)
             .AddProperty("RepositoryCommit", Repository.Commit)
             .AddProperty("RepositoryBranch", Repository.Branch)
+            .AddProperty("IncludeNativeLibs", "True")
             .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
             .SetProject(projectFile)
             .SetOutputDirectory(outputDir));
