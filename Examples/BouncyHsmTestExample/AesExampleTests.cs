@@ -3,6 +3,7 @@ using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+
 namespace BouncyHsmTestExample;
 
 internal static class BchClient
@@ -56,7 +57,6 @@ public class InitializerTest
         private set;
     } = default!;
 
-
     [AssemblyInitialize]
     public static async Task Initialize(TestContext testContext)
     {
@@ -102,7 +102,6 @@ public class InitializerTest
         }
     }
 }
-
 
 [TestClass]
 public class AesExampleTests

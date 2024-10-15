@@ -8,7 +8,8 @@
     <RepositoryUrl>https://github.com/harrison314/BouncyHsm</RepositoryUrl>
     <PackageProjectUrl>https://github.com/harrison314/BouncyHsm</PackageProjectUrl>
     <PackageIcon>BouncyHsm.png</PackageIcon>
-    <Tags>BouncyHsm;HSM;Client</Tags>
+    <PackageReadmeFile>BouncyHsmClient.md</PackageReadmeFile>
+    <PackageTags>BouncyHsm;HSM;Client;pkcs;pkcs11;security;cryptography;smartcard;HSM;test</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(TargetFramework) == 'netstandard2.1'">
@@ -17,6 +18,10 @@
 
   <ItemGroup>
     <None Include="..\..\..\Doc\BouncyHsm.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\..\Doc\BouncyHsmClient.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
