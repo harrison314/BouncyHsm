@@ -11,8 +11,8 @@
 <h1>Import P12 file</h1>
 <div class="row">
     <div class="col d-flex justify-content-end pb-3">
-        <NavLink href="@($"/Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
-        <NavLink href="@($"/Slots/{this.SlotId}/Pkcs")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+        <NavLink href="@($"Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+        <NavLink href="@($"Slots/{this.SlotId}/Pkcs")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
     </div>
 </div>
 
@@ -69,11 +69,11 @@
                 <div class="mb-1">
                     <label for="i-importmode" class="form-label">Import mode</label>
                     <InputSelect class="form-select" @bind-Value="this.model.ImportMode" id="i-importmode">
-                        <option value="@P12ImportMode.Imported">Standard import</option>
-                        <option value="@P12ImportMode.Local">Import as local objects</option>
+                        <option value="@PrivateKeyImportMode.Imported">Standard import</option>
+                        <option value="@PrivateKeyImportMode.Local">Import as local objects</option>
                         @if (this.slot.Token.SimulateQualifiedArea)
                         {
-                            <option value="@P12ImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
+                            <option value="@PrivateKeyImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
                         }
                     </InputSelect>
 
@@ -183,7 +183,7 @@
         try
         {
             await this.bouncyHsmClient.ImportP12Async(this.SlotId, request);
-            this.Navigation.NavigateTo($"/Slots/{this.SlotId}/Pkcs");
+            this.Navigation.NavigateTo($"Slots/{this.SlotId}/Pkcs");
         }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {

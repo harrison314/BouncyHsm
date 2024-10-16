@@ -20,7 +20,7 @@ public class ImportP12Request
         set;
     }
 
-    public P12ImportMode ImportMode
+    public PrivateKeyImportMode ImportMode
     {
         get;
         set;

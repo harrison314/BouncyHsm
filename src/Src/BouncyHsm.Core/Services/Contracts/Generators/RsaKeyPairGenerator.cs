@@ -13,16 +13,18 @@ using System.Threading.Tasks;
 namespace BouncyHsm.Core.Services.Contracts.Generators;
 
 /// <summary>
-/// RSA key pair generator for <seealso cref="CKM.CKM_RSA_PKCS_KEY_PAIR_GEN"/>.
+/// RSA key pair generator for <seealso cref="CKM.CKM_RSA_PKCS_KEY_PAIR_GEN"/> and <seealso cref="CKM.CKM_RSA_X9_31_KEY_PAIR_GEN"/>
 /// </summary>
 internal class RsaKeyPairGenerator : IKeyPairGenerator
 {
     private IReadOnlyDictionary<CKA, IAttributeValue>? publicKeyTemplate;
     private IReadOnlyDictionary<CKA, IAttributeValue>? privateKeyTemplate;
+    private readonly bool isX931;
     private readonly ILogger<RsaKeyPairGenerator> logger;
 
-    public RsaKeyPairGenerator(ILogger<RsaKeyPairGenerator> logger)
+    public RsaKeyPairGenerator(bool isX931, ILogger<RsaKeyPairGenerator> logger)
     {
+        this.isX931 = isX931;
         this.logger = logger;
     }
 
@@ -89,7 +91,7 @@ internal class RsaKeyPairGenerator : IKeyPairGenerator
     {
         this.logger.LogTrace("Entering to CreatePublicKeyObject");
 
-        RsaPublicKeyObject publicKeyObject = new RsaPublicKeyObject(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN);
+        RsaPublicKeyObject publicKeyObject = new RsaPublicKeyObject(this.isX931 ? CKM.CKM_RSA_X9_31_KEY_PAIR_GEN : CKM.CKM_RSA_PKCS_KEY_PAIR_GEN);
 
         foreach ((CKA attrType, IAttributeValue attrValue) in publicKeyTemplate)
         {

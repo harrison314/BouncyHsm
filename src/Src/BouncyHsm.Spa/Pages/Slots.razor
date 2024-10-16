@@ -7,7 +7,7 @@
 <h1>Slots</h1>
 <div class="d-flex justify-content-end pb-3">
     <button type="button" class="btn btn-outline-primary btn-w-tm" @onclick="ReloadSlots"><span class="icon-Recurring-Appointment icon-1x"></span> Reload</button>
-    <NavLink href="/Slots/Create" class="btn btn-outline-primary btn-w-tm"><span class="icon-plus icon-1x"></span> Create new</NavLink>
+    <NavLink href="Slots/Create" class="btn btn-outline-primary btn-w-tm"><span class="icon-plus icon-1x"></span> Create new</NavLink>
 </div>
 
 @if (this.slots == null)
@@ -25,7 +25,6 @@ else
             <div class="card-body">
                 <div class="d-flex justify-content-between">
 
-                    @*<div class="row">*@
                     <div class="col-1 d-flex align-items-center">
                         <div class="align-self-center">
                             <span class="icon-Sim-Card-Chip icon-4x"></span>
@@ -79,12 +78,10 @@ else
                     </div>
 
                     <div class="col-2">
-                        <NavLink href="@($"/Slots/Detail/{slot.SlotId}")" class="btn btn-outline-primary mb-1 btn-w-action"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
+                        <NavLink href="@($"Slots/Detail/{slot.SlotId}")" class="btn btn-outline-primary mb-1 btn-w-action"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
                         <br />
-                        <NavLink href="@($"/Slots/{slot.SlotId}/Pkcs")" class="btn btn-outline-primary mb-1 btn-w-action"><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+                        <NavLink href="@($"Slots/{slot.SlotId}/Pkcs")" class="btn btn-outline-primary mb-1 btn-w-action"><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
                     </div>
-                    @*</div>*@
-
                 </div>
             </div>
         </div>

@@ -27,9 +27,10 @@ public class HsmInfoFacadeTests
     public void GetAllMechanism_Call_Success()
     {
         HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
-        IEnumerable<Core.UseCases.Contracts.MechanismInfoData> mechanisms = hsmInfoFacade.GetAllMechanism();
+        Core.UseCases.Contracts.MechanismProfile mechanisms = hsmInfoFacade.GetAllMechanism();
 
-        Assert.IsNotNull(mechanisms.ToList());
+        Assert.IsNotNull(mechanisms);
+        Assert.IsNotNull(mechanisms.Mechanisms);
     }
 
     [TestMethod]

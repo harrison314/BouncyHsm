@@ -1,0 +1,253 @@
+﻿@page "/Slots/{SlotId:int}/Pkcs/ImportPem"
+@using BouncyHsm.Spa.Pages.Pkcs;
+@using BouncyHsm.Client
+@using BouncyHsm.Spa.Utils;
+@inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation
+@inject ILogger<ImportP12> logger
+
+<PageTitle>Import PEM object</PageTitle>
+
+<h1>Import PEM object</h1>
+<div class="row">
+    <div class="col d-flex justify-content-end pb-3">
+        <NavLink href="@($"Slots/Detail/{this.SlotId}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+        <NavLink href="@($"Slots/{this.SlotId}/Pkcs")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <p>Import PEM object.</p>
+
+        @if (this.slot == null)
+        {
+            <LoadingIndicator />
+        }
+        else
+        {
+            <p>Import into token with label <em>@this.slot.Token.Label</em> and serial <em>@this.slot.Token.SerialNumber</em>.</p>
+
+            @if (this.errorMessage != null)
+            {
+                <div class="mb-6">
+                    <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+                </div>
+            }
+
+            <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="mb-1">
+                    <label for="pemTextArea" class="form-label">PEM</label>
+                    <InputTextArea class="form-control" id="pemTextArea" rows="3" @bind-Value="this.model.Pem"></InputTextArea>
+                    <ValidationMessage For="() => this.model.Pem" />
+                </div>
+
+                <div class="mb-1">
+                    <label for="i-ckalabel" class="form-label">CKA Label</label>
+                    <InputText id="i-ckalabel" class="form-control" @bind-Value="this.model.CkaLabel" />
+                    <div class="form-text">Value of CKA_LABEL.</div>
+                    <ValidationMessage For="() => this.model.CkaLabel" />
+                </div>
+
+                <div class="row mb-1">
+                    <label for="i-ckaid" class="form-label">CKA ID</label>
+
+                    <div class="row">
+                        <div class="col-9">
+                            <InputText id="i-ckaid" class="form-control" @bind-Value="this.model.CkaIdText" />
+                        </div>
+                        <div class="col-3">
+                            <InputSelect class="form-select" @bind-Value="this.model.CkaIdForm">
+                                <option value="@BinaryForm.Utf8">UTF-8</option>
+                                <option value="@BinaryForm.Hex">HEX</option>
+                                <option value="@BinaryForm.Base64">Base64</option>
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    <div class="form-text">Value for CKA_ID.</div>
+                    <ValidationMessage For="() => this.model.CkaIdText" />
+                </div>
+
+                <hr />
+                <h5>Hints</h5>
+
+                <div class="mb-1">
+                    <label for="i-importmode" class="form-label">Import mode</label>
+                    <InputSelect class="form-select" @bind-Value="this.model.ImportMode" id="i-importmode">
+                        <option value="@PrivateKeyImportMode.Imported">Standard import</option>
+                        <option value="@PrivateKeyImportMode.Local">Import as local objects</option>
+                        @if (this.slot.Token.SimulateQualifiedArea)
+                        {
+                            <option value="@PrivateKeyImportMode.LocalInQualifiedArea">Import as local objects in qualified area</option>
+                        }
+                    </InputSelect>
+
+                    <ValidationMessage For="() => this.model.ImportMode" />
+                </div>
+
+                <div class="mb-1 form-check">
+                    <InputCheckbox class="form-check-input" id="i-forsigning" @bind-Value="this.model.ForSigning" />
+                    <label class="form-check-label" for="i-forsigning">For signing and verification</label>
+                    <ValidationMessage For="() => this.model.ForSigning" />
+                </div>
+                <div class="mb-1 form-check">
+                    <InputCheckbox class="form-check-input" id="i-encryption" @bind-Value="this.model.ForEncryption" />
+                    <label class="form-check-label" for="i-encryption">For encryption and decryption</label>
+                    <ValidationMessage For="() => this.model.ForEncryption" />
+                </div>
+                <div class="mb-1 form-check">
+                    <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.ForWrap" />
+                    <label class="form-check-label" for="i-wrap">For wrap and unwrap</label>
+                    <ValidationMessage For="() => this.model.ForWrap" />
+                </div>
+                <div class="mb-1 form-check">
+                    <InputCheckbox class="form-check-input" id="i-derivation" @bind-Value="this.model.ForDerivation" />
+                    <label class="form-check-label" for="i-derivation">Private key can use for derivation</label>
+                    <ValidationMessage For="() => this.model.ForDerivation" />
+                </div>
+
+                <div class="mb-1">
+                    <label for="i-password" class="form-label">Password</label>
+                    <InputText type="password" id="i-password" class="form-control" @bind-Value="this.model.Password" />
+                    <div class="form-text">Password for PEM.</div>
+                    <ValidationMessage For="() => this.model.Password" />
+                </div>
+
+                <div class="justify-content-end pt-4">
+                    <button type="submit" class="btn btn-primary"><span class="icon-upload3 icon-1x"></span> Submit</button>
+                </div>
+            </EditForm>
+        }
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-9">
+        <div class="alert alert-info mt-3" role="alert">
+            <h4 class="alert-heading">Supported PEM types</h4>
+            <p>
+                Standard PEM objects can be imported:
+                <code>PRIVATE KEY</code>,
+                <code>PUBLIC KEY</code>,
+                <code>RSA PUBLIC KEY</code>,
+                <code>CERTIFICATE</code>,
+                <code>X509 CERTIFICATE</code>.
+            </p>
+
+            <p>Other objects can also be imported:</p>
+            <p><code>AES SECRET KEY</code> - for AES key (content is key value).</p>
+            <p>
+                <code>GENERIC SECRET</code> - for generic secret, it is possible to specify the key type using the <em>KeyType</em> header (allowed values are: <em>CKK_GENERIC_SECRET</em>,
+                <em>CKK_MD5_HMAC</em>,
+                <em>CKK_SHA_1_HMAC</em>,
+                <em>CKK_SHA224_HMAC</em>,
+                <em>CKK_SHA256_HMAC</em>,
+                <em>CKK_SHA384_HMAC</em>,
+                <em>CKK_SHA512_HMAC</em>,
+                <em>CKK_RIPEMD128_HMAC</em>,
+                <em>CKK_RIPEMD160_HMAC</em>)
+            </p>
+            <p><code>DATA OBJECT</code> - for data object,it is possible to specify the application using the <em>Application</em> header.</p>
+
+            <hr />
+            <p>Examples:</p>
+
+            <pre>
+                <code>
+-----BEGIN PRIVATE KEY-----
+MIGEAgEAMBAGByqGSM49AgEGBSuBBAAKBG0wawIBAQQgdFZuDHw/XzWjO28BAQvK
+4cTOA5mbWBUWrClI2K7pw6OhRANCAAR8SEgi/OV/c/kxmIlNjSp1+ADlxnUEbj4x
+JtSL9LCVCvO8DI48SuQPOfXrkjgb1rgbGgFFFyeKrv+APnAggb2Y
+-----END PRIVATE KEY-----
+               </code>
+            </pre>
+
+            <pre>
+               <code>
+-----BEGIN AES SECRET KEY-----
+W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
+-----END AES SECRET KEY-----
+               </code>
+            </pre>
+
+            <pre>
+              <code>
+-----BEGIN GENERIC SECRET-----
+KeyType: CKK_SHA256_HMAC
+W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
+-----END GENERIC SECRET-----
+              </code>
+            </pre>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+
+    private ImportPemModel model = new ImportPemModel();
+    private EditContext? editContext;
+    private string? errorMessage = null;
+    private IBrowserFile? file = null;
+    private SlotDto? slot = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.editContext = new EditContext(this.model);
+        try
+        {
+            this.slot = await this.bouncyHsmClient.GetSlotAsync(this.SlotId);
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.logger.LogError(ex, "Error during call GetSlotAsync.");
+        }
+    }
+
+
+    private async Task HandleSubmit()
+    {
+        this.errorMessage = null;
+        await Task.Yield();
+
+        ImportPemRequestDto request = new ImportPemRequestDto()
+        {
+            CkaLabel = this.model.CkaLabel.Trim(),
+            CkaId = this.model.CkaIdForm.GetCkaId(this.model.CkaIdText.Trim()),
+            Password = this.model.Password,
+            Pem = this.model.Pem,
+            SlotId = this.SlotId,
+            Hints = new ImportPemHintsDto()
+            {
+                ForDerivation = this.model.ForDerivation,
+                ForEncryption = this.model.ForDerivation,
+                ForSigning = this.model.ForSigning,
+                ForWrap = this.model.ForWrap,
+                ImportMode = this.model.ImportMode
+            }
+        };
+
+        try
+        {
+            await this.bouncyHsmClient.ImportPemAsync(this.SlotId, request);
+            this.Navigation.NavigateTo($"Slots/{this.SlotId}/Pkcs");
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.logger.LogError(ex, "Error during call ImportP12Async.");
+        }
+    }
+}

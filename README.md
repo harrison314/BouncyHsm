@@ -1,5 +1,6 @@
 # Bouncy Hsm
 ![GitHub release (with filter)](https://img.shields.io/github/v/release/harrison314/BouncyHsm)
+[![NuGet Status](http://img.shields.io/nuget/v/BouncyHsm.Client.svg?style=flat)](https://www.nuget.org/packages/BouncyHsm.Client/)
 ![GitHub License](https://img.shields.io/github/license/harrison314/BouncyHsm)
 
 _Bouncy Hsm_ is an developer friendly implementation of a cryptographic store accessible through a PKCS#11 interface.
@@ -14,25 +15,30 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 
 ![Screenshots - BouncyHsm web UI](Doc/Screenshots.gif)
 
+(Screenshots from version 0.4.0)
+
 ## Features
 * Multiple application and users access using PKCS#11 interface.
 * Slot and crypto object management using web interface and REST API.
   * Create/remove slots.
   * Import P12/PFX files.
-  * Generate CSR, import certificate file.
+  * Import crypto objects in PEM format.
+  * Generate CSR, generate self-signed certificate, import certificate from file.
   * Generate keys.
   * ...
 * Possibility to simulate cards with a qualified area and a signature pin.
-* Possibility to simulate _protected authetification path_ using web interface.
+* Possibility to simulate _protected authentication path_ using web interface.
 * Supports RSA keys (with size 2-6K).
-* Supports 80 named elliptic curves.
+* Supports [80 named elliptic curves](/Doc/SuportedAlgorithms.md#elliptic-curves).
 * Supports secrets (HMAC, derive,...)
 * Supports AES keys.
 * [Supports mechanisms](/Doc/SuportedAlgorithms.md)
+* Supports [custom profiles for mechanisms](/Doc/Profiles.md) (To limit mechanisms to simulate a specific type of HSM or card).
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permission configuration).
 * _BouncyHsm_ runs on all platform supported [.Net 8.0](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64.
 * CLI tool for management.
+* Nuget ([BouncyHsm.Client](https://www.nuget.org/packages/BouncyHsm.Client)) with REST API client and native PKCS#11 libraries for unit testing. (See [example project](/Examples/BouncyHsmTestExample).)
 
 ## Quick start and deployment  guide
 * [Quick start guide](/Doc/QuickstartGuide.md)
@@ -42,6 +48,8 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 Pull requests are welcome. If you are not sure about the change, open an issue first.
 
 If the found error or changes refer to the PKCS#11 standard, please complete the link section of the standard.
+
+See more rules in [CONTRIBUTING](/.github/CONTRIBUTING.md).
 
 ## Links
 
@@ -58,3 +66,4 @@ If the found error or changes refer to the PKCS#11 standard, please complete the
 * [PKCS #11 Cryptographic Token Interface Base Specification Version 2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf)
 * [Software Ideas Modeler](https://www.softwareideas.net/) - tool in which the diagrams in the documentation were drawn
 * [NSwag studio](https://github.com/RicoSuter/NSwag/wiki/NSwagStudio) - tool for generate OpenApi client
+* [Ako som robil BouncyHsm](https://harrison314.github.io/BouncyHsm.html) - My blog post about BouncyHsm development, technological decisions and reasons for development - in Slovak language

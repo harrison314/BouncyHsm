@@ -120,7 +120,7 @@ else
         try
         {
             _ = await this.bouncyHsmClient.GenerateRsaKeyPairAsync(this.SlotId, this.model.ToDto());
-            this.Navigation.NavigateTo($"/Slots/{this.SlotId}/Pkcs");
+            this.Navigation.NavigateTo($"Slots/{this.SlotId}/Pkcs");
         }
         catch (Exception ex)
         {

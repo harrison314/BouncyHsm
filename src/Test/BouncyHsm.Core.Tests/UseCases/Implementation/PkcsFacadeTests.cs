@@ -5,6 +5,7 @@ using BouncyHsm.Core.UseCases.Implementation;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace BouncyHsm.Core.Tests.UseCases.Implementation;
 
@@ -12,13 +13,15 @@ namespace BouncyHsm.Core.Tests.UseCases.Implementation;
 public class PkcsFacadeTests
 {
     [DataTestMethod]
-    [DataRow(P12ImportMode.Local, true, 0)]
-    [DataRow(P12ImportMode.Local, false, 0)]
-    [DataRow(P12ImportMode.Imported, false, 0)]
-    [DataRow(P12ImportMode.LocalInQualifiedArea, false, 0)]
-    [DataRow(P12ImportMode.Imported, true, 1)]
-    public async Task ImportP12_Call_Success(P12ImportMode mode, bool withChain, int certId)
+    [DataRow(PrivateKeyImportMode.Local, true, 0)]
+    [DataRow(PrivateKeyImportMode.Local, false, 0)]
+    [DataRow(PrivateKeyImportMode.Imported, false, 0)]
+    [DataRow(PrivateKeyImportMode.LocalInQualifiedArea, false, 0)]
+    [DataRow(PrivateKeyImportMode.Imported, true, 1)]
+    public async Task ImportP12_Call_Success(PrivateKeyImportMode mode, bool withChain, int certId)
     {
+        Mock<ITimeAccessor> timeAccessor = new Mock<ITimeAccessor>(MockBehavior.Strict);
+
         Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
         repository.Setup(t => t.StoreObject(12U, It.Is<StorageObject>(q => q is X509CertificateObject || q is PrivateKeyObject || q is PublicKeyObject), It.IsAny<CancellationToken>()))
             .Returns(new ValueTask())
@@ -44,7 +47,7 @@ public class PkcsFacadeTests
             })
             .Verifiable();
 
-        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, new NullLogger<PkcsFacade>());
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, timeAccessor.Object, new NullLogger<PkcsFacade>());
 
         ImportP12Request request = new ImportP12Request()
         {
@@ -92,10 +95,290 @@ public class PkcsFacadeTests
     }
 
     [TestMethod]
+    public async Task ImportPem_Certificate_Success()
+    {
+        string pem = """
+           -----BEGIN CERTIFICATE-----
+           MIICMzCCAZygAwIBAgIJALiPnVsvq8dsMA0GCSqGSIb3DQEBBQUAMFMxCzAJBgNV
+           BAYTAlVTMQwwCgYDVQQIEwNmb28xDDAKBgNVBAcTA2ZvbzEMMAoGA1UEChMDZm9v
+           MQwwCgYDVQQLEwNmb28xDDAKBgNVBAMTA2ZvbzAeFw0xMzAzMTkxNTQwMTlaFw0x
+           ODAzMTgxNTQwMTlaMFMxCzAJBgNVBAYTAlVTMQwwCgYDVQQIEwNmb28xDDAKBgNV
+           BAcTA2ZvbzEMMAoGA1UEChMDZm9vMQwwCgYDVQQLEwNmb28xDDAKBgNVBAMTA2Zv
+           bzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAzdGfxi9CNbMf1UUcvDQh7MYB
+           OveIHyc0E0KIbhjK5FkCBU4CiZrbfHagaW7ZEcN0tt3EvpbOMxxc/ZQU2WN/s/wP
+           xph0pSfsfFsTKM4RhTWD2v4fgk+xZiKd1p0+L4hTtpwnEw0uXRVd0ki6muwV5y/P
+           +5FHUeldq+pgTcgzuK8CAwEAAaMPMA0wCwYDVR0PBAQDAgLkMA0GCSqGSIb3DQEB
+           BQUAA4GBAJiDAAtY0mQQeuxWdzLRzXmjvdSuL9GoyT3BF/jSnpxz5/58dba8pWen
+           v3pj4P3w5DoOso0rzkZy2jEsEitlVM2mLSbQpMM+MUVQCQoiG6W9xuCFuxSrwPIS
+           pAqEAuV4DNoxQKKWmhVv+J0ptMWD25Pnpxeq5sXzghfJnslJlQND
+           -----END CERTIFICATE----- 
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_RsaPrivateKey_Success()
+    {
+        string pem = """
+           -----BEGIN RSA PRIVATE KEY-----
+           MIIEpQIBAAKCAQEAuN9DJTv4kmgu064D8Zyg7OKVHlMeiCs5teCZqUstMXUt77KW
+           49EiEGIHz+sSYAsy5N/jdLy0sFofQkG6Xo8CxDeGg799wJcfJwG7Ayh0x3ztN98R
+           MNtEy3b9WVzyT0w5Shwfim6zAO6SzgEhVtNLobfbhuOPhxAJnhoKWNoiog/N7ejN
+           Cl9UFI1kY8M8M/LIjuokWvEM0+L/L+BM5vITq79Ws4F1/qjJg0rELUMw4oQeQMas
+           ZuglPvYkQqCrETALxiawJSb1TTCp/Ey9OZM1CLittLOvTW5DdBw7KM8V0P8zvuIS
+           itUjnNgz1lQbfxqdWu81902beHB6o9QjpzgFtwIDAQABAoIBAQCahPmBUJvV+0BQ
+           a10egDS9ajELFJwrYj2tOBoXNx+B/Bg2BYY6ylz3ZohzD17fadzTEhLySpuX3uvL
+           nFZinJPKX0KOMeqwo19FYhvmatUYu+EmVsrulAbvLPhazeY1w1cLC3CNazMwrzeC
+           +czc3mSTubHCD8eyMwRm4gsN8t0JqFJH/ucDJsHHfcu5BPyyL94TWmKCEietTfiI
+           8Ki8GH8OwVw4I9wy6+6F6+7joMR/B1OvV8x1rtFuk8wH5PSanEf1BPylDzFD/HAp
+           W4bDqlwrOSy2aMXto6OK8G3cgiyftSqNzOIhwarAVghB6bZUBU7kFrLGvn8H77GM
+           VTHzQXLJAoGBAN7d05pQe+P2gZLHprLLw+hRiS0kFjzFiibS5283Xkf7JkrMICMa
+           dh9Zlli5JYvmc5FerKgm0x92JpWLkDkpo/qsBklfxcVsPgLqTq4xSZtH/rbw5mHl
+           3i301/XMt8y4dJpLed5aYQmhU93FZcjGCIC8fdsVjGOpQ30bqBJUErQbAoGBANRb
+           ZACooo0uQEvkhO9Bb+zR3OXmyj3fJXrDSbzVE4yx0zQd7ceHYITZtNiNvf8ECdhe
+           /AcYH1iG23s8xxP+HbCzUvAA1105i3AUBt9TDuNlIQYs4Of1sfYWq1m3v1M4HdPJ
+           F/EL/xy5zwGq8jN1YHtmc5qEzWchjVKlPhLFfraVAoGAOeKn2UbaRuV51iPhGkNu
+           iOLUnFLpK7OrJFZXIj3hURTcZ0UJe9SdpZrhP/4m0GV00uciNTKQV3Wao/Dx7sbv
+           /mW75Ebp2VM58Avnj7rhgWF7uQxs6jSINquHhCI+AwBN2N2Ns8EJvzSV0d45h6JY
+           BwfuMH8yTZhjHRWX29rWWM0CgYEAtbHEbLPc8UMjjEvoWfX5V/1wLd08KZgmL1Ws
+           X79ITNdRyIPbER+Ju+GyVJ9iczH3YoRSy5ceKtaoMFeeVkLVEH0+d0+g9Yjo/2qD
+           Ps2ILZQ3n1sCzDVyoQZgchE/yGp5St4CeCI1k1SABANJ3DGP7cWJICqEvLr+ejoc
+           VF9avckCgYEAvF04CIssbqHzgioGu6886fgCyuNkmZraP5DsfS/0AWyEIzIB1g8k
+           K653XtGuxn544mROGPzjzeHtADX0qa5AnQcr+Ort6e0iO4Ht3kZPkVM7iph1qGsT
+           fScgKkkyyvumEZGIfgAiwPWuBbEbQSsXMkP5Xb3L31i1e5LyK8f0tNA=
+           -----END RSA PRIVATE KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_RsaPkcs8_Success()
+    {
+        string pem = """
+           -----BEGIN PRIVATE KEY-----
+           MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCjfdKE8hHXYMfi
+           OETUIit+swiYCwDVbACa6hCPgPZQf919pAXzqV28DW6EHCkvP5Zy2S2GIWVXKL9c
+           zms3iEOGyLoGEcQ9Y0PYhcUswxKijz/53KXRi3Qngd1YbuxyZiT99Ic9R7jEW+3Q
+           w5De2CRGq351oz9eXhCuUMq/+ChObaKbYNkpVBvD+udzO+8Vf79Z1Z4qBFR8b5WD
+           +zPTiU2VDnFlTniRWCGjJfz46HZsGK1+2amsbhKNa42FNUZ3hB/VGcAkrZfn8Ebk
+           katZq/1HHFL6mBqtYmYgQZx5s4+e57aLYBzj+rxvAAchl/6nJd57WivZksymUYdo
+           Ub5pkL8xAgMBAAECggEADUWBeVlNKXapwyteKvo7HaXa5Ly/7JM/2VN21K9bT12R
+           1UkjUoxFF6bfecnvbe5zgA8xKto7J8AfCKGZAoEFOkPBFg0LKRCNyV3Si7eqI5gN
+           UXMf4sq3Ox3Hog4fE4pHJnZbJBZWYVo1C+VUNULGbxYsxc/irP5lzECytLKoUvVi
+           I4/IpPCSRioY6GAfpMMl/Bqwfp2M+Ly8CVUS88g10qMq+vt2z/5vHNfPfdipj6u3
+           OpHtE/q1OiEs5gyploiJNtBJQIG5ekdx5RL6Oz1Zs5jXl08Bjt8zB5DddwC0KxHT
+           70cZPjlTnb/31heGC1Cx7ujy9slEoNtcsFTIeNXCoQKBgQDXZiIzUDxwagPZKqkH
+           qXO5dM4awCkExo8hB5ibAaHMCtKYWdETvygMSWR3cNc1P+rPwnJDL4qzJivJquyk
+           oDF99SXaL+f2UNPKMJXZGiVXesBzdhyqVj9gLsJ1IokBPHv7UlnbbWK1zq0C1ySn
+           53oZwBSBW0WWYxKoy+VME/degwKBgQDCTvHWgs1o0FK4s+3BE18K72QRZt79BqME
+           K31WkLGIt5yWiQ/6Z6+MiADU8k9DFNPWgRBqcDHY0ZNZQWDm+wWm6R6gPWL8P64v
+           4MoxzftwPi9y82s6jDmk/gNWsn2OM+/SRG1mjGm96a376j2hS3kV+kRrwdnxoxoI
+           Al4qE3h9OwKBgQDWTRwLt3FaWm+XuZTQNawYQHjqLnLg+HfgYcFXvqjt63qY7wtP
+           vSioCMD3AIJszTneGFQ8Oemh0YFRNEgahfKXobZWPMFo1APSrsH3bMboIQ2mEkX0
+           xrhpBjyb848hdr7XTZhu8oZ54bVKFSi4EFnvkqYUCO3T8J/Y5nssVNUQ5wKBgQCl
+           RHxR1cNciQQy8Wcht5Y5ONBGNNcpI0H4Q/1BaaR3AqT/LOkYNKSNxQfgF5DvH4Hm
+           irQps+/R2L+ZRRBkpdFy3AkehdfxcUB4nJudrPNVzq6Q+RWVILvO5/ZzATHlh6tN
+           jsH2XSt7SoyfHeb5j7YXyVv0w1baPb3gXhM1eoYbDQKBgF5wlWK0sttj485qWmm7
+           yX5DDJRJMJMEupLytEGHPzXYfWZTx/uCeHCf4douC3Xi4Eku7p+N1O7I+AGz3XbE
+           5T9qLDHXjtfrR5AvVeGYv/ZIWko0CzNn8o86LUpMPJU6PIkCBi6V4XHNChDZtsnO
+           1pbtAWtNwz//4idQhQ5bxr68
+           -----END PRIVATE KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_EcPkcs8_Success()
+    {
+        string pem = """
+           -----BEGIN PRIVATE KEY-----
+           MIGEAgEAMBAGByqGSM49AgEGBSuBBAAKBG0wawIBAQQgdFZuDHw/XzWjO28BAQvK
+           4cTOA5mbWBUWrClI2K7pw6OhRANCAAR8SEgi/OV/c/kxmIlNjSp1+ADlxnUEbj4x
+           JtSL9LCVCvO8DI48SuQPOfXrkjgb1rgbGgFFFyeKrv+APnAggb2Y
+           -----END PRIVATE KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_EcKeyAndCert_Success()
+    {
+        string pem = """
+           -----BEGIN PRIVATE KEY-----
+           MIGEAgEAMBAGByqGSM49AgEGBSuBBAAKBG0wawIBAQQghrSAsNdEiCXTR1h/VkIw
+           OeNUwqi1291TiIpr/QC2gXahRANCAATC1LhaWM2sj7C5gliIcP1lYhEjXbeYgKO+
+           MIlBj0eVZY4LMAKwVodiyeYlOtAMBndJ6goyQWfY+PCUgyYZSAsy
+           -----END PRIVATE KEY-----
+           -----BEGIN CERTIFICATE-----
+           MIIB+jCCAZ+gAwIBAgIUDCXazphao8sG6ot7FW+60TFT7mQwCgYIKoZIzj0EAwIw
+           QzELMAkGA1UEBhMCU0sxIDAeBgNVBAgMF0JhbnNrw6EgQnlzdHJpY2EgUmVnaW9u
+           MRIwEAYDVQQHDAlOb3ZhIEJhbmEwHhcNMjQwMzE2MTQyNjU3WhcNMjUwMzE2MTQy
+           NjU3WjBDMQswCQYDVQQGEwJTSzEgMB4GA1UECAwXQmFuc2vDoSBCeXN0cmljYSBS
+           ZWdpb24xEjAQBgNVBAcMCU5vdmEgQmFuYTBWMBAGByqGSM49AgEGBSuBBAAKA0IA
+           BMLUuFpYzayPsLmCWIhw/WViESNdt5iAo74wiUGPR5VljgswArBWh2LJ5iU60AwG
+           d0nqCjJBZ9j48JSDJhlICzKjdDByMB0GA1UdDgQWBBQXLi7f+Gp8WFZM78wKvMHp
+           E/oT3jAfBgNVHSMEGDAWgBQXLi7f+Gp8WFZM78wKvMHpE/oT3jAOBgNVHQ8BAf8E
+           BAMCBaAwIAYDVR0lAQH/BBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAoGCCqGSM49
+           BAMCA0kAMEYCIQDZ39a7NIpLKM8YbjLL4YTQIC3koJbXGRtHuasLJXmMXgIhAJWQ
+           PQr1eYzspGAaHmU/+ItvHY6otaHKqBhX3whUfm/J
+           -----END CERTIFICATE-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_DataObject_Success()
+    {
+        string pem = """
+           -----BEGIN DATA OBJECT-----
+           SGVsbG8gd29ybGQh
+           -----END DATA OBJECT-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_DataObjectWithApp_Success()
+    {
+        string pem = """
+           -----BEGIN DATA OBJECT-----
+           Application: MyApplication
+           SGVsbG8gd29ybGQh
+           -----END DATA OBJECT-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_DataObjectWitObjectId_Success()
+    {
+        string pem = """
+           -----BEGIN DATA OBJECT-----
+           ObjectId: 2.5.4.97
+           SGVsbG8gd29ybGQh
+           -----END DATA OBJECT-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_AesKey_Success()
+    {
+        string pem = """
+           -----BEGIN AES SECRET KEY-----
+           W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
+           -----END AES SECRET KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_GenericSecret_Success()
+    {
+        string pem = """
+           -----BEGIN GENERIC SECRET-----
+           W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
+           -----END GENERIC SECRET-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_GenericSecretWithType_Success()
+    {
+        string pem = """
+           -----BEGIN GENERIC SECRET-----
+           KeyType: CKK_SHA256_HMAC
+           W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
+           -----END GENERIC SECRET-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_RsaPublicKeyPkcs8_Success()
+    {
+        string pem = """
+           -----BEGIN PUBLIC KEY-----
+           MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf
+           9Cnzj4p4WGeKLs1Pt8QuKUpRKfFLfRYC9AIKjbJTWit+CqvjWYzvQwECAwEAAQ==
+           -----END PUBLIC KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_RsaPublicKey_Success()
+    {
+        string pem = """
+           -----BEGIN RSA PUBLIC KEY-----
+           MEgCQQCo9+BpMRYQ/dL3DS2CyJxRF+j6ctbT3/Qp84+KeFhnii7NT7fELilKUSnx
+           S30WAvQCCo2yU1orfgqr41mM70MBAgMBAAE=
+           -----END RSA PUBLIC KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    private async Task ImportPemTest(string pem)
+    {
+        Mock<ITimeAccessor> timeAccessor = new Mock<ITimeAccessor>(MockBehavior.Strict);
+
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.StoreObject(12U, It.IsAny<StorageObject>(), It.IsAny<CancellationToken>()))
+            .Returns(new ValueTask())
+            .Verifiable();
+
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new SlotEntity()
+            {
+                Description = "description",
+                Id = Guid.NewGuid(),
+                IsHwDevice = true,
+                SlotId = 12,
+                Token = new TokenInfo()
+                {
+                    IsSoPinLocked = false,
+                    IsUserPinLocked = false,
+                    Label = "Label",
+                    SerialNumber = "000011",
+                    SimulateHwMechanism = true,
+                    SimulateHwRng = true,
+                    SimulateQualifiedArea = true
+                }
+            })
+            .Verifiable();
+
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, timeAccessor.Object, new NullLogger<PkcsFacade>());
+
+        ImportPemRequest request = new ImportPemRequest()
+        {
+            SlotId = 12U,
+            CkaLabel = "label1",
+            Pem = pem,
+            Hints = new ImportPemHints()
+            {
+                ForDerivation = true,
+                ForEncryption = true,
+                ForSigning = true,
+                ForWrap = true,
+                ImportMode = PrivateKeyImportMode.Local
+            }
+
+        };
+
+        DomainResult<IReadOnlyList<Guid>> domainResult = await pkcsFacade.ImportPem(request, default);
+        _ = domainResult.AssertOkValue();
+
+        repository.VerifyAll();
+    }
+
+    [TestMethod]
     public async Task ParseCertificate_Call_Success()
     {
         uint slotId = 12;
         Guid objectId = Guid.NewGuid();
+
+        Mock<ITimeAccessor> timeAccessor = new Mock<ITimeAccessor>(MockBehavior.Strict);
 
         Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
         repository.Setup(t => t.TryLoadObject(slotId, objectId, It.IsAny<CancellationToken>()))
@@ -124,7 +407,7 @@ pU0+bapXOCAQP9suslVRcEn3")
          })
          .Verifiable();
 
-        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, new NullLogger<PkcsFacade>());
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, timeAccessor.Object, new NullLogger<PkcsFacade>());
 
         DomainResult<CertificateDetail> domianResult = await pkcsFacade.ParseCertificate(slotId, objectId, default);
         CertificateDetail result = domianResult.AssertOkValue();

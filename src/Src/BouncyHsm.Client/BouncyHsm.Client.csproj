@@ -1,9 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0;netstandard2.1</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Description>A REST API client for BouncyHSM that allows you to manage BouncyHSM programmatically using code. This package is recommended for use in unit tests.</Description>
+    <RepositoryUrl>https://github.com/harrison314/BouncyHsm</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/harrison314/BouncyHsm</PackageProjectUrl>
+    <PackageIcon>BouncyHsm.png</PackageIcon>
+    <PackageReadmeFile>BouncyHsmClient.md</PackageReadmeFile>
+    <PackageTags>BouncyHsm;HSM;Client;pkcs;pkcs11;security;cryptography;smartcard;HSM;test</PackageTags>
   </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework) == 'netstandard2.1'">
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Doc\BouncyHsm.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\..\Doc\BouncyHsmClient.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'netstandard2.1'">
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IncludeNativeLibs) == 'True'">
+    <None Include="..\..\..\artifacts\.tmp\native\Win-x86\BouncyHsm.Pkcs11Lib.dll">
+      <Pack>True</Pack>
+      <PackagePath>runtimes/win-x86/native/</PackagePath>
+    </None>
+    <None Include="..\..\..\artifacts\.tmp\native\Win-x64\BouncyHsm.Pkcs11Lib.dll">
+      <Pack>True</Pack>
+      <PackagePath>runtimes/win-x64/native/</PackagePath>
+    </None>
+    <None Include="..\..\..\artifacts\.tmp\native\Linux-x64\BouncyHsm.Pkcs11Lib.so" Condition="Exists('..\..\..\artifacts\.tmp\native\Linux-x64\BouncyHsm.Pkcs11Lib.so')">
+      <Pack>True</Pack>
+      <PackagePath>runtimes/linux-x64/native/</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@ using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Infrastructure;
 using BouncyHsm.Infrastructure.Application;
 using BouncyHsm.Services.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Serilog;
 using System.Runtime.CompilerServices;
@@ -36,18 +37,22 @@ public class Program
         builder.Services.Configure<Services.Configuration.BouncyHsmSetup>(builder.Configuration.GetSection("BouncyHsmSetup"));
         // Add services to the container.
 
-        builder.Services.AddScoped<BouncyHsm.Infrastructure.Filters.HttpResponseExceptionFilter>();
+        builder.Services.AddScoped<BouncyHsm.Infrastructure.Filters.HttpResponseErrorFilter>();
         builder.Services.AddControllers(cfg =>
         {
-            cfg.Filters.Add<BouncyHsm.Infrastructure.Filters.HttpResponseExceptionFilter>();
+            cfg.Filters.Add<BouncyHsm.Infrastructure.Filters.HttpResponseErrorFilter>();
         })
+            .ConfigureApiBehaviorOptions(cfg =>
+            {
+                cfg.SuppressModelStateInvalidFilter = true;
+            })
             .AddJsonOptions(cfg =>
             {
                 cfg.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
                 cfg.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
                 cfg.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
-            
+
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApiDocument(cfg =>
@@ -90,8 +95,10 @@ public class Program
         });
 
         builder.Services.AddSignalR();
+        builder.TryUseProfileFromConfiguration();
 
         WebApplication app = builder.Build();
+        UseBasePath(app);
 
         app.UseForwardedHeaders();
 
@@ -121,5 +128,15 @@ public class Program
         app.MapFallbackToFile("index.html");
 
         app.Run();
+    }
+
+    private static void UseBasePath(WebApplication app)
+    {
+        string? basePath = app.Configuration.GetValue<string>("AppBasePath");
+        if (!string.IsNullOrEmpty(basePath))
+        {
+            app.UsePathBase(basePath);
+            app.Logger.LogDebug("Start with base path {basePath}.", basePath);
+        }
     }
 }

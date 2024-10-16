@@ -17,7 +17,7 @@
 // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
 
 
-void SetPaddedStrSafe(char* destination, size_t destinationSize, const char* src)
+void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const char* src)
 {
     size_t copySize = strlen(src);
     if (copySize > destinationSize)
@@ -25,8 +25,8 @@ void SetPaddedStrSafe(char* destination, size_t destinationSize, const char* src
         copySize = destinationSize;
     }
 
-    memset(destination, ' ', destinationSize);
-    memcpy(destination, src, copySize);
+    memset((void*)destination, ' ', destinationSize);
+    memcpy((void*)destination, src, copySize);
 }
 
 CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
@@ -120,6 +120,16 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
             {
                 ptr[i].ValueTypeHint |= AttrValueFromNative_TypeHint_CkDate;
                 char* date = (char*)malloc(12);
+                if (date == NULL)
+                {
+                    if (ptr != NULL)
+                    {
+                        free((void*)ptr);
+                    }
+
+                    return NULL;
+                }
+
                 date[0] = dateValue->day[0];
                 date[1] = dateValue->day[1];
                 date[2] = '.';
@@ -195,7 +205,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         CkP_MacGeneralParams gp;
         gp.Value = (uint32_t)generalParamsValue;
 
-        result = nmrpc_writeAsBinary(&gp, CkP_MacGeneralParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&gp, (SerializeFnPtr_t)CkP_MacGeneralParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -223,7 +233,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         ckpPssParam.Mgf = (uint32_t)pssParam->mgf;
         ckpPssParam.SLen = (uint32_t)pssParam->sLen;
 
-        result = nmrpc_writeAsBinary(&ckpPssParam, CkP_RsaPkcsPssParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&ckpPssParam, (SerializeFnPtr_t)CkP_RsaPkcsPssParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -248,7 +258,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         derivationStringData.Data.size = (size_t)dsd->ulLen;
         derivationStringData.Len = (uint32_t)dsd->ulLen;
 
-        result = nmrpc_writeAsBinary(&derivationStringData, CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&derivationStringData, (SerializeFnPtr_t)CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -271,7 +281,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         cbcData.Data.data = (uint8_t*)cedp->pData;
         cbcData.Data.size = (size_t)cedp->length;
 
-        result = nmrpc_writeAsBinary(&cbcData, Ckp_CkAesCbcEnryptDataParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&cbcData, (SerializeFnPtr_t)Ckp_CkAesCbcEnryptDataParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -291,7 +301,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         CkP_CkObjectHandle handleParams;
         handleParams.Handle = (uint32_t)*handlePtr;
 
-        result = nmrpc_writeAsBinary(&handleParams, CkP_CkObjectHandle_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&handleParams, (SerializeFnPtr_t)CkP_CkObjectHandle_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -311,7 +321,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         CkP_ExtractParams ep;
         ep.Value = (uint32_t)extractParamsValue;
 
-        result = nmrpc_writeAsBinary(&ep, CkP_ExtractParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&ep, (SerializeFnPtr_t)CkP_ExtractParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -346,7 +356,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             deriveParams.SharedData = &sharedData;
         }
 
-        result = nmrpc_writeAsBinary(&deriveParams, Ckp_CkEcdh1DeriveParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&deriveParams, (SerializeFnPtr_t)Ckp_CkEcdh1DeriveParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -374,7 +384,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         rawData.Value.data = (uint8_t*)pMechanism->pParameter;
         rawData.Value.size = (size_t)pMechanism->ulParameterLen;
 
-        result = nmrpc_writeAsBinary(&rawData, CkP_RawDataParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&rawData, (SerializeFnPtr_t)CkP_RawDataParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -418,7 +428,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             gcmDerivedParams.Aad = &aadData;
         }
 
-        result = nmrpc_writeAsBinary(&gcmDerivedParams, Ckp_CkGcmParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&gcmDerivedParams, (SerializeFnPtr_t)Ckp_CkGcmParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -461,7 +471,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             ccmDerivedParams.Aad = &aadData;
         }
 
-        result = nmrpc_writeAsBinary(&ccmDerivedParams, Ckp_CkCcmParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&ccmDerivedParams, (SerializeFnPtr_t)Ckp_CkCcmParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -495,7 +505,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
             oaepDervedParams.SourceData = &sourceData;
         }
 
-        result = nmrpc_writeAsBinary(&oaepDervedParams, Ckp_CkRsaPkcsOaepParams_Serialize, &value->MechanismParamMp);
+        result = nmrpc_writeAsBinary(&oaepDervedParams, (SerializeFnPtr_t)Ckp_CkRsaPkcsOaepParams_Serialize, &value->MechanismParamMp);
         if (result != NMRPC_OK)
         {
             return result;
@@ -1653,7 +1663,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
                 {
-                    *((CK_BBOOL*)pTemplate[i].pValue) = (CK_BBOOL)outAttrPtr->ValueBool;
+                    *((CK_BBOOL*)pTemplate[i].pValue) = (CK_BBOOL)(outAttrPtr->ValueBool ? CK_TRUE : CK_FALSE);
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkUlong)
                 {
@@ -1669,10 +1679,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                         date->day[1] = (CK_CHAR)outAttrPtr->ValueCkDate[1];
                         date->month[0] = (CK_CHAR)outAttrPtr->ValueCkDate[3];
                         date->month[1] = (CK_CHAR)outAttrPtr->ValueCkDate[4];
-                        date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[5];
-                        date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
-                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
-                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
+                        date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
+                        date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
+                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
+                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[9];
                     }
                 }
                 else
@@ -1846,7 +1856,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_H
         *pulObjectCount = (CK_ULONG)envelope.Data->PullObjectCount;
         size_t i;
 
-        for (i = 0; i < envelope.Data->Objects.length; i++)
+        for (i = 0; i < (size_t)envelope.Data->Objects.length; i++)
         {
             phObject[i] = (CK_ULONG)envelope.Data->Objects.array[i];
         }

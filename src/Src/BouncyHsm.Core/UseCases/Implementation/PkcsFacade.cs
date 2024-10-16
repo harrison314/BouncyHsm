@@ -7,21 +7,25 @@ using BouncyHsm.Core.UseCases.Implementation.Generators;
 using BouncyHsm.Core.UseCases.Implementation.Visitors;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace BouncyHsm.Core.UseCases.Implementation;
 
 public class PkcsFacade : IPkcsFacade
 {
     private readonly IPersistentRepository persistentRepository;
+    private readonly ITimeAccessor timeAccessor;
     private readonly ILogger<PkcsFacade> logger;
 
-    public PkcsFacade(IPersistentRepository persistentRepository, ILogger<PkcsFacade> logger)
+    public PkcsFacade(IPersistentRepository persistentRepository, ITimeAccessor timeAccessor, ILogger<PkcsFacade> logger)
     {
         this.persistentRepository = persistentRepository;
+        this.timeAccessor = timeAccessor;
         this.logger = logger;
     }
 
@@ -36,7 +40,7 @@ public class PkcsFacade : IPkcsFacade
             return new DomainResult<Guid>.InvalidInput("SlotId not found.");
         }
 
-        if (request.ImportMode == P12ImportMode.LocalInQualifiedArea && !slot.Token.SimulateQualifiedArea)
+        if (request.ImportMode == PrivateKeyImportMode.LocalInQualifiedArea && !slot.Token.SimulateQualifiedArea)
         {
             this.logger.LogError("SlotId {slotId} not contains token with qualified area.", request.SlotId);
             return new DomainResult<Guid>.InvalidInput("SlotId  not contains token with qualified area.");
@@ -114,7 +118,7 @@ public class PkcsFacade : IPkcsFacade
 
         List<PkcsObjectInfo> objects = privateKeys.Select(t => new
         {
-            key = new LabelIdPair(t.CkaLabel, t.CkaId),
+            key = new LabelIdPair(t.CkaLabel, t.CkaId, false),
             type = CKO.CKO_PRIVATE_KEY,
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
@@ -123,7 +127,7 @@ public class PkcsFacade : IPkcsFacade
         })
             .Concat(publicKeys.Select(t => new
             {
-                key = new LabelIdPair(t.CkaLabel, t.CkaId),
+                key = new LabelIdPair(t.CkaLabel, t.CkaId, false),
                 type = CKO.CKO_PUBLIC_KEY,
                 id = t.Id,
                 alwaysAuthenticate = false,
@@ -132,7 +136,7 @@ public class PkcsFacade : IPkcsFacade
             }))
             .Concat(certificates.Select(t => new
             {
-                key = new LabelIdPair(t.CkaLabel, t.CkaId),
+                key = new LabelIdPair(t.CkaLabel, t.CkaId, t.CkaCertificateCategory == CKCertificateCategory.CK_CERTIFICATE_CATEGORY_AUTHORITY),
                 type = CKO.CKO_CERTIFICATE,
                 id = t.Id,
                 alwaysAuthenticate = false,
@@ -210,6 +214,89 @@ public class PkcsFacade : IPkcsFacade
         return new DomainResult<byte[]>.Ok(certificationRequest.GetEncoded());
     }
 
+    public async ValueTask<DomainResult<Guid>> GenerateSelfSignedCert(GenerateSelfSignedCertRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateSelfSignedCert with slotId {slotId}, PrivateKeyId {PrivateKeyId}, PublicKeyId {PublicKeyId}.",
+            request.SlotId,
+            request.PrivateKeyId,
+            request.PublicKeyId);
+
+        if (request.Validity < TimeSpan.Zero)
+        {
+            this.logger.LogError("Validity is less than zero.");
+            return new DomainResult<Guid>.InvalidInput("Validity is less than zero.");
+        }
+
+        StorageObject? privSo = await this.persistentRepository.TryLoadObject(request.SlotId, request.PrivateKeyId, cancellationToken);
+        if (privSo == null)
+        {
+            this.logger.LogError("Private key not found. SlotId {slotId}, object id {objectId}.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<Guid>.NotFound();
+        }
+
+        PrivateKeyObject? privKo = privSo as PrivateKeyObject;
+        if (privKo == null)
+        {
+            this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not private key.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<Guid>.InvalidInput("PrivateKeyId is not private key.");
+        }
+
+        StorageObject? pubSo = await this.persistentRepository.TryLoadObject(request.SlotId, request.PublicKeyId, cancellationToken);
+        if (pubSo == null)
+        {
+            this.logger.LogError("Public key not found. SlotId {slotId}, object id {objectId}.", request.SlotId, request.PublicKeyId);
+            return new DomainResult<Guid>.NotFound();
+        }
+
+        PublicKeyObject? pubKo = pubSo as PublicKeyObject;
+        if (pubKo == null)
+        {
+            this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not public key.", request.SlotId, request.PublicKeyId);
+            return new DomainResult<Guid>.InvalidInput("PublicKeyId is not public key.");
+        }
+
+        X509Name subject = request.Subject.Match(text => new X509Name(dirName: text.X509NameText),
+            oidValuePairs => new X509Name(oidValuePairs.Pairs.Select(t => new Org.BouncyCastle.Asn1.DerObjectIdentifier(t.Oid)).ToList(),
+                 oidValuePairs.Pairs.Select(t => t.Value).ToList()));
+
+        string algorithm = privKo.CkaKeyType switch
+        {
+            CKK.CKK_RSA => "SHA224WITHRSA",
+            CKK.CKK_ECDSA => "SHA256WITHECDSA",
+            _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
+        };
+
+        Asn1SignatureFactory asn1SignatureFactory = new Asn1SignatureFactory(algorithm,
+            privKo.GetPrivateKey());
+
+        DateTime utcNow = this.timeAccessor.UtcNow;
+        X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
+        generator.SetIssuerDN(subject);
+        generator.SetSubjectDN(subject);
+        generator.SetSerialNumber(Org.BouncyCastle.Math.BigInteger.One);
+        generator.SetPublicKey(pubKo.GetPublicKey());
+        generator.SetNotBefore(utcNow);
+        generator.SetNotAfter(utcNow.Add(request.Validity));
+        generator.AddExtension(X509Extensions.KeyUsage, false, this.CreateKeyUsage(privKo));
+        X509Certificate certificate = generator.Generate(asn1SignatureFactory);
+
+        this.logger.LogDebug("Certificate generated.");
+
+        X509CertificateWrapper certificateWrapper = X509CertificateWrapper.FromInstance(certificate);
+        X509CertObjectGenerator objectGenerator = new X509CertObjectGenerator(certificateWrapper,
+           privKo.CkaId,
+           privKo.CkaLabel);
+
+        X509CertificateObject certificateObject = objectGenerator.CreateCertificateObject(false);
+
+        await this.persistentRepository.StoreObject(request.SlotId, certificateObject, cancellationToken);
+        this.logger.LogInformation("Gneretae self-signed certificate and imported into slot {slotId} with object id {objectId}.",
+            request.SlotId,
+            certificateObject.Id);
+
+        return new DomainResult<Guid>.Ok(certificateObject.Id);
+    }
+
     public async ValueTask<DomainResult<Guid>> ImportX509Certificate(ImportX509CertificateRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to ImportX509Certificate with slotId {slotId}, PrivateKeyId {PrivateKeyId}.",
@@ -262,6 +349,9 @@ public class PkcsFacade : IPkcsFacade
         X509CertificateObject certificateObject = generator.CreateCertificateObject(false);
 
         await this.persistentRepository.StoreObject(request.SlotId, certificateObject, cancellationToken);
+        this.logger.LogInformation("Certificate imported into slot {slotId} with object id {objectId}.",
+            request.SlotId,
+            certificateObject.Id);
 
         return new DomainResult<Guid>.Ok(certificateObject.Id);
     }
@@ -308,7 +398,7 @@ public class PkcsFacade : IPkcsFacade
         StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, objectId, cancellationToken);
         if (storageObject == null)
         {
-            this.logger.LogError("Certificate not found. SlotId {slotId}, object id {objectId}.", slotId,objectId);
+            this.logger.LogError("Certificate not found. SlotId {slotId}, object id {objectId}.", slotId, objectId);
             return new DomainResult<CertificateDetail>.NotFound();
         }
 
@@ -334,6 +424,90 @@ public class PkcsFacade : IPkcsFacade
         };
 
         return new DomainResult<CertificateDetail>.Ok(result);
+    }
+
+    public async ValueTask<DomainResult<IReadOnlyList<Guid>>> ImportPem(ImportPemRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to ImportPem");
+
+        Services.Contracts.Entities.SlotEntity? slot = await this.persistentRepository.GetSlot(request.SlotId, cancellationToken);
+        if (slot == null)
+        {
+            this.logger.LogError("SlotId {slotId} not found.", request.SlotId);
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput("SlotId not found.");
+        }
+
+        if (request.Hints.ImportMode == PrivateKeyImportMode.LocalInQualifiedArea && !slot.Token.SimulateQualifiedArea)
+        {
+            this.logger.LogError("SlotId {slotId} not contains token with qualified area.", request.SlotId);
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput("SlotId  not contains token with qualified area.");
+        }
+
+        PemObjectGenerator pemObjectGenerator = new PemObjectGenerator(request.CkaId ?? RandomNumberGenerator.GetBytes(32),
+            request.CkaLabel);
+        pemObjectGenerator.ForWrap = request.Hints.ForWrap;
+        pemObjectGenerator.ForEncryption = request.Hints.ForEncryption;
+        pemObjectGenerator.ForDerivation = request.Hints.ForDerivation;
+        pemObjectGenerator.ForSigning = request.Hints.ForSigning;
+        pemObjectGenerator.ImportMode = request.Hints.ImportMode;
+
+        IReadOnlyList<StorageObject> storageObjects;
+        try
+        {
+            storageObjects = pemObjectGenerator.GenerateObjects(request.Pem, request.Password?.ToCharArray());
+        }
+        catch (IOException ex)
+        {
+            this.logger.LogError(ex, "PEM is invalid. {Description}", ex.Message);
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput($"PEM is invalid. {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "PEM is invalid.");
+            return new DomainResult<IReadOnlyList<Guid>>.InvalidInput($"PEM is invalid.");
+        }
+
+        foreach (StorageObject storageObject in storageObjects)
+        {
+            storageObject.Validate();
+        }
+
+        foreach (StorageObject storageObject in storageObjects)
+        {
+            await this.persistentRepository.StoreObject(request.SlotId, storageObject, cancellationToken);
+            this.logger.LogInformation("Object from PEM {object} imported into slot {slotId} with object id {objectId}.",
+                storageObject,
+                request.SlotId,
+                storageObject.Id);
+        }
+
+        return new DomainResult<IReadOnlyList<Guid>>.Ok(storageObjects.Select(t => t.Id).ToList());
+    }
+
+    private KeyUsage CreateKeyUsage(PrivateKeyObject keyObject)
+    {
+        int value = 0;
+        if (keyObject.CkaDecrypt)
+        {
+            value |= KeyUsage.DataEncipherment;
+        }
+
+        if (keyObject.CkaUnwrap)
+        {
+            value |= KeyUsage.KeyEncipherment;
+        }
+
+        if (keyObject.CkaDerive)
+        {
+            value |= KeyUsage.KeyAgreement;
+        }
+
+        if (keyObject.CkaSign)
+        {
+            value |= KeyUsage.DigitalSignature | KeyUsage.NonRepudiation | KeyUsage.KeyCertSign | KeyUsage.CrlSign;
+        }
+
+        return new KeyUsage(value);
     }
 
     private string? TryParseCertSubject(X509CertificateObject? x509CertificateObject)

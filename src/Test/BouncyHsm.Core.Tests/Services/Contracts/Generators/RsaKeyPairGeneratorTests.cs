@@ -18,7 +18,7 @@ public class RsaKeyPairGeneratorTests
     [DataRow(5120)]
     public void Generate_WithSize_Success(int keySize)
     {
-        RsaKeyPairGenerator generator = new RsaKeyPairGenerator(new NullLogger<RsaKeyPairGenerator>());
+        RsaKeyPairGenerator generator = new RsaKeyPairGenerator(false, new NullLogger<RsaKeyPairGenerator>());
 
         Dictionary<CKA, IAttributeValue> publicKeyTemplate = new Dictionary<CKA, IAttributeValue>()
         {

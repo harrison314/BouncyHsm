@@ -162,7 +162,7 @@
         try
         {
             await this.bouncyHsmClient.CreateSlotAsync(createSlotDto);
-            this.Navigation.NavigateTo("/Slots");
+            this.Navigation.NavigateTo("Slots");
         }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {

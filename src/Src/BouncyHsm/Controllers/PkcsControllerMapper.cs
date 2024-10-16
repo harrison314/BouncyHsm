@@ -36,6 +36,17 @@ internal static partial class PkcsControllerMapper
     [MapperIgnoreTarget(nameof(ImportP12Request.SlotId))]
     private static partial GeneratePkcs10Request FromDto(GeneratePkcs10RequestDto dto);
 
+    public static GenerateSelfSignedCertRequest FromDto(GenerateSelfSignedCertRequestDto dto, uint slotId)
+    {
+        GenerateSelfSignedCertRequest request = FromDto(dto);
+        request.SlotId = slotId;
+
+        return request;
+    }
+
+    [MapperIgnoreTarget(nameof(GenerateSelfSignedCertRequest.SlotId))]
+    private static partial GenerateSelfSignedCertRequest FromDto(GenerateSelfSignedCertRequestDto dto);
+
     private static SubjectName FromDto(SubjectNameDto dto)
     {
         if (dto.OidValuePairs != null)
@@ -65,4 +76,16 @@ internal static partial class PkcsControllerMapper
     private static partial ImportX509CertificateRequest FromDto(ImportX509CertificateRequestDto dto);
 
     public static partial CertificateDetailDto ToDto(CertificateDetail detail);
+
+    public static ImportPemRequest FromDto(ImportPemRequestDto dto, uint slotId)
+    {
+        ImportPemRequest request = FromDto(dto);
+        request.SlotId = slotId;
+
+        return request;
+    }
+
+    [MapperIgnoreTarget(nameof(ImportPemRequest.SlotId))]
+    private static partial ImportPemRequest FromDto(ImportPemRequestDto dto);
+
 }

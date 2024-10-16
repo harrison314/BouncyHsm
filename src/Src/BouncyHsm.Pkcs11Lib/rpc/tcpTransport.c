@@ -28,10 +28,10 @@
 
 #ifdef _WIN32
 static int isGlobalInit = 0;
+#define WSA_ERROR_MESSAGE_BUFFER_LEN 320
 
 int translateHostName(const char* hostName, int port, SockContext_t* ctx)
 {
-    struct addrinfo* addrInfo = NULL;
     struct addrinfo hints;
     int result;
     char portStr[6];
@@ -42,52 +42,111 @@ int translateHostName(const char* hostName, int port, SockContext_t* ctx)
     hints.ai_socktype = SOCK_STREAM; // TCP socket
     hints.ai_protocol = IPPROTO_TCP;
 
-    result = getaddrinfo(hostName, portStr, &hints, &addrInfo);
+    ctx->addr = NULL;
+
+    result = getaddrinfo(hostName, portStr, &hints, &ctx->addr);
     if (result != 0)
     {
         log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) getaddrinfo returns: %d", __FUNCTION__, __LINE__, result);
         return NMRPC_FATAL_ERROR;
     }
 
-    if (addrInfo == NULL)
+    if (ctx->addr == NULL)
     {
         log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) hostname %s can not translate to IP", __FUNCTION__, __LINE__, hostName);
         return NMRPC_FATAL_ERROR;
     }
 
-    struct addrinfo* ptr = addrInfo;
-    while (ptr != NULL)
+    if (log_level_is_enabled(LOG_LEVEL_TRACE))
     {
-        if (ptr->ai_family == AF_INET)
+        struct addrinfo* ptr = ctx->addr;
+        while (ptr != NULL)
         {
-            struct sockaddr_in* ipv4 = (struct sockaddr_in*)ptr->ai_addr;
-            inet_ntop(AF_INET, &(ipv4->sin_addr), ctx->ipAddress, INET_ADDRSTRLEN);
+            if (ptr->ai_family == AF_INET)
+            {
+                struct sockaddr_in* ipv4 = (struct sockaddr_in*)ptr->ai_addr;
+                inet_ntop(AF_INET, &(ipv4->sin_addr), ctx->ipAddress, INET_ADDRSTRLEN);
 
-            log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv4: %s",
-                __FUNCTION__,
-                hostName,
-                ctx->ipAddress);
+                log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv4: %s",
+                    __FUNCTION__,
+                    hostName,
+                    ctx->ipAddress);
+            }
+
+            if (ptr->ai_family == AF_INET6)
+            {
+                struct sockaddr_in6* ipv6 = (struct sockaddr_in6*)ptr->ai_addr;
+                inet_ntop(AF_INET6, &(ipv6->sin6_addr), ctx->ipAddress, INET6_ADDRSTRLEN);
+
+                log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv6: %s",
+                    __FUNCTION__,
+                    hostName,
+                    ctx->ipAddress);
+            }
+
+            ptr = ptr->ai_next;
+
+            break;
         }
-
-        if (ptr->ai_family == AF_INET6)
-        {
-            struct sockaddr_in6* ipv6 = (struct sockaddr_in6*)ptr->ai_addr;
-            inet_ntop(AF_INET6, &(ipv6->sin6_addr), ctx->ipAddress, INET6_ADDRSTRLEN);
-
-            log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv6: %s",
-                __FUNCTION__,
-                hostName,
-                ctx->ipAddress);
-        }
-
-        memcpy(&ctx->addr, ptr, sizeof(struct addrinfo));
-        ptr = ptr->ai_next;
-
-        break;
     }
 
-    freeaddrinfo(addrInfo);
     return NMRPC_OK;
+}
+
+bool toUtf8Msg(wchar_t* inBuffer, char* outBuffer, size_t outBufferLen)
+{
+    size_t inBuffer_length = wcslen(inBuffer);
+    int length = WideCharToMultiByte(CP_UTF8, 0, inBuffer, (int)inBuffer_length, 0, 0, NULL, NULL);
+    if (length == ERROR_NO_UNICODE_TRANSLATION)
+    {
+        return false;
+    }
+
+    if (length > outBufferLen)
+    {
+        return false;
+    }
+
+    WideCharToMultiByte(CP_UTF8, 0, inBuffer, (int)inBuffer_length, outBuffer, length, NULL, NULL);
+    outBuffer[length] = 0;
+
+    return true;
+}
+
+int getWsaLastErrorMessage(char* buffer, size_t bufferLen)
+{
+    int wsaErr = WSAGetLastError();
+    log_message(LOG_LEVEL_INFO, "Socket error - WSA last error: %d", wsaErr);
+
+    wchar_t msgbuf[WSA_ERROR_MESSAGE_BUFFER_LEN];
+    msgbuf[0] = L'\0';
+
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
+        NULL,                // lpsource
+        wsaErr,                 // message id
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),    // languageid
+        msgbuf,              // output buffer
+        sizeof(msgbuf),     // size of msgbuf, bytes
+        NULL);
+
+    if (msgbuf[0] == L'\0')
+    {
+        sprintf_s(buffer, bufferLen, "%d", wsaErr);
+    }
+    else
+    {
+        char tmpBuff[WSA_ERROR_MESSAGE_BUFFER_LEN];
+        if (toUtf8Msg(msgbuf, tmpBuff, sizeof(tmpBuff)))
+        {
+            sprintf_s(buffer, bufferLen, "%s (%d)", tmpBuff, wsaErr);
+        }
+        else
+        {
+            sprintf_s(buffer, bufferLen, "%d", wsaErr);
+        }
+    }
+
+    return wsaErr;
 }
 
 int SockContext_init(SockContext_t* ctx, const char* host, int port)
@@ -100,7 +159,10 @@ int SockContext_init(SockContext_t* ctx, const char* host, int port)
         isGlobalInit = 1;
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) WSA error: %d", __FUNCTION__, __LINE__, WSAGetLastError());
+            char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
+            getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) WSA error: %s", __FUNCTION__, __LINE__, errorMsgBuffer);
             return NMRPC_FATAL_ERROR;
         }
     }
@@ -127,16 +189,22 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
 
     if (!ctx->isInitialized)
     {
-        if ((ctx->s = socket(ctx->addr.ai_family, ctx->addr.ai_socktype, ctx->addr.ai_protocol)) == INVALID_SOCKET)
+        if ((ctx->s = socket(ctx->addr->ai_family, ctx->addr->ai_socktype, ctx->addr->ai_protocol)) == INVALID_SOCKET)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Could not create socket. IP: %s, WSA error: %d", __FUNCTION__, __LINE__, ctx->ipAddress, WSAGetLastError());
+            char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
+            getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Could not create socket. IP: %s, WSA error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, errorMsgBuffer);
             return NMRPC_FATAL_ERROR;
         }
 
 
-        if (connect(ctx->s, ctx->addr.ai_addr, (int)ctx->addr.ai_addrlen) < 0)
+        if (connect(ctx->s, ctx->addr->ai_addr, (int)ctx->addr->ai_addrlen) < 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s, WSA error: %d", __FUNCTION__, __LINE__, ctx->ipAddress, WSAGetLastError());
+            char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
+            getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s, WSA error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, errorMsgBuffer);
             return NMRPC_FATAL_ERROR;
         }
 
@@ -160,7 +228,10 @@ int sock_flush(void* user_ctx)
 
     if (shutdown(ctx->s, SD_SEND) == SOCKET_ERROR)
     {
-        log_message(LOG_LEVEL_ERROR, "shutdown failed : %d", WSAGetLastError());
+        char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
+        getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+
+        log_message(LOG_LEVEL_ERROR, "shutdown failed : %s", errorMsgBuffer);
         return NMRPC_FATAL_ERROR;
     }
 
@@ -181,7 +252,10 @@ size_t sock_readresponse(void* user_ctx, void* response_data, size_t response_da
     //Receive a reply from the server
     if ((recv_size = recv(ctx->s, response_data, (int)response_data_size, MSG_WAITALL)) == SOCKET_ERROR)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Received failed. WSA error %d", __FUNCTION__, __LINE__, WSAGetLastError());
+        char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
+        getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+
+        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Received failed. WSA error %s", __FUNCTION__, __LINE__, errorMsgBuffer);
         return 0;
     }
 
@@ -201,8 +275,17 @@ int readclose(void* user_ctx)
         int rv = closesocket(ctx->s);
         if (rv != 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Close socket. WSA error %d", __FUNCTION__, __LINE__, WSAGetLastError());
+            char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
+            getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Close socket. WSA error %s", __FUNCTION__, __LINE__, errorMsgBuffer);
         }
+    }
+
+    if (ctx->addr != NULL)
+    {
+        freeaddrinfo(ctx->addr);
+        ctx->addr = NULL;
     }
 
     return NMRPC_OK;
@@ -210,35 +293,8 @@ int readclose(void* user_ctx)
 
 #else
 
-static const char* getErrorD()
-{
-    switch (errno)
-    {
-    case EBADF:
-        return "EBADF (bad descriptor)";
-    case EFAULT:
-        return "EFAULT (bad adress)";
-    case ENOTSOCK:
-        return "ENOTSOCK";
-    case EISCONN:
-        return "EISCONN";
-    case ECONNREFUSED:
-        return "ECONNREFUSED";
-    case ETIMEDOUT:
-        return "ETIMEDOUT";
-    case ENETUNREACH:
-        return "ENETUNREACH";
-    case EADDRINUSE:
-        return "EADDRINUSE";
-    default:
-        return "unknown";
-    };
-}
-
-
 int translateHostName(const char* hostName, int port, SockContext_t* ctx)
 {
-    struct addrinfo* addrInfo = NULL;
     struct addrinfo hints;
     int result;
     char portStr[6];
@@ -249,54 +305,53 @@ int translateHostName(const char* hostName, int port, SockContext_t* ctx)
     hints.ai_socktype = SOCK_STREAM; // TCP socket
     hints.ai_protocol = IPPROTO_TCP;
 
-    result = getaddrinfo(hostName, portStr, &hints, &addrInfo);
+    result = getaddrinfo(hostName, portStr, &hints, &ctx->addr);
     if (result != 0)
     {
         log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) getaddrinfo returns: %d", __FUNCTION__, __LINE__, result);
         return NMRPC_FATAL_ERROR;
     }
 
-    if (addrInfo == NULL)
+    if (ctx->addr == NULL)
     {
         log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) hostname %s can not translate to IP", __FUNCTION__, __LINE__, hostName);
         return NMRPC_FATAL_ERROR;
     }
 
-    struct addrinfo* ptr = addrInfo;
-    while (ptr != NULL)
+    if (log_level_is_enabled(LOG_LEVEL_TRACE))
     {
-
-        if (ptr->ai_family == AF_INET)
+        struct addrinfo* ptr = ctx->addr;
+        while (ptr != NULL)
         {
-            struct sockaddr_in* ipv4 = (struct sockaddr_in*)ptr->ai_addr;
-            inet_ntop(AF_INET, &(ipv4->sin_addr), ctx->ipAddress, INET_ADDRSTRLEN);
 
-            log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv4: %s",
-                __FUNCTION__,
-                hostName,
-                ctx->ipAddress);
+            if (ptr->ai_family == AF_INET)
+            {
+                struct sockaddr_in* ipv4 = (struct sockaddr_in*)ptr->ai_addr;
+                inet_ntop(AF_INET, &(ipv4->sin_addr), ctx->ipAddress, INET_ADDRSTRLEN);
+
+                log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv4: %s",
+                    __FUNCTION__,
+                    hostName,
+                    ctx->ipAddress);
+            }
+
+            if (ptr->ai_family == AF_INET6)
+            {
+                struct sockaddr_in6* ipv6 = (struct sockaddr_in6*)ptr->ai_addr;
+                inet_ntop(AF_INET6, &(ipv6->sin6_addr), ctx->ipAddress, INET6_ADDRSTRLEN);
+
+                log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv6: %s",
+                    __FUNCTION__,
+                    hostName,
+                    ctx->ipAddress);
+            }
+
+            ptr = ptr->ai_next;
+
+            break;
         }
-
-        if (ptr->ai_family == AF_INET6)
-        {
-            struct sockaddr_in6* ipv6 = (struct sockaddr_in6*)ptr->ai_addr;
-            inet_ntop(AF_INET6, &(ipv6->sin6_addr), ctx->ipAddress, INET6_ADDRSTRLEN);
-
-            log_message(LOG_LEVEL_TRACE, "In %s: translate hostName %s to IPv6: %s",
-                __FUNCTION__,
-                hostName,
-                ctx->ipAddress);
-        }
-
-        /*server->sin_addr.s_addr = ptr->ai_addr;
-        server->sin_family = ptr->ai_family;*/
-        memcpy(&ctx->addr, ptr, sizeof(struct addrinfo));
-        ptr = ptr->ai_next;
-
-        break;
     }
 
-    freeaddrinfo(addrInfo);
     return NMRPC_OK;
 }
 
@@ -306,8 +361,6 @@ int SockContext_init(SockContext_t* ctx, const char* host, int port)
 
     ctx->isInitialized = 0;
     ctx->s = -1;
-    /*ctx->server.sin_addr.s_addr = inet_addr(host);
-    ctx->server.sin_family = AF_INET;*/
     if (translateHostName(host, port, ctx) != NMRPC_OK)
     {
         log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) can not translate hostname", __FUNCTION__, __LINE__);
@@ -317,7 +370,6 @@ int SockContext_init(SockContext_t* ctx, const char* host, int port)
 
     return NMRPC_OK;
 }
-
 
 int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_size)
 {
@@ -330,16 +382,16 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
 
     if (!ctx->isInitialized)
     {
-        if ((ctx->s = socket(ctx->addr.ai_family, ctx->addr.ai_socktype, ctx->addr.ai_protocol)) < 0)
+        if ((ctx->s = socket(ctx->addr->ai_family, ctx->addr->ai_socktype, ctx->addr->ai_protocol)) < 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Could not create socket. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, getErrorD());
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Could not create socket. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, strerror(errno));
             return NMRPC_FATAL_ERROR;
         }
 
 
-        if (connect(ctx->s, ctx->addr.ai_addr, (int)ctx->addr.ai_addrlen) < 0)
+        if (connect(ctx->s, ctx->addr->ai_addr, (int)ctx->addr->ai_addrlen) < 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, getErrorD());
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, strerror(errno));
             return NMRPC_FATAL_ERROR;
         }
 
@@ -348,7 +400,7 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
 
     if (send(ctx->s, (const char*)request_data, (int)request_data_size, 0) < 0)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, getErrorD());
+        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
         return NMRPC_FATAL_ERROR;
     }
 
@@ -364,7 +416,7 @@ int sock_flush(void* user_ctx)
     int flag = 1;
     if (setsockopt(ctx->s, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
     {
-        log_message(LOG_LEVEL_ERROR, "setsockopt failed. Error: %s", getErrorD());
+        log_message(LOG_LEVEL_ERROR, "setsockopt failed. Error: %s", strerror(errno));
         return NMRPC_FATAL_ERROR;
     }
 
@@ -385,7 +437,7 @@ size_t sock_readresponse(void* user_ctx, void* response_data, size_t response_da
     //Receive a reply from the server
     if ((recv_size = recv(ctx->s, response_data, (int)response_data_size, MSG_WAITALL)) < 0)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Received failed. Error: %s", __FUNCTION__, __LINE__, getErrorD());
+        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Received failed. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
         return 0;
     }
 
@@ -402,12 +454,16 @@ int readclose(void* user_ctx)
         int rv = close(ctx->s);
         if (rv != 0)
         {
-            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Close socket. Error: %s", __FUNCTION__, __LINE__, getErrorD());
+            log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Close socket. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
         }
+    }
+
+    if (ctx->addr != NULL)
+    {
+        freeaddrinfo(ctx->addr);
     }
 
     return NMRPC_OK;
 }
-
 
 #endif

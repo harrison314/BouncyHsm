@@ -12,6 +12,6 @@ internal class SmardCardSpeedAwaiter : BaseSpeedAwaiter
 
     protected override double[] GetMultiplicationVector()
     {
-        return new double[] { 23.2, 36.0, 36.0 };
+        return new double[] { 12.5, 18.0, 18.0 };
     }
 }

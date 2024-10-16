@@ -85,7 +85,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
         };
 
-        RsaKeyPairGenerator rsaGenerator = new RsaKeyPairGenerator(this.loggerFactory.CreateLogger<RsaKeyPairGenerator>());
+        RsaKeyPairGenerator rsaGenerator = new RsaKeyPairGenerator(false, this.loggerFactory.CreateLogger<RsaKeyPairGenerator>());
         rsaGenerator.Init(publicKeyTemplate, privateKeyTemplate);
 
         (PublicKeyObject publicKey, PrivateKeyObject privateKey) = rsaGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);

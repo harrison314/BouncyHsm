@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Scriban" Version="5.9.0" />
+    <PackageReference Include="Scriban" Version="5.10.0" />
   </ItemGroup>
 
   <ItemGroup>

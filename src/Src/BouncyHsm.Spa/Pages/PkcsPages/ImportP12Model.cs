@@ -23,7 +23,7 @@ public class ImportP12Model
         set;
     }
 
-    public P12ImportMode ImportMode
+    public PrivateKeyImportMode ImportMode
     {
         get;
         set;
@@ -48,7 +48,7 @@ public class ImportP12Model
         this.Password = string.Empty;
 
         this.CkaIdForm = BinaryForm.Utf8;
-        this.ImportMode = P12ImportMode.Imported;
+        this.ImportMode = PrivateKeyImportMode.Imported;
         this.ImportChain = false;
     }
 }

@@ -17,6 +17,7 @@ namespace BouncyHsm.Core.Services.Contracts.Entities;
 
 internal static class EcdsaUtils
 {
+    private static HashSet<DerObjectIdentifier>? enabledCurves = null;
     public static byte[] EncodeP11EcPoint(Org.BouncyCastle.Math.EC.ECPoint q)
     {
         System.Diagnostics.Debug.Assert(q != null);
@@ -94,6 +95,44 @@ internal static class EcdsaUtils
 
     public static IEnumerable<SupportedNameCurve> GetCurveNames()
     {
+        if (enabledCurves == null)
+        {
+            return GetCurveNamesInternal();
+        }
+        else
+        {
+            return GetCurveNamesInternal()
+                .Where(t => enabledCurves.Contains(new DerObjectIdentifier(t.Oid)));
+        }
+    }
+
+    public static void SetEnabledCurves(IEnumerable<string> enabledCurveOidOrNames)
+    {
+        HashSet<DerObjectIdentifier> enabled = new HashSet<DerObjectIdentifier>();
+        foreach (string curve in enabledCurveOidOrNames)
+        {
+            DerObjectIdentifier curveOid = GetEcOidFromNameOrOid(curve);
+
+            if (ECNamedCurveTable.GetByOidLazy(curveOid) == null)
+            {
+                throw new ArgumentException($"Curve {curve} is not supported.",nameof(enabledCurveOidOrNames));
+            }
+
+            enabled.Add(curveOid);
+
+
+        }
+
+        enabledCurves = enabled;
+    }
+
+    public static void ResetEnabledCurves()
+    {
+        enabledCurves = null;
+    }
+
+    private static IEnumerable<SupportedNameCurve> GetCurveNamesInternal()
+    {
         foreach (string name in X962NamedCurves.Names)
         {
             yield return new SupportedNameCurve("X962", name, X962NamedCurves.GetOid(name).Id);
@@ -130,14 +169,20 @@ internal static class EcdsaUtils
         }
     }
 
+
     private static DerObjectIdentifier ParseEcParamsInternal(byte[] ecParams)
     {
         try
         {
             Asn1Object asn1Object = Asn1Object.FromByteArray(ecParams);
-            if (asn1Object is DerObjectIdentifier)
+            if (asn1Object is DerObjectIdentifier curveOid)
             {
-                return (DerObjectIdentifier)asn1Object;
+                if (enabledCurves != null && !enabledCurves.Contains(curveOid))
+                {
+                    throw new RpcPkcs11Exception(CKR.CKR_CURVE_NOT_SUPPORTED, $"CKA_EC_PARAMS with name curve {curveOid} is not supported in this profile.");
+                }
+
+                return curveOid;
             }
             else if (asn1Object is DerNull)
             {

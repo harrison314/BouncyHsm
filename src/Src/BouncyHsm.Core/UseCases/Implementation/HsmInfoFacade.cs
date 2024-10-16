@@ -35,17 +35,21 @@ public class HsmInfoFacade : IHsmInfoFacade
             commitHashAttribute?.Value ?? "-");
     }
 
-    public IEnumerable<MechanismInfoData> GetAllMechanism()
+    public Contracts.MechanismProfile GetAllMechanism()
     {
         uint[] mechanisms = MechanismUtils.GetMechanismAsUintArray();
 
+        List<MechanismInfoData> mechanimsData = new List<MechanismInfoData>(mechanisms.Length);
         for (int i = 0; i < mechanisms.Length; i++)
         {
             MechanismUtils.TryGetMechanismInfo((CKM)mechanisms[i], out MechanismInfo mechanismInfo);
-            yield return new MechanismInfoData((CKM)mechanisms[i],
+            mechanimsData.Add(new MechanismInfoData((CKM)mechanisms[i],
                 mechanismInfo.MinKeySize,
                 mechanismInfo.MaxKeySize,
-                mechanismInfo.Flags);
+                mechanismInfo.Flags));
         }
+
+        return new Contracts.MechanismProfile(MechanismUtils.GetProfileName(),
+            mechanimsData);
     }
 }

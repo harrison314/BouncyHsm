@@ -1,20 +1,23 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 0.4.0.0 (commit _75691e8aed4eb1f2e54faf3a21fdbee014610b02_).
+Supported algorithms for _Bouncy Hsm_ version 1.0.1.0 (commit _0f1ce541f75c53ce4ad1fa72f25c0c0d3894907d_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 92 mechanisms.
+_Bouncy Hsm_ supports 96 mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign, Verify | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | `CKM_RSA_PKCS_KEY_PAIR_GEN` | 2048  | 6144 |   |   |   |   | ✓ |   |   |
 | `CKM_RSA_PKCS` | 2048  | 6144 |   | ✓ |   | ✓ |   |   | ✓ |
+| `CKM_RSA_9796` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_MD2_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_MD5_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_SHA1_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RIPEMD128_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RIPEMD160_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RSA_PKCS_OAEP` | 2048  | 6144 |   |   |   | ✓ |   |   | ✓ |
+| `CKM_RSA_X9_31_KEY_PAIR_GEN` | 2048  | 6144 |   |   |   |   | ✓ |   |   |
+| `CKM_SHA1_RSA_X9_31` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_RSA_PKCS_PSS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_SHA1_RSA_PKCS_PSS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
 | `CKM_SHA256_RSA_PKCS` | 2048  | 6144 |   | ✓ |   |   |   |   |   |
@@ -82,6 +85,7 @@ _Bouncy Hsm_ supports 92 mechanisms.
 | `CKM_ECDSA_SHA384` | 192  | 521 |   | ✓ |   |   |   |   |   |
 | `CKM_ECDSA_SHA512` | 192  | 521 |   | ✓ |   |   |   |   |   |
 | `CKM_ECDH1_DERIVE` | 192  | 521 |   |   | ✓ |   |   |   |   |
+| `CKM_ECDH1_COFACTOR_DERIVE` | 192  | 521 |   |   | ✓ |   |   |   |   |
 | `CKM_AES_KEY_GEN` | 16  | 32 |   |   |   |   |   | ✓ |   |
 | `CKM_AES_ECB` | 16  | 32 |   |   |   | ✓ |   |   |   |
 | `CKM_AES_CBC` | 16  | 32 |   |   |   | ✓ |   |   |   |
@@ -100,8 +104,8 @@ _Bouncy Hsm_ supports 92 mechanisms.
 | `CKM_AES_CFB1` | 16  | 32 |   |   |   | ✓ |   |   |   |
 | `CKM_AES_KEY_WRAP_PAD` | 16  | 32 |   |   |   |   |   |   | ✓ |
 
-## Elitic curves
-_Bouncy Hsm_ supports 80 different named elliptic curves.
+## Elliptic curves
+_Bouncy Hsm_ supports 84 different named elliptic curves.
 
 | Kind | Curve | OID |
 | ---  | --- | --- |
@@ -197,9 +201,13 @@ _Bouncy Hsm_ supports 80 different named elliptic curves.
 | ECGost3410 | GostR3410-2001-CryptoPro-XchA | `1.2.643.2.2.36.0` |
 | ECGost3410 | GostR3410-2001-CryptoPro-XchB | `1.2.643.2.2.36.1` |
 | ECGost3410 | Tc26-Gost-3410-12-256-paramSetA | `1.2.643.7.1.2.1.1.1` |
+| ECGost3410 | Tc26-Gost-3410-12-256-paramSetB | `1.2.643.7.1.2.1.1.2` |
+| ECGost3410 | Tc26-Gost-3410-12-256-paramSetC | `1.2.643.7.1.2.1.1.3` |
+| ECGost3410 | Tc26-Gost-3410-12-256-paramSetD | `1.2.643.7.1.2.1.1.4` |
 | ECGost3410 | Tc26-Gost-3410-12-512-paramSetA | `1.2.643.7.1.2.1.2.1` |
 | ECGost3410 | Tc26-Gost-3410-12-512-paramSetB | `1.2.643.7.1.2.1.2.2` |
 | ECGost3410 | Tc26-Gost-3410-12-512-paramSetC | `1.2.643.7.1.2.1.2.3` |
 | GMN | wapip192v1 | `1.2.156.10197.1.301.101` |
+| GMN | wapi192v1 | `1.2.156.11235.1.1.1` |
 | GMN | sm2p256v1 | `1.2.156.10197.1.301` |
 

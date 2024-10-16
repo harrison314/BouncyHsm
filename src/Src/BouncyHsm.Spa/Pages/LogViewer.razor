@@ -94,7 +94,7 @@
     protected override async Task OnInitializedAsync()
     {
         this.hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/loghub"))
+            .WithUrl(Navigation.ToAbsoluteUri("loghub"))
             .Build();
 
         await hubConnection.StartAsync();

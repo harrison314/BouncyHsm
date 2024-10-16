@@ -17,7 +17,7 @@ internal class P12ObjectsGenerator
     private readonly string ckaLabel;
     private readonly byte[] ckaId;
 
-    public P12ImportMode ImportMode
+    public PrivateKeyImportMode ImportMode
     {
         get;
         set;
@@ -32,7 +32,7 @@ internal class P12ObjectsGenerator
         this.ckaLabel = ckaLabel;
         this.ckaId = ckaId;
 
-        this.ImportMode = P12ImportMode.Imported;
+        this.ImportMode = PrivateKeyImportMode.Imported;
     }
 
     public PrivateKeyObject CreatePrivateKey()
@@ -116,32 +116,37 @@ internal class P12ObjectsGenerator
             return Array.Empty<X509CertificateObject>();
         }
 
-        X509CertificateObject[] objects = new X509CertificateObject[chain.Length];
-        for (int i = 0; i < objects.Length; i++)
+        List<X509CertificateObject> objects = new List<X509CertificateObject>(chain.Length);
+        for (int i = 0; i < chain.Length; i++)
         {
+            if (chain[i].Certificate.Equals(this.p12.Certificate.Certificate))
+            {
+                continue;
+            }
+
             X509CertObjectGenerator generator = new X509CertObjectGenerator(chain[i],
                this.ckaId,
                this.ckaLabel);
 
-            objects[i] = generator.CreateCertificateObject(true);
+            objects.Add(generator.CreateCertificateObject(true));
         }
 
-        return objects;
+        return objects.ToArray();
     }
 
     private void UpdateAttributesByMode(PublicKeyObject publicKeyObject)
     {
         switch (this.ImportMode)
         {
-            case P12ImportMode.Imported:
+            case PrivateKeyImportMode.Imported:
                 publicKeyObject.CkaLocal = false;
                 break;
 
-            case P12ImportMode.Local:
+            case PrivateKeyImportMode.Local:
                 publicKeyObject.CkaLocal = true;
                 break;
 
-            case P12ImportMode.LocalInQualifiedArea:
+            case PrivateKeyImportMode.LocalInQualifiedArea:
                 publicKeyObject.CkaLocal = true;
                 break;
 
@@ -154,7 +159,7 @@ internal class P12ObjectsGenerator
     {
         switch (this.ImportMode)
         {
-            case P12ImportMode.Imported:
+            case PrivateKeyImportMode.Imported:
                 privateKeyObject.CkaLocal = false;
                 privateKeyObject.CkaSensitive = false;
                 privateKeyObject.CkaAlwaysSensitive = false;
@@ -163,7 +168,7 @@ internal class P12ObjectsGenerator
                 privateKeyObject.CkaNewerExtractable = false;
                 break;
 
-            case P12ImportMode.Local:
+            case PrivateKeyImportMode.Local:
                 privateKeyObject.CkaLocal = true;
                 privateKeyObject.CkaSensitive = true;
                 privateKeyObject.CkaAlwaysSensitive = true;
@@ -172,7 +177,7 @@ internal class P12ObjectsGenerator
                 privateKeyObject.CkaNewerExtractable = true;
                 break;
 
-            case P12ImportMode.LocalInQualifiedArea:
+            case PrivateKeyImportMode.LocalInQualifiedArea:
                 privateKeyObject.CkaLocal = true;
                 privateKeyObject.CkaSensitive = true;
                 privateKeyObject.CkaAlwaysSensitive = true;

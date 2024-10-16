@@ -20,7 +20,7 @@ _Bouncy Hsm_ supports {{ MechanismsCount }} mechanisms.
 | `{{ mi.MechanismType }}` | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags.Digest | toCheck }} | {{mi.Flags.SignAndVerify | toCheck }} | {{mi.Flags.Derive | toCheck }} | {{mi.Flags.EncryptAndDecrypt | toCheck }} | {{mi.Flags.GenerateKeyPair | toCheck }} | {{mi.Flags.Generate | toCheck }} | {{mi.Flags.WrapAndUnwrap | toCheck }} |
 {{~ end ~}}
 
-## Elitic curves
+## Elliptic curves
 _Bouncy Hsm_ supports {{ EcCount }} different named elliptic curves.
 
 | Kind | Curve | OID |
