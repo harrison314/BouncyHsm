@@ -3611,6 +3611,9 @@ namespace BouncyHsm.Client
         [System.Text.Json.Serialization.JsonPropertyName("IsHwDevice")]
         public bool IsHwDevice { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("IsRemovableDevice")]
+        public bool IsRemovableDevice { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(512, MinimumLength = 1)]
