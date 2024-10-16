@@ -37,11 +37,15 @@ public class Program
         builder.Services.Configure<Services.Configuration.BouncyHsmSetup>(builder.Configuration.GetSection("BouncyHsmSetup"));
         // Add services to the container.
 
-        builder.Services.AddScoped<BouncyHsm.Infrastructure.Filters.HttpResponseExceptionFilter>();
+        builder.Services.AddScoped<BouncyHsm.Infrastructure.Filters.HttpResponseErrorFilter>();
         builder.Services.AddControllers(cfg =>
         {
-            cfg.Filters.Add<BouncyHsm.Infrastructure.Filters.HttpResponseExceptionFilter>();
+            cfg.Filters.Add<BouncyHsm.Infrastructure.Filters.HttpResponseErrorFilter>();
         })
+            .ConfigureApiBehaviorOptions(cfg =>
+            {
+                cfg.SuppressModelStateInvalidFilter = true;
+            })
             .AddJsonOptions(cfg =>
             {
                 cfg.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
