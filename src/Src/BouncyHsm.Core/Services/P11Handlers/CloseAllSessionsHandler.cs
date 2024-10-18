@@ -21,7 +21,7 @@ public partial class CloseAllSessionsHandler : IRpcRequestHandler<CloseAllSessio
     {
         this.logger.LogTrace("Entering to Handle with SlotId {SlotId}.", request.SlotId);
 
-        _ = await this.hwServices.Persistence.EnsureSlot(request.SlotId, cancellationToken);
+        _ = await this.hwServices.Persistence.EnsureSlot(request.SlotId, true, cancellationToken);
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
 
         int count = memorySession.DestroySessionsBySlot(request.SlotId);

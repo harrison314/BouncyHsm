@@ -18,18 +18,19 @@ public partial class FindObjectsHandler : IRpcRequestHandler<FindObjectsRequest,
         this.logger = logger;
     }
 
-    public ValueTask<FindObjectsEnvelope> Handle(FindObjectsRequest request, CancellationToken cancellationToken)
+    public async ValueTask<FindObjectsEnvelope> Handle(FindObjectsRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         FindObjectsState state = p11Session.State.Ensure<FindObjectsState>();
 
         uint[] handles = state.PullObjects(request.MaxObjectCount);
 
-        return new ValueTask<FindObjectsEnvelope>(new FindObjectsEnvelope()
+        return new FindObjectsEnvelope()
         {
             Rv = (uint)CKR.CKR_OK,
             Data = new FindObjectsData()
@@ -37,6 +38,6 @@ public partial class FindObjectsHandler : IRpcRequestHandler<FindObjectsRequest,
                 Objects = handles,
                 PullObjectCount = (uint)handles.Length
             }
-        });
+        };
     }
 }

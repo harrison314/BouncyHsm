@@ -18,11 +18,12 @@ public partial class DecryptUpdateHandler : IRpcRequestHandler<DecryptUpdateRequ
         this.logger = logger;
     }
 
-    public ValueTask<DecryptUpdateEnvelope> Handle(DecryptUpdateRequest request, CancellationToken cancellationToken)
+    public async ValueTask<DecryptUpdateEnvelope> Handle(DecryptUpdateRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         DecryptState decryptSessionState = p11Session.State.Ensure<DecryptState>();
@@ -39,7 +40,7 @@ public partial class DecryptUpdateHandler : IRpcRequestHandler<DecryptUpdateRequ
 
             byte[] plainText = decryptSessionState.Update(request.EncryptedData);
 
-            return new ValueTask<DecryptUpdateEnvelope>(new DecryptUpdateEnvelope()
+            return new DecryptUpdateEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new DecryptData()
@@ -47,11 +48,11 @@ public partial class DecryptUpdateHandler : IRpcRequestHandler<DecryptUpdateRequ
                     Data = plainText,
                     PullDataLen = (uint)plainText.Length
                 }
-            });
+            };
         }
         else
         {
-            return new ValueTask<DecryptUpdateEnvelope>(new DecryptUpdateEnvelope()
+            return new DecryptUpdateEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new DecryptData()
@@ -59,7 +60,7 @@ public partial class DecryptUpdateHandler : IRpcRequestHandler<DecryptUpdateRequ
                     Data = Array.Empty<byte>(),
                     PullDataLen = plainTextLen
                 }
-            });
+            };
         }
     }
 }

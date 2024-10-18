@@ -18,12 +18,14 @@ public partial class DigestHandler : IRpcRequestHandler<DigestRequest, DigestEnv
         this.logger = logger;
     }
 
-    public ValueTask<DigestEnvelope> Handle(DigestRequest request, CancellationToken cancellationToken)
+    public async ValueTask<DigestEnvelope> Handle(DigestRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.",
           request.SessionId);
 
-        IP11Session p11Session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
+        IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         DigestSessionState digestSessionState = p11Session.State.Ensure<DigestSessionState>();
         this.logger.LogDebug("Update digest using {sessionState}.", digestSessionState);
@@ -44,7 +46,7 @@ public partial class DigestHandler : IRpcRequestHandler<DigestRequest, DigestEnv
             byte[] digest = digestSessionState.Final();
             p11Session.ClearState();
 
-            return new ValueTask<DigestEnvelope>(new DigestEnvelope()
+            return new DigestEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new DigestValue()
@@ -52,11 +54,11 @@ public partial class DigestHandler : IRpcRequestHandler<DigestRequest, DigestEnv
                     Data = digest,
                     PulDigestLen = digestSessionState.DigestLength
                 }
-            });
+            };
         }
         else
         {
-            return new ValueTask<DigestEnvelope>(new DigestEnvelope()
+            return new DigestEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new DigestValue()
@@ -64,7 +66,7 @@ public partial class DigestHandler : IRpcRequestHandler<DigestRequest, DigestEnv
                     Data = null,
                     PulDigestLen = digestSessionState.DigestLength
                 }
-            });
+            };
         }
     }
 }

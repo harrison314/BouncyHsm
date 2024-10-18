@@ -5,8 +5,6 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Security;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -30,6 +28,7 @@ public partial class EncryptInitHandler : IRpcRequestHandler<EncryptInitRequest,
             (CKM)request.Mechanism.MechanismType);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         p11Session.State.EnsureEmpty();

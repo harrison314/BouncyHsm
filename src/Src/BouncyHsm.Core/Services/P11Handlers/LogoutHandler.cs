@@ -17,37 +17,39 @@ public partial class LogoutHandler : IRpcRequestHandler<LogoutRequest, LogoutEnv
         this.logger = logger;
     }
 
-    public ValueTask<LogoutEnvelope> Handle(LogoutRequest request, CancellationToken cancellationToken)
+    public async ValueTask<LogoutEnvelope> Handle(LogoutRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to handle with SessionId {SessionId}.", request.SessionId);
 
-        IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
+        IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         CKR rv = CKR.CKR_USER_NOT_LOGGED_IN;
 
-        if (session.IsLogged(CKU.CKU_USER))
+        if (p11Session.IsLogged(CKU.CKU_USER))
         {
-            session.SetLoginStatus(CKU.CKU_USER, false);
+            p11Session.SetLoginStatus(CKU.CKU_USER, false);
             this.logger.LogInformation("Logout user.");
 
-            session.ClearState();
+            p11Session.ClearState();
 
             rv = CKR.CKR_OK;
         }
 
-        if (session.IsLogged(CKU.CKU_SO))
+        if (p11Session.IsLogged(CKU.CKU_SO))
         {
-            session.SetLoginStatus(CKU.CKU_SO, false);
+            p11Session.SetLoginStatus(CKU.CKU_SO, false);
             this.logger.LogInformation("Logout so.");
 
-            session.ClearState();
+            p11Session.ClearState();
 
             rv = CKR.CKR_OK;
         }
 
-        return new ValueTask<LogoutEnvelope>(new LogoutEnvelope()
+        return new LogoutEnvelope()
         {
             Rv = (uint)rv
-        });
+        };
     }
 }

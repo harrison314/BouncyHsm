@@ -18,13 +18,12 @@ public partial class VerifyUpdateHandler : IRpcRequestHandler<VerifyUpdateReques
         this.logger = logger;
     }
 
-    public ValueTask<VerifyUpdateEnvelope> Handle(VerifyUpdateRequest request, CancellationToken cancellationToken)
+    public async ValueTask<VerifyUpdateEnvelope> Handle(VerifyUpdateRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
-        this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
-
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         VerifyState state = p11Session.State.Ensure<VerifyState>();
@@ -32,9 +31,9 @@ public partial class VerifyUpdateHandler : IRpcRequestHandler<VerifyUpdateReques
         state.Update(request.Data);
         this.logger.LogDebug("Updating signature with data length: {dataLength}.", request.Data.Length);
 
-        return new ValueTask<VerifyUpdateEnvelope>(new VerifyUpdateEnvelope()
+        return new VerifyUpdateEnvelope()
         {
             Rv = (uint)CKR.CKR_OK
-        });
+        };
     }
 }

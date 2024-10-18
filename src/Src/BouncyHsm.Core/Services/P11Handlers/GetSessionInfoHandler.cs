@@ -17,22 +17,23 @@ public partial class GetSessionInfoHandler : IRpcRequestHandler<GetSessionInfoRe
         this.logger = logger;
     }
 
-    public ValueTask<GetSessionInfoEnvelope> Handle(GetSessionInfoRequest request, CancellationToken cancellationToken)
+    public async ValueTask<GetSessionInfoEnvelope> Handle(GetSessionInfoRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with SessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        IP11Session session = memorySession.EnsureSession(request.SessionId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         uint flags = CKF.CKF_SERIAL_SESSION;
-        if (session.IsRwSession)
+        if (p11Session.IsRwSession)
         {
             flags |= CKF.CKF_RW_SESSION;
         }
 
-        bool isLoggedToSlot = memorySession.IsUserLogged(session.SlotId);
-        bool isSoLogin = session.IsLogged(CKU.CKU_SO);
-        CKS sessionState = (isLoggedToSlot, isSoLogin, session.IsRwSession) switch
+        bool isLoggedToSlot = memorySession.IsUserLogged(p11Session.SlotId);
+        bool isSoLogin = p11Session.IsLogged(CKU.CKU_SO);
+        CKS sessionState = (isLoggedToSlot, isSoLogin, p11Session.IsRwSession) switch
         {
             (false, false, _) => CKS.CKS_RO_PUBLIC_SESSION,
             (true, false, false) => CKS.CKS_RO_USER_FUNCTIONS,
@@ -41,18 +42,16 @@ public partial class GetSessionInfoHandler : IRpcRequestHandler<GetSessionInfoRe
             (_, true, false) => CKS.CKS_RW_SO_FUNCTIONS,
         };
 
-        GetSessionInfoEnvelope envelope = new GetSessionInfoEnvelope()
+        return new GetSessionInfoEnvelope()
         {
             Rv = (uint)CKR.CKR_OK,
             Data = new SessionInfoData()
             {
-                SlotId = session.SlotId,
+                SlotId = p11Session.SlotId,
                 Flags = flags,
                 State = (uint)sessionState,
                 DeviceError = 0
             }
         };
-
-        return new ValueTask<GetSessionInfoEnvelope>(envelope);
     }
 }

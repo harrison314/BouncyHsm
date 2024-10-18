@@ -29,8 +29,10 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
             request.Utf8Pin?.Length ?? 0,
             request.Utf8Pin != null);
 
-        IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
-        SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
+        IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
+        SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(p11Session.SlotId, true, cancellationToken);
 
         CKU userType = (CKU)request.UserType;
         if (!Enum.IsDefined(userType))
@@ -44,7 +46,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
 
         if (userType == CKU.CKU_CONTEXT_SPECIFIC)
         {
-            ISessionStateWithAlwaysAuthenticated state = session.State.Ensure<ISessionStateWithAlwaysAuthenticated>();
+            ISessionStateWithAlwaysAuthenticated state = p11Session.State.Ensure<ISessionStateWithAlwaysAuthenticated>();
             if (!state.RequireContextPin)
             {
                 this.logger.LogDebug("State not required CKU_CONTEXT_SPECIFIC login in session {SessionId}.", request.SessionId);
@@ -63,7 +65,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
                 };
             }
 
-            bool pinIsValid = await this.ExecuteLogin(request, slot, session, cancellationToken);
+            bool pinIsValid = await this.ExecuteLogin(request, slot, p11Session, cancellationToken);
             if (!pinIsValid)
             {
                 return new LoginEnvelope()
@@ -82,7 +84,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
         }
         else
         {
-            if (session.IsLogged(userType))
+            if (p11Session.IsLogged(userType))
             {
                 this.logger.LogDebug("User already logged in sessionId {SessionId}.", request.SessionId);
                 return new LoginEnvelope()
@@ -91,7 +93,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
                 };
             }
 
-            bool pinIsValid = await this.ExecuteLogin(request, slot, session, cancellationToken);
+            bool pinIsValid = await this.ExecuteLogin(request, slot, p11Session, cancellationToken);
             if (!pinIsValid)
             {
                 return new LoginEnvelope()
@@ -100,7 +102,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
                 };
             }
 
-            session.SetLoginStatus(userType, true);
+            p11Session.SetLoginStatus(userType, true);
 
             this.logger.LogInformation("Successfully logged to slot {slotId} with token {TokenSerial}.", slot.SlotId, slot.Token.SerialNumber);
             return new LoginEnvelope()

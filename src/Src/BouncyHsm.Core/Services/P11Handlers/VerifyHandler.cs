@@ -18,11 +18,12 @@ public partial class VerifyHandler : IRpcRequestHandler<VerifyRequest, VerifyEnv
         this.logger = logger;
     }
 
-    public ValueTask<VerifyEnvelope> Handle(VerifyRequest request, CancellationToken cancellationToken)
+    public async ValueTask<VerifyEnvelope> Handle(VerifyRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         VerifyState state = p11Session.State.Ensure<VerifyState>();
@@ -38,9 +39,9 @@ public partial class VerifyHandler : IRpcRequestHandler<VerifyRequest, VerifyEnv
 
         p11Session.ClearState();
 
-        return new ValueTask<VerifyEnvelope>(new VerifyEnvelope()
+        return new VerifyEnvelope()
         {
             Rv = (uint)(isValid ? CKR.CKR_OK : CKR.CKR_SIGNATURE_INVALID)
-        });
+        };
     }
 }

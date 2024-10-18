@@ -18,11 +18,12 @@ public partial class EncryptFinalHandler : IRpcRequestHandler<EncryptFinalReques
         this.logger = logger;
     }
 
-    public ValueTask<EncryptFinalEnvelope> Handle(EncryptFinalRequest request, CancellationToken cancellationToken)
+    public async ValueTask<EncryptFinalEnvelope> Handle(EncryptFinalRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         EncryptState encryptSessionState = p11Session.State.Ensure<EncryptState>();
@@ -40,7 +41,7 @@ public partial class EncryptFinalHandler : IRpcRequestHandler<EncryptFinalReques
             byte[] cipherText = encryptSessionState.DoFinal();
             p11Session.ClearState();
 
-            return new ValueTask<EncryptFinalEnvelope>(new EncryptFinalEnvelope()
+            return new EncryptFinalEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new EncryptData()
@@ -48,11 +49,11 @@ public partial class EncryptFinalHandler : IRpcRequestHandler<EncryptFinalReques
                     EncryptedData = cipherText,
                     PullEncryptedDataLen = (uint)cipherText.Length
                 }
-            });
+            };
         }
         else
         {
-            return new ValueTask<EncryptFinalEnvelope>(new EncryptFinalEnvelope()
+            return new EncryptFinalEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new EncryptData()
@@ -60,7 +61,7 @@ public partial class EncryptFinalHandler : IRpcRequestHandler<EncryptFinalReques
                     EncryptedData = Array.Empty<byte>(),
                     PullEncryptedDataLen = cipherTextLen
                 }
-            });
+            };
         }
     }
 }

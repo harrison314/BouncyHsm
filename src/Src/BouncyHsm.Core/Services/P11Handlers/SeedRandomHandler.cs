@@ -21,8 +21,10 @@ public partial class SeedRandomHandler : IRpcRequestHandler<SeedRandomRequest, S
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
-        IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
-        Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
+        IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
+        Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(p11Session.SlotId, true, cancellationToken);
 
         if (slot.Token.SimulateHwRng)
         {
@@ -34,7 +36,7 @@ public partial class SeedRandomHandler : IRpcRequestHandler<SeedRandomRequest, S
         }
         else
         {
-            session.SecureRandom.SetSeed(request.Seed);
+            p11Session.SecureRandom.SetSeed(request.Seed);
             return new SeedRandomEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK

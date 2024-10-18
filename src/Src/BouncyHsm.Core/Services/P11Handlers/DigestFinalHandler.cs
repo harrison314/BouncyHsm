@@ -18,12 +18,14 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
         this.logger = logger;
     }
 
-    public ValueTask<DigestFinalEnvelope> Handle(DigestFinalRequest request, CancellationToken cancellationToken)
+    public async ValueTask<DigestFinalEnvelope> Handle(DigestFinalRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.",
            request.SessionId);
 
-        IP11Session p11Session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
+        IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         DigestSessionState digestSessionState = p11Session.State.Ensure<DigestSessionState>();
         this.logger.LogDebug("Update digest using {sessionState}.", digestSessionState);
@@ -43,7 +45,7 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
             byte[] digest = digestSessionState.Final();
             p11Session.ClearState();
 
-            return new ValueTask<DigestFinalEnvelope>(new DigestFinalEnvelope()
+            return new DigestFinalEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new DigestValue()
@@ -51,11 +53,11 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
                     Data = digest,
                     PulDigestLen = digestSessionState.DigestLength
                 }
-            });
+            };
         }
         else
         {
-            return new ValueTask<DigestFinalEnvelope>(new DigestFinalEnvelope()
+            return new DigestFinalEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new DigestValue()
@@ -63,7 +65,7 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
                     Data = null,
                     PulDigestLen = digestSessionState.DigestLength
                 }
-            });
+            };
         }
     }
 }

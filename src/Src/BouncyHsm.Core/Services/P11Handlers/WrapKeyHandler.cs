@@ -30,6 +30,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
             (CKM)request.Mechanism.MechanismType);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         KeyObject wrappingKey = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.WrappingKeyHandle, cancellationToken);
@@ -108,7 +109,6 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         if (key is PrivateKeyObject privateKeyObject)
         {
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter privateKeyParams = privateKeyObject.GetPrivateKey();
-            //Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey()
             PrivateKeyInfo info = PrivateKeyInfoFactory.CreatePrivateKeyInfo(privateKeyParams);
             return info.ParsePrivateKey().GetEncoded();
         }

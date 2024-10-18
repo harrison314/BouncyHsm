@@ -24,7 +24,7 @@ public partial class GetMechanismInfoHandler : IRpcRequestHandler<GetMechanismIn
            request.MechanismType);
 
         _ = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(request.SlotId, cancellationToken);
+        Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(request.SlotId, true, cancellationToken);
 
         if (MechanismUtils.TryGetMechanismInfo(request.MechanismType, out Common.MechanismInfo mechanismInfo))
         {

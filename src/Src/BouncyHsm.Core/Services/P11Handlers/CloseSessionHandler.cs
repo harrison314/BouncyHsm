@@ -17,10 +17,12 @@ public partial class CloseSessionHandler : IRpcRequestHandler<CloseSessionReques
         this.logger = logger;
     }
 
-    public ValueTask<CloseSessionEnvelope> Handle(CloseSessionRequest request, CancellationToken cancellationToken)
+    public async ValueTask<CloseSessionEnvelope> Handle(CloseSessionRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with SessionId {SessionId}.", request.SessionId);
+
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
 
         CloseSessionEnvelope envelope = new CloseSessionEnvelope();
         if (memorySession.DestroySession(request.SessionId))
@@ -32,6 +34,6 @@ public partial class CloseSessionHandler : IRpcRequestHandler<CloseSessionReques
             envelope.Rv = (uint)CKR.CKR_SESSION_HANDLE_INVALID;
         }
 
-        return new ValueTask<CloseSessionEnvelope>(envelope);
+        return envelope;
     }
 }

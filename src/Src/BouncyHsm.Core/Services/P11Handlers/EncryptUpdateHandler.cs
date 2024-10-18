@@ -18,11 +18,12 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
         this.logger = logger;
     }
 
-    public ValueTask<EncryptUpdateEnvelope> Handle(EncryptUpdateRequest request, CancellationToken cancellationToken)
+    public async ValueTask<EncryptUpdateEnvelope> Handle(EncryptUpdateRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         EncryptState encryptSessionState = p11Session.State.Ensure<EncryptState>();
@@ -39,7 +40,7 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
 
             byte[] cipherText = encryptSessionState.Update(request.PartData);
 
-            return new ValueTask<EncryptUpdateEnvelope>(new EncryptUpdateEnvelope()
+            return new EncryptUpdateEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new EncryptData()
@@ -47,11 +48,11 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
                     EncryptedData = cipherText,
                     PullEncryptedDataLen = (uint)cipherText.Length
                 }
-            });
+            };
         }
         else
         {
-            return new ValueTask<EncryptUpdateEnvelope>(new EncryptUpdateEnvelope()
+            return new EncryptUpdateEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new EncryptData()
@@ -59,7 +60,7 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
                     EncryptedData = Array.Empty<byte>(),
                     PullEncryptedDataLen = cipherTextLen
                 }
-            });
+            };
         }
     }
 }

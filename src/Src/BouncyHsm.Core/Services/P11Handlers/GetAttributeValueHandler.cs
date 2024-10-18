@@ -27,8 +27,8 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
             request.ObjectHandle);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
-
 
         ICryptoApiObject pkcs11Object = await this.hwServices.FindObjectByHandle(memorySession,
              p11Session,

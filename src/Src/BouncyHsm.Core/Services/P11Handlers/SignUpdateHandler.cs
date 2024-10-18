@@ -18,11 +18,12 @@ public partial class SignUpdateHandler : IRpcRequestHandler<SignUpdateRequest, S
         this.logger = logger;
     }
 
-    public ValueTask<SignUpdateEnvelope> Handle(SignUpdateRequest request, CancellationToken cancellationToken)
+    public async ValueTask<SignUpdateEnvelope> Handle(SignUpdateRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         SignState state = p11Session.State.Ensure<SignState>();
@@ -35,9 +36,9 @@ public partial class SignUpdateHandler : IRpcRequestHandler<SignUpdateRequest, S
         state.Update(request.Data);
         this.logger.LogDebug("Updating signature with data length: {dataLength}.", request.Data.Length);
 
-        return new ValueTask<SignUpdateEnvelope>(new SignUpdateEnvelope()
+        return new SignUpdateEnvelope()
         {
             Rv = (uint)CKR.CKR_OK
-        });
+        };
     }
 }

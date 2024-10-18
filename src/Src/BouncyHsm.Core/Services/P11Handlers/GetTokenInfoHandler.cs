@@ -24,17 +24,7 @@ public partial class GetTokenInfoHandler : IRpcRequestHandler<GetTokenInfoReques
             request.SlotId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        SlotEntity? slot = await this.hwServices.Persistence.GetSlot(request.SlotId, cancellationToken);
-
-        if (slot == null)
-        {
-            this.logger.LogDebug("SlotId {SlotId} not found.", request.SlotId);
-            return new GetTokenInfoEnvelope()
-            {
-                Rv = (uint)CKR.CKR_SLOT_ID_INVALID,
-                Data = null
-            };
-        }
+        SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(request.SlotId, true, cancellationToken);
 
         CkVersion currentVersion = DataTransform.GetCurrentVersion();
         CkSpecialUint unknown = new CkSpecialUint()

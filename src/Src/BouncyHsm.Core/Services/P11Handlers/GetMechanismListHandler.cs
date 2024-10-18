@@ -23,7 +23,7 @@ public partial class GetMechanismListHandler : IRpcRequestHandler<GetMechanismLi
             request.SlotId);
 
         _ = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        _ = await this.hwServices.Persistence.EnsureSlot(request.SlotId, cancellationToken);
+        _ = await this.hwServices.Persistence.EnsureSlot(request.SlotId, true, cancellationToken);
 
         uint[] mechanismTypes = MechanismUtils.GetMechanismAsUintArray();
 

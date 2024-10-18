@@ -33,6 +33,7 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
             (CKM)request.Mechanism.MechanismType);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_SIGN);

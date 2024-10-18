@@ -22,13 +22,16 @@ public partial class GenerateRandomHandler : IRpcRequestHandler<GenerateRandomRe
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
-        IP11Session session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
-        Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(session.SlotId, cancellationToken);
+        IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
+
+        Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(p11Session.SlotId, true, cancellationToken);
 
         int length = Convert.ToInt32(request.RandomLen);
         byte[] data = new byte[length];
 
-        session.SecureRandom.NextBytes(data);
+        p11Session.SecureRandom.NextBytes(data);
 
         return new GenerateRandomEnvelope()
         {

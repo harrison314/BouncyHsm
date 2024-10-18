@@ -22,23 +22,25 @@ public partial class DigestInitHandler : IRpcRequestHandler<DigestInitRequest, D
         this.logger = logger;
     }
 
-    public ValueTask<DigestInitEnvelope> Handle(DigestInitRequest request, CancellationToken cancellationToken)
+    public async ValueTask<DigestInitEnvelope> Handle(DigestInitRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}, {digestType}.",
             request.SessionId,
             (CKM)request.Mechanism.MechanismType);
 
-        IP11Session p11Session = this.hwServices.ClientAppCtx.EnsureSession(request.AppId, request.SessionId);
+        IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         p11Session.State.EnsureEmpty();
 
         IDigest bcDigest = this.CreateDigest(request.Mechanism);
         p11Session.State = new DigestSessionState(bcDigest);
 
-        return new ValueTask<DigestInitEnvelope>(new DigestInitEnvelope()
+        return new DigestInitEnvelope()
         {
             Rv = (uint)CKR.CKR_OK
-        });
+        };
     }
 
     private IDigest CreateDigest(MechanismValue mechanism)

@@ -27,6 +27,7 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
 
         DateTime utcStartTime = this.hwServices.Time.UtcNow;
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
+        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         SignState state = p11Session.State.Ensure<SignState>();
