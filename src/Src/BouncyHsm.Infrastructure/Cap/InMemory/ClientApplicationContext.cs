@@ -78,7 +78,7 @@ public class ClientApplicationContext : IClientApplicationContext
 
         foreach (MemorySession ms in this.apps.Values)
         {
-            MemorySessionStatus status = ms.GetStatus();
+            MemorySessionStatus status = ms.GetStatus(null);
             rwSessionCount += status.RwSessionCount;
             roSessionCount += status.RoSessionCount;
             totalCount++;

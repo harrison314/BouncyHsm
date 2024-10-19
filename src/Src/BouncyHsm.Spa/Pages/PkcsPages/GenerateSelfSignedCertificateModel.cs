@@ -22,5 +22,6 @@ public class GenerateSelfSignedCertificateModel
     public GenerateSelfSignedCertificateModel()
     {
         this.Subject = string.Empty;
+        this.ValidityInDays = string.Empty;
     }
 }

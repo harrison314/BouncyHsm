@@ -90,20 +90,37 @@ public class MemorySession : IMemorySession
         return sessionsToRemove.Count;
     }
 
-    public MemorySessionStatus GetStatus()
+    public MemorySessionStatus GetStatus(uint? slotIdSpecification)
     {
         int rwSessions = 0;
         int roSessions = 0;
 
-        foreach (P11Session session in this.sessions.Values)
+        if (slotIdSpecification.HasValue)
         {
-            if (session.IsRwSession)
+            foreach (P11Session session in this.sessions.Values.Where(t => t.SlotId == slotIdSpecification.Value))
             {
-                rwSessions++;
+                if (session.IsRwSession)
+                {
+                    rwSessions++;
+                }
+                else
+                {
+                    roSessions++;
+                }
             }
-            else
+        }
+        else
+        {
+            foreach (P11Session session in this.sessions.Values)
             {
-                roSessions++;
+                if (session.IsRwSession)
+                {
+                    rwSessions++;
+                }
+                else
+                {
+                    roSessions++;
+                }
             }
         }
 

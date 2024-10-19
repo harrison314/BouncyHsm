@@ -27,7 +27,7 @@ public interface IMemorySession
         set;
     }
 
-    MemorySessionStatus GetStatus();
+    MemorySessionStatus GetStatus(uint? slotIdSpecification);
 
     uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom);
 

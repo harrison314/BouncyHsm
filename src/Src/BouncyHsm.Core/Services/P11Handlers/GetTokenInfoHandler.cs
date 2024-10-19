@@ -43,7 +43,7 @@ public partial class GetTokenInfoHandler : IRpcRequestHandler<GetTokenInfoReques
             Value = 0
         };
 
-        MemorySessionStatus info = memorySession.GetStatus();
+        MemorySessionStatus info = memorySession.GetStatus(request.SlotId);
         uint flags = this.BuildFlags(slot.Token);
 
         return new GetTokenInfoEnvelope()
