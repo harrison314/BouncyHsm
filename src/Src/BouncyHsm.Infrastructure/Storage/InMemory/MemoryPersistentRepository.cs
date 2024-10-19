@@ -129,6 +129,28 @@ internal class MemoryPersistentRepository : IPersistentRepository
         return new ValueTask<IReadOnlyList<SlotEntity>>(this.slots);
     }
 
+    public ValueTask<bool> ExecuteSlotCommand(uint slotId, IPersistentRepositorySlotCommand command, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to ExecuteSlotCommand with slotId {slotId}.", slotId);
+
+        if (command == null) throw new ArgumentNullException(nameof(command));
+
+        SlotEntity? slot = this.slots.SingleOrDefault(t => t.SlotId == slotId);
+        if (slot == null)
+        {
+            this.logger.LogError("Slot with id {slotId} does not exists.", slotId);
+            throw new BouncyHsmStorageException($"Slot with id {slotId} does not exists.");
+        }
+
+        bool changed = command.UpdateSlot(slot);
+        if (changed)
+        {
+            this.logger.LogInformation("Slot with id {slotId} chaned using command {command}.", slotId, command);
+        }
+
+        return new ValueTask<bool>(changed);
+    }
+
     public ValueTask StoreObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to StoreObject with slotId {slotId}.", slotId);
@@ -183,7 +205,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
             return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token).SoPin == pin);
         }
 
-        throw new NotSupportedException();
+        throw new NotSupportedException($"User type {userType} is not supported.");
     }
 
     public ValueTask<StorageObject?> TryLoadObject(uint slotId, Guid id, CancellationToken cancellationToken)

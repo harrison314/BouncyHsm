@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace BouncyHsm.Infrastructure.Storage.LiteDbFile;
@@ -179,7 +180,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         int deletedSlots = collection.DeleteMany(t => t.SlotId == slotId);
         if (deletedSlots != 1)
         {
-            throw new BouncyHsmNotFoundException("Slot with slotId {slotId} not found.");
+            throw new BouncyHsmNotFoundException($"Slot with slotId {slotId} not found.");
         }
 
         this.logger.LogDebug("Slot with slotId {slotId} has removed from database.", slotId);
@@ -212,6 +213,42 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         }
 
         return new ValueTask();
+    }
+
+    public ValueTask<bool> ExecuteSlotCommand(uint slotId, IPersistentRepositorySlotCommand command, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to ExecuteSlotCommand with slotId {slotId}.", slotId);
+
+        ILiteCollection<SlotModel> collection = this.database.GetCollection<SlotModel>();
+
+        bool hasChanged = this.database.ExecuteInTransaction<bool>(db =>
+         {
+             ILiteCollection<SlotModel> collection = db.GetCollection<SlotModel>();
+             SlotModel? model = collection.FindOne(t => t.SlotId == slotId);
+             if (model == null)
+             {
+                 throw new BouncyHsmNotFoundException($"Slot with slotId {slotId} not found.");
+             }
+
+             SlotMapper mapper = new SlotMapper();
+
+             SlotEntity entity = mapper.MapSlot(model);
+             bool changed = command.UpdateSlot(entity);
+             if (changed)
+             {
+                 SlotModel updatedModel = mapper.MapSlot(entity);
+                 collection.Update(updatedModel);
+             }
+
+             return changed;
+         });
+
+        if (hasChanged)
+        {
+            this.logger.LogInformation("Slot with id {slotId} chaned using command {command}.", slotId, command);
+        }
+
+        return new ValueTask<bool>(hasChanged);
     }
 
     public ValueTask<bool> ValidatePin(SlotEntity slot, CKU userType, string pin, object? context, CancellationToken cancellationToken)

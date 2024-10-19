@@ -19,13 +19,15 @@ public interface IPersistentRepository
     ValueTask DeleteSlot(uint slotId, CancellationToken cancellationToken);
 
     ValueTask<bool> ValidatePin(SlotEntity slot, CKU userType, string pin, object? context, CancellationToken cancellationToken);
-   
+
+    ValueTask<bool> ExecuteSlotCommand(uint slotId, IPersistentRepositorySlotCommand command, CancellationToken cancellationToken);
+
     ValueTask StoreObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken);
 
     ValueTask UpdateObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken);
 
     ValueTask<IReadOnlyList<StorageObject>> FindObjects(uint slotId, FindObjectSpecification specification, CancellationToken cancellationToken);
-   
+
     ValueTask<StorageObject?> TryLoadObject(uint slotId, Guid id, CancellationToken cancellationToken);
 
     ValueTask DestroyObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken);

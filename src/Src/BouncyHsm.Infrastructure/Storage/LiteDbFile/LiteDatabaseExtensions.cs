@@ -28,4 +28,26 @@ internal static class LiteDatabaseExtensions
             throw;
         }
     }
+
+    public static T ExecuteInTransaction<T>(this LiteDatabase database, Func<LiteDatabase, T> function)
+    {
+        if (!database.BeginTrans())
+        {
+            throw new InvalidProgramException("Reentrant transaction is not supported.");
+        }
+
+        try
+        {
+            T result = function.Invoke(database);
+            database.Commit();
+
+            return result;
+        }
+        catch (Exception)
+        {
+            database.Rollback();
+
+            throw;
+        }
+    }
 }
