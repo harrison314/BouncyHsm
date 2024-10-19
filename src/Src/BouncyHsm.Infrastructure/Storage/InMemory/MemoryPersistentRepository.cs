@@ -205,6 +205,11 @@ internal class MemoryPersistentRepository : IPersistentRepository
             return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token).SoPin == pin);
         }
 
+        if (userType == CKU.CKU_CONTEXT_SPECIFIC)
+        {
+            return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token).SignaturePin == pin);
+        }
+
         throw new NotSupportedException($"User type {userType} is not supported.");
     }
 
