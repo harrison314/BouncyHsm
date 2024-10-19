@@ -20,6 +20,8 @@ public static class Program
                 slot.AddCommand<ListSlotsCommand>("list").WithDescription("List all slots and tokens.");
                 slot.AddCommand<CreateSlotCommand>("create").WithDescription("Create a new slot with token.");
                 slot.AddCommand<DeleteSlotCommand>("delete").WithDescription("Delete slot with token.");
+                slot.AddCommand<PlugTokenCommand>("plug").WithDescription("Plug token into slot.");
+                slot.AddCommand<UnplugTokenCommand>("unplug").WithDescription("Unplug token from slot.");
 
                 slot.SetDescription("Slot manipulation.");
             });

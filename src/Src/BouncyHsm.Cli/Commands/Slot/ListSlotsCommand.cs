@@ -34,6 +34,7 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
         table.AddColumn("Token SerialNumber");
         table.AddColumn("With HW RNG");
         table.AddColumn("With Qualified Area");
+        table.AddColumn("Plugged token");
 
         foreach (SlotDto slot in slots)
         {
@@ -42,10 +43,21 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
                 new Markup(Markup.Escape(slot.Token.Label)),
                 new Markup(Markup.Escape(slot.Token.SerialNumber)),
                 new Markup(slot.Token.SimulateHwRng ? "[green]yes[/]" : "[yellow]no[/]"),
-                new Markup(slot.Token.SimulateQualifiedArea ? "[green]yes[/]" : "[yellow]no[/]"));
+                new Markup(slot.Token.SimulateQualifiedArea ? "[green]yes[/]" : "[yellow]no[/]"),
+                new Markup(this.FormatPluggedColumn(slot)));
         }
 
         AnsiConsole.Write(table);
         return 0;
+    }
+
+    private string FormatPluggedColumn(SlotDto slot)
+    {
+        if (!slot.IsRemovableDevice)
+        {
+            return "[grey]alwais[/]";
+        }
+
+        return slot.IsUnplugged ? "[red]no[/]" : "[green]yes[/]";
     }
 }
