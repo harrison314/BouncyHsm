@@ -3270,6 +3270,73 @@ public partial class CopyObjectEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class WaitForSlotEventRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint Flags
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public bool IsSlotPtrSet
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public bool IsReservedPtrSet
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class WaitForSlotEventEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public WaitForSlotEventData? Data
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class WaitForSlotEventData
+{
+    [Key(0)]
+    public uint SlotId
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public partial class CkP_MacGeneralParams
 {
     [Key(0)]

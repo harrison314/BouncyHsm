@@ -78,6 +78,7 @@ public static partial class RequestProcessor
         "DecryptFinal" => ProcessRequestBody<DecryptFinalRequest, DecryptFinalEnvelope>(serviceProvider, "DecryptFinal", requestBody, static ckRv => new DecryptFinalEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "WrapKey" => ProcessRequestBody<WrapKeyRequest, WrapKeyEnvelope>(serviceProvider, "WrapKey", requestBody, static ckRv => new WrapKeyEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "UnwrapKey" => ProcessRequestBody<UnwrapKeyRequest, UnwrapKeyEnvelope>(serviceProvider, "UnwrapKey", requestBody, static ckRv => new UnwrapKeyEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "WaitForSlotEvent" => ProcessRequestBody<WaitForSlotEventRequest, WaitForSlotEventEnvelope>(serviceProvider, "WaitForSlotEvent", requestBody, static ckRv => new WaitForSlotEventEnvelope(){ Rv = ckRv }, logger, cancellationToken),
           _ => throw new InvalidOperationException($"RPC operation {header.Operation} is not supported.")
       };
    }

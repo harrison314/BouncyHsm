@@ -3396,5 +3396,42 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    WaitForSlotEventRequest request;
+    WaitForSlotEventEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.Flags = (uint32_t)flags;
+    request.IsSlotPtrSet = pSlot != NULL;
+    request.IsReservedPtrSet = pReserved != NULL;
+
+    int rv = nmrpc_call_WaitForSlotEvent(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    if ((CK_RV)envelope.Rv == CKR_OK)
+    {
+        if (pSlot == NULL)
+        {
+            return CKR_ARGUMENTS_BAD;
+        }
+
+        *pSlot = (CK_SLOT_ID)envelope.Data->SlotId;
+    }
+
+    WaitForSlotEventEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }

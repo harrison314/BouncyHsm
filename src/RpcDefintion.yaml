@@ -219,6 +219,10 @@ Rpc:
     Summary: Call for C_UnwrapKey
     Request: UnwrapKeyRequest
     Response: UnwrapKeyEnvelope
+  WaitForSlotEvent:
+    Summary: Call for C_WaitForSlotEvent
+    Request: WaitForSlotEventRequest
+    Response: WaitForSlotEventEnvelope
 
 Messages:
   AppIdentification:
@@ -1089,6 +1093,25 @@ Messages:
     Fields:
       Rv: uint32
       Data: CopyObjectData?
+
+  WaitForSlotEventRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      Flags: uint32
+      IsSlotPtrSet: bool
+      IsReservedPtrSet: bool
+
+  WaitForSlotEventEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: WaitForSlotEventData?
+
+  WaitForSlotEventData:
+    Summary:
+    Fields:
+      SlotId: uint32
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

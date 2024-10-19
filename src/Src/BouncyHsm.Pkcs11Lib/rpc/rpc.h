@@ -141,6 +141,9 @@ typedef struct _SetAttributeValueEnvelope SetAttributeValueEnvelope;
 typedef struct _CopyObjectRequest CopyObjectRequest;
 typedef struct _CopyObjectData CopyObjectData;
 typedef struct _CopyObjectEnvelope CopyObjectEnvelope;
+typedef struct _WaitForSlotEventRequest WaitForSlotEventRequest;
+typedef struct _WaitForSlotEventEnvelope WaitForSlotEventEnvelope;
+typedef struct _WaitForSlotEventData WaitForSlotEventData;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1593,6 +1596,37 @@ int CopyObjectEnvelope_Serialize(cmp_ctx_t* ctx, CopyObjectEnvelope* value);
 int CopyObjectEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, CopyObjectEnvelope* value);
 int CopyObjectEnvelope_Release(CopyObjectEnvelope* value);
 
+typedef struct _WaitForSlotEventRequest
+{
+    AppIdentification AppId;
+    uint32_t Flags;
+    bool IsSlotPtrSet;
+    bool IsReservedPtrSet;
+} WaitForSlotEventRequest;
+
+int WaitForSlotEventRequest_Serialize(cmp_ctx_t* ctx, WaitForSlotEventRequest* value);
+int WaitForSlotEventRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, WaitForSlotEventRequest* value);
+int WaitForSlotEventRequest_Release(WaitForSlotEventRequest* value);
+
+typedef struct _WaitForSlotEventEnvelope
+{
+    uint32_t Rv;
+    WaitForSlotEventData* Data;
+} WaitForSlotEventEnvelope;
+
+int WaitForSlotEventEnvelope_Serialize(cmp_ctx_t* ctx, WaitForSlotEventEnvelope* value);
+int WaitForSlotEventEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, WaitForSlotEventEnvelope* value);
+int WaitForSlotEventEnvelope_Release(WaitForSlotEventEnvelope* value);
+
+typedef struct _WaitForSlotEventData
+{
+    uint32_t SlotId;
+} WaitForSlotEventData;
+
+int WaitForSlotEventData_Serialize(cmp_ctx_t* ctx, WaitForSlotEventData* value);
+int WaitForSlotEventData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, WaitForSlotEventData* value);
+int WaitForSlotEventData_Release(WaitForSlotEventData* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1783,5 +1817,6 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
 int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* request, DecryptFinalEnvelope* response);
 int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, WrapKeyEnvelope* response);
 int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request, UnwrapKeyEnvelope* response);
+int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventRequest* request, WaitForSlotEventEnvelope* response);
 
 #endif // NMRPC_rpc

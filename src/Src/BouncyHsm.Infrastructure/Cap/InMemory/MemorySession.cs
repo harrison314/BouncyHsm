@@ -178,11 +178,13 @@ public class MemorySession : IMemorySession
     {
         lock (this.slotEvents)
         {
-            uint? slotId = this.slotEvents.FirstOrDefault();
-            if (slotId.HasValue)
+            if (this.slotEvents.Count == 0)
             {
-                this.slotEvents.Remove(slotId.Value);
+                return null;
             }
+
+            uint slotId = this.slotEvents.First();
+            this.slotEvents.Remove(slotId);
 
             return slotId;
         }
