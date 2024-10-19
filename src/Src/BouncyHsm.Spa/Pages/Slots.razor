@@ -35,7 +35,7 @@ else
                         <p>@slot.Description <CopyBtn Text="@slot.Description" /></p>
                     </div>
                     <div class="col-3">
-                         <table class="table table-borderless table-sm">
+                        <table class="table table-borderless table-sm">
                             <tbody>
                                 <tr>
                                     <td>Token label:</td>
@@ -47,6 +47,24 @@ else
                                     <td>@slot.Token.SerialNumber</td>
                                     <td><CopyBtn Text="@slot.Token.SerialNumber" /></td>
                                 </tr>
+                                <tr>
+                                    <td>Removable:</td>
+                                    <td>@slot.IsRemovableDevice</td>
+                                </tr>
+                                @if (slot.IsRemovableDevice)
+                                {
+                                    <tr>
+                                        <td>Token state:</td>
+                                        @if(slot.IsUnplugged)
+                                        {
+                                            <td class="text-danger">Unpluged</td>
+                                        }
+                                        else
+                                        {
+                                            <td>Pluged</td>
+                                        }
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -81,6 +99,23 @@ else
                         <NavLink href="@($"Slots/Detail/{slot.SlotId}")" class="btn btn-outline-primary mb-1 btn-w-action"><span class="icon-zoom-in icon-1x"></span> Detail</NavLink>
                         <br />
                         <NavLink href="@($"Slots/{slot.SlotId}/Pkcs")" class="btn btn-outline-primary mb-1 btn-w-action"><span class="icon-Approval icon-1x"></span> PKCS</NavLink>
+
+                        @if (slot.IsRemovableDevice)
+                        {
+                            <br />
+                            @if (slot.IsUnplugged)
+                            {
+                                <button class="btn btn-primary mb-1 btn-w-action" @onclick="@(_ => this.SetPluggedState(slot, true))">
+                                    <span class="icon-Connected icon-1x"></span> Plug
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger mb-1 btn-w-action" @onclick="@(_ => this.SetPluggedState(slot, false))">
+                                    <span class="icon-Disconnected icon-1x"></span> Unplug
+                                </button>
+                            }
+                        }
                     </div>
                 </div>
             </div>
@@ -101,5 +136,22 @@ else
         this.slots = null;
         await Task.Yield();
         this.slots = await this.bouncyHsmClient.GetAllSlotsAsync();
+    }
+
+    private async Task SetPluggedState(SlotDto slot, bool plugged)
+    {
+        this.slots = null;
+        try
+        {
+            await this.bouncyHsmClient.SetPluggedStateAsync(slot.SlotId, new SetPluggedStateDto()
+                {
+                    Plugged = plugged
+                });
+        }
+        finally
+        {
+            await Task.Yield();
+            this.slots = await this.bouncyHsmClient.GetAllSlotsAsync();
+        }
     }
 }
