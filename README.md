@@ -21,6 +21,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 * Multiple application and users access using PKCS#11 interface.
 * Slot and crypto object management using web interface and REST API.
   * Create/remove slots.
+  * Plug and unplug devices (tokens).
   * Import P12/PFX files.
   * Import crypto objects in PEM format.
   * Generate CSR, generate self-signed certificate, import certificate from file.
@@ -28,6 +29,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
   * ...
 * Possibility to simulate cards with a qualified area and a signature pin.
 * Possibility to simulate _protected authentication path_ using web interface.
+* Possibility to simulate removable devices (tokens).
 * Supports RSA keys (with size 2-6K).
 * Supports [80 named elliptic curves](/Doc/SuportedAlgorithms.md#elliptic-curves).
 * Supports secrets (HMAC, derive,...)
