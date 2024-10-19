@@ -64,11 +64,11 @@ public class SlotController : Controller
         return result.ToActionResult();
     }
 
-    [HttpPost("{slotId}/PluggedState", Name = nameof(SetPluggedState))]
+    [HttpPost("{slotId}/PluggedState", Name = nameof(SetSlotPluggedState))]
     [ProducesResponseType(typeof(void), 200)]
-    public async Task<IActionResult> SetPluggedState(int slotId, [FromBody] SetPluggedStateDto setPluggedStateDto)
+    public async Task<IActionResult> SetSlotPluggedState(int slotId, [FromBody] SetPluggedStateDto setPluggedStateDto)
     {
-        this.logger.LogTrace("Entering to SetPluggedState with {slotId}, plugged {plugged}", slotId, setPluggedStateDto.Plugged);
+        this.logger.LogTrace("Entering to SetSlotPluggedState with {slotId}, plugged {plugged}", slotId, setPluggedStateDto.Plugged);
 
         VoidDomainResult result = await this.slotFacade.SetPluggedState((uint)slotId,
             setPluggedStateDto.Plugged,
