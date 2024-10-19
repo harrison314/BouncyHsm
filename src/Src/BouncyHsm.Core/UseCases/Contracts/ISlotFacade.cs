@@ -12,4 +12,6 @@ public interface ISlotFacade
     ValueTask<DomainResult<SlotEntity>> GetSlotById(uint slotId, CancellationToken cancellationToken);
 
     ValueTask<VoidDomainResult> DeleteSlot(uint slotId, CancellationToken cancellationToken);
+
+    ValueTask<VoidDomainResult> SetPluggedState(uint slotId, bool plugged, CancellationToken cancellationToken);
 }

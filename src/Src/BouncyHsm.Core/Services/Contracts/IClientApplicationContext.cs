@@ -15,4 +15,6 @@ public interface IClientApplicationContext
     ClientApplicationContextStats GetStats();
 
     IEnumerable<IMemorySession> GetActiveMemorySessions();
+
+    void NotifySlotEvent(uint slotId);
 }

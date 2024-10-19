@@ -12,6 +12,7 @@ public class MemorySession : IMemorySession
     private readonly ConcurrentDictionary<uint, P11Session> sessions;
     private readonly ConcurrentDictionary<Guid, uint> objectHandlesToGuid;
     private readonly ConcurrentDictionary<uint, Guid> objectHandlesToHandles;
+    private readonly HashSet<uint> slotEvents;
     private DateTime lastActivity;
 
     public Guid Id
@@ -32,8 +33,8 @@ public class MemorySession : IMemorySession
     public DateTime LastActivity
     {
         get => this.lastActivity;
-        set => this.lastActivity = (value >= this.lastActivity) 
-            ? value 
+        set => this.lastActivity = (value >= this.lastActivity)
+            ? value
             : throw new ArgumentException("The last activity must be later than the start and the last activity.", nameof(this.LastActivity));
     }
 
@@ -42,6 +43,7 @@ public class MemorySession : IMemorySession
         this.sessions = new ConcurrentDictionary<uint, P11Session>();
         this.objectHandlesToGuid = new ConcurrentDictionary<Guid, uint>();
         this.objectHandlesToHandles = new ConcurrentDictionary<uint, Guid>();
+        this.slotEvents = new HashSet<uint>();
         this.Id = Guid.NewGuid();
         this.Data = sessionData;
         this.StartAt = startAt;
@@ -169,6 +171,28 @@ public class MemorySession : IMemorySession
         if (this.objectHandlesToGuid.TryRemove(id, out uint handle))
         {
             this.objectHandlesToHandles.TryRemove(handle, out _);
+        }
+    }
+
+    public uint? GetLastSlotEvent()
+    {
+        lock (this.slotEvents)
+        {
+            uint? slotId = this.slotEvents.FirstOrDefault();
+            if (slotId.HasValue)
+            {
+                this.slotEvents.Remove(slotId.Value);
+            }
+
+            return slotId;
+        }
+    }
+
+    internal void NotifySlotEvent(uint slotId)
+    {
+        lock (this.slotEvents)
+        {
+            _ = this.slotEvents.Add(slotId);
         }
     }
 }

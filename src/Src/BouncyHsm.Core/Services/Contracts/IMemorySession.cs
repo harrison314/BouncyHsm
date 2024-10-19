@@ -44,4 +44,6 @@ public interface IMemorySession
     Guid? FindObjectHandle(uint objectHandle);
 
     void DestroyObjectHandle(Guid id);
+
+    uint? GetLastSlotEvent();
 }

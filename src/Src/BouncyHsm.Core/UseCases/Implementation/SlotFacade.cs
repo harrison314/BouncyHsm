@@ -16,11 +16,13 @@ namespace BouncyHsm.Core.UseCases.Implementation;
 public class SlotFacade : ISlotFacade
 {
     private readonly IPersistentRepository persistentRepository;
+    private readonly IClientApplicationContext clientAppCtx;
     private readonly ILogger<SlotFacade> logger;
 
-    public SlotFacade(IPersistentRepository persistentRepository, ILogger<SlotFacade> logger)
+    public SlotFacade(IPersistentRepository persistentRepository, IClientApplicationContext clientAppCtx, ILogger<SlotFacade> logger)
     {
         this.persistentRepository = persistentRepository;
+        this.clientAppCtx = clientAppCtx;
         this.logger = logger;
     }
 
@@ -91,6 +93,7 @@ public class SlotFacade : ISlotFacade
         SlotEntity? result = await this.persistentRepository.GetSlot(slotId, cancellationToken);
         if (result == null)
         {
+            this.logger.LogError("Slot with slotId {slotId} not found.", slotId);
             return new DomainResult<SlotEntity>.NotFound();
         }
 
@@ -104,6 +107,49 @@ public class SlotFacade : ISlotFacade
         {
             await this.persistentRepository.DeleteSlot(slotId, cancellationToken);
             this.logger.LogInformation("Removed slot with slotId {slotId}.", slotId);
+
+            return new VoidDomainResult.Ok();
+        }
+        catch (BouncyHsmNotFoundException ex)
+        {
+            this.logger.LogError(ex, "Slot {slotId} not found.", slotId);
+            return new VoidDomainResult.NotFound();
+        }
+    }
+
+    public async ValueTask<VoidDomainResult> SetPluggedState(uint slotId, bool plugged, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to SetPluggedState with slotId {slotId}, plugged {plugged}.", slotId, plugged);
+        try
+        {
+            SlotEntity? slot = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+            if (slot == null)
+            {
+                this.logger.LogError("Slot with slotId {slotId} not found.", slotId);
+                return new VoidDomainResult.NotFound();
+            }
+
+            if (!slot.IsRemovableDevice)
+            {
+                this.logger.LogError("Slot with slotId {slotId} is not removable device.", slotId);
+                return new VoidDomainResult.InvalidInput("Slot is not removable device.");
+            }
+
+            if (slot.IsUnplugged != plugged)
+            {
+                this.logger.LogDebug("Slot with slotId {slotId} already set IsUnplugged to {isUnplugged}.", slotId, slot.IsUnplugged);
+                return new VoidDomainResult.Ok();
+            }
+
+            bool slotChanged = await this.persistentRepository.ExecuteSlotCommand(slotId,
+                plugged ? new SlotCommands.PlugDeviceCommand() : new SlotCommands.UnplugDeviceCommand(),
+                cancellationToken);
+
+            if (slotChanged)
+            {
+                this.clientAppCtx.NotifySlotEvent(slotId);
+                this.logger.LogInformation("Slot with slotId {slotId} set IsUnplugged to {isUnplugged}.", slotId, slot.IsUnplugged);
+            }
 
             return new VoidDomainResult.Ok();
         }

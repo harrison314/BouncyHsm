@@ -63,4 +63,17 @@ public class SlotController : Controller
 
         return result.ToActionResult();
     }
+
+    [HttpPost("{slotId}/PluggedState", Name = nameof(SetPluggedState))]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task<IActionResult> SetPluggedState(int slotId, [FromBody] SetPluggedStateDto setPluggedStateDto)
+    {
+        this.logger.LogTrace("Entering to SetPluggedState with {slotId}, plugged {plugged}", slotId, setPluggedStateDto.Plugged);
+
+        VoidDomainResult result = await this.slotFacade.SetPluggedState((uint)slotId,
+            setPluggedStateDto.Plugged,
+            this.HttpContext.RequestAborted);
+
+        return result.ToActionResult();
+    }
 }

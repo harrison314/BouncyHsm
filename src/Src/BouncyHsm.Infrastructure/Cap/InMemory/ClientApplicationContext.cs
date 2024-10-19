@@ -93,4 +93,12 @@ public class ClientApplicationContext : IClientApplicationContext
     {
         return this.apps.Values;
     }
+
+    public void NotifySlotEvent(uint slotId)
+    {
+        foreach (MemorySession ms in this.apps.Values)
+        {
+            ms.NotifySlotEvent(slotId);
+        }
+    }
 }
