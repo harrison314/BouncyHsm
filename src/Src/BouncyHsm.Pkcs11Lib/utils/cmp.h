@@ -1,3 +1,4 @@
+// Version from dommit 9b8fa1ec9f409d4fa74281d4a57d6c2163bb1a86
 /*
 The MIT License (MIT)
 
@@ -145,7 +146,7 @@ uint32_t cmp_version(void);
 uint32_t cmp_mp_version(void);
 
 /* Returns a string description of a CMP context's error */
-const char* cmp_strerror(cmp_ctx_t *ctx);
+const char* cmp_strerror(const cmp_ctx_t *ctx);
 
 /* Writes a signed integer to the backend */
 bool cmp_write_integer(cmp_ctx_t *ctx, int64_t d);
@@ -298,7 +299,7 @@ bool cmp_read_str_size(cmp_ctx_t *ctx, uint32_t *size);
 
 /*
  * Reads a string from the backend; according to the spec, the string's data
- * ought to be encoded using UTF-8, 
+ * ought to be encoded using UTF-8, but CMP leaves that job up to the programmer.
  */
 bool cmp_read_str(cmp_ctx_t *ctx, char *data, uint32_t *size);
 
