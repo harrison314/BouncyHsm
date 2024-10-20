@@ -55,6 +55,7 @@ bouncy-pkcs11.o: $(SRC_DIR)/bouncy-pkcs11.c $(HEADERFILES)
 
 clean:
 	-rm -f *.o
+	-rm -f *.so
 
 cleanso:
 	-rm -f *.so
