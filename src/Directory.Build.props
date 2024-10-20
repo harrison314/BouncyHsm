@@ -10,6 +10,6 @@
   <Copyright>Copyright (c) $([System.DateTime]::Now.ToString('yyyy')), Jozef Gajdoš</Copyright>
   <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-  <Version>1.0.1</Version>
+  <Version>1.1.0</Version>
  </PropertyGroup>
 </Project>
