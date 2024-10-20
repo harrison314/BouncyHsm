@@ -257,7 +257,12 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         ILiteCollection<PasswordsModel> passwordCollection = this.database.GetCollection<PasswordsModel>();
 
-        PasswordsModel model = passwordCollection.FindById(slot.Id);
+        PasswordsModel? model = passwordCollection.FindById(slot.Id);
+        if (model == null)
+        {
+            throw new BouncyHsmNotFoundException($"Slot with slotId {slot.SlotId} not found.");
+        }
+
         Pbkdf2PasswordModel? hashModel = userType switch
         {
             CKU.CKU_USER => model.UserPin,
@@ -272,6 +277,46 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         }
 
         return new ValueTask<bool>(this.VerifyHashPassword(hashModel, pin));
+    }
+    public ValueTask SetPin(SlotEntity slot, CKU userType, string newPin, object? context, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to SetPin with slotId {slotId}, userType {userType}.", slot.Id, userType);
+
+        Pbkdf2PasswordModel hashModel = this.HashPassword(newPin);
+
+        ILiteCollection<PasswordsModel> passwordCollection = this.database.GetCollection<PasswordsModel>();
+
+        PasswordsModel model = passwordCollection.FindById(slot.Id);
+        if (model == null)
+        {
+            throw new BouncyHsmNotFoundException($"Slot with slotId {slot.SlotId} not found.");
+        }
+
+        switch (userType)
+        {
+            case CKU.CKU_USER:
+                model.UserPin = hashModel;
+                break;
+
+            case CKU.CKU_SO:
+                model.SoPin = hashModel;
+                break;
+
+            case CKU.CKU_CONTEXT_SPECIFIC:
+                model.SignaturePin = hashModel;
+                break;
+
+            default:
+                throw new InvalidProgramException($"Enum value {userType} is not supported.");
+        }
+
+        this.database.ExecuteInTransaction(db =>
+        {
+            passwordCollection.Update(model);
+        });
+
+        this.logger.LogInformation("PIN {userType} changed for slot Id {slotId}.", userType, slot.Id);
+        return new ValueTask();
     }
 
     #endregion

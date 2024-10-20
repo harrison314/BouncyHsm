@@ -38,6 +38,10 @@ Rpc:
     Summary: Call for C_GetMechanismInfo
     Request: GetMechanismInfoRequest
     Response: GetMechanismInfoEnvelope
+  SetPin:
+    Summary: Call for C_SetPIN
+    Request: SetPinRequest
+    Response: SetPinEnvelope
   OpenSession:
     Summary: Call for C_OpenSession
     Request: OpenSessionRequest
@@ -413,6 +417,19 @@ Messages:
     Fields:
       Rv: uint32
       Data: MechanismInfo?
+
+  SetPinRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Utf8OldPin: binary?
+      Utf8NewPin: binary?
+
+  SetPinEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
 
   OpenSessionRequest:
     Summary:

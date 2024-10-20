@@ -18,4 +18,6 @@ internal static partial class SlotControllerMapper
     public static partial List<SlotDto> ToDto(IReadOnlyList<SlotEntity> entities);
 
     public static partial CreateSlotResultDto ToDto(CreateSlotResult result);
+
+    public static partial SetTokenPinData MapFromDto(SetTokenPinDataDto dto);
 }

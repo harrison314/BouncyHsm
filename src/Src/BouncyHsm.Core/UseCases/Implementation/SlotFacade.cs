@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -159,6 +158,47 @@ public class SlotFacade : ISlotFacade
             return new VoidDomainResult.NotFound();
         }
     }
+
+    public async ValueTask<VoidDomainResult> SetTokenPin(uint slotId, SetTokenPinData pinData, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to SetTokenPin with slotId {slotId}, userType {userType}.", slotId, pinData.UserType);
+        try
+        {
+            SlotEntity? slot = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+            if (slot == null)
+            {
+                this.logger.LogError("Slot with slotId {slotId} not found.", slotId);
+                return new VoidDomainResult.NotFound();
+            }
+
+            if (string.IsNullOrEmpty(pinData.NewPin))
+            {
+                this.logger.LogError("Pin is empty string for SetTokenPin with slotId {slotId}", slotId);
+                return new VoidDomainResult.InvalidInput("Pin can not by empty string.");
+            }
+
+            if (pinData.UserType == Services.Contracts.P11.CKU.CKU_CONTEXT_SPECIFIC && !slot.Token.SimulateQualifiedArea)
+            {
+                this.logger.LogError("Slot with slotId {slotId} can not simlate quealifield area - can not use CKU_CONTEXT_SPECIFIC user type.", slotId);
+                return new VoidDomainResult.InvalidInput("Slot can not simlate quealifield area - can not use CKU_CONTEXT_SPECIFIC user type.");
+            }
+
+            await this.persistentRepository.SetPin(slot,
+                pinData.UserType,
+                pinData.NewPin,
+                null,
+                cancellationToken);
+
+            this.logger.LogInformation("New pin has set for token with slotId {slotId} and user type {userType}.", slotId, pinData.UserType);
+            return new VoidDomainResult.Ok();
+        }
+        catch (BouncyHsmNotFoundException ex)
+        {
+            this.logger.LogError(ex, "Slot {slotId} not found.", slotId);
+            return new VoidDomainResult.NotFound();
+        }
+    }
+
 
     private string CreateSerial(int serialLen = 8)
     {

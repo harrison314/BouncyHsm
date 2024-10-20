@@ -16,7 +16,7 @@ public sealed class NullProtectedAuthPathProvider : IProtectedAuthPathProvider
         
     }
 
-    public Task<byte[]?> TryLoginProtected(CKU userType, SlotEntity slot, CancellationToken cancellationToken)
+    public Task<byte[]?> TryLoginProtected(ProtectedAuthPathWindowType windowType, CKU userType, SlotEntity slot, CancellationToken cancellationToken)
     {
         if (slot == null) throw new ArgumentNullException(nameof(slot));
 

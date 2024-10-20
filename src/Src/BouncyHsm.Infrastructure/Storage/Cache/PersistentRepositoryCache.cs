@@ -113,4 +113,9 @@ public class PersistentRepositoryCache : IPersistentRepository
     {
         return this.repository.ValidatePin(slot, userType, pin, context, cancellationToken);
     }
+
+    public ValueTask SetPin(SlotEntity slot, CKU userType, string newPin, object? context, CancellationToken cancellationToken)
+    {
+        return this.repository.SetPin(slot, userType, newPin, context, cancellationToken);
+    }
 }

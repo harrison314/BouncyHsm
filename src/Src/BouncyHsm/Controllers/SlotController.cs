@@ -76,4 +76,18 @@ public class SlotController : Controller
 
         return result.ToActionResult();
     }
+
+    [HttpPost("{slotId}/TokenPin", Name = nameof(SetTokenPinForSlot))]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task<IActionResult> SetTokenPinForSlot(int slotId, [FromBody] SetTokenPinDataDto setTokenPinDataDto)
+    {
+        this.logger.LogTrace("Entering to SetSlotPluggedState with {slotId}, userType {userType}", slotId, setTokenPinDataDto.UserType);
+
+        SetTokenPinData data = SlotControllerMapper.MapFromDto(setTokenPinDataDto);
+        VoidDomainResult result = await this.slotFacade.SetTokenPin((uint)slotId,
+            data,
+            this.HttpContext.RequestAborted);
+
+        return result.ToActionResult();
+    }
 }

@@ -38,6 +38,8 @@ typedef struct _GetMechanismListEnvelope GetMechanismListEnvelope;
 typedef struct _GetMechanismInfoRequest GetMechanismInfoRequest;
 typedef struct _MechanismInfo MechanismInfo;
 typedef struct _GetMechanismInfoEnvelope GetMechanismInfoEnvelope;
+typedef struct _SetPinRequest SetPinRequest;
+typedef struct _SetPinEnvelope SetPinEnvelope;
 typedef struct _OpenSessionRequest OpenSessionRequest;
 typedef struct _OpenSessionEnvelope OpenSessionEnvelope;
 typedef struct _CloseSessionRequest CloseSessionRequest;
@@ -502,6 +504,27 @@ typedef struct _GetMechanismInfoEnvelope
 int GetMechanismInfoEnvelope_Serialize(cmp_ctx_t* ctx, GetMechanismInfoEnvelope* value);
 int GetMechanismInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, GetMechanismInfoEnvelope* value);
 int GetMechanismInfoEnvelope_Release(GetMechanismInfoEnvelope* value);
+
+typedef struct _SetPinRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    Binary* Utf8OldPin;
+    Binary* Utf8NewPin;
+} SetPinRequest;
+
+int SetPinRequest_Serialize(cmp_ctx_t* ctx, SetPinRequest* value);
+int SetPinRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SetPinRequest* value);
+int SetPinRequest_Release(SetPinRequest* value);
+
+typedef struct _SetPinEnvelope
+{
+    uint32_t Rv;
+} SetPinEnvelope;
+
+int SetPinEnvelope_Serialize(cmp_ctx_t* ctx, SetPinEnvelope* value);
+int SetPinEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SetPinEnvelope* value);
+int SetPinEnvelope_Release(SetPinEnvelope* value);
 
 typedef struct _OpenSessionRequest
 {
@@ -1774,6 +1797,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
 int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* request, GetTokenInfoEnvelope* response);
 int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListRequest* request, GetMechanismListEnvelope* response);
 int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoRequest* request, GetMechanismInfoEnvelope* response);
+int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPinEnvelope* response);
 int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* request, OpenSessionEnvelope* response);
 int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* request, CloseSessionEnvelope* response);
 int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsRequest* request, CloseAllSessionsEnvelope* response);

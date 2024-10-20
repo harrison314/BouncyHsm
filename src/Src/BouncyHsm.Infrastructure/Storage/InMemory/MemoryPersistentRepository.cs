@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
@@ -208,6 +209,31 @@ internal class MemoryPersistentRepository : IPersistentRepository
         if (userType == CKU.CKU_CONTEXT_SPECIFIC)
         {
             return new ValueTask<bool>(((InMemoryTokenInfo)slot.Token).SignaturePin == pin);
+        }
+
+        throw new NotSupportedException($"User type {userType} is not supported.");
+    }
+
+    public ValueTask SetPin(SlotEntity slot, CKU userType, string newPin, object? context, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to SetPin with slotId {slotId}, userType {userType}.", slot.Id, userType);
+        
+        if (userType == CKU.CKU_USER)
+        {
+            ((InMemoryTokenInfo)slot.Token).UserPin = newPin;
+            return new ValueTask();
+        }
+
+        if (userType == CKU.CKU_SO)
+        {
+            ((InMemoryTokenInfo)slot.Token).SoPin = newPin;
+            return new ValueTask();
+        }
+
+        if (userType == CKU.CKU_CONTEXT_SPECIFIC)
+        {
+            ((InMemoryTokenInfo)slot.Token).SignaturePin = newPin;
+            return new ValueTask();
         }
 
         throw new NotSupportedException($"User type {userType} is not supported.");

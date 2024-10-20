@@ -10,5 +10,5 @@ namespace BouncyHsm.Core.Services.Contracts;
 
 public interface IProtectedAuthPathProvider
 {
-    Task<byte[]?> TryLoginProtected(CKU userType, SlotEntity slot, CancellationToken cancellationToken);
+    Task<byte[]?> TryLoginProtected(ProtectedAuthPathWindowType windowType, CKU userType, SlotEntity slot, CancellationToken cancellationToken);
 }

@@ -61,6 +61,11 @@ public partial class GetMechanismInfoHandler : IRpcRequestHandler<GetMechanismIn
    // Implement in another class
 }
 
+public partial class SetPinHandler : IRpcRequestHandler<SetPinRequest, SetPinEnvelope>
+{
+   // Implement in another class
+}
+
 public partial class OpenSessionHandler : IRpcRequestHandler<OpenSessionRequest, OpenSessionEnvelope>
 {
    // Implement in another class
@@ -299,6 +304,7 @@ public static partial class RpcDefinitionUtils
          { typeof(IRpcRequestHandler<GetTokenInfoRequest, GetTokenInfoEnvelope>), typeof(GetTokenInfoHandler)},
          { typeof(IRpcRequestHandler<GetMechanismListRequest, GetMechanismListEnvelope>), typeof(GetMechanismListHandler)},
          { typeof(IRpcRequestHandler<GetMechanismInfoRequest, GetMechanismInfoEnvelope>), typeof(GetMechanismInfoHandler)},
+         { typeof(IRpcRequestHandler<SetPinRequest, SetPinEnvelope>), typeof(SetPinHandler)},
          { typeof(IRpcRequestHandler<OpenSessionRequest, OpenSessionEnvelope>), typeof(OpenSessionHandler)},
          { typeof(IRpcRequestHandler<CloseSessionRequest, CloseSessionEnvelope>), typeof(CloseSessionHandler)},
          { typeof(IRpcRequestHandler<CloseAllSessionsRequest, CloseAllSessionsEnvelope>), typeof(CloseAllSessionsHandler)},

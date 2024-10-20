@@ -769,6 +769,53 @@ public partial class GetMechanismInfoEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class SetPinRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public byte[]? Utf8OldPin
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public byte[]? Utf8NewPin
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class SetPinEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public partial class OpenSessionRequest : IRpcRequest
 {
     [Key(0)]

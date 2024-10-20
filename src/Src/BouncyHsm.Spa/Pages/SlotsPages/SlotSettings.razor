@@ -1,0 +1,109 @@
+﻿@page "/Slots/{Id:int}/Settings"
+@using BouncyHsm.Client
+@inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation
+@inject ILogger<SlotSettings> logger
+
+<PageTitle>Slot settings</PageTitle>
+<h1>Slot settings</h1>
+@if (this.slot == null)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <div class="row">
+        <div class="col d-flex justify-content-end pb-3">
+            <NavLink href="@($"Slots/Detail/{this.Id}")" class="btn btn-outline-primary btn-w-tm" ActiveClass=""><span class="icon-zoom-in icon-1x"></span> Slot</NavLink>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Settings for slot with token label <em>@slot.Token.Label</em></p>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            @if (this.errorMessage != null)
+            {
+                <div class="mb-6">
+                    <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+                </div>
+            }
+
+            <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit">
+                <ValidatableObjectValidator />
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="mb-1">
+                    <label for="i-userType" class="form-label">User type</label>
+                    <InputSelect class="form-select" @bind-Value="this.model.UserType" id="i-userType">
+                        <option value="@CKU.CKU_USER">CKU_USER (ordinal user)</option>
+                        <option value="@CKU.CKU_SO">CKU_SO (security officer)</option>
+                        @if (this.slot.Token.SimulateQualifiedArea)
+                        {
+                            <option value="@CKU.CKU_CONTEXT_SPECIFIC">CKU_CONTEXT_SPECIFIC (signature PIN)</option>
+                        }
+                    </InputSelect>
+
+                    <ValidationMessage For="() => this.model.UserType" />
+                </div>
+                <div class="mb-1">
+                    <label for="i-newPin" class="form-label">New PIN</label>
+                    <InputText id="i-newPin" class="form-control" @bind-Value="this.model.NewPin" />
+                    <ValidationMessage For="() => this.model.NewPin" />
+                </div>
+                <div class="justify-content-end pt-4">
+                    <button type="submit" class="btn btn-primary"><span class="icon-floppy-disk icon-1x"></span> Set PIN</button>
+                </div>
+            </EditForm>
+
+        </div>
+    </div>
+}
+
+@code {
+    private SlotDto? slot = null;
+    private SetPinModel model = new SetPinModel();
+    private EditContext? editContext;
+    private string? errorMessage = null;
+
+    [Parameter]
+    public int Id
+    {
+        get;
+        set;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.slot = await this.bouncyHsmClient.GetSlotAsync(this.Id);
+        this.editContext = new EditContext(this.model);
+    }
+
+    private async Task HandleSubmit()
+    {
+        this.errorMessage = null;
+        await Task.Yield();
+
+        try
+        {
+            await this.bouncyHsmClient.SetTokenPinForSlotAsync(this.Id,
+            new SetTokenPinDataDto()
+                {
+                    NewPin = this.model.NewPin,
+                    UserType = this.model.UserType
+                });
+
+            this.Navigation.NavigateTo($"Slots/Detail/{this.Id}");
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.logger.LogError(ex, "Error during call Pkcs_GetPkcsObjectsAsync.");
+        }
+    }
+}

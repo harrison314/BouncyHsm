@@ -1104,7 +1104,51 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetPIN)(CK_SESSION_HANDLE hSession, CK_UTF8CHAR_PTR 
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    SetPinRequest request;
+    SetPinEnvelope envelope;
+    Binary oldPinBinary;
+    Binary newPinBinary;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    request.Utf8OldPin = NULL;
+    request.Utf8NewPin = NULL;
+
+    if (NULL != pOldPin)
+    {
+        oldPinBinary.data = (uint8_t*)pOldPin;
+        oldPinBinary.size = (size_t)ulOldLen;
+
+        request.Utf8OldPin = &oldPinBinary;
+    }
+
+    if (NULL != pOldPin)
+    {
+        newPinBinary.data = (uint8_t*)pNewPin;
+        newPinBinary.size = (size_t)ulNewLen;
+
+        request.Utf8NewPin = &newPinBinary;
+    }
+
+    int rv = nmrpc_call_SetPin(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    SetPinEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

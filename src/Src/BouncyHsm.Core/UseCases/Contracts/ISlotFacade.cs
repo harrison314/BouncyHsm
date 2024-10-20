@@ -1,5 +1,4 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
-using BouncyHsm.Core.Services.Contracts.P11;
 
 namespace BouncyHsm.Core.UseCases.Contracts;
 
@@ -14,4 +13,6 @@ public interface ISlotFacade
     ValueTask<VoidDomainResult> DeleteSlot(uint slotId, CancellationToken cancellationToken);
 
     ValueTask<VoidDomainResult> SetPluggedState(uint slotId, bool plugged, CancellationToken cancellationToken);
+    
+    ValueTask<VoidDomainResult> SetTokenPin(uint slotId, SetTokenPinData pinData, CancellationToken cancellationToken);
 }

@@ -19,6 +19,8 @@ public interface IPersistentRepository
     ValueTask DeleteSlot(uint slotId, CancellationToken cancellationToken);
 
     ValueTask<bool> ValidatePin(SlotEntity slot, CKU userType, string pin, object? context, CancellationToken cancellationToken);
+    
+    ValueTask SetPin(SlotEntity slot, CKU userType, string newPin, object? context, CancellationToken cancellationToken);
 
     ValueTask<bool> ExecuteSlotCommand(uint slotId, IPersistentRepositorySlotCommand command, CancellationToken cancellationToken);
 

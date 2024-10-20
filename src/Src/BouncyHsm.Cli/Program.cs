@@ -22,6 +22,7 @@ public static class Program
                 slot.AddCommand<DeleteSlotCommand>("delete").WithDescription("Delete slot with token.");
                 slot.AddCommand<PlugTokenCommand>("plug").WithDescription("Plug token into slot.");
                 slot.AddCommand<UnplugTokenCommand>("unplug").WithDescription("Unplug token from slot.");
+                slot.AddCommand<SetPinCommand>("setPin").WithDescription("Set PIN for token.");
 
                 slot.SetDescription("Slot manipulation.");
             });

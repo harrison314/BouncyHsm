@@ -119,7 +119,8 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
         {
             if (slot.Token.SimulateProtectedAuthPath)
             {
-                utf8Pin = await this.protectedAuthPathProvider.TryLoginProtected((CKU)request.UserType,
+                utf8Pin = await this.protectedAuthPathProvider.TryLoginProtected(ProtectedAuthPathWindowType.Login,
+                    (CKU)request.UserType,
                     slot,
                     cancellationToken);
 

@@ -16,11 +16,20 @@ public class SignalrProtectedAuthPathProvider : IProtectedAuthPathProvider
         this.logger = logger;
     }
 
-    public async Task<byte[]?> TryLoginProtected(CKU userType, SlotEntity slot, CancellationToken cancellationToken)
+    public async Task<byte[]?> TryLoginProtected(ProtectedAuthPathWindowType windowType, CKU userType, SlotEntity slot, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Entering to TryLoginProtected.");
+        this.logger.LogTrace("Entering to TryLoginProtected with windowType {windowType}, userType {userType}, slotId {slotId}.",
+            windowType,
+            userType,
+            slot.SlotId);
 
-        string tolkenInfo = $"Login to: {slot.Token.Label}";
+        string tolkenInfo = windowType switch
+        {
+            ProtectedAuthPathWindowType.SetPin => $"Set PIN for: {slot.Token.Label}",
+            ProtectedAuthPathWindowType.Login => $"Login to: {slot.Token.Label}",
+            _ => throw new InvalidProgramException($"Enum value {windowType} is not supported.")
+        };
+
         byte[]? loginValue = await this.context.PerformLogin(
             userType.ToString(),
             tolkenInfo,
