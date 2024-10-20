@@ -383,11 +383,11 @@ int ArrayOfuint32_t_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, Arr
 
   value->length = (int)array_size;
   value->array = (uint32_t*) malloc(sizeof(uint32_t) * array_size);
+  if (value->array == NULL) return NMRPC_FATAL_ERROR;
   for (i = 0; i < array_size; i++)
   {
-  result = cmp_read_uint(ctx, &value->array[i]);
+   result = cmp_read_uint(ctx, &value->array[i]);
    if (!result) return NMRPC_FATAL_ERROR;
-
   }
 
     return NMRPC_OK;
@@ -442,11 +442,11 @@ int ArrayOfAttrValueFromNative_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_o
 
   value->length = (int)array_size;
   value->array = (AttrValueFromNative*) malloc(sizeof(AttrValueFromNative) * array_size);
+  if (value->array == NULL) return NMRPC_FATAL_ERROR;
   for (i = 0; i < array_size; i++)
   {
-  result = AttrValueFromNative_Deserialize(ctx, NULL, &value->array[i]);
+   result = AttrValueFromNative_Deserialize(ctx, NULL, &value->array[i]);
    if (result != NMRPC_OK) return result;
-
   }
 
     return NMRPC_OK;
@@ -510,11 +510,11 @@ int ArrayOfGetAttributeInputValues_Deserialize(cmp_ctx_t* ctx, cmp_object_t* sta
 
   value->length = (int)array_size;
   value->array = (GetAttributeInputValues*) malloc(sizeof(GetAttributeInputValues) * array_size);
+  if (value->array == NULL) return NMRPC_FATAL_ERROR;
   for (i = 0; i < array_size; i++)
   {
-  result = GetAttributeInputValues_Deserialize(ctx, NULL, &value->array[i]);
+   result = GetAttributeInputValues_Deserialize(ctx, NULL, &value->array[i]);
    if (result != NMRPC_OK) return result;
-
   }
 
     return NMRPC_OK;
@@ -578,11 +578,11 @@ int ArrayOfGetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_
 
   value->length = (int)array_size;
   value->array = (GetAttributeOutValue*) malloc(sizeof(GetAttributeOutValue) * array_size);
+  if (value->array == NULL) return NMRPC_FATAL_ERROR;
   for (i = 0; i < array_size; i++)
   {
-  result = GetAttributeOutValue_Deserialize(ctx, NULL, &value->array[i]);
+   result = GetAttributeOutValue_Deserialize(ctx, NULL, &value->array[i]);
    if (result != NMRPC_OK) return result;
-
   }
 
     return NMRPC_OK;

@@ -727,7 +727,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
         body.AppendLine("  value->length = (int)array_size;");
         body.AppendLine($"  value->array = ({type.GetTypeFromAray()}*) malloc(sizeof({type.GetTypeFromAray()}) * array_size);");
-
+        body.AppendLine("  if (value->array == NULL) return NMRPC_FATAL_ERROR;");
 
         body.AppendLine("  for (i = 0; i < array_size; i++)");
         body.AppendLine("  {");
@@ -736,61 +736,53 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
         {
             if (type.BaseDefinition == CDeclaredType.StringName)
             {
-                body.AppendLine($"  result = cmph_read_nullable_str(ctx, &value->array[i]);");
+                body.AppendLine($"   result = cmph_read_nullable_str(ctx, &value->array[i]);");
                 body.AppendLine("   if (result != NMRPC_OK) return result;");
                 body.AppendLine($"   if (value->array[i] == NULL) return NMRPC_DESERIALIZE_ERR;");
-                body.AppendLine();
             }
 
             if (type.BaseDefinition == CDeclaredType.BinaryName)
             {
 
-                body.AppendLine($"  result = cmph_read_binary(ctx, &value->array[i]);");
+                body.AppendLine($"   result = cmph_read_binary(ctx, &value->array[i]);");
                 body.AppendLine("   if (result != NMRPC_OK) return result;");
-                body.AppendLine();
             }
 
             if (type.BaseDefinition == CDeclaredType.Int32Name)
             {
-                body.AppendLine($"  result = cmp_read_int(ctx, &value->array[i]);");
+                body.AppendLine($"   result = cmp_read_int(ctx, &value->array[i]);");
                 body.AppendLine("   if (!result) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
             }
             if (type.BaseDefinition == CDeclaredType.Int64Name)
             {
-                body.AppendLine($"  result = cmp_read_long(ctx, &value->array[i]);");
+                body.AppendLine($"   result = cmp_read_long(ctx, &value->array[i]);");
                 body.AppendLine("   if (!result) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
             }
 
             if (type.BaseDefinition == CDeclaredType.UInt32Name)
             {
-                body.AppendLine($"  result = cmp_read_uint(ctx, &value->array[i]);");
+                body.AppendLine($"   result = cmp_read_uint(ctx, &value->array[i]);");
                 body.AppendLine("   if (!result) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
             }
 
             if (type.BaseDefinition == CDeclaredType.UInt64Name)
             {
-                body.AppendLine($"  result = cmp_read_ulong(ctx, &value->array[i]);");
+                body.AppendLine($"   result = cmp_read_ulong(ctx, &value->array[i]);");
                 body.AppendLine("   if (!result) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
             }
 
             if (type.BaseDefinition == CDeclaredType.BoolName)
             {
-                body.AppendLine($"  result = cmp_read_bool(ctx, &value->array[i]);");
+                body.AppendLine($"   result = cmp_read_bool(ctx, &value->array[i]);");
                 body.AppendLine("   if (!result) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
             }
         }
         else
         {
             string readFnName = this.GetDeserializeFnName(type);
 
-            body.AppendLine($"  result = {readFnName}(ctx, NULL, &value->array[i]);");
+            body.AppendLine($"   result = {readFnName}(ctx, NULL, &value->array[i]);");
             body.AppendLine("   if (result != NMRPC_OK) return result;");
-            body.AppendLine();
         }
 
         body.AppendLine("  }");

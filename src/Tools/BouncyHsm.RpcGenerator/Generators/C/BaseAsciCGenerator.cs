@@ -261,14 +261,14 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
 
         foreach (KeyValuePair<string, MessageDefinition> type in definition.Messages)
         {
-            header.AppendFormat("typedef struct _{0} {0};", type.Key);
-            header.AppendLine();
+            this.header.AppendFormat("typedef struct _{0} {0};", type.Key);
+            this.header.AppendLine();
         }
 
-        header.AppendLine();
+        this.header.AppendLine();
 
-        header.AppendLine("typedef struct _Binary Binary;");
-        header.AppendLine();
+        this.header.AppendLine("typedef struct _Binary Binary;");
+        this.header.AppendLine();
 
         //header.AppendLine("#ifndef NMRPC_LOG_ERR_FIELD");
         //header.AppendLine("#define NMRPC_LOG_ERR_FIELD(field) log_err_field(__FILE__, __LINE__, __FUNCTION__, field)");
@@ -277,28 +277,28 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
 
         foreach (CDeclaredType type in this.GetArrayDefinitions(definition))
         {
-            header.AppendFormat("typedef struct _{0} {0};", type.CType.TrimEnd('*'));
-            header.AppendLine();
+            this.header.AppendFormat("typedef struct _{0} {0};", type.CType.TrimEnd('*'));
+            this.header.AppendLine();
         }
 
-        header.AppendLine();
+        this.header.AppendLine();
 
-        header.AppendLine("""
+        this.header.AppendLine("""
             typedef struct _Binary {
               uint8_t* data;
               size_t size;
             } Binary;
             """);
-        header.AppendLine();
-        header.AppendLine("int Binary_Release(Binary* value);");
-        header.AppendLine();
-        header.AppendLine("typedef int (*SerializeFnPtr_t)(cmp_ctx_t* ctx, void* data);");
-        header.AppendLine("int nmrpc_writeAsBinary(void *data, SerializeFnPtr_t serialize, Binary** outBinary);");
-        header.AppendLine();
+        this.header.AppendLine();
+        this.header.AppendLine("int Binary_Release(Binary* value);");
+        this.header.AppendLine();
+        this.header.AppendLine("typedef int (*SerializeFnPtr_t)(cmp_ctx_t* ctx, void* data);");
+        this.header.AppendLine("int nmrpc_writeAsBinary(void *data, SerializeFnPtr_t serialize, Binary** outBinary);");
+        this.header.AppendLine();
 
         foreach (CDeclaredType type in this.GetArrayDefinitions(definition))
         {
-            header.AppendLine($$"""
+            this.header.AppendLine($$"""
                 typedef struct _{{type.CType.TrimEnd('*')}} 
                 {
                     {{type.GetTypeFromAray()}}* array;
@@ -306,43 +306,43 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
                 } {{type.CType.TrimEnd('*')}};
                 """);
 
-            header.AppendFormat("{0};", this.GetArraySerializeFnDeclaration(type)).AppendLine();
-            header.AppendFormat("{0};", this.GetArrayDeserializeFnDeclaration(type)).AppendLine();
-            header.AppendFormat("{0};", this.GetArrayReleaseFnDeclaration(type)).AppendLine();
+            this.header.AppendFormat("{0};", this.GetArraySerializeFnDeclaration(type)).AppendLine();
+            this.header.AppendFormat("{0};", this.GetArrayDeserializeFnDeclaration(type)).AppendLine();
+            this.header.AppendFormat("{0};", this.GetArrayReleaseFnDeclaration(type)).AppendLine();
 
-            header.AppendLine();
+            this.header.AppendLine();
         }
 
-        header.AppendLine();
+        this.header.AppendLine();
 
         foreach (KeyValuePair<string, MessageDefinition> type in definition.Messages)
         {
             CDeclaredType ctype = new CDeclaredType(type.Key);
-            header.AppendFormat("typedef struct _{0}", type.Key).AppendLine();
-            header.AppendLine("{");
+            this.header.AppendFormat("typedef struct _{0}", type.Key).AppendLine();
+            this.header.AppendLine("{");
 
             foreach ((string name, string fieldType) in type.Value.Fields)
             {
                 CDeclaredType declaredType = new CDeclaredType(fieldType);
 
-                header.AppendFormat("    {0} {1};",
+                this.header.AppendFormat("    {0} {1};",
                     declaredType.CType,
                     name).AppendLine();
             }
 
-            header.Append('}').AppendFormat(" {0};", type.Key).AppendLine();
-            header.AppendLine();
+            this.header.Append('}').AppendFormat(" {0};", type.Key).AppendLine();
+            this.header.AppendLine();
 
-            header.AppendFormat("{0};", this.GetSerializeFnDeclaration(ctype)).AppendLine();
-            header.AppendFormat("{0};", this.GetDeserializeFnDeclaration(ctype)).AppendLine();
-            header.AppendFormat("{0};", this.GetReleaseFnDeclaration(ctype)).AppendLine();
+            this.header.AppendFormat("{0};", this.GetSerializeFnDeclaration(ctype)).AppendLine();
+            this.header.AppendFormat("{0};", this.GetDeserializeFnDeclaration(ctype)).AppendLine();
+            this.header.AppendFormat("{0};", this.GetReleaseFnDeclaration(ctype)).AppendLine();
 
-            header.AppendLine();
+            this.header.AppendLine();
         }
 
         this.GenerateRpcHeaders(this.header, definition);
 
-        header.AppendLine($"#endif // NMRPC_{this.Name}");
+        this.header.AppendLine($"#endif // NMRPC_{this.Name}");
     }
 
 
