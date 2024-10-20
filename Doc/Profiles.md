@@ -91,7 +91,7 @@ Enables mechanisms based on (C#) regular expression.
 
 ```json
 {
-    "Operation": "RemoveUsingRegex",
+    "Operation": "EnableUsingRegex",
     "RegexPattern": "RSA|SHA" // Regular expression (required)
 }
 ```

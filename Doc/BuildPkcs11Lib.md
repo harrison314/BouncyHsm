@@ -20,6 +20,10 @@ git clone https://github.com/harrison314/BouncyHsm.git
 
 Build:
 ```
-cd BouncyHsm/build_linux
+cd BouncyHsm
+# git checkout <last tag>
+cd build_linux
 make
 ```
+
+The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
