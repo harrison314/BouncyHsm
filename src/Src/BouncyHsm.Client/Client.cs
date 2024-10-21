@@ -3729,9 +3729,6 @@ namespace BouncyHsm.Client
     public partial class ImportPemRequestDto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("SlotId")]
-        public int SlotId { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("Pem")]
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.StringLength(102400, MinimumLength = 1)]

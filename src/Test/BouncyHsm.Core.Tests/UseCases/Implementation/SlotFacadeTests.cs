@@ -19,7 +19,10 @@ public class SlotFacadeTests
             .ReturnsAsync(new SlotIds(Guid.NewGuid(), 12))
             .Verifiable();
 
-        SlotFacade slotFacade = new SlotFacade(repository.Object, new NullLogger<SlotFacade>());
+        Mock<IClientApplicationContext> cacMock = new Mock<IClientApplicationContext>(MockBehavior.Strict);
+
+
+        SlotFacade slotFacade = new SlotFacade(repository.Object, cacMock.Object, new NullLogger<SlotFacade>());
 
         DomainResult<CreateSlotResult> result = await slotFacade.CreateSlot(new CreateSlotData()
         {
@@ -74,7 +77,9 @@ public class SlotFacadeTests
             })
             .Verifiable();
 
-        SlotFacade slotFacade = new SlotFacade(repository.Object, new NullLogger<SlotFacade>());
+        Mock<IClientApplicationContext> cacMock = new Mock<IClientApplicationContext>(MockBehavior.Strict);
+
+        SlotFacade slotFacade = new SlotFacade(repository.Object, cacMock.Object, new NullLogger<SlotFacade>());
 
         DomainResult<IReadOnlyList<SlotEntity>> result = await slotFacade.GetAllSlots(default);
 
@@ -109,7 +114,9 @@ public class SlotFacadeTests
             })
             .Verifiable();
 
-        SlotFacade slotFacade = new SlotFacade(repository.Object, new NullLogger<SlotFacade>());
+        Mock<IClientApplicationContext> cacMock = new Mock<IClientApplicationContext>(MockBehavior.Strict);
+
+        SlotFacade slotFacade = new SlotFacade(repository.Object, cacMock.Object, new NullLogger<SlotFacade>());
 
         DomainResult<SlotEntity> result = await slotFacade.GetSlotById(12, default);
 
@@ -128,7 +135,9 @@ public class SlotFacadeTests
             .Returns(new ValueTask())
             .Verifiable();
 
-        SlotFacade slotFacade = new SlotFacade(repository.Object, new NullLogger<SlotFacade>());
+        Mock<IClientApplicationContext> cacMock = new Mock<IClientApplicationContext>(MockBehavior.Strict);
+
+        SlotFacade slotFacade = new SlotFacade(repository.Object, cacMock.Object, new NullLogger<SlotFacade>());
 
         VoidDomainResult domainResult = await slotFacade.DeleteSlot(12U, default);
 

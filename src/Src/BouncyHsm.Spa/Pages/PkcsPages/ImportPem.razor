@@ -199,7 +199,6 @@ W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
     private ImportPemModel model = new ImportPemModel();
     private EditContext? editContext;
     private string? errorMessage = null;
-    private IBrowserFile? file = null;
     private SlotDto? slot = null;
 
     protected override async Task OnInitializedAsync()
@@ -216,7 +215,6 @@ W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
         }
     }
 
-
     private async Task HandleSubmit()
     {
         this.errorMessage = null;
@@ -228,7 +226,6 @@ W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
             CkaId = this.model.CkaIdForm.GetCkaId(this.model.CkaIdText.Trim()),
             Password = this.model.Password,
             Pem = this.model.Pem,
-            SlotId = this.SlotId,
             Hints = new ImportPemHintsDto()
             {
                 ForDerivation = this.model.ForDerivation,

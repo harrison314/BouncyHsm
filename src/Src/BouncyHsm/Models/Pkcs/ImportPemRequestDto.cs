@@ -6,13 +6,6 @@ namespace BouncyHsm.Models.Pkcs;
 public class ImportPemRequestDto
 {
     [Required]
-    public uint SlotId
-    {
-        get;
-        set;
-    }
-
-    [Required]
     [MaxLength(102400)]
     public string Pem
     {
