@@ -27,3 +27,29 @@ make
 ```
 
 The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
+
+## Example compilation for Alpine Linux
+Install prerequisites:
+
+```
+apk add build-base
+apk add git
+```
+
+Clone repository:
+```
+git clone https://github.com/harrison314/BouncyHsm.git
+```
+
+Edit Makefile:  
+Edit `BouncyHsm/build_linux/Makefile` and change `CC=clang` to `CC=gcc`.
+
+Build:
+```
+cd BouncyHsm
+# git checkout <last tag>
+cd build_linux
+make
+```
+
+The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
