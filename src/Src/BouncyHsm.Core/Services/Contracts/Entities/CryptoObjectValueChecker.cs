@@ -42,7 +42,7 @@ internal static class CryptoObjectValueChecker
         catch (Exception ex)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                $"Attribute {attributeType} is not valid OID in DER encoding.",
+                $"Attribute {attributeType} is not valid OID in DER encoding. (Value: {EscapeBytes(data)})",
                 ex);
         }
     }
@@ -69,7 +69,7 @@ internal static class CryptoObjectValueChecker
         catch (Exception ex)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                $"Attribute {attributeType} is not valid Public subject key info in DER encoding.",
+                $"Attribute {attributeType} is not valid Public subject key info in DER encoding. (Value: {EscapeBytes(data)})",
                 ex);
         }
     }
@@ -92,7 +92,7 @@ internal static class CryptoObjectValueChecker
         if (data[0] != 0x30) // Starts with ASN.1 sequence
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                   $"Attribute {attributeType} is not valid X509 certificate with DER encodng.");
+                   $"Attribute {attributeType} is not valid X509 certificate with DER encodng. (Value: {EscapeBytes(data)})");
         }
 
         try
@@ -103,7 +103,7 @@ internal static class CryptoObjectValueChecker
         catch (Exception ex)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                $"Attribute {attributeType} is not valid X509 certificate with DER encodng.",
+                $"Attribute {attributeType} is not valid X509 certificate with DER encodng. (Value: {EscapeBytes(data)})",
                 ex);
         }
     }
@@ -130,7 +130,7 @@ internal static class CryptoObjectValueChecker
         catch (Exception ex)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                $"Attribute {attributeType} is not valid X509 Name in DER encoding.",
+                $"Attribute {attributeType} is not valid X509 Name in DER encoding. (Value: {EscapeBytes(data)})",
                 ex);
         }
     }
@@ -154,7 +154,7 @@ internal static class CryptoObjectValueChecker
         if (data.Length != 0 && data.Length != 3)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                  $"Attribute {attributeType} must by empty or 3 byte length.");
+                  $"Attribute {attributeType} must by empty or 3 byte length. (Value: {EscapeBytes(data)})");
         }
     }
 
@@ -209,7 +209,7 @@ internal static class CryptoObjectValueChecker
             if (mustByPositive && value.Value.SignValue < 0)
             {
                 throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                   $"Attribute {attributeType} must by positive DER integer.");
+                   $"Attribute {attributeType} must by positive DER integer. (Value: {EscapeBytes(data)})");
             }
         }
         catch (RpcPkcs11Exception)
@@ -219,8 +219,13 @@ internal static class CryptoObjectValueChecker
         catch (Exception ex)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                $"Attribute {attributeType} is not valid X509 Name in DER encoding.",
+                $"Attribute {attributeType} is not valid ASN integer in DER encoding. (Value: {EscapeBytes(data)})",
                 ex);
         }
+    }
+
+    private static string EscapeBytes(byte[] bytes)
+    {
+        return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
     }
 }
