@@ -1,6 +1,6 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 1.1.0.0 (commit _e494deae3fb1b4739d2d22caa64ff0861a3c2b38_).
+Supported algorithms for _Bouncy Hsm_ version 1.1.1.0 (commit _cdffbf546a7183d3879323c7ba4d01493cdb3a4d_).
 
 ## Mechanisms
 _Bouncy Hsm_ supports 96 mechanisms.
