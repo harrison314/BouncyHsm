@@ -36,7 +36,7 @@ public partial class GetMechanismInfoHandler : IRpcRequestHandler<GetMechanismIn
                     MechanismType = request.MechanismType,
                     MinKeySize = mechanismInfo.MinKeySize,
                     MaxKeySize = mechanismInfo.MaxKeySize,
-                    Flags = (uint)((slot.Token.SimulateHwMechanism) ? mechanismInfo.Flags : mechanismInfo.Flags | MechanismCkf.CKF_HW)
+                    Flags = (uint)(slot.Token.SimulateHwMechanism ? (mechanismInfo.Flags | MechanismCkf.CKF_HW) : mechanismInfo.Flags)
                 }
             };
         }
