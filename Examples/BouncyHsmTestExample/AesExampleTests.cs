@@ -33,12 +33,20 @@ public class InitializerTest
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                return "BouncyHsm.Pkcs11Lib.dll";
+                if (Environment.Is64BitProcess)
+                {
+                    return @"runtimes\win-x64\native\BouncyHsm.Pkcs11Lib.dll";
+                }
+                else
+                {
+                    return @"runtimes\win-x86\native\BouncyHsm.Pkcs11Lib.dll";
+                }
+
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return "" + "./BouncyHsm.Pkcs11Lib-x64.so";
+                return @"runtimes\linux-x64\native\BouncyHsm.Pkcs11Lib.so";
             }
 
             throw new PlatformNotSupportedException();
@@ -120,15 +128,18 @@ public class AesExampleTests
             AppType.SingleThreaded);
 
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
-        ISlot slot = slots.First();
+        ISlot slot = slots.Where(t => t.GetTokenInfo().SerialNumber == InitializerTest.TokenSerialNumber).Single();
+
 
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
-        session.Login(CKU.CKU_USER, InitializerTest.LoginPin);
+        session.Login(Net.Pkcs11Interop.Common.CKU.CKU_USER, InitializerTest.LoginPin);
 
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
-             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, Net.Pkcs11Interop.Common.CKO.CKO_SECRET_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, Net.Pkcs11Interop.Common.CKK.CKK_AES),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
         };
 
