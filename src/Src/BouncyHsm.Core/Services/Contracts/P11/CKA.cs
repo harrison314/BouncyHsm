@@ -541,6 +541,8 @@ public enum CKA : uint
     /// </summary>
     CKA_VENDOR_DEFINED = 0x80000000,
 
-
+    /// <summary>
+    /// Defines the mechanism used to calculate CKA_HASH_OF_SUBJECT_PUBLIC_KEY and CKA_HASH_OF_ISSUER_PUBLIC_KEY. [CKM/uint]
+    /// </summary> 
     CKA_NAME_HASH_ALGORITHM = 0x0000008C
 }
