@@ -10,6 +10,7 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
 {
     private readonly IClientApplicationContext clientApplicationContext;
     private readonly ILogger<InitializeHandler> logger;
+    private readonly static string? CoreLibVersion = typeof(InitializeHandler).Assembly.GetName().Version?.ToString();
 
     public InitializeHandler(IClientApplicationContext clientApplicationContext, ILogger<InitializeHandler> logger)
     {
@@ -41,11 +42,26 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
             request.ClientInfo.Platform,
             request.ClientInfo.LibVersion);
 
+        this.CheckLibralyVersion(request.ClientInfo.LibVersion);
+
         InitializeEnvelope envelope = new InitializeEnvelope()
         {
             Rv = (uint)CKR.CKR_OK
         };
 
         return new ValueTask<InitializeEnvelope>(envelope);
+    }
+
+    private void CheckLibralyVersion(string libVersion)
+    {
+        System.Diagnostics.Debug.Assert(libVersion != null);
+        System.Diagnostics.Debug.Assert(CoreLibVersion != null);
+
+        if (!string.Equals(CoreLibVersion, libVersion, StringComparison.Ordinal))
+        {
+            this.logger.LogWarning("Native library BouncyHsm.Pkcs11Lib version {libVersion} does not match BouncyHsm program version {programVersion}.",
+                libVersion,
+                CoreLibVersion);
+        }
     }
 }
