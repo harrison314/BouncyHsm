@@ -18,10 +18,33 @@ public enum MechanismCkf : uint
     CKF_UNWRAP = 0x00040000,
     CKF_DERIVE = 0x00080000,
 
+    /// <summary>
+    /// True if the mechanism can be used with EC domain parameters over F_p
+    /// </summary>
     CKF_EC_F_P = 0x00100000,
+
+    /// <summary>
+    /// True if the mechanism can be used with EC domain parameters over F 2 m 
+    /// </summary>
     CKF_EC_F_2M = 0x00200000,
+
+    /// <summary>
+    /// True if the mechanism can be used with EC domain parameters of the choice ecParameters
+    /// </summary>
     CKF_EC_ECPARAMETERS = 0x00400000,
+
+    /// <summary>
+    /// True if the mechanism can be used with EC domain parameters of the choice namedCurve
+    /// </summary>
     CKF_EC_NAMEDCURVE = 0x00800000,
+
+    /// <summary>
+    /// True if the mechanism can be used with elliptic curve point uncompressed 
+    /// </summary>
     CKF_EC_UNCOMPRESS = 0x01000000,
+
+    /// <summary>
+    /// True if the mechanism can be used with elliptic curve point compressed 
+    /// </summary>
     CKF_EC_COMPRESS = 0x02000000,
 }
