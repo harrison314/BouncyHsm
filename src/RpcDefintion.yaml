@@ -232,6 +232,10 @@ Rpc:
     Summary: Call for C_SignRecoverInit
     Request: SignRecoverInitRequest
     Response: SignRecoverInitEnvelope
+  SignRecover:
+    Summary: Call fro C_SignRecoverInit
+    Request: SignRecoverRequest
+    Response: SignRecoverEnvelope
 
 Messages:
   AppIdentification:
@@ -1147,6 +1151,27 @@ Messages:
     Summary:
     Fields:
       Rv: uint32
+
+  SignRecoverRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+      IsSignaturePtrSet: bool
+      PullSignatureLen: uint32
+
+  SignRecoverData:
+    Summary:
+    Fields:
+      PullSignatureLen: uint32
+      Signature: binary
+
+  SignRecoverEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: SignRecoverData?
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

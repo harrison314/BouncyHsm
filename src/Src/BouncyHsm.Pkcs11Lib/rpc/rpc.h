@@ -148,6 +148,9 @@ typedef struct _WaitForSlotEventEnvelope WaitForSlotEventEnvelope;
 typedef struct _WaitForSlotEventData WaitForSlotEventData;
 typedef struct _SignRecoverInitRequest SignRecoverInitRequest;
 typedef struct _SignRecoverInitEnvelope SignRecoverInitEnvelope;
+typedef struct _SignRecoverRequest SignRecoverRequest;
+typedef struct _SignRecoverData SignRecoverData;
+typedef struct _SignRecoverEnvelope SignRecoverEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1673,6 +1676,39 @@ int SignRecoverInitEnvelope_Serialize(cmp_ctx_t* ctx, SignRecoverInitEnvelope* v
 int SignRecoverInitEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SignRecoverInitEnvelope* value);
 int SignRecoverInitEnvelope_Release(SignRecoverInitEnvelope* value);
 
+typedef struct _SignRecoverRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    Binary Data;
+    bool IsSignaturePtrSet;
+    uint32_t PullSignatureLen;
+} SignRecoverRequest;
+
+int SignRecoverRequest_Serialize(cmp_ctx_t* ctx, SignRecoverRequest* value);
+int SignRecoverRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SignRecoverRequest* value);
+int SignRecoverRequest_Release(SignRecoverRequest* value);
+
+typedef struct _SignRecoverData
+{
+    uint32_t PullSignatureLen;
+    Binary Signature;
+} SignRecoverData;
+
+int SignRecoverData_Serialize(cmp_ctx_t* ctx, SignRecoverData* value);
+int SignRecoverData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SignRecoverData* value);
+int SignRecoverData_Release(SignRecoverData* value);
+
+typedef struct _SignRecoverEnvelope
+{
+    uint32_t Rv;
+    SignRecoverData* Data;
+} SignRecoverEnvelope;
+
+int SignRecoverEnvelope_Serialize(cmp_ctx_t* ctx, SignRecoverEnvelope* value);
+int SignRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SignRecoverEnvelope* value);
+int SignRecoverEnvelope_Release(SignRecoverEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1866,5 +1902,6 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
 int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request, UnwrapKeyEnvelope* response);
 int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventRequest* request, WaitForSlotEventEnvelope* response);
 int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitRequest* request, SignRecoverInitEnvelope* response);
+int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* request, SignRecoverEnvelope* response);
 
 #endif // NMRPC_rpc

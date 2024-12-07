@@ -2649,7 +2649,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData,
         }
         else
         {
-            *pulSignatureLen = envelope.Data->PullSignatureLen;
+            *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
         }
     }
 
@@ -2792,8 +2792,53 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECH
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
 {
     LOG_ENTERING_TO_FUNCTION();
+    if (NULL == pData || NULL == pulSignatureLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    SignRecoverRequest request;
+    SignRecoverEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    request.Data.data = (uint8_t*)pData;
+    request.Data.size = (size_t)ulDataLen;
+    request.IsSignaturePtrSet = pSignature != NULL;
+    request.PullSignatureLen = (uint32_t)*pulSignatureLen;
+
+    int rv = nmrpc_call_SignRecover(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    if ((CK_RV)envelope.Rv == CKR_OK)
+    {
+        if (pSignature != NULL)
+        {
+            memcpy_s(pSignature, *pulSignatureLen, envelope.Data->Signature.data, envelope.Data->Signature.size);
+            *pulSignatureLen = (CK_ULONG)envelope.Data->Signature.size;
+        }
+        else
+        {
+            *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
+        }
+    }
+
+    SignRecoverEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

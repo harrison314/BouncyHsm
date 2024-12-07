@@ -59,6 +59,42 @@ internal class SignWithRecoverState : ISessionStateWithAlwaysAuthenticated
         this.IsContextPinHasSet = true;
     }
 
+    public void Update(byte[] data)
+    {
+        System.Diagnostics.Debug.Assert(data != null);
+
+        if (this.RequireContextPin && !this.IsContextPinHasSet)
+        {
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, "Error: CONTEXT_SPECIFIC login required.");
+        }
+
+        if (data.Length > 0)
+        {
+            this.signer.BlockUpdate(data);
+            this.isEmpty = false;
+        }
+    }
+
+    public byte[] GetSignature()
+    {
+        if (this.isEmpty)
+        {
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: Signing empty data.");
+        }
+
+        if (this.RequireContextPin && !this.IsContextPinHasSet)
+        {
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, "Error: CONTEXT_SPECIFIC login required.");
+        }
+
+        if (this.signature == null)
+        {
+            this.signature = this.signer.GenerateSignature();
+        }
+
+        return this.signature;
+    }
+
     public override string ToString()
     {
         return $"Sign with recover state - algorithm: {this.signer.AlgorithmName}";
