@@ -286,6 +286,11 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
    // Implement in another class
 }
 
+public partial class SignRecoverInitHandler : IRpcRequestHandler<SignRecoverInitRequest, SignRecoverInitEnvelope>
+{
+   // Implement in another class
+}
+
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public static partial class RpcDefinitionUtils
 {
@@ -349,6 +354,7 @@ public static partial class RpcDefinitionUtils
          { typeof(IRpcRequestHandler<WrapKeyRequest, WrapKeyEnvelope>), typeof(WrapKeyHandler)},
          { typeof(IRpcRequestHandler<UnwrapKeyRequest, UnwrapKeyEnvelope>), typeof(UnwrapKeyHandler)},
          { typeof(IRpcRequestHandler<WaitForSlotEventRequest, WaitForSlotEventEnvelope>), typeof(WaitForSlotEventHandler)},
+         { typeof(IRpcRequestHandler<SignRecoverInitRequest, SignRecoverInitEnvelope>), typeof(SignRecoverInitHandler)},
        };
     }
 }

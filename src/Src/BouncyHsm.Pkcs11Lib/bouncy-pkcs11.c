@@ -2749,7 +2749,43 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECH
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    if (NULL == pMechanism)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    SignRecoverInitRequest request;
+    SignRecoverInitEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
+    {
+        return CKR_GENERAL_ERROR;
+    }
+
+    request.KeyObjectHandle = (uint32_t)hKey;
+
+    int rv = nmrpc_call_SignRecoverInit(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    MechanismValue_Destroy(&request.Mechanism);
+    SignRecoverInitEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

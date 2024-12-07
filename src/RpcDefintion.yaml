@@ -228,6 +228,11 @@ Rpc:
     Request: WaitForSlotEventRequest
     Response: WaitForSlotEventEnvelope
 
+  SignRecoverInit:
+    Summary: Call for C_SignRecoverInit
+    Request: SignRecoverInitRequest
+    Response: SignRecoverInitEnvelope
+
 Messages:
   AppIdentification:
     Summary: Application uniq identification data for server.
@@ -1129,6 +1134,19 @@ Messages:
     Summary:
     Fields:
       SlotId: uint32
+
+  SignRecoverInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  SignRecoverInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

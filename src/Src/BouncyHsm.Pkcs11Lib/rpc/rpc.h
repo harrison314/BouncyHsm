@@ -146,6 +146,8 @@ typedef struct _CopyObjectEnvelope CopyObjectEnvelope;
 typedef struct _WaitForSlotEventRequest WaitForSlotEventRequest;
 typedef struct _WaitForSlotEventEnvelope WaitForSlotEventEnvelope;
 typedef struct _WaitForSlotEventData WaitForSlotEventData;
+typedef struct _SignRecoverInitRequest SignRecoverInitRequest;
+typedef struct _SignRecoverInitEnvelope SignRecoverInitEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1650,6 +1652,27 @@ int WaitForSlotEventData_Serialize(cmp_ctx_t* ctx, WaitForSlotEventData* value);
 int WaitForSlotEventData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, WaitForSlotEventData* value);
 int WaitForSlotEventData_Release(WaitForSlotEventData* value);
 
+typedef struct _SignRecoverInitRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    MechanismValue Mechanism;
+    uint32_t KeyObjectHandle;
+} SignRecoverInitRequest;
+
+int SignRecoverInitRequest_Serialize(cmp_ctx_t* ctx, SignRecoverInitRequest* value);
+int SignRecoverInitRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SignRecoverInitRequest* value);
+int SignRecoverInitRequest_Release(SignRecoverInitRequest* value);
+
+typedef struct _SignRecoverInitEnvelope
+{
+    uint32_t Rv;
+} SignRecoverInitEnvelope;
+
+int SignRecoverInitEnvelope_Serialize(cmp_ctx_t* ctx, SignRecoverInitEnvelope* value);
+int SignRecoverInitEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SignRecoverInitEnvelope* value);
+int SignRecoverInitEnvelope_Release(SignRecoverInitEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1842,5 +1865,6 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
 int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, WrapKeyEnvelope* response);
 int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request, UnwrapKeyEnvelope* response);
 int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventRequest* request, WaitForSlotEventEnvelope* response);
+int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitRequest* request, SignRecoverInitEnvelope* response);
 
 #endif // NMRPC_rpc
