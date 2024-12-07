@@ -3,19 +3,74 @@
 [Flags]
 public enum MechanismCkf : uint
 {
+    /// <summary>
+    /// Without CKF
+    /// </summary>
     NONE = 0x00000000,
+
+    /// <summary>
+    /// True if the mechanism is performed by the device; false if the mechanism is performed in software 
+    /// </summary>
     CKF_HW = 0x00000001,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_EncryptInit
+    /// </summary>
     CKF_ENCRYPT = 0x00000100,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_DecryptInit
+    /// </summary>
     CKF_DECRYPT = 0x00000200,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_DigestInit
+    /// </summary>
     CKF_DIGEST = 0x00000400,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_SignInit
+    /// </summary>
     CKF_SIGN = 0x00000800,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_SignRecoverInit
+    /// </summary>
     CKF_SIGN_RECOVER = 0x00001000,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_VerifyInit
+    /// </summary>
     CKF_VERIFY = 0x00002000,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_VerifyRecoverInit
+    /// </summary>
     CKF_VERIFY_RECOVER = 0x00004000,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_GenerateKey
+    /// </summary>
     CKF_GENERATE = 0x00008000,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_GenerateKeyPair
+    /// </summary>
     CKF_GENERATE_KEY_PAIR = 0x00010000,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_WrapKey
+    /// </summary>
     CKF_WRAP = 0x00020000,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_UnwrapKey
+    /// </summary>
     CKF_UNWRAP = 0x00040000,
+
+    /// <summary>
+    /// True if the mechanism can be used with C_DeriveKey
+    /// </summary>
     CKF_DERIVE = 0x00080000,
 
     /// <summary>
@@ -47,4 +102,9 @@ public enum MechanismCkf : uint
     /// True if the mechanism can be used with elliptic curve point compressed 
     /// </summary>
     CKF_EC_COMPRESS = 0x02000000,
+
+    /// <summary>
+    /// True if there is an extension to the flags; false if no extensions. Must be false for this version. 
+    /// </summary>
+    CKF_EXTENSION =	0x80000000 	
 }
