@@ -82,6 +82,7 @@ public static partial class RequestProcessor
         "WaitForSlotEvent" => ProcessRequestBody<WaitForSlotEventRequest, WaitForSlotEventEnvelope>(serviceProvider, "WaitForSlotEvent", requestBody, static ckRv => new WaitForSlotEventEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "SignRecoverInit" => ProcessRequestBody<SignRecoverInitRequest, SignRecoverInitEnvelope>(serviceProvider, "SignRecoverInit", requestBody, static ckRv => new SignRecoverInitEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "SignRecover" => ProcessRequestBody<SignRecoverRequest, SignRecoverEnvelope>(serviceProvider, "SignRecover", requestBody, static ckRv => new SignRecoverEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "VerifyRecoverInit" => ProcessRequestBody<VerifyRecoverInitRequest, VerifyRecoverInitEnvelope>(serviceProvider, "VerifyRecoverInit", requestBody, static ckRv => new VerifyRecoverInitEnvelope(){ Rv = ckRv }, logger, cancellationToken),
           _ => throw new InvalidOperationException($"RPC operation {header.Operation} is not supported.")
       };
    }

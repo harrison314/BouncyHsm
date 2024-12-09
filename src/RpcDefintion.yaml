@@ -236,6 +236,10 @@ Rpc:
     Summary: Call fro C_SignRecoverInit
     Request: SignRecoverRequest
     Response: SignRecoverEnvelope
+  VerifyRecoverInit:
+    Summary: Call for C_VerifyRecoverInit
+    Request: VerifyRecoverInitRequest
+    Response: VerifyRecoverInitEnvelope
 
 Messages:
   AppIdentification:
@@ -1172,6 +1176,19 @@ Messages:
     Fields:
       Rv: uint32
       Data: SignRecoverData?
+
+  VerifyRecoverInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  VerifyRecoverInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

@@ -151,6 +151,8 @@ typedef struct _SignRecoverInitEnvelope SignRecoverInitEnvelope;
 typedef struct _SignRecoverRequest SignRecoverRequest;
 typedef struct _SignRecoverData SignRecoverData;
 typedef struct _SignRecoverEnvelope SignRecoverEnvelope;
+typedef struct _VerifyRecoverInitRequest VerifyRecoverInitRequest;
+typedef struct _VerifyRecoverInitEnvelope VerifyRecoverInitEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1709,6 +1711,27 @@ int SignRecoverEnvelope_Serialize(cmp_ctx_t* ctx, SignRecoverEnvelope* value);
 int SignRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SignRecoverEnvelope* value);
 int SignRecoverEnvelope_Release(SignRecoverEnvelope* value);
 
+typedef struct _VerifyRecoverInitRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    MechanismValue Mechanism;
+    uint32_t KeyObjectHandle;
+} VerifyRecoverInitRequest;
+
+int VerifyRecoverInitRequest_Serialize(cmp_ctx_t* ctx, VerifyRecoverInitRequest* value);
+int VerifyRecoverInitRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, VerifyRecoverInitRequest* value);
+int VerifyRecoverInitRequest_Release(VerifyRecoverInitRequest* value);
+
+typedef struct _VerifyRecoverInitEnvelope
+{
+    uint32_t Rv;
+} VerifyRecoverInitEnvelope;
+
+int VerifyRecoverInitEnvelope_Serialize(cmp_ctx_t* ctx, VerifyRecoverInitEnvelope* value);
+int VerifyRecoverInitEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, VerifyRecoverInitEnvelope* value);
+int VerifyRecoverInitEnvelope_Release(VerifyRecoverInitEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1903,5 +1926,6 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
 int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventRequest* request, WaitForSlotEventEnvelope* response);
 int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitRequest* request, SignRecoverInitEnvelope* response);
 int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* request, SignRecoverEnvelope* response);
+int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitRequest* request, VerifyRecoverInitEnvelope* response);
 
 #endif // NMRPC_rpc

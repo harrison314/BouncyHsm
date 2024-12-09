@@ -3011,7 +3011,38 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_ME
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    VerifyRecoverInitRequest request;
+    VerifyRecoverInitEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
+    {
+        return CKR_MECHANISM_INVALID;
+    }
+
+    request.KeyObjectHandle = (uint32_t)hKey;
+
+    int rv = nmrpc_call_VerifyRecoverInit(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    MechanismValue_Destroy(&request.Mechanism);
+    VerifyRecoverInitEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 
