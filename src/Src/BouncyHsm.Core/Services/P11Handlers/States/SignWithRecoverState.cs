@@ -59,6 +59,9 @@ internal class SignWithRecoverState : ISessionStateWithAlwaysAuthenticated
         this.IsContextPinHasSet = true;
     }
 
+    //TODO: Use another updare?
+    //TODO: Merge methods GetSignature and Update
+    //TODO: Use another BlockUpdate for recovery data?
     public void Update(byte[] data)
     {
         System.Diagnostics.Debug.Assert(data != null);
