@@ -301,6 +301,11 @@ public partial class VerifyRecoverInitHandler : IRpcRequestHandler<VerifyRecover
    // Implement in another class
 }
 
+public partial class VerifyRecoverHandler : IRpcRequestHandler<VerifyRecoverRequest, VerifyRecoverEnvelope>
+{
+   // Implement in another class
+}
+
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public static partial class RpcDefinitionUtils
 {
@@ -367,6 +372,7 @@ public static partial class RpcDefinitionUtils
          { typeof(IRpcRequestHandler<SignRecoverInitRequest, SignRecoverInitEnvelope>), typeof(SignRecoverInitHandler)},
          { typeof(IRpcRequestHandler<SignRecoverRequest, SignRecoverEnvelope>), typeof(SignRecoverHandler)},
          { typeof(IRpcRequestHandler<VerifyRecoverInitRequest, VerifyRecoverInitEnvelope>), typeof(VerifyRecoverInitHandler)},
+         { typeof(IRpcRequestHandler<VerifyRecoverRequest, VerifyRecoverEnvelope>), typeof(VerifyRecoverHandler)},
        };
     }
 }

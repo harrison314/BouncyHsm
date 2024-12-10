@@ -153,6 +153,9 @@ typedef struct _SignRecoverData SignRecoverData;
 typedef struct _SignRecoverEnvelope SignRecoverEnvelope;
 typedef struct _VerifyRecoverInitRequest VerifyRecoverInitRequest;
 typedef struct _VerifyRecoverInitEnvelope VerifyRecoverInitEnvelope;
+typedef struct _VerifyRecoverRequest VerifyRecoverRequest;
+typedef struct _VerifyRecoverData VerifyRecoverData;
+typedef struct _VerifyRecoverEnvelope VerifyRecoverEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1732,6 +1735,39 @@ int VerifyRecoverInitEnvelope_Serialize(cmp_ctx_t* ctx, VerifyRecoverInitEnvelop
 int VerifyRecoverInitEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, VerifyRecoverInitEnvelope* value);
 int VerifyRecoverInitEnvelope_Release(VerifyRecoverInitEnvelope* value);
 
+typedef struct _VerifyRecoverRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    Binary Signature;
+    bool IsPtrDataSet;
+    uint32_t PulDataLen;
+} VerifyRecoverRequest;
+
+int VerifyRecoverRequest_Serialize(cmp_ctx_t* ctx, VerifyRecoverRequest* value);
+int VerifyRecoverRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, VerifyRecoverRequest* value);
+int VerifyRecoverRequest_Release(VerifyRecoverRequest* value);
+
+typedef struct _VerifyRecoverData
+{
+    uint32_t PulDataLen;
+    Binary Data;
+} VerifyRecoverData;
+
+int VerifyRecoverData_Serialize(cmp_ctx_t* ctx, VerifyRecoverData* value);
+int VerifyRecoverData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, VerifyRecoverData* value);
+int VerifyRecoverData_Release(VerifyRecoverData* value);
+
+typedef struct _VerifyRecoverEnvelope
+{
+    uint32_t Rv;
+    VerifyRecoverData* Data;
+} VerifyRecoverEnvelope;
+
+int VerifyRecoverEnvelope_Serialize(cmp_ctx_t* ctx, VerifyRecoverEnvelope* value);
+int VerifyRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, VerifyRecoverEnvelope* value);
+int VerifyRecoverEnvelope_Release(VerifyRecoverEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1927,5 +1963,6 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
 int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitRequest* request, SignRecoverInitEnvelope* response);
 int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* request, SignRecoverEnvelope* response);
 int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitRequest* request, VerifyRecoverInitEnvelope* response);
+int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* request, VerifyRecoverEnvelope* response);
 
 #endif // NMRPC_rpc

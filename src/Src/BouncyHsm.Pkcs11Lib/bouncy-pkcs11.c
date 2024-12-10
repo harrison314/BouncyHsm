@@ -3050,7 +3050,58 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    if (NULL == pulDataLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (NULL == pSignature || 0 == ulSignatureLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    VerifyRecoverRequest request;
+    VerifyRecoverEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    request.Signature.data = (uint8_t*)pSignature;
+    request.Signature.size = (size_t)ulSignatureLen;
+    request.IsPtrDataSet = pData != NULL;
+    request.PulDataLen = (uint32_t)*pulDataLen;
+
+    int rv = nmrpc_call_VerifyRecover(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    if ((CK_RV)envelope.Rv == CKR_OK)
+    {
+        if (pSignature != NULL)
+        {
+            memcpy_s(pData, *pulDataLen, envelope.Data->Data.data, envelope.Data->Data.size);
+            *pulDataLen = (CK_ULONG)envelope.Data->Data.size;
+        }
+        else
+        {
+            *pulDataLen = (CK_ULONG)envelope.Data->PulDataLen;
+        }
+    }
+
+    VerifyRecoverEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

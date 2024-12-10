@@ -3559,6 +3559,87 @@ public partial class VerifyRecoverInitEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class VerifyRecoverRequest : IRpcRequest
+{
+    [Key(0)]
+    public AppIdentification AppId
+    {
+        get;
+        set;
+    } = default!;
+
+    [Key(1)]
+    public uint SessionId
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public byte[] Signature
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+    [Key(3)]
+    public bool IsPtrDataSet
+    {
+        get;
+        set;
+    }
+
+    [Key(4)]
+    public uint PulDataLen
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class VerifyRecoverData
+{
+    [Key(0)]
+    public uint PulDataLen
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public byte[] Data
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+public partial class VerifyRecoverEnvelope : IRpcResponse
+{
+    [Key(0)]
+    public uint Rv
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public VerifyRecoverData? Data
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
 public partial class CkP_MacGeneralParams
 {
     [Key(0)]

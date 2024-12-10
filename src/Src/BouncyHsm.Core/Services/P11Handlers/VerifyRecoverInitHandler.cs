@@ -32,7 +32,7 @@ public partial class VerifyRecoverInitHandler : IRpcRequestHandler<VerifyRecover
         await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_VERIFY);
+        MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_VERIFY_RECOVER);
         p11Session.State.EnsureEmpty();
 
         KeyObject objectInstance = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);

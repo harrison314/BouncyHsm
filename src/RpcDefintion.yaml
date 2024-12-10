@@ -240,6 +240,10 @@ Rpc:
     Summary: Call for C_VerifyRecoverInit
     Request: VerifyRecoverInitRequest
     Response: VerifyRecoverInitEnvelope
+  VerifyRecover:
+    Summary: Call for C_VerifyRecover
+    Request: VerifyRecoverRequest
+    Response: VerifyRecoverEnvelope
 
 Messages:
   AppIdentification:
@@ -1189,6 +1193,27 @@ Messages:
     Summary:
     Fields:
       Rv: uint32
+
+  VerifyRecoverRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Signature: binary
+      IsPtrDataSet: bool
+      PulDataLen: uint32
+
+  VerifyRecoverData:
+    Summary: Recovered data
+    Fields:
+      PulDataLen: uint32
+      Data: binary
+
+  VerifyRecoverEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: VerifyRecoverData?
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:
