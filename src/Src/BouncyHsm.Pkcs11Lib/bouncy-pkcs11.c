@@ -3088,7 +3088,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        if (pSignature != NULL)
+        if (pData != NULL)
         {
             memcpy_s(pData, *pulDataLen, envelope.Data->Data.data, envelope.Data->Data.size);
             *pulDataLen = (CK_ULONG)envelope.Data->Data.size;
