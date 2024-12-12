@@ -19,7 +19,8 @@ internal class VerifyWithRecoveryState : ISessionState
     {
         System.Diagnostics.Debug.Assert(signature != null);
 
-        if( this.signer.VerifySignature(signature))
+        this.signer.Reset();
+        if (this.signer.VerifySignature(signature))
         {
             recoveredMessage = this.signer.GetRecoveredMessage();
             return true;
