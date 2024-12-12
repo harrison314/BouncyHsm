@@ -28,8 +28,7 @@ internal class WrapperSignWithRecoverFactory
         return ckMechanism switch
         {
             CKM.CKM_RSA_PKCS => new RsaWrapperSignWithRecover(new RsaPkcs1SignerWithRecovery(new RsaBlindedEngine()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSignWithRecover>()),
-            //TODO:Use custom implementation using  //ISO9796d1Encoding
-            CKM.CKM_RSA_9796 => new RsaWrapperSignWithRecover(new Iso9796d2Signer(new RsaEngine(), new NullDigest(), isImplicit: true), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSignWithRecover>()),
+            CKM.CKM_RSA_9796 => new RsaWrapperSignWithRecover(new RsaIso9796PlainSignerWithRecovery(new RsaBlindedEngine()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSignWithRecover>()),
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for signing or validation with recover.")
         };
     }

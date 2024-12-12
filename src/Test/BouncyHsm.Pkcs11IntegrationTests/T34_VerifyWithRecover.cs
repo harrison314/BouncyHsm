@@ -93,50 +93,79 @@ public class T34_VerifyWithRecover
     }
 
 
-    //[TestMethod]
-    //public void VerifyRsa9796_SignAndVerify_Success()
-    //{
-    //    byte[] dataToSign = new byte[32];
-    //    Random.Shared.NextBytes(dataToSign);
+    [TestMethod]
+    public void VerifyRecover_Rsa9796_Success()
+    {
+        byte[] dataToSign = new byte[32];
+        Random.Shared.NextBytes(dataToSign);
 
-    //    Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
-    //    using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
-    //        AssemblyTestConstants.P11LibPath,
-    //        AppType.SingleThreaded);
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
 
-    //    List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
-    //    ISlot slot = slots.SelectTestSlot();
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
 
-    //    using ISession session = slot.OpenSession(SessionType.ReadOnly);
-    //    session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
-    //    string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-    //    byte[] ckId = session.GenerateRandom(32);
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
 
-    //    this.CreateRsaKeyPair(factories, slot, ckId, label);
+        this.CreateRsaKeyPair(factories, slot, ckId, label, false);
 
-    //    IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
+        IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
 
-    //    using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
 
-    //    byte[] signature = session.SignRecover(mechanism, handle, dataToSign);
+        byte[] signature = session.SignRecover(mechanism, handle, dataToSign);
 
 
-    //    IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);
+        IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);
 
-    //   byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
+        byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
 
-    //    Assert.IsTrue(isValid, "Signature must by valid");
-    //    Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
+        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
+    }
 
-    //    unchecked
-    //    {
-    //        signature[2]++;
-    //    }
+    [TestMethod]
+    public void VerifyRecover_Rsa9796WithStanardSign_Success()
+    {
+        byte[] dataToSign = new byte[32];
+        Random.Shared.NextBytes(dataToSign);
 
-    //    byte[] nullRecovedData = session.VerifyRecover(mechanism, pubKey, signature, out bool isNotValid);
-    //    Assert.IsFalse(isNotValid, "Inconsistent signature is valid");
-    //}
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        this.CreateRsaKeyPair(factories, slot, ckId, label, true);
+
+        IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
+
+        byte[] signature = session.Sign(mechanism, handle, dataToSign);
+
+
+        IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);
+
+        byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
+
+        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
+    }
 
     private IObjectHandle FindPublicKey(ISession session, byte[] ckaId, string ckaLabel)
     {
