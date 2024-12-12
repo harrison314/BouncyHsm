@@ -82,12 +82,21 @@ internal class Iso9796Signer : ISigner
         byte[] message = new byte[this.digest.GetDigestSize()];
         this.digest.DoFinal(message);
 
-        byte[] verificationMessage = this.encoding.ProcessBlock(signature, 0, signature.Length);
+        try
+        {
+            byte[] verificationMessage = this.encoding.ProcessBlock(signature, 0, signature.Length);
 
-        bool isValid = System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(message, verificationMessage);
-        System.Security.Cryptography.CryptographicOperations.ZeroMemory(verificationMessage);
-        System.Security.Cryptography.CryptographicOperations.ZeroMemory(message);
-
-        return isValid;
+            bool isValid = System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(message, verificationMessage);
+            System.Security.Cryptography.CryptographicOperations.ZeroMemory(verificationMessage);
+            return isValid;
+        }
+        catch (InvalidCipherTextException ex)
+        {
+            return false;
+        }
+        finally
+        {
+            System.Security.Cryptography.CryptographicOperations.ZeroMemory(message);
+        }
     }
 }
