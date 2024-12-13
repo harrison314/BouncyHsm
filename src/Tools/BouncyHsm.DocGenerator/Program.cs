@@ -47,6 +47,7 @@ public static class Program
                 Generate = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_GENERATE),
                 GenerateKeyPair = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_GENERATE_KEY_PAIR),
                 SignAndVerify = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_SIGN),
+                SignAndVerifyRecover = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_SIGN_RECOVER),
                 WrapAndUnwrap = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_WRAP),
             };
 
