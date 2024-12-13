@@ -2,9 +2,7 @@
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.Contracts;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Signers;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
