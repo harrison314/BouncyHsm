@@ -22,10 +22,10 @@ internal class WrapperSignWithRecoverFactory
         this.logger.LogTrace("Entering to CreateSignatureAlgorithm with mechanism type {mechanismType}", mechanism.MechanismType);
 
         CKM ckMechanism = (CKM)mechanism.MechanismType;
-       
+
         return ckMechanism switch
         {
-            CKM.CKM_RSA_PKCS => new RsaWrapperSignWithRecover(new RsaPkcs1SignerWithRecovery(new RsaBlindedEngine()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSignWithRecover>()),
+            CKM.CKM_RSA_PKCS => new RsaWrapperSignWithRecover(new RsaPkcs1SignerWithRecovery(new RsaBlindedEngine(), new Pkcs1DigestInfoCheckerAsDigest(this.loggerFactory.CreateLogger<Pkcs1DigestInfoCheckerAsDigest>())), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSignWithRecover>()),
             CKM.CKM_RSA_9796 => new RsaWrapperSignWithRecover(new RsaIso9796PlainSignerWithRecovery(new RsaBlindedEngine()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSignWithRecover>()),
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for signing or validation with recover.")
         };

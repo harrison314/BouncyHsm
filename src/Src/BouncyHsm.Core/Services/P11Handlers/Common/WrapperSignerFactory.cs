@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
@@ -34,7 +35,7 @@ internal class WrapperSignerFactory
 
         return ckMechanism switch
         {
-            CKM.CKM_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_RSA_PKCS => new RsaWrapperSigner(this.CreateRsaPkcsSigner(), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
             CKM.CKM_SHA1_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("SHA1withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
             CKM.CKM_SHA224_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("SHA224withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
             CKM.CKM_SHA256_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("SHA256withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
@@ -189,5 +190,13 @@ internal class WrapperSignerFactory
         return new RsaWrapperSigner(signer,
             (CKM)mechanism.MechanismType,
             this.loggerFactory.CreateLogger<RsaWrapperSigner>());
+    }
+
+    private ISigner CreateRsaPkcsSigner()
+    {
+        Pkcs1DigestInfoCheckerAsDigest nullDigest = new Pkcs1DigestInfoCheckerAsDigest(this.loggerFactory.CreateLogger<Pkcs1DigestInfoCheckerAsDigest>());
+
+        // Alternative for SignerUtilities.GetSigner("RSA")
+        return new RsaDigestSigner(nullDigest, (AlgorithmIdentifier?)null);
     }
 }

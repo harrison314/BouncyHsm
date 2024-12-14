@@ -14,6 +14,7 @@ namespace BouncyHsm.Core.Services.P11Handlers.Common;
 internal class RsaPkcs1SignerWithRecovery : ISignerWithRecovery
 {
     private readonly IAsymmetricBlockCipher rsaEngine;
+    private readonly IDigest signingDigest;
     private RsaDigestSigner? rsaDigestSigner;
     private Pkcs1Encoding? verifier;
     private byte[]? recoveredMessage;
@@ -26,13 +27,21 @@ internal class RsaPkcs1SignerWithRecovery : ISignerWithRecovery
     public RsaPkcs1SignerWithRecovery(IAsymmetricBlockCipher rsaEngine)
     {
         this.rsaEngine = rsaEngine;
+        this.signingDigest = new NullDigest();
+    }
+
+    public RsaPkcs1SignerWithRecovery(IAsymmetricBlockCipher rsaEngine, IDigest signingDigest)
+    {
+        this.rsaEngine = rsaEngine;
+        this.signingDigest = signingDigest;
     }
 
     public void Init(bool forSigning, ICipherParameters parameters)
     {
         if (forSigning)
         {
-            this.rsaDigestSigner = new RsaDigestSigner(this.rsaEngine, new NullDigest(), (AlgorithmIdentifier?)null);
+            this.signingDigest.Reset();
+            this.rsaDigestSigner = new RsaDigestSigner(this.rsaEngine, this.signingDigest, (AlgorithmIdentifier?)null);
             this.rsaDigestSigner.Init(true, parameters);
         }
         else
