@@ -62,7 +62,7 @@ internal class WrapperSignerFactory
             CKM.CKM_ECDSA_SHA384 => this.CreateEcdsaSigner(ckMechanism, new Sha384Digest()),
             CKM.CKM_ECDSA_SHA512 => this.CreateEcdsaSigner(ckMechanism, new Sha512Digest()),
 
-            CKM.CKM_RSA_9796 => new RsaWrapperSigner(new Iso9796Signer(new RsaBlindedEngine(), new NullDigest()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_RSA_9796 => new RsaWrapperSigner(new Iso9796d2Signer(new RsaBlindedEngine(), new NullDigest(), isImplicit: true), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 
             //TODO: Implement CKM_CMS_SIG 
             CKM.CKM_MD2_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new MD2Digest(), null),
