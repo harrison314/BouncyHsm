@@ -35,6 +35,7 @@ else
                 <th>Max. key size</th>
                 <th>Digest</th>
                 <th>Sign, Verify</th>
+                <th>SignRecover, VerifyRecover</th>
                 <th>Derive</th>
                 <th>Encrypt, Decrypt</th>
                 <th>Generate key pair</th>
@@ -51,6 +52,7 @@ else
                     <td class="text-end">@mi.MaxKeySize</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Digest)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Sign, mi.Flags.Verify)</td>
+                    <td class="text-center">@ShowFlag(mi.Flags.SignRecover, mi.Flags.VerifyRecover)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Derive)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.Encrypt, mi.Flags.Decrypt)</td>
                     <td class="text-center">@ShowFlag(mi.Flags.GenerateKeyPair)</td>

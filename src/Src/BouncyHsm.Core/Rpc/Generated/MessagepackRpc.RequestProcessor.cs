@@ -80,6 +80,10 @@ public static partial class RequestProcessor
         "WrapKey" => ProcessRequestBody<WrapKeyRequest, WrapKeyEnvelope>(serviceProvider, "WrapKey", requestBody, static ckRv => new WrapKeyEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "UnwrapKey" => ProcessRequestBody<UnwrapKeyRequest, UnwrapKeyEnvelope>(serviceProvider, "UnwrapKey", requestBody, static ckRv => new UnwrapKeyEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "WaitForSlotEvent" => ProcessRequestBody<WaitForSlotEventRequest, WaitForSlotEventEnvelope>(serviceProvider, "WaitForSlotEvent", requestBody, static ckRv => new WaitForSlotEventEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "SignRecoverInit" => ProcessRequestBody<SignRecoverInitRequest, SignRecoverInitEnvelope>(serviceProvider, "SignRecoverInit", requestBody, static ckRv => new SignRecoverInitEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "SignRecover" => ProcessRequestBody<SignRecoverRequest, SignRecoverEnvelope>(serviceProvider, "SignRecover", requestBody, static ckRv => new SignRecoverEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "VerifyRecoverInit" => ProcessRequestBody<VerifyRecoverInitRequest, VerifyRecoverInitEnvelope>(serviceProvider, "VerifyRecoverInit", requestBody, static ckRv => new VerifyRecoverInitEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "VerifyRecover" => ProcessRequestBody<VerifyRecoverRequest, VerifyRecoverEnvelope>(serviceProvider, "VerifyRecover", requestBody, static ckRv => new VerifyRecoverEnvelope(){ Rv = ckRv }, logger, cancellationToken),
           _ => throw new InvalidOperationException($"RPC operation {header.Operation} is not supported.")
       };
    }

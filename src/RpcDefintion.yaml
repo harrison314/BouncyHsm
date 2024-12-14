@@ -228,6 +228,23 @@ Rpc:
     Request: WaitForSlotEventRequest
     Response: WaitForSlotEventEnvelope
 
+  SignRecoverInit:
+    Summary: Call for C_SignRecoverInit
+    Request: SignRecoverInitRequest
+    Response: SignRecoverInitEnvelope
+  SignRecover:
+    Summary: Call fro C_SignRecoverInit
+    Request: SignRecoverRequest
+    Response: SignRecoverEnvelope
+  VerifyRecoverInit:
+    Summary: Call for C_VerifyRecoverInit
+    Request: VerifyRecoverInitRequest
+    Response: VerifyRecoverInitEnvelope
+  VerifyRecover:
+    Summary: Call for C_VerifyRecover
+    Request: VerifyRecoverRequest
+    Response: VerifyRecoverEnvelope
+
 Messages:
   AppIdentification:
     Summary: Application uniq identification data for server.
@@ -1129,6 +1146,74 @@ Messages:
     Summary:
     Fields:
       SlotId: uint32
+
+  SignRecoverInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  SignRecoverInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  SignRecoverRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Data: binary
+      IsSignaturePtrSet: bool
+      PullSignatureLen: uint32
+
+  SignRecoverData:
+    Summary:
+    Fields:
+      PullSignatureLen: uint32
+      Signature: binary
+
+  SignRecoverEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: SignRecoverData?
+
+  VerifyRecoverInitRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      KeyObjectHandle: uint32
+
+  VerifyRecoverInitEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  VerifyRecoverRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Signature: binary
+      IsPtrDataSet: bool
+      PulDataLen: uint32
+
+  VerifyRecoverData:
+    Summary: Recovered data
+    Fields:
+      PulDataLen: uint32
+      Data: binary
+
+  VerifyRecoverEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: VerifyRecoverData?
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

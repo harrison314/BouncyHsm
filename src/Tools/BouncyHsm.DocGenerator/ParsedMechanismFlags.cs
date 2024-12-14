@@ -14,6 +14,12 @@ public class ParsedMechanismFlags
         set;
     }
 
+    public bool SignAndVerifyRecover
+    {
+        get;
+        set;
+    }
+
     public bool Derive
     {
         get;
@@ -42,5 +48,10 @@ public class ParsedMechanismFlags
     {
         get;
         set;
+    }
+
+    public ParsedMechanismFlags()
+    {
+        
     }
 }

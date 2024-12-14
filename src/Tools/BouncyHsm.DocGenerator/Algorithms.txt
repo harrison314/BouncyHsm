@@ -14,10 +14,10 @@ Supported algorithms for _Bouncy Hsm_ version {{ Versions.Version }} (commit _{{
 ## Mechanisms
 _Bouncy Hsm_ supports {{ MechanismsCount }} mechanisms.
 
-| Mechanism | Min key size | Max key size | Digest | Sign, Verify | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
-| :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Mechanism | Min key size | Max key size | Digest | Sign, Verify | SignRecover, VerifyRecover | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
+| :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 {{~ for mi in Mechanisms ~}}
-| `{{ mi.MechanismType }}` | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags.Digest | toCheck }} | {{mi.Flags.SignAndVerify | toCheck }} | {{mi.Flags.Derive | toCheck }} | {{mi.Flags.EncryptAndDecrypt | toCheck }} | {{mi.Flags.GenerateKeyPair | toCheck }} | {{mi.Flags.Generate | toCheck }} | {{mi.Flags.WrapAndUnwrap | toCheck }} |
+| `{{ mi.MechanismType }}` | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags.Digest | toCheck }} | {{mi.Flags.SignAndVerify | toCheck }} | {{mi.Flags.SignAndVerifyRecover | toCheck }} | {{mi.Flags.Derive | toCheck }} | {{mi.Flags.EncryptAndDecrypt | toCheck }} | {{mi.Flags.GenerateKeyPair | toCheck }} | {{mi.Flags.Generate | toCheck }} | {{mi.Flags.WrapAndUnwrap | toCheck }} |
 {{~ end ~}}
 
 ## Elliptic curves
