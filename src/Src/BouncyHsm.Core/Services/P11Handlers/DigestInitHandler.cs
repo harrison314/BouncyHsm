@@ -3,6 +3,7 @@ using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
+using MessagePack;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
@@ -81,7 +82,7 @@ public partial class DigestInitHandler : IRpcRequestHandler<DigestInitRequest, D
 
         try
         {
-            CkP_MacGeneralParams generalParams = MessagePack.MessagePackSerializer.Deserialize<CkP_MacGeneralParams>(mechanism.MechanismParamMp);
+            CkP_MacGeneralParams generalParams = MessagePack.MessagePackSerializer.Deserialize<CkP_MacGeneralParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
             return new Sha512tDigest(Convert.ToInt32(generalParams.Value));
         }
         catch (Exception ex)

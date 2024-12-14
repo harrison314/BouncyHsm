@@ -31,14 +31,14 @@ public static partial class RequestProcessor
         //            Convert.ToHexString(requestBody.ToArray()));
         //#endif
 
-        HeaderStructure header = MessagePackSerializer.Deserialize<HeaderStructure>(requestHeader);
+        HeaderStructure header = MessagePackSerializer.Deserialize<HeaderStructure>(requestHeader, MessagepackBouncyHsmResolver.GetOptions());
 
         using IDisposable? logScope = logger.BeginScope(CreateContextScope(header));
 
         IMemoryOwner<byte> responseBody = await ProcessRequestInternal(scopeProvider, header, requestBody, logger, cancellationToken);
 
         OwnedBufferWriter headerWriter = new OwnedBufferWriter(256);
-        MessagePackSerializer.Serialize<ResponseHeaderStructure>(headerWriter, new ResponseHeaderStructure());
+        MessagePackSerializer.Serialize<ResponseHeaderStructure>(headerWriter, new ResponseHeaderStructure(), MessagepackBouncyHsmResolver.GetOptions());
 
         //#if DEBUG
         //        logger.LogDebug("Response low-level info:\nHead: {0}\nBody:{1}",
@@ -66,7 +66,7 @@ public static partial class RequestProcessor
 
     private static async ValueTask<IMemoryOwner<byte>> ProcessRequestBody<TRequest, TResponse>(IServiceProvider scopeProvider, string operation, ReadOnlyMemory<byte> requestBody, Func<uint, TResponse> nonOkResponseFactory, ILogger logger, CancellationToken cancellationToken)
     {
-        TRequest request = MessagePackSerializer.Deserialize<TRequest>(requestBody);
+        TRequest request = MessagePackSerializer.Deserialize<TRequest>(requestBody, MessagepackBouncyHsmResolver.GetOptions());
 
         IEnumerable<IRpcPipeline<TRequest, TResponse>>? pipeline = (IEnumerable<IRpcPipeline<TRequest, TResponse>>?)scopeProvider.GetService(typeof(IEnumerable<IRpcPipeline<TRequest, TResponse>>));
         IRpcRequestHandler<TRequest, TResponse> handler = (IRpcRequestHandler<TRequest, TResponse>)(scopeProvider.GetService(typeof(IRpcRequestHandler<TRequest, TResponse>))
@@ -110,7 +110,7 @@ public static partial class RequestProcessor
             }
 
             OwnedBufferWriter bodyWriter = new OwnedBufferWriter(1024 * 8);
-            MessagePackSerializer.Serialize<TResponse>(bodyWriter, response);
+            MessagePackSerializer.Serialize<TResponse>(bodyWriter, response, MessagepackBouncyHsmResolver.GetOptions());
             return bodyWriter;
         }
         catch (RpcPkcs11Exception ex)
@@ -120,7 +120,7 @@ public static partial class RequestProcessor
             TResponse errorResponse = nonOkResponseFactory((uint)ex.ReturnValue);
 
             OwnedBufferWriter bodyWriter = new OwnedBufferWriter(256);
-            MessagePackSerializer.Serialize<TResponse>(bodyWriter, errorResponse);
+            MessagePackSerializer.Serialize<TResponse>(bodyWriter, errorResponse, MessagepackBouncyHsmResolver.GetOptions());
             return bodyWriter;
         }
         catch (NotSupportedException ex)
@@ -129,7 +129,7 @@ public static partial class RequestProcessor
 
             TResponse errorResponse = nonOkResponseFactory((uint)CKR.CKR_FUNCTION_NOT_SUPPORTED);
             OwnedBufferWriter bodyWriter = new OwnedBufferWriter(256);
-            MessagePackSerializer.Serialize<TResponse>(bodyWriter, errorResponse);
+            MessagePackSerializer.Serialize<TResponse>(bodyWriter, errorResponse, MessagepackBouncyHsmResolver.GetOptions());
             return bodyWriter;
         }
         catch (Exception ex)
@@ -138,7 +138,7 @@ public static partial class RequestProcessor
 
             TResponse errorResponse = nonOkResponseFactory((uint)CKR.CKR_GENERAL_ERROR);
             OwnedBufferWriter bodyWriter = new OwnedBufferWriter(256);
-            MessagePackSerializer.Serialize<TResponse>(bodyWriter, errorResponse);
+            MessagePackSerializer.Serialize<TResponse>(bodyWriter, errorResponse, MessagepackBouncyHsmResolver.GetOptions());
             return bodyWriter;
         }
     }

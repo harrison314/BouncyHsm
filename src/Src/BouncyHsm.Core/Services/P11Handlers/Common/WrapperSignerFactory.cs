@@ -115,7 +115,7 @@ internal class WrapperSignerFactory
         this.logger.LogTrace("Entering to CreateHmacGeneralWrapperSigner with {MechanismType}.", (CKM)mechanism.MechanismType);
         try
         {
-            CkP_MacGeneralParams generalParams = MessagePack.MessagePackSerializer.Deserialize<CkP_MacGeneralParams>(mechanism.MechanismParamMp);
+            CkP_MacGeneralParams generalParams = MessagePack.MessagePackSerializer.Deserialize<CkP_MacGeneralParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
             if (generalParams.Value == 0)
             {
@@ -142,7 +142,7 @@ internal class WrapperSignerFactory
     {
         this.logger.LogTrace("Entering to CreateRsaPssSigner.");
 
-        CkP_RsaPkcsPssParams mechanismParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RsaPkcsPssParams>(mechanism.MechanismParamMp);
+        CkP_RsaPkcsPssParams mechanismParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RsaPkcsPssParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
         CKM pssHashAlgorithm = (CKM)mechanismParams.HashAlg;
         CKG pssMgf = (CKG)mechanismParams.Mgf;

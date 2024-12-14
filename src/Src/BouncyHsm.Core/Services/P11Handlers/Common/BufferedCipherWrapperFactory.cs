@@ -71,7 +71,7 @@ internal class BufferedCipherWrapperFactory
     {
         try
         {
-            CkP_RawDataParams rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RawDataParams>(mechanism.MechanismParamMp);
+            CkP_RawDataParams rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RawDataParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
             this.logger.LogDebug("Extract IV with len {ivLen} for mechanism {mechanism}.",
                 rawDataParams.Value.Length,
@@ -93,7 +93,7 @@ internal class BufferedCipherWrapperFactory
     {
         try
         {
-            Ckp_CkGcmParams gcmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkGcmParams>(mechanism.MechanismParamMp);
+            Ckp_CkGcmParams gcmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkGcmParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
             if (this.logger.IsEnabled(LogLevel.Trace))
             {
@@ -129,7 +129,7 @@ internal class BufferedCipherWrapperFactory
     {
         try
         {
-            Ckp_CkCcmParams ccmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkCcmParams>(mechanism.MechanismParamMp);
+            Ckp_CkCcmParams ccmParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkCcmParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
             if (this.logger.IsEnabled(LogLevel.Trace))
             {
@@ -164,7 +164,7 @@ internal class BufferedCipherWrapperFactory
     {
         try
         {
-            Ckp_CkRsaPkcsOaepParams rsaPkcsOaepParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkRsaPkcsOaepParams>(mechanism.MechanismParamMp);
+            Ckp_CkRsaPkcsOaepParams rsaPkcsOaepParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkRsaPkcsOaepParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
             if (this.logger.IsEnabled(LogLevel.Trace))
             {

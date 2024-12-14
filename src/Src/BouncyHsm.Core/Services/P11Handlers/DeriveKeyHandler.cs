@@ -4,6 +4,7 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.Generators;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
+using MessagePack;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Security;
@@ -126,7 +127,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
         try
         {
-            CkP_ExtractParams extractParams = MessagePack.MessagePackSerializer.Deserialize<CkP_ExtractParams>(mechanism.MechanismParamMp);
+            CkP_ExtractParams extractParams = MessagePack.MessagePackSerializer.Deserialize<CkP_ExtractParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
             return new ExtractKeyFromKeyDeriveKeyGenerator((int)extractParams.Value, this.loggerFactory.CreateLogger<ExtractKeyFromKeyDeriveKeyGenerator>());
         }
         catch (Exception ex)
@@ -142,7 +143,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
         try
         {
-            Ckp_CkEcdh1DeriveParams deriveParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkEcdh1DeriveParams>(mechanism.MechanismParamMp);
+            Ckp_CkEcdh1DeriveParams deriveParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkEcdh1DeriveParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
             Ecdh1DeriveParams ecDeriveParams = new Ecdh1DeriveParams((CKD)deriveParams.Kdf,
                 deriveParams.PublicData,
                 deriveParams.SharedData);
@@ -167,7 +168,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
         try
         {
-            Ckp_CkAesCbcEnryptDataParams cbcEncryptData = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkAesCbcEnryptDataParams>(mechanism.MechanismParamMp);
+            Ckp_CkAesCbcEnryptDataParams cbcEncryptData = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkAesCbcEnryptDataParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
             return new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/CBC/NOPADDING"),
                 cbcEncryptData.Data,
@@ -187,7 +188,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
         try
         {
-            CkP_KeyDerivationStringData rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_KeyDerivationStringData>(mechanism.MechanismParamMp);
+            CkP_KeyDerivationStringData rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_KeyDerivationStringData>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
             return rawDataParams.Data;
         }
         catch (Exception ex)
@@ -203,7 +204,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
         try
         {
-            CkP_CkObjectHandle rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_CkObjectHandle>(mechanism.MechanismParamMp);
+            CkP_CkObjectHandle rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_CkObjectHandle>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
             this.logger.LogDebug("Read CkP_CkObjectHandle with handle {Handle}.", rawDataParams.Handle);
 
             SecretKeyObject keyObject = await this.hwServices.FindObjectByHandle<SecretKeyObject>(memorySession,

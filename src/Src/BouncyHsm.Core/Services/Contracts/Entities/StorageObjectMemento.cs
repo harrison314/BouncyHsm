@@ -17,7 +17,7 @@ public class StorageObjectMemento : Entity
     {
         System.Diagnostics.Debug.Assert(content != null);
 
-        return MessagePackSerializer.Deserialize<StorageObjectMemento>(content);
+        return MessagePackSerializer.Deserialize<StorageObjectMemento>(content, MessagepackBouncyHsmResolver.GetOptions());
     }
 
     public StorageObjectMemento()
@@ -36,11 +36,11 @@ public class StorageObjectMemento : Entity
 
     public byte[] ToByteArray()
     {
-        return MessagePackSerializer.Serialize<StorageObjectMemento>(this);
+        return MessagePackSerializer.Serialize<StorageObjectMemento>(this, MessagepackBouncyHsmResolver.GetOptions());
     }
 
     public void WriteTo(IBufferWriter<byte> writer)
     {
-        MessagePackSerializer.Serialize(writer, this);
+        MessagePackSerializer.Serialize(writer, this, MessagepackBouncyHsmResolver.GetOptions());
     }
 }
