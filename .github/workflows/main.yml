@@ -45,10 +45,10 @@ jobs:
             ${{ runner.os }}-buildx-
       - name: Build Docker image
         run: |
-          docker build --file Dockerfile --tag c-project:latest .
+          docker build --file build_linux/Dockerfile --tag bh-lib-rehl:latest .
       - name: Run Docker container and compile project
         run: |
-          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace/build_linux c-project:latest make
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace/build_linux bh-lib-rehl:latest make
       - name: Rename so file for REHL distribution
         run: |
           mv -f build_linux/BouncyHsm.Pkcs11Lib-x64.so build_linux/BouncyHsm.Pkcs11Lib-x64-rehl.so
