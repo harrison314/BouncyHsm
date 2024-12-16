@@ -29,7 +29,7 @@ jobs:
             build_linux/*.so
           retention-days: 1
 
-  Build-REHL-like:
+  Build-rehl-libs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -64,7 +64,9 @@ jobs:
   Build-Bouncy-Hsm:
     name: Build-Bouncy-Hsm
     runs-on: windows-latest
-    needs: Build-linux-libs
+    needs:
+      - Build-linux-libs
+      - Build-rehl-libs
     steps:
       - uses: actions/checkout@v4
       - name: Cache .nuke/temp, ~/.nuget/packages
