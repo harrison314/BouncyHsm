@@ -53,7 +53,7 @@ jobs:
         run: |
           mv -f build_linux/BouncyHsm.Pkcs11Lib-x64.so build_linux/BouncyHsm.Pkcs11Lib-x64-rehl.so
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
