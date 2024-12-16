@@ -1,4 +1,4 @@
-name: Build Bouncy Hsm
+name: Build Bouncy Hsm Experimental
 on:
   workflow_dispatch
   
@@ -28,6 +28,38 @@ jobs:
           path: |
             build_linux/*.so
           retention-days: 1
+
+  Build-REHL-like:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Build Docker image
+        run: |
+          docker build --file Dockerfile --tag c-project:latest .
+      - name: Run Docker container and compile project
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace/build_linux c-project:latest make
+      - name: Rename so file for REHL distribution
+        run: |
+          mv -f build_linux/BouncyHsm.Pkcs11Lib-x64.so build_linux/BouncyHsm.Pkcs11Lib-x64-rehl.so
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: |
+            build_linux/*.so
+          retention-days: 1
+
 
   Build-Bouncy-Hsm:
     name: Build-Bouncy-Hsm
