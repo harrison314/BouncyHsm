@@ -81,7 +81,7 @@ internal class CCharpMpGenerator : IRpcGenerator
             string classApendix = this.CreateClassApendix(typeName, definition);
 
             this.content.AppendLine("[MessagePackObject]");
-            this.content.AppendLine("[System.CodeDom.Compiler.GeneratedCode(\"BouncyHsm.RpcGenerator.Generators\", \"1.0.0\")]");
+            this.content.AppendLine("[System.CodeDom.Compiler.GeneratedCode(\"BouncyHsm.RpcGenerator.Generators\", \"1.2.0\")]");
             this.content.AppendLine($"public partial class {typeName}{classApendix}");
             this.content.AppendLine("{");
 

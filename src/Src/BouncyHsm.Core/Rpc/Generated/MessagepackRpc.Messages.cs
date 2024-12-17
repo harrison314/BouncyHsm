@@ -17,7 +17,7 @@ namespace BouncyHsm.Core.Rpc;
 #nullable enable
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class AppIdentification
 {
     [Key(0)]
@@ -44,7 +44,7 @@ public partial class AppIdentification
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class ExtendedClientInfo
 {
     [Key(0)]
@@ -85,7 +85,7 @@ public partial class ExtendedClientInfo
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class PingRequest : IRpcRequest
 {
     [Key(0)]
@@ -98,7 +98,7 @@ public partial class PingRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class PingEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -111,7 +111,7 @@ public partial class PingEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class InitializeRequest : IRpcRequest
 {
     [Key(0)]
@@ -152,7 +152,7 @@ public partial class InitializeRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class InitializeEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -165,7 +165,7 @@ public partial class InitializeEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FinalizeRequest : IRpcRequest
 {
     [Key(0)]
@@ -185,7 +185,7 @@ public partial class FinalizeRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FinalizeEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -198,7 +198,7 @@ public partial class FinalizeEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -211,7 +211,7 @@ public partial class GetInfoRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -231,7 +231,7 @@ public partial class GetInfoEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetSlotListRequest : IRpcRequest
 {
     [Key(0)]
@@ -265,7 +265,7 @@ public partial class GetSlotListRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetSlotListEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -292,7 +292,7 @@ public partial class GetSlotListEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetSlotInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -312,7 +312,7 @@ public partial class GetSlotInfoRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkVersion
 {
     [Key(0)]
@@ -332,7 +332,7 @@ public partial class CkVersion
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkSpecialUint
 {
     [Key(0)]
@@ -366,7 +366,7 @@ public partial class CkSpecialUint
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SlotInfo
 {
     [Key(0)]
@@ -421,7 +421,7 @@ public partial class SlotInfo
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetSlotInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -441,7 +441,7 @@ public partial class GetSlotInfoEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetTokenInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -461,7 +461,7 @@ public partial class GetTokenInfoRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class TokenInfo
 {
     [Key(0)]
@@ -593,7 +593,7 @@ public partial class TokenInfo
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetTokenInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -613,7 +613,7 @@ public partial class GetTokenInfoEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetMechanismListRequest : IRpcRequest
 {
     [Key(0)]
@@ -647,7 +647,7 @@ public partial class GetMechanismListRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class MechanismList
 {
     [Key(0)]
@@ -667,7 +667,7 @@ public partial class MechanismList
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetMechanismListEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -687,7 +687,7 @@ public partial class GetMechanismListEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetMechanismInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -714,7 +714,7 @@ public partial class GetMechanismInfoRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class MechanismInfo
 {
     [Key(0)]
@@ -748,7 +748,7 @@ public partial class MechanismInfo
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetMechanismInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -768,7 +768,7 @@ public partial class GetMechanismInfoEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SetPinRequest : IRpcRequest
 {
     [Key(0)]
@@ -802,7 +802,7 @@ public partial class SetPinRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SetPinEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -815,7 +815,7 @@ public partial class SetPinEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class OpenSessionRequest : IRpcRequest
 {
     [Key(0)]
@@ -856,7 +856,7 @@ public partial class OpenSessionRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class OpenSessionEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -876,7 +876,7 @@ public partial class OpenSessionEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CloseSessionRequest : IRpcRequest
 {
     [Key(0)]
@@ -896,7 +896,7 @@ public partial class CloseSessionRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CloseSessionEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -909,7 +909,7 @@ public partial class CloseSessionEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CloseAllSessionsRequest : IRpcRequest
 {
     [Key(0)]
@@ -929,7 +929,7 @@ public partial class CloseAllSessionsRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CloseAllSessionsEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -942,7 +942,7 @@ public partial class CloseAllSessionsEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetSessionInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -962,7 +962,7 @@ public partial class GetSessionInfoRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SessionInfoData
 {
     [Key(0)]
@@ -996,7 +996,7 @@ public partial class SessionInfoData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetSessionInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1016,7 +1016,7 @@ public partial class GetSessionInfoEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class LoginRequest : IRpcRequest
 {
     [Key(0)]
@@ -1050,7 +1050,7 @@ public partial class LoginRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class LoginEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1063,7 +1063,7 @@ public partial class LoginEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class LogoutRequest : IRpcRequest
 {
     [Key(0)]
@@ -1083,7 +1083,7 @@ public partial class LogoutRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class LogoutEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1096,7 +1096,7 @@ public partial class LogoutEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SeedRandomRequest : IRpcRequest
 {
     [Key(0)]
@@ -1123,7 +1123,7 @@ public partial class SeedRandomRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SeedRandomEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1136,7 +1136,7 @@ public partial class SeedRandomEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateRandomRequest : IRpcRequest
 {
     [Key(0)]
@@ -1163,7 +1163,7 @@ public partial class GenerateRandomRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateRandomEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1183,7 +1183,7 @@ public partial class GenerateRandomEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class MechanismValue
 {
     [Key(0)]
@@ -1203,7 +1203,7 @@ public partial class MechanismValue
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -1230,7 +1230,7 @@ public partial class DigestInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1243,7 +1243,7 @@ public partial class DigestInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestRequest : IRpcRequest
 {
     [Key(0)]
@@ -1284,7 +1284,7 @@ public partial class DigestRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestValue
 {
     [Key(0)]
@@ -1304,7 +1304,7 @@ public partial class DigestValue
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1324,7 +1324,7 @@ public partial class DigestEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -1351,7 +1351,7 @@ public partial class DigestUpdateRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1364,7 +1364,7 @@ public partial class DigestUpdateEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -1391,7 +1391,7 @@ public partial class DigestKeyRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1404,7 +1404,7 @@ public partial class DigestKeyEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -1438,7 +1438,7 @@ public partial class DigestFinalRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DigestFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1458,7 +1458,7 @@ public partial class DigestFinalEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class AttrValueFromNative
 {
     [Key(0)]
@@ -1506,7 +1506,7 @@ public partial class AttrValueFromNative
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CreateObjectRequest : IRpcRequest
 {
     [Key(0)]
@@ -1533,7 +1533,7 @@ public partial class CreateObjectRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CreateObjectEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1553,7 +1553,7 @@ public partial class CreateObjectEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DestroyObjectRequest : IRpcRequest
 {
     [Key(0)]
@@ -1580,7 +1580,7 @@ public partial class DestroyObjectRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DestroyObjectEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1593,7 +1593,7 @@ public partial class DestroyObjectEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FindObjectsInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -1620,7 +1620,7 @@ public partial class FindObjectsInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FindObjectsInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1633,7 +1633,7 @@ public partial class FindObjectsInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FindObjectsRequest : IRpcRequest
 {
     [Key(0)]
@@ -1660,7 +1660,7 @@ public partial class FindObjectsRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FindObjectsData
 {
     [Key(0)]
@@ -1680,7 +1680,7 @@ public partial class FindObjectsData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FindObjectsEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1700,7 +1700,7 @@ public partial class FindObjectsEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FindObjectsFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -1720,7 +1720,7 @@ public partial class FindObjectsFinalRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class FindObjectsFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1733,7 +1733,7 @@ public partial class FindObjectsFinalEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetObjectSizeRequest : IRpcRequest
 {
     [Key(0)]
@@ -1760,7 +1760,7 @@ public partial class GetObjectSizeRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetObjectSizeEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1780,7 +1780,7 @@ public partial class GetObjectSizeEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetAttributeInputValues
 {
     [Key(0)]
@@ -1807,7 +1807,7 @@ public partial class GetAttributeInputValues
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetAttributeValueRequest : IRpcRequest
 {
     [Key(0)]
@@ -1841,7 +1841,7 @@ public partial class GetAttributeValueRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetAttributeOutValue
 {
     [Key(0)]
@@ -1889,7 +1889,7 @@ public partial class GetAttributeOutValue
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetAttributeOutValues
 {
     [Key(0)]
@@ -1902,7 +1902,7 @@ public partial class GetAttributeOutValues
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GetAttributeValueEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1922,7 +1922,7 @@ public partial class GetAttributeValueEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateKeyPairRequest : IRpcRequest
 {
     [Key(0)]
@@ -1963,7 +1963,7 @@ public partial class GenerateKeyPairRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateKeyPairData
 {
     [Key(0)]
@@ -1983,7 +1983,7 @@ public partial class GenerateKeyPairData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateKeyPairEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2003,7 +2003,7 @@ public partial class GenerateKeyPairEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2037,7 +2037,7 @@ public partial class SignInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2050,7 +2050,7 @@ public partial class SignInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignRequest : IRpcRequest
 {
     [Key(0)]
@@ -2091,7 +2091,7 @@ public partial class SignRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignatureData
 {
     [Key(0)]
@@ -2111,7 +2111,7 @@ public partial class SignatureData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2131,7 +2131,7 @@ public partial class SignEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -2158,7 +2158,7 @@ public partial class SignUpdateRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2171,7 +2171,7 @@ public partial class SignUpdateEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -2205,7 +2205,7 @@ public partial class SignFinalRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2225,7 +2225,7 @@ public partial class SignFinalEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2259,7 +2259,7 @@ public partial class VerifyInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2272,7 +2272,7 @@ public partial class VerifyInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyRequest : IRpcRequest
 {
     [Key(0)]
@@ -2306,7 +2306,7 @@ public partial class VerifyRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2319,7 +2319,7 @@ public partial class VerifyEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -2346,7 +2346,7 @@ public partial class VerifyUpdateRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2359,7 +2359,7 @@ public partial class VerifyUpdateEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -2386,7 +2386,7 @@ public partial class VerifyFinalRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2399,7 +2399,7 @@ public partial class VerifyFinalEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -2433,7 +2433,7 @@ public partial class GenerateKeyRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateKeyData
 {
     [Key(0)]
@@ -2446,7 +2446,7 @@ public partial class GenerateKeyData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class GenerateKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2466,7 +2466,7 @@ public partial class GenerateKeyEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DeriveKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -2507,7 +2507,7 @@ public partial class DeriveKeyRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DeriveKeyData
 {
     [Key(0)]
@@ -2520,7 +2520,7 @@ public partial class DeriveKeyData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DeriveKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2540,7 +2540,7 @@ public partial class DeriveKeyEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2574,7 +2574,7 @@ public partial class EncryptInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2587,7 +2587,7 @@ public partial class EncryptInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptRequest : IRpcRequest
 {
     [Key(0)]
@@ -2628,7 +2628,7 @@ public partial class EncryptRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptData
 {
     [Key(0)]
@@ -2648,7 +2648,7 @@ public partial class EncryptData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2668,7 +2668,7 @@ public partial class EncryptEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -2709,7 +2709,7 @@ public partial class EncryptUpdateRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2729,7 +2729,7 @@ public partial class EncryptUpdateEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -2763,7 +2763,7 @@ public partial class EncryptFinalRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class EncryptFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2783,7 +2783,7 @@ public partial class EncryptFinalEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2817,7 +2817,7 @@ public partial class DecryptInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2830,7 +2830,7 @@ public partial class DecryptInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptRequest : IRpcRequest
 {
     [Key(0)]
@@ -2871,7 +2871,7 @@ public partial class DecryptRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptData
 {
     [Key(0)]
@@ -2891,7 +2891,7 @@ public partial class DecryptData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2911,7 +2911,7 @@ public partial class DecryptEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -2952,7 +2952,7 @@ public partial class DecryptUpdateRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2972,7 +2972,7 @@ public partial class DecryptUpdateEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -3006,7 +3006,7 @@ public partial class DecryptFinalRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class DecryptFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3026,7 +3026,7 @@ public partial class DecryptFinalEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class WrapKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -3081,7 +3081,7 @@ public partial class WrapKeyRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class WrapKeyData
 {
     [Key(0)]
@@ -3101,7 +3101,7 @@ public partial class WrapKeyData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class WrapKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3121,7 +3121,7 @@ public partial class WrapKeyEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class UnwrapKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -3169,7 +3169,7 @@ public partial class UnwrapKeyRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class UnwrapKeyData
 {
     [Key(0)]
@@ -3182,7 +3182,7 @@ public partial class UnwrapKeyData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class UnwrapKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3202,7 +3202,7 @@ public partial class UnwrapKeyEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SetAttributeValueRequest : IRpcRequest
 {
     [Key(0)]
@@ -3236,7 +3236,7 @@ public partial class SetAttributeValueRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SetAttributeValueEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3249,7 +3249,7 @@ public partial class SetAttributeValueEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CopyObjectRequest : IRpcRequest
 {
     [Key(0)]
@@ -3283,7 +3283,7 @@ public partial class CopyObjectRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CopyObjectData
 {
     [Key(0)]
@@ -3296,7 +3296,7 @@ public partial class CopyObjectData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CopyObjectEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3316,7 +3316,7 @@ public partial class CopyObjectEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class WaitForSlotEventRequest : IRpcRequest
 {
     [Key(0)]
@@ -3350,7 +3350,7 @@ public partial class WaitForSlotEventRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class WaitForSlotEventEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3370,7 +3370,7 @@ public partial class WaitForSlotEventEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class WaitForSlotEventData
 {
     [Key(0)]
@@ -3383,7 +3383,7 @@ public partial class WaitForSlotEventData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignRecoverInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -3417,7 +3417,7 @@ public partial class SignRecoverInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignRecoverInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3430,7 +3430,7 @@ public partial class SignRecoverInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignRecoverRequest : IRpcRequest
 {
     [Key(0)]
@@ -3471,7 +3471,7 @@ public partial class SignRecoverRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignRecoverData
 {
     [Key(0)]
@@ -3491,7 +3491,7 @@ public partial class SignRecoverData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class SignRecoverEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3511,7 +3511,7 @@ public partial class SignRecoverEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyRecoverInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -3545,7 +3545,7 @@ public partial class VerifyRecoverInitRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyRecoverInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3558,7 +3558,7 @@ public partial class VerifyRecoverInitEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyRecoverRequest : IRpcRequest
 {
     [Key(0)]
@@ -3599,7 +3599,7 @@ public partial class VerifyRecoverRequest : IRpcRequest
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyRecoverData
 {
     [Key(0)]
@@ -3619,7 +3619,7 @@ public partial class VerifyRecoverData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class VerifyRecoverEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3639,7 +3639,7 @@ public partial class VerifyRecoverEnvelope : IRpcResponse
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkP_MacGeneralParams
 {
     [Key(0)]
@@ -3652,7 +3652,7 @@ public partial class CkP_MacGeneralParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkP_ExtractParams
 {
     [Key(0)]
@@ -3665,7 +3665,7 @@ public partial class CkP_ExtractParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkP_RsaPkcsPssParams
 {
     [Key(0)]
@@ -3692,7 +3692,7 @@ public partial class CkP_RsaPkcsPssParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkP_RawDataParams
 {
     [Key(0)]
@@ -3705,7 +3705,7 @@ public partial class CkP_RawDataParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkP_KeyDerivationStringData
 {
     [Key(0)]
@@ -3725,7 +3725,7 @@ public partial class CkP_KeyDerivationStringData
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class CkP_CkObjectHandle
 {
     [Key(0)]
@@ -3738,7 +3738,7 @@ public partial class CkP_CkObjectHandle
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class Ckp_CkEcdh1DeriveParams
 {
     [Key(0)]
@@ -3765,7 +3765,7 @@ public partial class Ckp_CkEcdh1DeriveParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class Ckp_CkGcmParams
 {
     [Key(0)]
@@ -3799,7 +3799,7 @@ public partial class Ckp_CkGcmParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class Ckp_CkCcmParams
 {
     [Key(0)]
@@ -3833,7 +3833,7 @@ public partial class Ckp_CkCcmParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class Ckp_CkRsaPkcsOaepParams
 {
     [Key(0)]
@@ -3867,7 +3867,7 @@ public partial class Ckp_CkRsaPkcsOaepParams
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class Ckp_CkAesCbcEnryptDataParams
 {
     [Key(0)]
