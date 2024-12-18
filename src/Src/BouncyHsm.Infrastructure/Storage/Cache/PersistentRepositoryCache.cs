@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace BouncyHsm.Infrastructure.Storage.Cache;
 
+[Obsolete("use after test functionality.", true)]
 public class PersistentRepositoryCache : IPersistentRepository
 {
     private readonly IMemoryCache memoryCache;
