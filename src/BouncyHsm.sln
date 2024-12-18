@@ -46,6 +46,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.Cli", "Src\Bouncy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BouncyHsm.Client", "Src\BouncyHsm.Client\BouncyHsm.Client.csproj", "{2045BC8E-C3CC-4036-9B14-8CD3EAA4223A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyHsm.Pkcs11ScenarioTests", "Test\BouncyHsm.Pkcs11ScenarioTests\BouncyHsm.Pkcs11ScenarioTests.csproj", "{CCFE1C2B-304A-4095-B84A-20028D41FCF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -210,6 +212,18 @@ Global
 		{2045BC8E-C3CC-4036-9B14-8CD3EAA4223A}.Release|x64.Build.0 = Release|Any CPU
 		{2045BC8E-C3CC-4036-9B14-8CD3EAA4223A}.Release|x86.ActiveCfg = Release|Any CPU
 		{2045BC8E-C3CC-4036-9B14-8CD3EAA4223A}.Release|x86.Build.0 = Release|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Debug|x64.Build.0 = Debug|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Debug|x86.Build.0 = Debug|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Release|x64.ActiveCfg = Release|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Release|x64.Build.0 = Release|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Release|x86.ActiveCfg = Release|Any CPU
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -227,6 +241,7 @@ Global
 		{BA63BB8C-EA31-4364-9904-8718474EBF3E} = {B4F6ABAC-07CA-4CEB-8C60-73F8FD1FB795}
 		{B4593EFB-4DDE-47EA-A661-D010456A086B} = {1992AF95-E90B-4EF5-B167-85FEB6B666D2}
 		{2045BC8E-C3CC-4036-9B14-8CD3EAA4223A} = {1992AF95-E90B-4EF5-B167-85FEB6B666D2}
+		{CCFE1C2B-304A-4095-B84A-20028D41FCF4} = {B4F6ABAC-07CA-4CEB-8C60-73F8FD1FB795}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C90C9750-6184-4C23-BB55-60152D43665D}
