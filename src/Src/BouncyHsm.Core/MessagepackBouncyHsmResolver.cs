@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using MessagePack.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,6 @@ internal partial class MessagepackBouncyHsmResolver
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static MessagePackSerializerOptions? GetOptions()
     {
-        // TODO: Fix problems with MessagePack - System.String is not registered in resolver: BouncyHsm.Core.MessagepackBouncyHsmResolver'
-        // return new MessagePackSerializerOptions(MessagepackBouncyHsmResolver.Instance);
-        return null;
+        return new MessagePackSerializerOptions(CompositeResolver.Create(BuiltinResolver.Instance, MessagepackBouncyHsmResolver.Instance));
     }
 }
