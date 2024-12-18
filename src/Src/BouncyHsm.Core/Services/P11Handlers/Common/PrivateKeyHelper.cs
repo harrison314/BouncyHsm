@@ -14,6 +14,7 @@ internal static class PrivateKeyHelper
         return privateKeyObject.CkaPrivate
                 && privateKeyObject.CkaSign
                 && !privateKeyObject.CkaDecrypt
+                && !privateKeyObject.CkaUnwrap
                 && !privateKeyObject.CkaExtractable
                 && privateKeyObject.CkaSensitive;
     }
