@@ -165,4 +165,48 @@ public sealed class RemovableSlotTest
             Assert.AreEqual(1, slotCount);
         }
     }
+
+    [TestMethod]
+    public async Task WaitForSlotEvent_PluggedUnpluged_Success()
+    {
+        Assert.IsTrue(SlotId.HasValue);
+
+        await BchClient.Client.SetSlotPluggedStateAsync(SlotId.Value, new SetPluggedStateDto()
+        {
+            Plugged = true
+        });
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            BchClient.P11LibPath,
+            AppType.SingleThreaded);
+
+        
+        bool eventOccured;
+        ulong slotId;
+
+        library.WaitForSlotEvent(WaitType.NonBlocking, out eventOccured, out slotId);
+        Assert.IsFalse(eventOccured);
+
+        await BchClient.Client.SetSlotPluggedStateAsync(SlotId.Value, new SetPluggedStateDto()
+        {
+            Plugged = false
+        });
+
+        library.WaitForSlotEvent(WaitType.NonBlocking, out eventOccured, out slotId);
+        Assert.IsTrue(eventOccured);
+        Assert.AreEqual((ulong)SlotId.Value, slotId);
+
+        library.WaitForSlotEvent(WaitType.NonBlocking, out eventOccured, out slotId);
+        Assert.IsFalse(eventOccured);
+
+        await BchClient.Client.SetSlotPluggedStateAsync(SlotId.Value, new SetPluggedStateDto()
+        {
+            Plugged = true
+        });
+
+        library.WaitForSlotEvent(WaitType.NonBlocking, out eventOccured, out slotId);
+        Assert.IsTrue(eventOccured);
+        Assert.AreEqual((ulong)SlotId.Value, slotId);
+    }
 }
