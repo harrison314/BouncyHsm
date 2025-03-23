@@ -36,14 +36,14 @@ public class ImportP12RequestDto
     }
 
     [Required]
-    [MaxLength(1024*1024)]
+    [MaxLength(1024 * 1024)]
     public byte[] Pkcs12Content
     {
         get;
         set;
     }
 
-    [Required]
+    [Required(AllowEmptyStrings = true)]
     [MaxLength(1024)]
     public string Password
     {
@@ -52,7 +52,7 @@ public class ImportP12RequestDto
     }
 
     public ImportP12RequestDto()
-	{
+    {
         this.CkaLabel = string.Empty;
         this.CkaId = Array.Empty<byte>();
         this.Pkcs12Content = Array.Empty<byte>();
