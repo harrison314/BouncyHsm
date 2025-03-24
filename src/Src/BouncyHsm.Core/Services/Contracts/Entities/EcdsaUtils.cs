@@ -59,7 +59,7 @@ internal static class EcdsaUtils
         }
 
 
-        throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "CKA_EC_PARAMS is not named curve oid.");
+        throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not named curve oid ({namedCurve}).");
     }
 
     public static string ParseEcParamsAsName(byte[] ecParams)
@@ -190,7 +190,7 @@ internal static class EcdsaUtils
             }
             else
             {
-                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "CKA_EC_PARAMS is not OID.");
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not OID. CKA_EC_PARAMS is {Convert.ToHexString(ecParams)}.");
             }
         }
         catch (RpcPkcs11Exception)
@@ -199,7 +199,7 @@ internal static class EcdsaUtils
         }
         catch (Exception ex)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "CKA_EC_PARAMS is not OID.", ex);
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not OID. CKA_EC_PARAMS is {Convert.ToHexString(ecParams)}.", ex);
         }
     }
 }
