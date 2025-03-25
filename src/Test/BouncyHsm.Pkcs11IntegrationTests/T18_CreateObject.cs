@@ -3,6 +3,10 @@ using Net.Pkcs11Interop.Common;
 using System.Text;
 using PkcsExtensions;
 using System.Security.Cryptography;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Crypto.Parameters;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 
@@ -285,7 +289,7 @@ TnCoPhVFsVeDjQwg");
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
-        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100,999)}";
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
         byte[] ckId = session.GenerateRandom(32);
 
         byte[] secret = new byte[size];
@@ -362,5 +366,44 @@ TnCoPhVFsVeDjQwg");
         };
 
         _ = session.CreateObject(objectAttributes);
+    }
+
+    [TestMethod]
+    public void CreateObject_EcPrivateKey_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"Ec-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        Utils.EcdhData ecdhData = Utils.CreateEcdhParams();
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_ECDSA),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, ecdhData.X9Parameters.ToAsn1Object().GetEncoded()),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, ecdhData.EcPrivateKey.D.ToByteArrayUnsigned())
+        };
+
+        _ = session.CreateObject(privateKeyAttributes);
     }
 }

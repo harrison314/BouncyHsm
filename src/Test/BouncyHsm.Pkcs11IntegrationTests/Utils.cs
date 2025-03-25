@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Crypto.Parameters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,6 +65,35 @@ namespace BouncyHsm.Pkcs11IntegrationTests
             }
 
             return pkcs1DigestInfo;
+        }
+
+        public record EcdhData(X9ECParameters X9Parameters, ECPrivateKeyParameters EcPrivateKey, byte[] RawCertificate);
+        public static EcdhData CreateEcdhParams()
+        {
+            X500DistinguishedName subject = new X500DistinguishedName("CN=Test");
+            using ECDsa ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            CertificateRequest request = new CertificateRequest(subject, ecdsa, HashAlgorithmName.SHA256);
+            using X509Certificate2 certificate = request.CreateSelfSigned(DateTime.Now, DateTime.Now.AddDays(2));
+            byte[] p12Data = certificate.Export(X509ContentType.Pkcs12, "Password");
+
+            using MemoryStream ms = new MemoryStream(p12Data);
+
+            Org.BouncyCastle.Pkcs.Pkcs12StoreBuilder stBuilder = new Org.BouncyCastle.Pkcs.Pkcs12StoreBuilder();
+
+            Org.BouncyCastle.Pkcs.Pkcs12Store st = stBuilder.Build();
+            st.Load(ms, "Password".ToCharArray());
+            string? alias = st.Aliases.Cast<string>().FirstOrDefault(p => st.IsKeyEntry(p));
+            Org.BouncyCastle.Pkcs.X509CertificateEntry keyEntryX = st.GetCertificate(alias);
+            Org.BouncyCastle.Pkcs.AsymmetricKeyEntry keyEntry = st.GetKey(alias);
+            ECPrivateKeyParameters ecPrivateKey = (ECPrivateKeyParameters)keyEntry.Key;
+
+            X9ECParameters x9Parameters = new X9ECParameters(ecPrivateKey.Parameters.Curve,
+                new X9ECPoint(ecPrivateKey.Parameters.G, false),
+                ecPrivateKey.Parameters.N,
+                ecPrivateKey.Parameters.H,
+                ecPrivateKey.Parameters.GetSeed());
+
+            return new EcdhData(x9Parameters, ecPrivateKey, certificate.RawData);
         }
     }
 }
