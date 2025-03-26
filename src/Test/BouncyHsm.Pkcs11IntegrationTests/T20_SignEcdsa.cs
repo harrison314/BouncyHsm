@@ -100,6 +100,57 @@ public class T20_SignEcdsa
         }
     }
 
+    [TestMethod]
+    public void SignEcdsa_WithExplicitEcParams_Success()
+    {
+        byte[] dataToSign = new byte[412];
+        Random.Shared.NextBytes(dataToSign);
+        byte[] hash = SHA256.HashData(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"Ec-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        Utils.EcdhData ecdhData = Utils.CreateEcdhParams();
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_ECDSA),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, ecdhData.X9Parameters.ToAsn1Object().GetEncoded()),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, ecdhData.EcPrivateKey.D.ToByteArrayUnsigned())
+        };
+
+        IObjectHandle privateKey = session.CreateObject(privateKeyAttributes);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA);
+        byte[] signature = session.Sign(mechanism, privateKey, hash);
+
+        using System.Security.Cryptography.X509Certificates.X509Certificate2 certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(ecdhData.RawCertificate);
+        bool verfied = certificate.PublicKey.GetECDsaPublicKey()!.VerifyHash(hash, signature, DSASignatureFormat.IeeeP1363FixedFieldConcatenation);
+
+        Assert.IsTrue(verfied, "Signature inconsistent.");
+    }
+
     private ECDsa ExportPublicKey(ISession session, IObjectHandle pubKeyHandle)
     {
         List<CKA> attributes = new List<CKA>()
