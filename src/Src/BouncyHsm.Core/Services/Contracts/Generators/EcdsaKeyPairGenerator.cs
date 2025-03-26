@@ -67,16 +67,13 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
                 Convert.ToHexString(ecParams));
         }
 
-        EcdsaUtilsInternalParams namedCurve = EcdsaUtils.ParseEcParamsStructure(ecParams);
-        ECKeyGenerationParameters ecKeyGenParams = namedCurve.Match(
-            namedCurve => new ECKeyGenerationParameters(namedCurve.Oid, secureRandom),
-            explicitParams => new ECKeyGenerationParameters(new ECDomainParameters(explicitParams.EcParameters), secureRandom));
+        ECKeyGenerationParameters ecKeyGenParams = EcdsaUtils.ParseEcParamsToECKeyGenerationParameters(ecParams, secureRandom);
 
         Org.BouncyCastle.Crypto.Generators.ECKeyPairGenerator ecKeyPairGenerator = new Org.BouncyCastle.Crypto.Generators.ECKeyPairGenerator();
         ecKeyPairGenerator.Init(ecKeyGenParams);
         Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair = ecKeyPairGenerator.GenerateKeyPair();
 
-        this.logger.LogInformation("Generated EC key pair for named curve {NamedCurveOid}", namedCurve);
+        this.logger.LogInformation("Generated EC key pair for named curve {NamedCurveOid}", EcdsaUtils.ParseEcParamsAsName(ecParams));
 
         return ((ECPublicKeyParameters)keyPair.Public, (ECPrivateKeyParameters)keyPair.Private);
     }
