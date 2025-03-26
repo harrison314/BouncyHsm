@@ -1,11 +1,11 @@
 FROM almalinux:latest
 
-RUN yum -y update && \
-    yum -y install \
+RUN dnf -y update && \
+    dnf -y install \
     gcc \
     clang \
     make \
-    && yum clean all
+    && dnf clean all
 
 WORKDIR /workspace
 
