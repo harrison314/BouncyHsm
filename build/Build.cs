@@ -102,12 +102,11 @@ public partial class Build : NukeBuild
                linuxNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
            }
 
-           // ist not supported yet
-           //AbsolutePath rehlNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rehl.so";
-           //if (rehlNativeLibx64.Exists("file"))
-           //{
-           //    rehlNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Rehl-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
-           //}
+           AbsolutePath rehlNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rehl.so";
+           if (rehlNativeLibx64.Exists("file"))
+           {
+               rehlNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Rehl-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
+           }
 
            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Client" / "BouncyHsm.Client.csproj";
            AbsolutePath outputDir = ArtifactsDirectory;
