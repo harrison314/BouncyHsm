@@ -116,6 +116,9 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
         }
 
         ecdsaPublicKeyObject.SetPublicKey(publicKey);
+        // Overide the CKA_EC_PARAMS with the one from the template,
+        // // SetPublicKey() set CKA_EC_PARAMS with compiuted value
+        ecdsaPublicKeyObject.CkaEcParams = publicKeyTemplate.GetRequiredAttributeBytes(CKA.CKA_EC_PARAMS);
 
         return ecdsaPublicKeyObject;
     }

@@ -45,20 +45,33 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
     {
         Org.BouncyCastle.Asn1.X9.X9ECParameters ecParams = EcdsaUtils.ParseEcParams(this.CkaEcParams);
 
-        return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ecParams, this.CkaEcPoint), 
+        return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ecParams, this.CkaEcPoint),
             new ECDomainParameters(ecParams));
     }
 
     public override void SetPublicKey(AsymmetricKeyParameter publicKey)
     {
-        if(publicKey is not ECPublicKeyParameters)
+        if (publicKey is not ECPublicKeyParameters)
         {
             throw new ArgumentException("publicKey is not ECPublicKeyParameters", nameof(publicKey));
         }
 
         ECPublicKeyParameters ecdsaPublicKey = (ECPublicKeyParameters)publicKey;
         this.CkaEcPoint = EcdsaUtils.EncodeP11EcPoint(ecdsaPublicKey.Q);
-        this.CkaEcParams = ecdsaPublicKey.PublicKeyParamSet.GetEncoded();
+
+        if (ecdsaPublicKey.PublicKeyParamSet != null)
+        {
+            this.CkaEcParams = ecdsaPublicKey.PublicKeyParamSet.GetEncoded();
+        }
+        else
+        {
+            Org.BouncyCastle.Asn1.X9.X9ECParameters x9EcParamaters = new Org.BouncyCastle.Asn1.X9.X9ECParameters(ecdsaPublicKey.Parameters.Curve,
+                new Org.BouncyCastle.Asn1.X9.X9ECPoint(ecdsaPublicKey.Parameters.G, false),
+                ecdsaPublicKey.Parameters.N,
+                ecdsaPublicKey.Parameters.H,
+                ecdsaPublicKey.Parameters.GetSeed());
+            this.CkaEcParams = x9EcParamaters.GetEncoded();
+        }
     }
 
     public override void Validate()
@@ -68,7 +81,7 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
         ECPublicKeyParameters pubKey = (ECPublicKeyParameters)this.GetPublicKey();
         if (!pubKey.Q.IsValid())
         {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, 
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
                 $"CKA_EC_POINT is not valid in EcdsaPublicKeyObject with id {this.Id}.");
         }
     }

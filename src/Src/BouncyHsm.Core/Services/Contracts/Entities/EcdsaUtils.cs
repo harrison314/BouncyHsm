@@ -142,7 +142,7 @@ internal static class EcdsaUtils
 
         return internalParams.Match<ECKeyGenerationParameters>(
             ecParams => new ECKeyGenerationParameters(new ECDomainParameters(ecParams.Parameters), secureRandom),
-            namedCurve => new ECKeyGenerationParameters(namedCurve.Oid,secureRandom),
+            namedCurve => new ECKeyGenerationParameters(namedCurve.Oid, secureRandom),
             implicitlyCA => throw new System.Diagnostics.UnreachableException());
     }
 
