@@ -73,6 +73,19 @@ public sealed class EcdsaPrivateKeyObject : PrivateKeyObject
 
         ECPrivateKeyParameters ecdsaPrivateKey = (ECPrivateKeyParameters)privateKey;
         this.CkaValue = ecdsaPrivateKey.D.ToByteArrayUnsigned();
-        this.CkaEcParams = ecdsaPrivateKey.PublicKeyParamSet.GetEncoded();
+        
+        if (ecdsaPrivateKey.PublicKeyParamSet != null)
+        {
+            this.CkaEcParams = ecdsaPrivateKey.PublicKeyParamSet.GetEncoded();
+        }
+        else
+        {
+            Org.BouncyCastle.Asn1.X9.X9ECParameters x9EcParamaters = new Org.BouncyCastle.Asn1.X9.X9ECParameters(ecdsaPrivateKey.Parameters.Curve,
+                new Org.BouncyCastle.Asn1.X9.X9ECPoint(ecdsaPrivateKey.Parameters.G, false),
+                ecdsaPrivateKey.Parameters.N,
+                ecdsaPrivateKey.Parameters.H,
+                ecdsaPrivateKey.Parameters.GetSeed());
+            this.CkaEcParams = x9EcParamaters.GetEncoded();
+        }
     }
 }

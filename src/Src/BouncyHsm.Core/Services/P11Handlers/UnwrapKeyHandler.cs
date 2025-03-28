@@ -108,8 +108,9 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         }
         else if (storageObject is EcdsaPrivateKeyObject ecPrivateKeyObject)
         {
-            DerObjectIdentifier curveNameOid = EcdsaUtils.ParseEcParamsOid(ecPrivateKeyObject.CkaEcParams);
-            PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, curveNameOid),
+            Asn1Object asn1EcParams = EcdsaUtils.ParseEcParamsToAsn1Object(ecPrivateKeyObject.CkaEcParams);
+
+            PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, asn1EcParams),
                 Asn1Object.FromByteArray(unwrappedKey));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);

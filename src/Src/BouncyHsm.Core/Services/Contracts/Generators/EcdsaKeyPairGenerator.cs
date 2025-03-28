@@ -67,13 +67,13 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
                 Convert.ToHexString(ecParams));
         }
 
-        DerObjectIdentifier namedCurve = EcdsaUtils.ParseEcParamsOid(ecParams);
+        ECKeyGenerationParameters ecKeyGenParams = EcdsaUtils.ParseEcParamsToECKeyGenerationParameters(ecParams, secureRandom);
 
         Org.BouncyCastle.Crypto.Generators.ECKeyPairGenerator ecKeyPairGenerator = new Org.BouncyCastle.Crypto.Generators.ECKeyPairGenerator();
-        ecKeyPairGenerator.Init(new ECKeyGenerationParameters(namedCurve, secureRandom));
+        ecKeyPairGenerator.Init(ecKeyGenParams);
         Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair = ecKeyPairGenerator.GenerateKeyPair();
 
-        this.logger.LogInformation("Generated EC key pair for named curve {NamedCurveOid}", namedCurve);
+        this.logger.LogInformation("Generated EC key pair for named curve {NamedCurveOid}", EcdsaUtils.ParseEcParamsAsName(ecParams));
 
         return ((ECPublicKeyParameters)keyPair.Public, (ECPrivateKeyParameters)keyPair.Private);
     }
@@ -116,6 +116,9 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
         }
 
         ecdsaPublicKeyObject.SetPublicKey(publicKey);
+        // Overide the CKA_EC_PARAMS with the one from the template,
+        // // SetPublicKey() set CKA_EC_PARAMS with compiuted value
+        ecdsaPublicKeyObject.CkaEcParams = publicKeyTemplate.GetRequiredAttributeBytes(CKA.CKA_EC_PARAMS);
 
         return ecdsaPublicKeyObject;
     }

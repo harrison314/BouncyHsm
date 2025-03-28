@@ -7,6 +7,8 @@ using Org.BouncyCastle.Asn1.Nist;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.TeleTrust;
 using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,37 +37,41 @@ internal static class EcdsaUtils
         return ecParameters.Curve.DecodePoint(octetString.GetOctets());
     }
 
-    public static DerObjectIdentifier ParseEcParamsOid(byte[] ecParams)
-    {
-        DerObjectIdentifier namedCurve = ParseEcParamsInternal(ecParams);
+    //public static EcdsaUtilsInternalParams ParseEcParamsStructure(byte[] ecParams)
+    //{
+    //    EcdsaUtilsInternalParams ecdsaUtilsInternalParams = ParseEcParamsInternal(ecParams);
 
-        if (ECNamedCurveTable.GetByOidLazy(namedCurve) != null)
-        {
-            return namedCurve;
-        }
+    //    ecdsaUtilsInternalParams.MatchNamedCurve(namedCurve =>
+    //    {
+    //        if (ECNamedCurveTable.GetByOidLazy(namedCurve.Oid) == null)
+    //        {
+    //            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not named curve oid ({namedCurve.Oid}).");
+    //        }
+    //    },
+    //    () => { });
 
-        throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not named curve oid ({namedCurve}).");
-    }
+    //    return ecdsaUtilsInternalParams;
+    //}
 
     public static X9ECParameters ParseEcParams(byte[] ecParams)
     {
-        DerObjectIdentifier namedCurve = ParseEcParamsInternal(ecParams);
+        EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
+        CheckIsSupported(internalParams);
 
-        X9ECParameters? parsedParams = null;
-        parsedParams = ECNamedCurveTable.GetByOid(namedCurve);
-        if (parsedParams != null)
-        {
-            return parsedParams;
-        }
-
-
-        throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not named curve oid ({namedCurve}).");
+        return internalParams.Match(ecParams => ecParams.Parameters,
+            namedCurve => ECNamedCurveTable.GetByOid(namedCurve.Oid),
+            implicitCa => throw new System.Diagnostics.UnreachableException());
     }
 
     public static string ParseEcParamsAsName(byte[] ecParams)
     {
-        DerObjectIdentifier namedCurve = ParseEcParamsInternal(ecParams);
-        return ECNamedCurveTable.GetName(namedCurve);
+        EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
+        CheckIsSupported(internalParams);
+
+        return internalParams.Match<string>(
+            ecParams => "Explicit-EC_PARAMS",
+            namedCurve => ECNamedCurveTable.GetName(namedCurve.Oid),
+            implicitlyCA => "implicitlyCA");
     }
 
     public static DerObjectIdentifier GetEcOidFromNameOrOid(string nameOrOid)
@@ -115,12 +121,10 @@ internal static class EcdsaUtils
 
             if (ECNamedCurveTable.GetByOidLazy(curveOid) == null)
             {
-                throw new ArgumentException($"Curve {curve} is not supported.",nameof(enabledCurveOidOrNames));
+                throw new ArgumentException($"Curve {curve} is not supported.", nameof(enabledCurveOidOrNames));
             }
 
             enabled.Add(curveOid);
-
-
         }
 
         enabledCurves = enabled;
@@ -129,6 +133,28 @@ internal static class EcdsaUtils
     public static void ResetEnabledCurves()
     {
         enabledCurves = null;
+    }
+
+    public static ECKeyGenerationParameters ParseEcParamsToECKeyGenerationParameters(byte[] ecParams, SecureRandom secureRandom)
+    {
+        EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
+        CheckIsSupported(internalParams);
+
+        return internalParams.Match<ECKeyGenerationParameters>(
+            ecParams => new ECKeyGenerationParameters(new ECDomainParameters(ecParams.Parameters), secureRandom),
+            namedCurve => new ECKeyGenerationParameters(namedCurve.Oid, secureRandom),
+            implicitlyCA => throw new System.Diagnostics.UnreachableException());
+    }
+
+    public static Asn1Object ParseEcParamsToAsn1Object(byte[] ecParams)
+    {
+        EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
+        CheckIsSupported(internalParams);
+
+        return internalParams.Match<Asn1Object>(
+            ecParams => ecParams.Parameters.ToAsn1Object(),
+            namedCurve => namedCurve.Oid,
+            implicitlyCA => throw new System.Diagnostics.UnreachableException());
     }
 
     private static IEnumerable<SupportedNameCurve> GetCurveNamesInternal()
@@ -169,8 +195,7 @@ internal static class EcdsaUtils
         }
     }
 
-
-    private static DerObjectIdentifier ParseEcParamsInternal(byte[] ecParams)
+    private static EcdsaUtilsInternalParams ParseEcParamsInternal(byte[] ecParams)
     {
         try
         {
@@ -182,11 +207,23 @@ internal static class EcdsaUtils
                     throw new RpcPkcs11Exception(CKR.CKR_CURVE_NOT_SUPPORTED, $"CKA_EC_PARAMS with name curve {curveOid} is not supported in this profile.");
                 }
 
-                return curveOid;
+                return new EcdsaUtilsInternalParams.NamedCurve(curveOid);
+            }
+            else if (asn1Object is DerSequence derSequance)
+            {
+                try
+                {
+                    X9ECParameters parsedParams = X9ECParameters.GetInstance(derSequance);
+                    return new EcdsaUtilsInternalParams.EcParamaters(parsedParams);
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not X9ECParameters ASN1 structure. CKA_EC_PARAMS is {Convert.ToHexString(ecParams)}.", ex);
+                }
             }
             else if (asn1Object is DerNull)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "CKA_EC_PARAMS is DER NULL - is not allowed in PKCS11.");
+                return new EcdsaUtilsInternalParams.ImplicitlyCA();
             }
             else
             {
@@ -201,5 +238,25 @@ internal static class EcdsaUtils
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not OID. CKA_EC_PARAMS is {Convert.ToHexString(ecParams)}.", ex);
         }
+    }
+
+    private static void CheckIsSupported(EcdsaUtilsInternalParams ecParams)
+    {
+        ecParams.Match(
+            static ecParamsms =>
+            {
+                // NOP
+            },
+            static namedCurve =>
+            {
+                if (ECNamedCurveTable.GetByOidLazy(namedCurve.Oid) == null)
+                {
+                    throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not named curve oid ({namedCurve}).");
+                }
+            },
+            static implicitCa =>
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "CKA_EC_PARAMS is DER NULL - is not allowed in PKCS11.");
+            });
     }
 }
