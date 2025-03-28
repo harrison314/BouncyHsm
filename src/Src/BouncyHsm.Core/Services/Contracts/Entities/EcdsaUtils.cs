@@ -37,22 +37,6 @@ internal static class EcdsaUtils
         return ecParameters.Curve.DecodePoint(octetString.GetOctets());
     }
 
-    //public static EcdsaUtilsInternalParams ParseEcParamsStructure(byte[] ecParams)
-    //{
-    //    EcdsaUtilsInternalParams ecdsaUtilsInternalParams = ParseEcParamsInternal(ecParams);
-
-    //    ecdsaUtilsInternalParams.MatchNamedCurve(namedCurve =>
-    //    {
-    //        if (ECNamedCurveTable.GetByOidLazy(namedCurve.Oid) == null)
-    //        {
-    //            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not named curve oid ({namedCurve.Oid}).");
-    //        }
-    //    },
-    //    () => { });
-
-    //    return ecdsaUtilsInternalParams;
-    //}
-
     public static X9ECParameters ParseEcParams(byte[] ecParams)
     {
         EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
@@ -218,7 +202,7 @@ internal static class EcdsaUtils
                 }
                 catch (ArgumentException ex)
                 {
-                    throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not X9ECParameters ASN1 structure. CKA_EC_PARAMS is {Convert.ToHexString(ecParams)}.", ex);
+                    throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not X9ECParameters ASN1 structure. CKA_EC_PARAMS is {EscapeBytes(ecParams)}.", ex);
                 }
             }
             else if (asn1Object is DerNull)
@@ -227,7 +211,7 @@ internal static class EcdsaUtils
             }
             else
             {
-                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not OID. CKA_EC_PARAMS is {Convert.ToHexString(ecParams)}.");
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not OID. CKA_EC_PARAMS is {EscapeBytes(ecParams)}.");
             }
         }
         catch (RpcPkcs11Exception)
@@ -236,7 +220,7 @@ internal static class EcdsaUtils
         }
         catch (Exception ex)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not OID. CKA_EC_PARAMS is {Convert.ToHexString(ecParams)}.", ex);
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"CKA_EC_PARAMS is not OID. CKA_EC_PARAMS is {EscapeBytes(ecParams)}.", ex);
         }
     }
 
@@ -258,5 +242,10 @@ internal static class EcdsaUtils
             {
                 throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "CKA_EC_PARAMS is DER NULL - is not allowed in PKCS11.");
             });
+    }
+
+    private static string EscapeBytes(byte[] bytes)
+    {
+        return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
     }
 }
