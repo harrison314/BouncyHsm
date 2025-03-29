@@ -53,7 +53,7 @@ internal static class EcdsaUtils
         CheckIsSupported(internalParams);
 
         return internalParams.Match<string>(
-            ecParams => "Explicit-EC_PARAMS",
+            ecParams => $"Explicit-EC_PARAMS-{ecParams.Parameters.Curve.FieldSize}b",
             namedCurve => ECNamedCurveTable.GetName(namedCurve.Oid),
             implicitlyCA => "implicitlyCA");
     }
