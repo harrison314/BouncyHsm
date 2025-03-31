@@ -11,7 +11,7 @@
                     {
                         <span class="icon-windows icon-4x"></span>
                     }
-                    else if (this.Platform == DownloadPlatform.Linux)
+                    else if (this.Platform == DownloadPlatform.Linux || this.Platform == DownloadPlatform.REHL)
                     {
                         <span class="icon-tux icon-4x"></span>
                     }
@@ -60,6 +60,8 @@
             (DownloadPlatform.Windows, "x86") => "BouncyHsm.Pkcs11Lib-Winx86.zip",
             (DownloadPlatform.Linux, "x64") => "BouncyHsm.Pkcs11Lib-Linuxx64.zip",
             (DownloadPlatform.Linux, "x86") => "BouncyHsm.Pkcs11Lib-Linuxx84.zip",
+            (DownloadPlatform.REHL, "x64") => "BouncyHsm.Pkcs11Lib-REHLx64.zip",
+            (DownloadPlatform.REHL, "x86") => "BouncyHsm.Pkcs11Lib-REHLx86.zip",
 
             _ => throw new InvalidProgramException($"Unsuported platform {this.Platform} and architecture {this.Architecture}.")
         };

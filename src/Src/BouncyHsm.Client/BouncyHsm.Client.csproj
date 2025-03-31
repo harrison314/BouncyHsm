@@ -45,6 +45,10 @@
       <Pack>True</Pack>
       <PackagePath>runtimes/linux-x64/native/</PackagePath>
     </None>
+    <None Include="..\..\..\artifacts\.tmp\native\Rehl-x64\BouncyHsm.Pkcs11Lib.so" Condition="Exists('..\..\..\artifacts\.tmp\native\Rehl-x64\BouncyHsm.Pkcs11Lib.so')">
+      <Pack>True</Pack>
+      <PackagePath>runtimes/rhel-x64/native/</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
