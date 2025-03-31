@@ -102,10 +102,10 @@ public partial class Build : NukeBuild
                linuxNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
            }
 
-           AbsolutePath rehlNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rehl.so";
-           if (rehlNativeLibx64.Exists("file"))
+           AbsolutePath rhelNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rhel.so";
+           if (rhelNativeLibx64.Exists("file"))
            {
-               rehlNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Rehl-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
+               rhelNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Rhel-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
            }
 
            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Client" / "BouncyHsm.Client.csproj";
@@ -170,14 +170,14 @@ public partial class Build : NukeBuild
                 Log.Warning("Native lib {0} not found.", linuxNativeLibx32);
             }
 
-            AbsolutePath rehlNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rehl.so";
-            if (rehlNativeLibx64.Exists("file"))
+            AbsolutePath rhelNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rhel.so";
+            if (rhelNativeLibx64.Exists("file"))
             {
-                rehlNativeLibx64.Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native" / "REHL-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
-                CreateZip(rehlNativeLibx64,
-                "REHL X64",
+                rhelNativeLibx64.Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Rhel-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
+                CreateZip(rhelNativeLibx64,
+                "RHEL X64",
                 ThisVersion,
-                ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-REHLx64.zip");
+                ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-RHELx64.zip");
             }
             else
             {

@@ -29,7 +29,7 @@ jobs:
             build_linux/*.so
           retention-days: 1
 
-  Build-rehl-libs:
+  Build-rhel-libs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -45,17 +45,17 @@ jobs:
             ${{ runner.os }}-buildx-
       - name: Build Docker image
         run: |
-          docker build --file build_linux/Dockerfile --tag bh-lib-rehl:latest .
+          docker build --file build_linux/Dockerfile --tag bh-lib-rhel:latest .
       - name: Run Docker container and compile project
         run: |
-          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace/build_linux bh-lib-rehl:latest make
-      - name: Rename so file for REHL distribution
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace/build_linux bh-lib-rhel:latest make
+      - name: Rename so file for RHEL distribution
         run: |
-          mv -f build_linux/BouncyHsm.Pkcs11Lib-x64.so build_linux/BouncyHsm.Pkcs11Lib-x64-rehl.so
+          mv -f build_linux/BouncyHsm.Pkcs11Lib-x64.so build_linux/BouncyHsm.Pkcs11Lib-x64-rhel.so
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: rehl-native-libs 
+          name: rhel-native-libs 
           path: |
             build_linux/*.so
           retention-days: 1
@@ -65,7 +65,7 @@ jobs:
     runs-on: windows-latest
     needs:
       - Build-linux-libs
-      - Build-rehl-libs
+      - Build-rhel-libs
     steps:
       - uses: actions/checkout@v4
       - name: Cache .nuke/temp, ~/.nuget/packages
@@ -81,7 +81,7 @@ jobs:
           path: build_linux
       - uses: actions/download-artifact@v4
         with:
-          name: rehl-native-libs
+          name: rhel-native-libs
           path: build_linux
       - name: Run './build.cmd BuildAll'
         run: ./build.cmd BuildAll --configuration Release

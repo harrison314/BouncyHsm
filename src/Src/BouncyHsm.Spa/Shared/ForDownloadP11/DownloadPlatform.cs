@@ -4,5 +4,5 @@ public enum DownloadPlatform
 {
     Windows,
     Linux,
-    REHL
+    RHEL
 }
