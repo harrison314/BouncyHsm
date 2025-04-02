@@ -44,19 +44,19 @@ else
 
             @if (this.KeyType == GeneratedKeyType.Rsa)
             {
-                <GenerateRsaKeys SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+                <GenerateRsaKeys SlotId="@this.SlotId" OnLoadingChanged="e=>this.isInLoading = e" />
             }
             else if (this.KeyType == GeneratedKeyType.Ec)
             {
-                <GenerateEcKeys SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+                <GenerateEcKeys SlotId="@this.SlotId" OnLoadingChanged="e=>this.isInLoading = e" />
             }
             else if (this.KeyType == GeneratedKeyType.Aes)
             {
-                <GenerateAesKey SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+                <GenerateAesKey SlotId="@this.SlotId" OnLoadingChanged="e=>this.isInLoading = e" />
             }
             else if (this.KeyType == GeneratedKeyType.Secret)
             {
-                <GenerateSecretKey SlotId="@this.SlotId" OnLodingChanged="e=>this.isInLoading = e" />
+                <GenerateSecretKey SlotId="@this.SlotId" OnLoadingChanged="e=>this.isInLoading = e" />
             }
         </div>
     </div>

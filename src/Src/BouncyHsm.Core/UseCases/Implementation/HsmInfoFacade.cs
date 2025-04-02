@@ -39,17 +39,17 @@ public class HsmInfoFacade : IHsmInfoFacade
     {
         uint[] mechanisms = MechanismUtils.GetMechanismAsUintArray();
 
-        List<MechanismInfoData> mechanimsData = new List<MechanismInfoData>(mechanisms.Length);
+        List<MechanismInfoData> mechanismsData = new List<MechanismInfoData>(mechanisms.Length);
         for (int i = 0; i < mechanisms.Length; i++)
         {
             MechanismUtils.TryGetMechanismInfo((CKM)mechanisms[i], out MechanismInfo mechanismInfo);
-            mechanimsData.Add(new MechanismInfoData((CKM)mechanisms[i],
+            mechanismsData.Add(new MechanismInfoData((CKM)mechanisms[i],
                 mechanismInfo.MinKeySize,
                 mechanismInfo.MaxKeySize,
                 mechanismInfo.Flags));
         }
 
         return new Contracts.MechanismProfile(MechanismUtils.GetProfileName(),
-            mechanimsData);
+            mechanismsData);
     }
 }

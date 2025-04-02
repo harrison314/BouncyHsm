@@ -86,10 +86,10 @@ internal class GenerateEcKeyPairCommand : AsyncCommand<GenerateEcKeyPairCommand.
             set;
         }
 
-        [CommandOption("--senzitive")]
-        [Description("Set CKA_SENZITIVE to true.")]
+        [CommandOption("--sensitive")]
+        [Description("Set CKA_SENSITIVE to true.")]
         [DefaultValue(false)]
-        public bool Senzitive
+        public bool Sensitive
         {
             get;
             set;
@@ -116,7 +116,7 @@ internal class GenerateEcKeyPairCommand : AsyncCommand<GenerateEcKeyPairCommand.
                        ForEncryption = settings.ForEncryption,
                        ForSigning = settings.ForSigning,
                        ForWrap = settings.ForWrap,
-                       Senzitive = settings.Senzitive,
+                       Sensitive = settings.Sensitive,
                    }
                });
            });

@@ -245,7 +245,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         if (hasChanged)
         {
-            this.logger.LogInformation("Slot with id {slotId} chaned using command {command}.", slotId, command);
+            this.logger.LogInformation("Slot with id {slotId} changed using command {command}.", slotId, command);
         }
 
         return new ValueTask<bool>(hasChanged);
@@ -588,7 +588,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             };
 
             collection.Insert(currentVersion);
-            this.logger.LogInformation("Insert new version recored with version {version}.", version);
+            this.logger.LogInformation("Insert new version record with version {version}.", version);
         }
     }
 

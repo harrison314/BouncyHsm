@@ -15,17 +15,17 @@ public sealed class FilterFipsProfileOperation : ProfileOperation
         List<CKM> mechanismsToDelete = new List<CKM>();
         HashSet<CKM> fipsMechanism = this.GetAllFipsMechanism();
 
-        foreach ((CKM mechnaism, _) in mechanisms)
+        foreach ((CKM mechanism, _) in mechanisms)
         {
-            if (!fipsMechanism.Contains(mechnaism))
+            if (!fipsMechanism.Contains(mechanism))
             {
-                mechanismsToDelete.Add(mechnaism);
+                mechanismsToDelete.Add(mechanism);
             }
         }
 
-        foreach (CKM mechnaism in mechanismsToDelete)
+        foreach (CKM mechanism in mechanismsToDelete)
         {
-            mechanisms.Remove(mechnaism);
+            mechanisms.Remove(mechanism);
         }
     }
 

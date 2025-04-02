@@ -39,6 +39,6 @@ internal class FindObjectsState : ISessionState
 
     public override string ToString()
     {
-        return $"Find objects state - found: {this.handlers.Count} reade: {this.start}";
+        return $"Find objects state - found: {this.handlers.Count} read: {this.start}";
     }
 }

@@ -88,8 +88,8 @@
     {
         System.Diagnostics.Debug.Assert(this.SelectedObject != null);
 
-        Guid publicKeyid = this.SelectedObject.Objects.First(t => t.CkaClass == CKO.CKO_PUBLIC_KEY).ObjectId;
-        return await this.bouncyHsmClient.GetObjectContentAsync(this.SlotId, publicKeyid);
+        Guid publicKeyId = this.SelectedObject.Objects.First(t => t.CkaClass == CKO.CKO_PUBLIC_KEY).ObjectId;
+        return await this.bouncyHsmClient.GetObjectContentAsync(this.SlotId, publicKeyId);
     }
 
     private async Task<ObjectContentDto> GetPrivateKey()

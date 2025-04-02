@@ -12,13 +12,13 @@ internal abstract class BaseKeyTimeVisitor : ICryptoApiObjectVisitor<TimeSpan>
 
     public TimeSpan Visit(ClockObject clockObject)
     {
-        this.NotSuported(clockObject);
+        this.NotSupported(clockObject);
         return default;
     }
 
     public TimeSpan Visit(DataObject dataObject)
     {
-        this.NotSuported(dataObject);
+        this.NotSupported(dataObject);
         return default;
     }
 
@@ -26,31 +26,31 @@ internal abstract class BaseKeyTimeVisitor : ICryptoApiObjectVisitor<TimeSpan>
 
     public TimeSpan Visit(RsaPublicKeyObject rsaPublicKeyObject)
     {
-        this.NotSuported(rsaPublicKeyObject);
+        this.NotSupported(rsaPublicKeyObject);
         return default;
     }
 
     public TimeSpan Visit(X509CertificateObject x509CertificateObject)
     {
-        this.NotSuported(x509CertificateObject);
+        this.NotSupported(x509CertificateObject);
         return default;
     }
 
     public TimeSpan Visit(WtlsCertificateObject wtlsCertificateObject)
     {
-        this.NotSuported(wtlsCertificateObject);
+        this.NotSupported(wtlsCertificateObject);
         return default;
     }
 
     public TimeSpan Visit(X509AttributeCertificateObject x509AttributeCertificateObject)
     {
-        this.NotSuported(x509AttributeCertificateObject);
+        this.NotSupported(x509AttributeCertificateObject);
         return default;
     }
 
     public TimeSpan Visit(EcdsaPublicKeyObject ecdsaPublicKeyObject)
     {
-        this.NotSuported(ecdsaPublicKeyObject);
+        this.NotSupported(ecdsaPublicKeyObject);
         return default;
     }
 
@@ -61,7 +61,7 @@ internal abstract class BaseKeyTimeVisitor : ICryptoApiObjectVisitor<TimeSpan>
     public abstract TimeSpan Visit(AesKeyObject aesKeyObject);
 
     [DoesNotReturn]
-    protected virtual void NotSuported(ICryptoApiObject cryptoApiObject)
+    protected virtual void NotSupported(ICryptoApiObject cryptoApiObject)
     {
         throw new NotSupportedException($"Object of type {cryptoApiObject.GetType().Name} is not supported.");
     }

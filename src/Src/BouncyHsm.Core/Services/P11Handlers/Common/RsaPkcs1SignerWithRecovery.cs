@@ -72,7 +72,7 @@ internal class RsaPkcs1SignerWithRecovery : ISignerWithRecovery
     {
         if (this.rsaDigestSigner == null)
         {
-            throw new InvalidOperationException("RsaPkcs1SignerWithRecovery not initialised for signature generation.");
+            throw new InvalidOperationException("RsaPkcs1SignerWithRecovery not initialized for signature generation.");
         }
 
         return this.rsaDigestSigner.GenerateSignature();
@@ -82,7 +82,7 @@ internal class RsaPkcs1SignerWithRecovery : ISignerWithRecovery
     {
         if (this.rsaDigestSigner == null)
         {
-            throw new InvalidOperationException("RsaPkcs1SignerWithRecovery not initialised for signature generation.");
+            throw new InvalidOperationException("RsaPkcs1SignerWithRecovery not initialized for signature generation.");
         }
 
         return this.rsaDigestSigner.GetMaxSignatureSize();
@@ -123,7 +123,7 @@ internal class RsaPkcs1SignerWithRecovery : ISignerWithRecovery
     {
         if (this.verifier == null)
         {
-            throw new InvalidOperationException("RsaPkcs1SignerWithRecovery not initialised for verification");
+            throw new InvalidOperationException("RsaPkcs1SignerWithRecovery not initialized for verification");
         }
         this.recoveredMessage = null;
         try

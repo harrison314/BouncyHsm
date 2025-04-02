@@ -27,10 +27,10 @@ public class PersistentRepositoryCache : IPersistentRepository
 
     public async ValueTask<SlotIds> CreateSlot(SlotEntity slot, TokenPins? pins, CancellationToken cancellationToken)
     {
-        SlotIds slotid = await this.repository.CreateSlot(slot, pins, cancellationToken);
+        SlotIds slotId = await this.repository.CreateSlot(slot, pins, cancellationToken);
         this.memoryCache.Remove(SlotListKey);
 
-        return slotid;
+        return slotId;
     }
 
     public async ValueTask DeleteSlot(uint slotId, CancellationToken cancellationToken)

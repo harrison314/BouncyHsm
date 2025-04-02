@@ -210,7 +210,7 @@ W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
         }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
-            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.errorMessage = ex.Result.Detail ?? "Unexpected error.";
             this.logger.LogError(ex, "Error during call GetSlotAsync.");
         }
     }
@@ -243,7 +243,7 @@ W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
         }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
-            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.errorMessage = ex.Result.Detail ?? "Unexpected error.";
             this.logger.LogError(ex, "Error during call ImportP12Async.");
         }
     }

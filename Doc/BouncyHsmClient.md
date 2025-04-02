@@ -183,7 +183,7 @@ public class AesExampleTests
                 ForEncryption = true,
                 ForSigning = false,
                 ForWrap = false,
-                Senzitive = true
+                Sensitive = true
             }
         });
 

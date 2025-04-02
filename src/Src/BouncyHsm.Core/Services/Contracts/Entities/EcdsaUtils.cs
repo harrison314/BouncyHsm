@@ -193,12 +193,12 @@ internal static class EcdsaUtils
 
                 return new EcdsaUtilsInternalParams.NamedCurve(curveOid);
             }
-            else if (asn1Object is DerSequence derSequance)
+            else if (asn1Object is DerSequence derSequence)
             {
                 try
                 {
-                    X9ECParameters parsedParams = X9ECParameters.GetInstance(derSequance);
-                    return new EcdsaUtilsInternalParams.EcParamaters(parsedParams);
+                    X9ECParameters parsedParams = X9ECParameters.GetInstance(derSequence);
+                    return new EcdsaUtilsInternalParams.EcParameters(parsedParams);
                 }
                 catch (ArgumentException ex)
                 {
@@ -227,7 +227,7 @@ internal static class EcdsaUtils
     private static void CheckIsSupported(EcdsaUtilsInternalParams ecParams)
     {
         ecParams.Match(
-            static ecParamsms =>
+            static ecParams =>
             {
                 // NOP
             },

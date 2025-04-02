@@ -57,7 +57,7 @@ internal class RsaIso9796PlainSignerWithRecovery : ISignerWithRecovery
     {
         if (this.signer == null)
         {
-            throw new InvalidOperationException("RsaIso9796PlainSignerWithRecovery not initialised for signature generation.");
+            throw new InvalidOperationException("RsaIso9796PlainSignerWithRecovery not initialized for signature generation.");
         }
 
         return this.signer.GenerateSignature();
@@ -67,7 +67,7 @@ internal class RsaIso9796PlainSignerWithRecovery : ISignerWithRecovery
     {
         if (this.signer == null)
         {
-            throw new InvalidOperationException("RsaIso9796PlainSignerWithRecovery not initialised for signature generation.");
+            throw new InvalidOperationException("RsaIso9796PlainSignerWithRecovery not initialized for signature generation.");
         }
 
         return this.signer.GetMaxSignatureSize();
@@ -108,7 +108,7 @@ internal class RsaIso9796PlainSignerWithRecovery : ISignerWithRecovery
     {
         if (this.verifier == null)
         {
-            throw new InvalidOperationException("RsaIso9796PlainSignerWithRecovery not initialised for verification");
+            throw new InvalidOperationException("RsaIso9796PlainSignerWithRecovery not initialized for verification.");
         }
         this.recoveredMessage = null;
         try

@@ -82,7 +82,7 @@ public sealed class RsaPublicKeyObject : PublicKeyObject
         if ((uint)(this.CkaModulus.Length * 8) != this.CkaModulusBits)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-               $"Attribute {CKA.CKA_MODULUS_BITS} has invalid value (not match with bit lenght of {CKA.CKA_MODULUS}).");
+               $"Attribute {CKA.CKA_MODULUS_BITS} has invalid value (not match with bit length of {CKA.CKA_MODULUS}).");
         }
     }
 

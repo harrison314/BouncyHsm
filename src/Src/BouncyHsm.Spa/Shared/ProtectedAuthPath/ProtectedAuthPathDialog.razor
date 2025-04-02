@@ -36,9 +36,9 @@
                 <span class="icon-forward fs-6"></span>
                 Login
             </button>
-            <button class="btn btn-primary mb-1 btn-w-action" @onclick="this.SendCancell">
+            <button class="btn btn-primary mb-1 btn-w-action" @onclick="this.SendCancel">
                 <span class="icon-cross fs-6"></span>
-                Cancell
+                Cancel
             </button>
             <button class="btn btn-outline-dark mb-1 btn-w-action" @onclick="this.Ignore">
                 <span class="icon-exit fs-6"></span>
@@ -115,7 +115,7 @@
         }
     }
 
-    private async Task SendCancell()
+    private async Task SendCancel()
     {
         if (this.activeLogSession == null) throw new InvalidOperationException("Log session must be set.");
         if (this.hubConnection == null) throw new InvalidProgramException("Hub must by connected.");

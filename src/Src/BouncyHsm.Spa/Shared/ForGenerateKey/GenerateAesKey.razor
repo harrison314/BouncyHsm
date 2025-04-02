@@ -69,9 +69,9 @@ else
             <ValidationMessage For="() => this.model.ForWrap" />
         </div>
         <div class="mb-1 form-check">
-            <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.Senzitive" />
+            <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.Sensitive" />
             <label class="form-check-label" for="i-wrap">Key is sensitive</label>
-            <ValidationMessage For="() => this.model.Senzitive" />
+            <ValidationMessage For="() => this.model.Sensitive" />
         </div>
         <div class="mb-1 form-check">
             <InputCheckbox class="form-check-input" id="i-exportable" @bind-Value="this.model.Exportable" />
@@ -94,7 +94,7 @@ else
     }
 
     [Parameter]
-    public EventCallback<bool> OnLodingChanged
+    public EventCallback<bool> OnLoadingChanged
     {
         get;
         set;
@@ -113,7 +113,7 @@ else
     private async Task HandleSubmit()
     {
         this.isInLoading = true;
-        await this.OnLodingChanged.InvokeAsync(true);
+        await this.OnLoadingChanged.InvokeAsync(true);
         await Task.Yield();
         try
         {
@@ -127,7 +127,7 @@ else
         finally
         {
             this.isInLoading = false;
-            await this.OnLodingChanged.InvokeAsync(false);
+            await this.OnLoadingChanged.InvokeAsync(false);
         }
     }
 
@@ -145,7 +145,7 @@ else
         {
             this.KeySize = 32;
 
-            this.Senzitive = true;
+            this.Sensitive = true;
             this.Exportable = false;
 
             this.ForWrap = false;

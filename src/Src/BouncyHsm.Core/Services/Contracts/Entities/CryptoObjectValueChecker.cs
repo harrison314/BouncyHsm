@@ -92,7 +92,7 @@ internal static class CryptoObjectValueChecker
         if (data[0] != 0x30) // Starts with ASN.1 sequence
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                   $"Attribute {attributeType} is not valid X509 certificate with DER encodng. (Value: {EscapeBytes(data)})");
+                   $"Attribute {attributeType} is not valid X509 certificate with DER encoding. (Value: {EscapeBytes(data)})");
         }
 
         try
@@ -103,7 +103,7 @@ internal static class CryptoObjectValueChecker
         catch (Exception ex)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                $"Attribute {attributeType} is not valid X509 certificate with DER encodng. (Value: {EscapeBytes(data)})",
+                $"Attribute {attributeType} is not valid X509 certificate with DER encoding. (Value: {EscapeBytes(data)})",
                 ex);
         }
     }
@@ -158,7 +158,7 @@ internal static class CryptoObjectValueChecker
         }
     }
 
-    public static void CheckDigestValue(CKA attributeType, CKM digestMechnaism, byte[] digest, bool enableEmpty)
+    public static void CheckDigestValue(CKA attributeType, CKM digestMechanism, byte[] digest, bool enableEmpty)
     {
         System.Diagnostics.Debug.Assert(digest != null);
 
@@ -173,7 +173,7 @@ internal static class CryptoObjectValueChecker
             return;
         }
 
-        Org.BouncyCastle.Crypto.IDigest? algorithm = BouncyHsm.Core.Services.P11Handlers.Common.DigestUtils.TryGetDigest(digestMechnaism);
+        Org.BouncyCastle.Crypto.IDigest? algorithm = BouncyHsm.Core.Services.P11Handlers.Common.DigestUtils.TryGetDigest(digestMechanism);
         if (algorithm == null)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
@@ -184,7 +184,7 @@ internal static class CryptoObjectValueChecker
         if (digestSize != digest.Length)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                   $"Attribute {attributeType} has invalid digest lenght ({digest.Length}), excepted is {digestSize} for {digestMechnaism}.");
+                   $"Attribute {attributeType} has invalid digest length ({digest.Length}), excepted is {digestSize} for {digestMechanism}.");
         }
     }
 

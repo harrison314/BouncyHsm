@@ -70,6 +70,6 @@ internal class EncryptState : ISessionState
 
     public override string ToString()
     {
-        return $"Enctypt state with {this.bufferedCipher.AlgorithmName} for mechanism {this.mechanism}.";
+        return $"Encrypt state with {this.bufferedCipher.AlgorithmName} for mechanism {this.mechanism}.";
     }
 }

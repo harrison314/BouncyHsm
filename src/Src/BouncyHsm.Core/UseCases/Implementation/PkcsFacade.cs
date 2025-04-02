@@ -79,7 +79,7 @@ public class PkcsFacade : IPkcsFacade
                     cancellationToken);
             }
 
-            this.logger.LogInformation("Successfull imported Pkcs12 file into private key {privateKeyId}, publicKey {publicKeyId} and certificate {certificateId}.",
+            this.logger.LogInformation("Successful imported Pkcs12 file into private key {privateKeyId}, publicKey {publicKeyId} and certificate {certificateId}.",
                 objects[0].Id,
                 objects[1].Id,
                 objects[2].Id);
@@ -290,7 +290,7 @@ public class PkcsFacade : IPkcsFacade
         X509CertificateObject certificateObject = objectGenerator.CreateCertificateObject(false);
 
         await this.persistentRepository.StoreObject(request.SlotId, certificateObject, cancellationToken);
-        this.logger.LogInformation("Gneretae self-signed certificate and imported into slot {slotId} with object id {objectId}.",
+        this.logger.LogInformation("Generate self-signed certificate and imported into slot {slotId} with object id {objectId}.",
             request.SlotId,
             certificateObject.Id);
 

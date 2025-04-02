@@ -48,7 +48,7 @@ internal class Iso9796Signer : ISigner
     {
         if (this.encoding == null)
         {
-            throw new InvalidOperationException("Iso9796PlainSigner not initialised.");
+            throw new InvalidOperationException("Iso9796PlainSigner not initialized.");
         }
 
         return this.encoding.GetOutputBlockSize();
@@ -63,7 +63,7 @@ internal class Iso9796Signer : ISigner
     {
         if (this.encoding == null || !this.forSigning)
         {
-            throw new InvalidOperationException("Iso9796PlainSigner not initialised for signature generation.");
+            throw new InvalidOperationException("Iso9796PlainSigner not initialized for signature generation.");
         }
 
         byte[] message = new byte[this.digest.GetDigestSize()];
@@ -76,7 +76,7 @@ internal class Iso9796Signer : ISigner
     {
         if (this.encoding == null || !this.forSigning)
         {
-            throw new InvalidOperationException("Iso9796PlainSigner not initialised for verification.");
+            throw new InvalidOperationException("Iso9796PlainSigner not initialized for verification.");
         }
 
         byte[] message = new byte[this.digest.GetDigestSize()];

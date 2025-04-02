@@ -14,7 +14,7 @@ namespace BouncyHsm.Core.Services.Contracts.Entities;
 [Union]
 internal partial record EcdsaUtilsInternalParams
 {
-    partial record EcParamaters(X9ECParameters Parameters);
+    partial record EcParameters(X9ECParameters Parameters);
     partial record NamedCurve(DerObjectIdentifier Oid);
     partial record ImplicitlyCA();
 }

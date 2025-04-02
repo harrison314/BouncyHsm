@@ -46,8 +46,8 @@ else
                             <tbody>
                                 <tr>
                                     <td>Machine:</td>
-                                    <td class="text-break">@appSession.CompiuterName</td>
-                                    <td><CopyBtn Text="@appSession.CompiuterName" /></td>
+                                    <td class="text-break">@appSession.ComputerName</td>
+                                    <td><CopyBtn Text="@appSession.ComputerName" /></td>
                                 </tr>
                                 <tr>
                                     <td>Application:</td>
@@ -84,7 +84,7 @@ else
                         <DangerOperationBtn IconClass="icon-cross icon-1x"
                                             Text="Remove connection"
                                             AdditionalClass="btn-w-action"
-                                            ConfirmText="@($"Remove connection to {appSession.CompiuterName}/{appSession.ApplicationName} (PID: {appSession.Pid})?")"
+                                            ConfirmText="@($"Remove connection to {appSession.ComputerName}/{appSession.ApplicationName} (PID: {appSession.Pid})?")"
                                             OnConfirm="() => this.RemoveConnection(appSession.ApplicationSessionId)" />
                     </div>
                 </div>

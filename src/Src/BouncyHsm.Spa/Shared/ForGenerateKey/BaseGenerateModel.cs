@@ -33,7 +33,7 @@ internal abstract class BaseGenerateModel
     }
 
     [Required]
-    public bool Senzitive
+    public bool Sensitive
     {
         get;
         set;
@@ -76,17 +76,17 @@ internal abstract class BaseGenerateModel
 
     internal GenerateKeyAttributesDto ToGenerateKeyAttributesDto()
     {
-        string ckIdtext = this.CkaIdText.Trim();
+        string ckIdText = this.CkaIdText.Trim();
         return new GenerateKeyAttributesDto()
         {
-            CkaId = string.IsNullOrEmpty(ckIdtext) ? null : this.CkaIdForm.GetCkaId(ckIdtext),
+            CkaId = string.IsNullOrEmpty(ckIdText) ? null : this.CkaIdForm.GetCkaId(ckIdText),
             CkaLabel = this.CkaLabel.Trim(),
             Exportable = this.Exportable,
             ForDerivation = this.ForDerivation,
             ForEncryption = this.ForEncryption,
             ForSigning = this.ForSigning,
             ForWrap = this.ForWrap,
-            Senzitive = this.Senzitive
+            Sensitive = this.Sensitive
         };
     }
 

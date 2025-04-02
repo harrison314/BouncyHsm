@@ -41,7 +41,7 @@ public class KeysGenerationFacadeTests
                 ForEncryption = true,
                 ForSigning = true,
                 ForWrap = false,
-                Senzitive = true,
+                Sensitive = true,
             }
         };
 
@@ -75,7 +75,7 @@ public class KeysGenerationFacadeTests
                 ForEncryption = true,
                 ForSigning = true,
                 ForWrap = false,
-                Senzitive = true,
+                Sensitive = true,
             }
         };
 
@@ -109,7 +109,7 @@ public class KeysGenerationFacadeTests
                 ForEncryption = true,
                 ForSigning = true,
                 ForWrap = false,
-                Senzitive = true,
+                Sensitive = true,
             }
         };
 
@@ -143,7 +143,7 @@ public class KeysGenerationFacadeTests
                 ForEncryption = true,
                 ForSigning = true,
                 ForWrap = false,
-                Senzitive = true,
+                Sensitive = true,
             }
         };
 

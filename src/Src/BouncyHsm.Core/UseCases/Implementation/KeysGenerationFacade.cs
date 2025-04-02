@@ -49,8 +49,8 @@ public class KeysGenerationFacade : IKeysGenerationFacade
 
         if (request.KeyAttributes.ForDerivation)
         {
-            this.logger.LogError("RSA keca can nit suuport derivation.");
-            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("RSA keca can nit suuport derivation.");
+            this.logger.LogError("RSA keys can not support derivation.");
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("RSA keys can not support derivation.");
         }
 
         byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
@@ -77,7 +77,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
             { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
             { CKA.CKA_ID, AttributeValue.Create(ckaId) },
-            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Senzitive) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
             { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
             { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
@@ -145,7 +145,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
             { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
             { CKA.CKA_ID, AttributeValue.Create(ckaId) },
-            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Senzitive) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
             { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
             { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
@@ -194,7 +194,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
 
-            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Senzitive) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
             { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
 
             { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
@@ -228,8 +228,8 @@ public class KeysGenerationFacade : IKeysGenerationFacade
 
         if (request.KeyAttributes.ForDerivation)
         {
-            this.logger.LogError("RSA keca can nit suuport derivation.");
-            return new DomainResult<GeneratedSecretId>.InvalidInput("RSA keca can nit suuport derivation.");
+            this.logger.LogError("RSA keys can not support derivation.");
+            return new DomainResult<GeneratedSecretId>.InvalidInput("RSA keys can not support derivation.");
         }
 
         byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
@@ -245,7 +245,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
 
-            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Senzitive) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
             { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
 
             { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },

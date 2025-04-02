@@ -107,7 +107,7 @@ internal static class P11HwServicesExtensions
         {
             SpeedMode.WithoutRestriction => new WithoutRestrictionSpeedAwaiter(),
             SpeedMode.Hsm => new HsmSpeedAwaiter(hwServices.Time, loggerFactory.CreateLogger<HsmSpeedAwaiter>()),
-            SpeedMode.SmartCard => new SmardCardSpeedAwaiter(hwServices.Time, loggerFactory.CreateLogger<SmardCardSpeedAwaiter>()),
+            SpeedMode.SmartCard => new SmartCardSpeedAwaiter(hwServices.Time, loggerFactory.CreateLogger<SmartCardSpeedAwaiter>()),
             _ => throw new InvalidProgramException($"Enum value {slot.Token.SpeedMode} is not supported.")
         };
     }

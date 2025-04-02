@@ -23,5 +23,4 @@ public interface ICryptoApiObject
     void Accept(ICryptoApiObjectVisitor visitor);
 
     T Accept<T>(ICryptoApiObjectVisitor<T> visitor);
-
 }
