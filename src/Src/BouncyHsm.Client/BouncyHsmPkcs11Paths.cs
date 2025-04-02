@@ -48,7 +48,7 @@ public static class BouncyHsmPkcs11Paths
         }
 
 #if NET8_0_OR_GREATER
-        throw new PlatformNotSupportedException($"Platfrom {RuntimeInformation.RuntimeIdentifier} is not supported by the native library.");
+        throw new PlatformNotSupportedException($"Platform {RuntimeInformation.RuntimeIdentifier} is not supported by the native library.");
 #else
         throw new PlatformNotSupportedException();
 #endif
