@@ -22,7 +22,7 @@ public partial class CloseSessionHandler : IRpcRequestHandler<CloseSessionReques
         this.logger.LogTrace("Entering to Handle with SessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
 
         CloseSessionEnvelope envelope = new CloseSessionEnvelope();
         if (memorySession.DestroySession(request.SessionId))

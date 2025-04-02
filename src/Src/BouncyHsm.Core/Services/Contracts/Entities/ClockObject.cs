@@ -60,7 +60,7 @@ public sealed class ClockObject : IHardwareFeature
         return true;
     }
 
-    public uint? TryGetSize(bool isLogedIn)
+    public uint? TryGetSize(bool isLoggedIn)
     {
         return 0;
     }

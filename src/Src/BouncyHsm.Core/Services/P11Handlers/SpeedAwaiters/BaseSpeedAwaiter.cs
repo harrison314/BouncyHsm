@@ -19,20 +19,20 @@ internal abstract class BaseSpeedAwaiter : ISpeedAwaiter
     {
         this.logger.LogTrace("Entering to AwaitKeyGeneration with storageObject {storageObject}.", keyObject);
 
-        TimeSpan elapedTime = this.timeAccessor.UtcNow - utcStartTime;
+        TimeSpan elapsedTime = this.timeAccessor.UtcNow - utcStartTime;
         TimeSpan waitTime = keyObject.Accept(new GenerateKeyVisitor(this.GetMultiplicationVector()));
 
-        await this.TryWait(waitTime - elapedTime, cancellationToken);
+        await this.TryWait(waitTime - elapsedTime, cancellationToken);
     }
 
     public async ValueTask AwaitSignature(KeyObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to AwaitSignature with storageObject {storageObject}.", keyObject);
 
-        TimeSpan elapedTime = this.timeAccessor.UtcNow - utcStartTime;
+        TimeSpan elapsedTime = this.timeAccessor.UtcNow - utcStartTime;
         TimeSpan waitTime = keyObject.Accept(new SignVisitor(this.GetMultiplicationVector()));
 
-        await this.TryWait(waitTime - elapedTime, cancellationToken);
+        await this.TryWait(waitTime - elapsedTime, cancellationToken);
     }
 
     public async ValueTask AwaitDestroy(StorageObject storageObject, DateTime utcStartTime, CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ internal abstract class BaseSpeedAwaiter : ISpeedAwaiter
 
         const int blockSize = 8 * 1024;
 
-        TimeSpan elapedTime = this.timeAccessor.UtcNow - utcStartTime;
+        TimeSpan elapsedTime = this.timeAccessor.UtcNow - utcStartTime;
         uint objectSize = storageObject.TryGetSize(true) ?? blockSize;
         objectSize += blockSize - 1;
 
@@ -50,7 +50,7 @@ internal abstract class BaseSpeedAwaiter : ISpeedAwaiter
         double[] multiplicator = this.GetMultiplicationVector();
         double result = blocks * 20.0 * this.GetMultiplicator(multiplicator, 1);
 
-        await this.TryWait(TimeSpan.FromMilliseconds(result) - elapedTime, cancellationToken);
+        await this.TryWait(TimeSpan.FromMilliseconds(result) - elapsedTime, cancellationToken);
     }
 
     protected abstract double[] GetMultiplicationVector();

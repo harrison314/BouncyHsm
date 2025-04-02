@@ -65,12 +65,12 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
         }
         else
         {
-            Org.BouncyCastle.Asn1.X9.X9ECParameters x9EcParamaters = new Org.BouncyCastle.Asn1.X9.X9ECParameters(ecdsaPublicKey.Parameters.Curve,
+            Org.BouncyCastle.Asn1.X9.X9ECParameters x9EcParameters = new Org.BouncyCastle.Asn1.X9.X9ECParameters(ecdsaPublicKey.Parameters.Curve,
                 new Org.BouncyCastle.Asn1.X9.X9ECPoint(ecdsaPublicKey.Parameters.G, false),
                 ecdsaPublicKey.Parameters.N,
                 ecdsaPublicKey.Parameters.H,
                 ecdsaPublicKey.Parameters.GetSeed());
-            this.CkaEcParams = x9EcParamaters.GetEncoded();
+            this.CkaEcParams = x9EcParameters.GetEncoded();
         }
     }
 

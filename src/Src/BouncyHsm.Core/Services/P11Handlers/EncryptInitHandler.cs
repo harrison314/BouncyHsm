@@ -28,7 +28,7 @@ public partial class EncryptInitHandler : IRpcRequestHandler<EncryptInitRequest,
             (CKM)request.Mechanism.MechanismType);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         p11Session.State.EnsureEmpty();

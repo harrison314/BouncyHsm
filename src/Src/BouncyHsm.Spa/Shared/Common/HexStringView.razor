@@ -6,7 +6,7 @@
     {
         <text>@chunk</text>
         <text>@this.Delimiter</text>
-        @if (++i % this.BaytesOnLine == 0)
+        @if (++i % this.BytesOnLine == 0)
         {
             <br />
         }
@@ -30,7 +30,7 @@
     } = string.Empty;
 
     [Parameter]
-    public int BaytesOnLine
+    public int BytesOnLine
     {
         get;
         set;

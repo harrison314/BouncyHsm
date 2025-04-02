@@ -27,7 +27,7 @@ namespace BouncyHsm.Models.KeyGeneration
         }
 
         [Required]
-        public bool Senzitive
+        public bool Sensitive
         {
             get;
             set;

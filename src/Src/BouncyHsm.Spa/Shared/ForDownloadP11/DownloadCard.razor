@@ -61,7 +61,7 @@
             (DownloadPlatform.Linux, "x64") => "BouncyHsm.Pkcs11Lib-Linuxx64.zip",
             (DownloadPlatform.Linux, "x86") => "BouncyHsm.Pkcs11Lib-Linuxx84.zip",
 
-            _ => throw new InvalidProgramException($"Unsuported platform {this.Platform} and architecture {this.Architecture}.")
+            _ => throw new InvalidProgramException($"Unsupported platform {this.Platform} and architecture {this.Architecture}.")
         };
 
         return string.Concat("native/", fileName);

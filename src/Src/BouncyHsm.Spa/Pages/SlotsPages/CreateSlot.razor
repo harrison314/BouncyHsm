@@ -30,7 +30,7 @@
             </div>
             <div class="mb-1 form-check">
                 <InputCheckbox class="form-check-input" id="i-simulateHwSlot" @bind-Value="this.model.SimulateHwSlot" />
-                <label class="form-check-label" for="i-simulateHwSlot">Simulare HW slot</label>
+                <label class="form-check-label" for="i-simulateHwSlot">Simulate HW slot</label>
                 <ValidationMessage For="() => this.model.SimulateHwSlot" />
             </div>
             <div class="mb-1 form-check">
@@ -55,22 +55,22 @@
 
             <div class="mb-1 form-check">
                 <InputCheckbox class="form-check-input" id="i-tokenSimHw" @bind-Value="@this.model.TokenSimulateHwMechanism" />
-                <label class="form-check-label" for="i-tokenSimHw">Simulare HW mechanism</label>
+                <label class="form-check-label" for="i-tokenSimHw">Simulate HW mechanism</label>
                 <ValidationMessage For="() => this.model.TokenSimulateHwMechanism" />
             </div>
             <div class="mb-1 form-check">
                 <InputCheckbox class="form-check-input" id="i-tokenSimHwRng" @bind-Value="@this.model.TokenSimulateHwRng" />
-                <label class="form-check-label" for="i=tokenSimHwRng">Simulare HW RNG</label>
+                <label class="form-check-label" for="i=tokenSimHwRng">Simulate HW RNG</label>
                 <ValidationMessage For="() => this.model.TokenSimulateHwRng" />
             </div>
             <div class="mb-1 form-check">
                 <InputCheckbox class="form-check-input" id="i-tokenSimQa" @bind-Value="@this.model.TokenSimulateQualifiedArea" />
-                <label class="form-check-label" for="i-tokenSimQa">Simulare qualified area on token</label>
+                <label class="form-check-label" for="i-tokenSimQa">Simulate qualified area on token</label>
                 <ValidationMessage For="() => this.model.TokenSimulateQualifiedArea" />
             </div>
             <div class="mb-1 form-check">
                 <InputCheckbox class="form-check-input" id="i-tokenSimPap" @bind-Value="@this.model.TokenSimulateProtectedAuthPath" />
-                <label class="form-check-label" for="i-tokenSimPap">Simulare protected authentication path</label>
+                <label class="form-check-label" for="i-tokenSimPap">Simulate protected authentication path</label>
                 <ValidationMessage For="() => this.model.TokenSimulateProtectedAuthPath" />
                 @if (this.model.TokenSimulateProtectedAuthPath)
                 {
@@ -85,7 +85,7 @@
                 <InputSelect class="form-select" @bind-Value="this.model.SpeedMode" id="i-speedMode">
                     <option value="@SpeedMode.WithoutRestriction">Without speed restrictions</option>
                     <option value="@SpeedMode.Hsm">As HSM</option>
-                    <option value="@SpeedMode.SmartCard">As Smard card</option>
+                    <option value="@SpeedMode.SmartCard">As Smart card</option>
                 </InputSelect>
 
                 <ValidationMessage For="() => this.model.SpeedMode" />
@@ -166,7 +166,7 @@
         }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
-            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.errorMessage = ex.Result.Detail ?? "Unexpected error.";
             this.logger.LogError(ex, "Error during CreateSlotAsync.");
         }
     }

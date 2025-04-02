@@ -29,7 +29,7 @@ public partial class VerifyInitHandler : IRpcRequestHandler<VerifyInitRequest, V
            (CKM)request.Mechanism.MechanismType);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_VERIFY);

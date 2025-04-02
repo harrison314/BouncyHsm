@@ -36,7 +36,7 @@ public partial class SetPinHandler : IRpcRequestHandler<SetPinRequest, SetPinEnv
             request.Utf8NewPin != null);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
         SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(p11Session.SlotId, true, cancellationToken);
 

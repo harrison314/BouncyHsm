@@ -263,7 +263,7 @@ internal static class MechanismUtils
     public static void UpdateMechanisms<T>(Func<Dictionary<CKM, MechanismInfo>, T, MechanismProfile> updateFunction, T context)
     {
         MechanismProfile profile = updateFunction(originalMechanism, context);
-        mechanism = profile.Mechanims;
+        mechanism = profile.Mechanisms;
         profileName = profile.Name;
     }
 

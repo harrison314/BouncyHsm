@@ -15,7 +15,7 @@ internal static class MemorySessionExtensions
         return session;
     }
 
-    public static async ValueTask CheckIsSlotPluuged(this IMemorySession memorySession, uint sessionId, IP11HwServices hwServices, CancellationToken cancellationToken)
+    public static async ValueTask CheckIsSlotPlugged(this IMemorySession memorySession, uint sessionId, IP11HwServices hwServices, CancellationToken cancellationToken)
     {
         if (!memorySession.TryGetSession(sessionId, out IP11Session? session))
         {

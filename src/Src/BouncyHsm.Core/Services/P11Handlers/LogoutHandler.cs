@@ -22,7 +22,7 @@ public partial class LogoutHandler : IRpcRequestHandler<LogoutRequest, LogoutEnv
         this.logger.LogTrace("Entering to handle with SessionId {SessionId}.", request.SessionId);
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
-        await memorySession.CheckIsSlotPluuged(request.SessionId, this.hwServices, cancellationToken);
+        await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         CKR rv = CKR.CKR_USER_NOT_LOGGED_IN;

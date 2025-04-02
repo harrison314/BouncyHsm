@@ -2,7 +2,7 @@
 
 public class MemorySessionData
 {
-    public string CompiuterName
+    public string ComputerName
     {
         get;
         private set;
@@ -34,7 +34,7 @@ public class MemorySessionData
 
     public MemorySessionData(string compiuterName, string applicationName, ulong pid, uint ptrSize, uint ckUlongSize)
     {
-        this.CompiuterName = compiuterName;
+        this.ComputerName = compiuterName;
         this.ApplicationName = applicationName;
         this.Pid = pid;
         this.PtrSize = ptrSize;
@@ -43,6 +43,6 @@ public class MemorySessionData
 
     public override string ToString()
     {
-        return $"MemorySession: on {this.CompiuterName}, Application: {this.ApplicationName} ({this.Pid})";
+        return $"MemorySession: on {this.ComputerName}, Application: {this.ApplicationName} ({this.Pid})";
     }
 }

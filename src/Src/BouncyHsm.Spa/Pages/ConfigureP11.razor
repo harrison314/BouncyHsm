@@ -112,39 +112,39 @@
 }
 
 @code {
-    private const string DefaltServer = "127.0.0.1";
-    private const int DefaltPort = 8765;
-    private const string DefaltLogTarget = "ErrorConsole";
-    private const string DefaltLogLevel = "ERROR";
-    private const string DefaltTag = "";
+    private const string DefaultServer = "127.0.0.1";
+    private const int DefaultPort = 8765;
+    private const string DefaultLogTarget = "ErrorConsole";
+    private const string DefaultLogLevel = "ERROR";
+    private const string DefaultTag = "";
 
-    private const string EnviromentVariable = "BOUNCY_HSM_CFG_STRING";
+    private const string EnvironmentVariable = "BOUNCY_HSM_CFG_STRING";
 
-    private string server = DefaltServer;
-    private int port = DefaltPort;
-    private string logTarget = DefaltLogTarget;
-    private string logLevel = DefaltLogLevel;
-    private string tag = DefaltTag;
+    private string server = DefaultServer;
+    private int port = DefaultPort;
+    private string logTarget = DefaultLogTarget;
+    private string logLevel = DefaultLogLevel;
+    private string tag = DefaultTag;
 
     private string CmdCommand
     {
-        get => $"SET {EnviromentVariable}={CreateConfiguration()}";
+        get => $"SET {EnvironmentVariable}={CreateConfiguration()}";
     }
 
     private string PowershellCommand
     {
-        get => $"$env:{EnviromentVariable} = '{CreateConfiguration()}';";
+        get => $"$env:{EnvironmentVariable} = '{CreateConfiguration()}';";
     }
 
     private string BashCommand
     {
-        get => $"export {EnviromentVariable}=\"{CreateConfiguration()}\"";
+        get => $"export {EnvironmentVariable}=\"{CreateConfiguration()}\"";
     }
 
     private string CreateConfiguration()
     {
         StringBuilder sb = new StringBuilder();
-        if (this.server != DefaltServer || this.port != DefaltPort)
+        if (this.server != DefaultServer || this.port != DefaultPort)
         {
             sb.Append("Server=");
             sb.Append(this.ToMaxLen(this.server.Trim(), 255));
@@ -155,21 +155,21 @@
             sb.Append("; ");
         }
 
-        if (this.logTarget != DefaltLogTarget)
+        if (this.logTarget != DefaultLogTarget)
         {
             sb.Append("LogTarget=");
             sb.Append(this.logTarget);
             sb.Append("; ");
         }
 
-        if (this.logLevel != DefaltLogLevel)
+        if (this.logLevel != DefaultLogLevel)
         {
             sb.Append("LogLevel=");
             sb.Append(this.logLevel);
             sb.Append("; ");
         }
 
-        if (this.tag != DefaltTag)
+        if (this.tag != DefaultTag)
         {
             sb.Append("Tag=");
             sb.Append(this.ToMaxLen(this.tag, 31));

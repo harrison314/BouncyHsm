@@ -179,8 +179,8 @@ public class SlotFacade : ISlotFacade
 
             if (pinData.UserType == Services.Contracts.P11.CKU.CKU_CONTEXT_SPECIFIC && !slot.Token.SimulateQualifiedArea)
             {
-                this.logger.LogError("Slot with slotId {slotId} can not simlate quealifield area - can not use CKU_CONTEXT_SPECIFIC user type.", slotId);
-                return new VoidDomainResult.InvalidInput("Slot can not simlate quealifield area - can not use CKU_CONTEXT_SPECIFIC user type.");
+                this.logger.LogError("Slot with slotId {slotId} can not simulate qualified area - can not use CKU_CONTEXT_SPECIFIC user type.", slotId);
+                return new VoidDomainResult.InvalidInput("Slot can not simulate qualified area - can not use CKU_CONTEXT_SPECIFIC user type.");
             }
 
             await this.persistentRepository.SetPin(slot,

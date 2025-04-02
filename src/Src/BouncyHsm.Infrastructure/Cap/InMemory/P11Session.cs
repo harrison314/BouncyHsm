@@ -106,8 +106,8 @@ public class P11Session : IP11Session
 
     public StorageObject? TryLoadObject(Guid id)
     {
-        StorageObjectMemento? memnto = this.objects.FirstOrDefault(t => t.Id == id);
-        return (memnto != null) ? StorageObjectFactory.CreateFromMemento(memnto) : null;
+        StorageObjectMemento? memento = this.objects.FirstOrDefault(t => t.Id == id);
+        return (memento != null) ? StorageObjectFactory.CreateFromMemento(memento) : null;
     }
 
     public void DestroyObject(StorageObject storageObject)

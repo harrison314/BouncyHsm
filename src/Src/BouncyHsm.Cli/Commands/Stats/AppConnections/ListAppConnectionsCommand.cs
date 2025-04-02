@@ -38,7 +38,7 @@ internal class ListAppConnectionsCommand : AsyncCommand<ListAppConnectionsComman
         foreach (ApplicationSessionDto session in sessions)
         {
             table.AddRow(new Markup($"[green]{session.ApplicationSessionId}[/]"),
-                new Markup(Markup.Escape(session.CompiuterName)),
+                new Markup(Markup.Escape(session.ComputerName)),
                 new Markup(Markup.Escape(session.ApplicationName)),
                 new Markup(Markup.Escape(session.Pid.ToString())),
                 new Markup(Markup.Escape(session.StartAt.ToString())),

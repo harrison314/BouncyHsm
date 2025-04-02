@@ -102,7 +102,7 @@ else
         }
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
-            this.errorMessage = ex.Result.Detail ?? "Unexcepred error.";
+            this.errorMessage = ex.Result.Detail ?? "Unexpected error.";
             this.logger.LogError(ex, "Error during call Pkcs_GetPkcsObjectsAsync.");
         }
     }

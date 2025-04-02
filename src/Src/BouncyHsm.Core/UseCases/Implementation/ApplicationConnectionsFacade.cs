@@ -26,7 +26,7 @@ public class ApplicationConnectionsFacade: IApplicationConnectionsFacade
 
         List<ApplicationSession> sessions = this.clientAppCtx.GetActiveMemorySessions()
             .Select(t => new ApplicationSession(t.Id,
-                t.Data.CompiuterName,
+                t.Data.ComputerName,
                 t.Data.ApplicationName,
                 Convert.ToUInt32(t.Data.Pid),
                 t.StartAt,

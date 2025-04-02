@@ -9,7 +9,7 @@ public class ApplicationSessionDto
         set;
     }
 
-    public string CompiuterName
+    public string ComputerName
     {
         get;
         set;
@@ -42,6 +42,6 @@ public class ApplicationSessionDto
     public ApplicationSessionDto()
     {
         this.ApplicationName = string.Empty;
-        this.CompiuterName = string.Empty;
+        this.ComputerName = string.Empty;
     }
 }

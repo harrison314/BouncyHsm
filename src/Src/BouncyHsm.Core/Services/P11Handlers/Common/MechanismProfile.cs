@@ -2,4 +2,4 @@
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
-public record MechanismProfile(Dictionary<CKM, MechanismInfo> Mechanims, string Name);
+public record MechanismProfile(Dictionary<CKM, MechanismInfo> Mechanisms, string Name);
