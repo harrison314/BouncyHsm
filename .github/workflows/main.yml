@@ -1,4 +1,4 @@
-name: Build Bouncy Hsm
+name: Build Bouncy Hsm Experimental
 on:
   workflow_dispatch
   
@@ -29,10 +29,43 @@ jobs:
             build_linux/*.so
           retention-days: 1
 
+  Build-rhel-libs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Build Docker image
+        run: |
+          docker build --file build_linux/Dockerfile --tag bh-lib-rhel:latest .
+      - name: Run Docker container and compile project
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace/build_linux bh-lib-rhel:latest make
+      - name: Rename so file for RHEL distribution
+        run: |
+          mv -f build_linux/BouncyHsm.Pkcs11Lib-x64.so build_linux/BouncyHsm.Pkcs11Lib-x64-rhel.so
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rhel-native-libs 
+          path: |
+            build_linux/*.so
+          retention-days: 1
+
   Build-Bouncy-Hsm:
     name: Build-Bouncy-Hsm
     runs-on: windows-latest
-    needs: Build-linux-libs
+    needs:
+      - Build-linux-libs
+      - Build-rhel-libs
     steps:
       - uses: actions/checkout@v4
       - name: Cache .nuke/temp, ~/.nuget/packages
@@ -45,6 +78,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: linux-native-libs
+          path: build_linux
+      - uses: actions/download-artifact@v4
+        with:
+          name: rhel-native-libs
           path: build_linux
       - name: Run './build.cmd BuildAll'
         run: ./build.cmd BuildAll --configuration Release

@@ -92,9 +92,15 @@ bool GetCurrentCompiuterName(char* buffer, size_t maxSize)
 }
 #endif
 
+
+#define MACRO_EXPLODE_STR(s) X_MACRO_EXPLODE_STR(s)
+#define X_MACRO_EXPLODE_STR(s) #s
+
 const char* GetPlatformName()
 {
-#if defined(_WIN32) || defined(__CYGWIN__)
+#if defined(BUILD_ENV)
+    return MACRO_EXPLODE_STR(BUILD_ENV);
+#elif  defined(_WIN32) || defined(__CYGWIN__)
     return  "Windows";
 #elif defined(__linux__)
     return  "Linux";

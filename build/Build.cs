@@ -102,6 +102,12 @@ public partial class Build : NukeBuild
                linuxNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
            }
 
+           AbsolutePath rhelNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rhel.so";
+           if (rhelNativeLibx64.Exists("file"))
+           {
+               rhelNativeLibx64.Copy(ArtifactsTmpDirectory / "native" / "Rhel-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
+           }
+
            AbsolutePath projectFile = SourceDirectory / "BouncyHsm.Client" / "BouncyHsm.Client.csproj";
            AbsolutePath outputDir = ArtifactsDirectory;
 
@@ -162,6 +168,20 @@ public partial class Build : NukeBuild
             else
             {
                 Log.Warning("Native lib {0} not found.", linuxNativeLibx32);
+            }
+
+            AbsolutePath rhelNativeLibx64 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x64-rhel.so";
+            if (rhelNativeLibx64.Exists("file"))
+            {
+                rhelNativeLibx64.Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Rhel-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
+                CreateZip(rhelNativeLibx64,
+                "RHEL X64",
+                ThisVersion,
+                ArtifactsTmpDirectory / "BouncyHsm" / "wwwroot" / "native" / "BouncyHsm.Pkcs11Lib-RHELx64.zip");
+            }
+            else
+            {
+                Log.Warning("Native lib {0} not found.", linuxNativeLibx64);
             }
 
             CopyLicenses(ArtifactsTmpDirectory / "BouncyHsm");
