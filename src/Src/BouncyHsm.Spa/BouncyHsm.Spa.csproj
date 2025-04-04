@@ -9,8 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.11" PrivateAssets="all" />
-    <PackageReference Include="BlazorStrap.V5" Version="5.2.103" />
-    <PackageReference Include="BlazorStrap" Version="5.2.103.121624" />
+    <PackageReference Include="BlazorStrap.V5" Version="5.2.103.122024" />
+    <PackageReference Include="BlazorStrap" Version="5.2.103.250102" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.11" />
   </ItemGroup>
 
