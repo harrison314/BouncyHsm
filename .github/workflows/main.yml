@@ -1,4 +1,4 @@
-name: Build Bouncy Hsm Experimental
+name: Build Bouncy Hsm
 on:
   workflow_dispatch
   
