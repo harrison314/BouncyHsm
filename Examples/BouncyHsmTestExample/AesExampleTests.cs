@@ -27,32 +27,6 @@ public class InitializerTest
         private set;
     }
 
-    public static string P11LibPath
-    {
-        get
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (Environment.Is64BitProcess)
-                {
-                    return @"runtimes\win-x64\native\BouncyHsm.Pkcs11Lib.dll";
-                }
-                else
-                {
-                    return @"runtimes\win-x86\native\BouncyHsm.Pkcs11Lib.dll";
-                }
-
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return @"runtimes\linux-x64\native\BouncyHsm.Pkcs11Lib.so";
-            }
-
-            throw new PlatformNotSupportedException();
-        }
-    }
-
     public static string? TokenSerialNumber
     {
         get;
@@ -124,7 +98,7 @@ public class AesExampleTests
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
-            InitializerTest.P11LibPath,
+            BouncyHsmPkcs11Paths.CurrentPlatformSpecificPkcs11Path,
             AppType.SingleThreaded);
 
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
