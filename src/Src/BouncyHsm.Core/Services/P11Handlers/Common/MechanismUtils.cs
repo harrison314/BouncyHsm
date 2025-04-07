@@ -53,6 +53,11 @@ internal static class MechanismUtils
              { CKM.CKM_RIPEMD160, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
              { CKM.CKM_GOSTR3411, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
 
+             { CKM.CKM_SHA3_256, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+             { CKM.CKM_SHA3_224, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+             { CKM.CKM_SHA3_384, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+             { CKM.CKM_SHA3_512, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+
             // Generate Key pairs
             {CKM.CKM_RSA_PKCS_KEY_PAIR_GEN, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_RSA_X9_31_KEY_PAIR_GEN, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },

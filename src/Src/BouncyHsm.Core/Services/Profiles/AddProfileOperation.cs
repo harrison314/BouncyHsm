@@ -68,7 +68,8 @@ public sealed class AddProfileOperation : ProfileOperation
         mechanisms.Add(this.Mechanism, new MechanismInfo(this.MinKeySize,
             this.MaxKeySize,
             concatFlags,
-            originalInfo.RequireParamsIn));
+            originalInfo.RequireParamsIn,
+            originalInfo.SpecVersion));
     }
 }
 

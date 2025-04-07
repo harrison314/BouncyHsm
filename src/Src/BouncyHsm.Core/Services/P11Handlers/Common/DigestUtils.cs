@@ -25,6 +25,10 @@ internal static class DigestUtils
             CKM.CKM_RIPEMD128 => new RipeMD128Digest(),
             CKM.CKM_RIPEMD160 => new RipeMD160Digest(),
             CKM.CKM_GOSTR3411 => new Gost3411Digest(),
+            CKM.CKM_SHA3_256 => new Sha3Digest(256),
+            CKM.CKM_SHA3_224 => new Sha3Digest(224),
+            CKM.CKM_SHA3_384 => new Sha3Digest(384),
+            CKM.CKM_SHA3_512 => new Sha3Digest(512),
 
             _ => null
         };
@@ -51,7 +55,7 @@ internal static class DigestUtils
         sha1Digest.DoFinal(buffer);
 
         byte[] checkValue = new byte[3];
-        buffer.Slice(0,3).CopyTo(checkValue);
+        buffer.Slice(0, 3).CopyTo(checkValue);
 
         return checkValue;
     }
@@ -65,7 +69,10 @@ internal static class DigestUtils
             CKG.CKG_MGF1_SHA256 => new Sha256Digest(),
             CKG.CKG_MGF1_SHA384 => new Sha384Digest(),
             CKG.CKG_MGF1_SHA512 => new Sha512Digest(),
-
+            CKG.CKG_MGF1_SHA3_256 => new Sha3Digest(256),
+            CKG.CKG_MGF1_SHA3_224 => new Sha3Digest(224),
+            CKG.CKG_MGF1_SHA3_384 => new Sha3Digest(384),
+            CKG.CKG_MGF1_SHA3_512 => new Sha3Digest(512),
             _ => null
         };
     }

@@ -21,6 +21,10 @@ public class T15_Digest
     [DataRow(CKM.CKM_RIPEMD128)]
     [DataRow(CKM.CKM_RIPEMD160)]
     [DataRow(CKM.CKM_GOSTR3411)]
+    [DataRow(CKM_V3_1.CKM_SHA3_224)]
+    [DataRow(CKM_V3_1.CKM_SHA3_256)]
+    [DataRow(CKM_V3_1.CKM_SHA3_384)]
+    [DataRow(CKM_V3_1.CKM_SHA3_512)]
     public void Digest_Call_Success(CKM digestMechanism)
     {
         byte[] message = PkcsExtensions.HexConvertor.GetBytes("ba8b0702598482a4ef6d6f4056ea10a2e08ecfa327d5ebe9cb7cee0023cc9552362824e13cbb04b0f630bb8e1a3fa532c12fabbce5b4ca0283f2bfb79d67");
@@ -76,6 +80,10 @@ public class T15_Digest
     [DataRow(CKM.CKM_RIPEMD128)]
     [DataRow(CKM.CKM_RIPEMD160)]
     [DataRow(CKM.CKM_GOSTR3411)]
+    [DataRow(CKM_V3_1.CKM_SHA3_224)]
+    [DataRow(CKM_V3_1.CKM_SHA3_256)]
+    [DataRow(CKM_V3_1.CKM_SHA3_384)]
+    [DataRow(CKM_V3_1.CKM_SHA3_512)]
     public void DigestUpdate_Call_Success(CKM digestMechanism)
     {
         byte[] message = PkcsExtensions.HexConvertor.GetBytes("ba8b0702598482a4ef6d6f4056ea10a2e08ecfa327d5ebe9cb7cee0023cc9552362824e13cbb04b0f630bb8e1a3fa532c12fabbce5b4ca0283f2bfb79d67");

@@ -3,6 +3,7 @@ using BouncyHsm.Core.Services.P11Handlers.Common;
 
 namespace BouncyHsm.Core.Services.Profiles;
 
+//TODO: Check spec 3.1
 public sealed class FilterFipsProfileOperation : ProfileOperation
 {
     public FilterFipsProfileOperation()

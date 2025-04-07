@@ -83,6 +83,7 @@ public sealed class UpdateProfileOperation : ProfileOperation
         mechanisms[this.Mechanism] = new MechanismInfo(minKeySize,
             maxKeySize,
             concatFlags,
-           originalInfo.RequireParamsIn);
+           originalInfo.RequireParamsIn,
+           originalInfo.SpecVersion);
     }
 }

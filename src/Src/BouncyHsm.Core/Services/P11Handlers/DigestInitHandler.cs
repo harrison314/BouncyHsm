@@ -64,6 +64,11 @@ public partial class DigestInitHandler : IRpcRequestHandler<DigestInitRequest, D
             CKM.CKM_SHA512_224 => new Sha512tDigest(224),
             CKM.CKM_SHA512_T => this.BuildSha512T(mechanism),
 
+            CKM.CKM_SHA3_256 => new Sha3Digest(256),
+            CKM.CKM_SHA3_224 => new Sha3Digest(224),
+            CKM.CKM_SHA3_384 => new Sha3Digest(384),
+            CKM.CKM_SHA3_512 => new Sha3Digest(512),
+
             CKM.CKM_RIPEMD128 => new RipeMD128Digest(),
             CKM.CKM_RIPEMD160 => new RipeMD160Digest(),
 

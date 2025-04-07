@@ -1680,14 +1680,24 @@ public enum CKM : uint
 
 
     /*
-     *  From PKCS#11 version 3.0
+     *  From PKCS#11 version 3.1
      */
 
-    /// <summary>
-    /// Edwards curve key generation
-    /// </summary>
-   // CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x00001055,
-    /*
-     * #define CKK_EC_EDWARDS                    0x00000040
-     * */
+    CKM_SHA3_256 = 0x000002b0,
+    CKM_SHA3_256_HMAC = 0x000002b1,
+    CKM_SHA3_256_HMAC_GENERAL = 0x000002b2,
+    CKM_SHA3_256_KEY_GEN = 0x000002b3,
+    CKM_SHA3_224 = 0x000002b5,
+    CKM_SHA3_224_HMAC = 0x000002b6,
+    CKM_SHA3_224_HMAC_GENERAL = 0x000002b7,
+    CKM_SHA3_224_KEY_GEN = 0x000002b8,
+    CKM_SHA3_384 = 0x000002c0,
+    CKM_SHA3_384_HMAC = 0x000002c1,
+    CKM_SHA3_384_HMAC_GENERAL = 0x000002c2,
+    CKM_SHA3_384_KEY_GEN = 0x000002c3,
+    CKM_SHA3_512 = 0x000002d0,
+    CKM_SHA3_512_HMAC = 0x000002d1,
+    CKM_SHA3_512_HMAC_GENERAL = 0x000002d2,
+    CKM_SHA3_512_KEY_GEN = 0x000002d3,
+
 }
