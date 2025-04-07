@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pkcs11Interop" Version="5.2.0" />
+    <PackageReference Include="Pkcs11Interop" Version="5.3.0" />
   </ItemGroup>
 
  <ItemGroup Condition="Exists('../../x64/Debug/BouncyHsm.Pkcs11Lib.dll')">
