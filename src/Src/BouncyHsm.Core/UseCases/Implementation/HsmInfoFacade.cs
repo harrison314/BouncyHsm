@@ -46,7 +46,8 @@ public class HsmInfoFacade : IHsmInfoFacade
             mechanismsData.Add(new MechanismInfoData((CKM)mechanisms[i],
                 mechanismInfo.MinKeySize,
                 mechanismInfo.MaxKeySize,
-                mechanismInfo.Flags));
+                mechanismInfo.Flags,
+                mechanismInfo.SpecVersion));
         }
 
         return new Contracts.MechanismProfile(MechanismUtils.GetProfileName(),

@@ -1,4 +1,6 @@
 ﻿
+using BouncyHsm.Core.Services.P11Handlers.Common;
+
 namespace BouncyHsm.Models.HsmInfo;
 
 [SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.MechanismInfoData))]
@@ -23,6 +25,12 @@ public class MechanismInfoDto
     }
 
     public MechanismFlags Flags
+    {
+        get;
+        set;
+    }
+
+    public Pkcs11SpecVersion SpecificationVersion
     {
         get;
         set;
