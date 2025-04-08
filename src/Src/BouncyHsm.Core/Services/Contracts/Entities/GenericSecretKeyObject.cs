@@ -62,7 +62,8 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
         }
 
         // TODO: Check if is need use min length
-        if (this.CkaValueLen < this.GetMinKeySize(this.CkaKeyType))
+        //if (this.CkaValueLen < this.GetMinKeySize(this.CkaKeyType))
+        if (this.CkaValueLen < 1)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
               $"Attribute {CKA.CKA_VALUE_LEN} is too small for {this.CkaKeyType}.");
