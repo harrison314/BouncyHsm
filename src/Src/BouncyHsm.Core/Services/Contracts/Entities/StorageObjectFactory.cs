@@ -214,6 +214,13 @@ public static class StorageObjectFactory
             CKK.CKK_SHA512_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
             CKK.CKK_RIPEMD128_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
             CKK.CKK_RIPEMD160_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_SHA512_224_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_SHA512_256_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_SHA3_224_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_SHA3_256_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_SHA3_384_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_SHA3_512_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_SHA512_T_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
 
             CKK.CKK_AES => factory.Create(StorageObjectInternalType.AesKeyObject),
             _ => throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"Value {keyType} for CKO_SECRET_KEY is not defined.")

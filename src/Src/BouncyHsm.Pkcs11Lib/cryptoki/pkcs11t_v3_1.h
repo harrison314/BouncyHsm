@@ -22,4 +22,16 @@
 #define CKM_SHA3_512_HMAC_GENERAL      0x000002d2UL
 #define CKM_SHA3_512_KEY_GEN           0x000002d3UL
 
+
+
+#define CKM_SHA_1_KEY_GEN              0x00004003UL
+#define CKM_SHA224_KEY_GEN             0x00004004UL
+#define CKM_SHA256_KEY_GEN             0x00004005UL
+#define CKM_SHA384_KEY_GEN             0x00004006UL
+#define CKM_SHA512_KEY_GEN             0x00004007UL
+#define CKM_SHA512_224_KEY_GEN         0x00004008UL
+#define CKM_SHA512_256_KEY_GEN         0x00004009UL
+#define CKM_SHA512_T_KEY_GEN           0x0000400aUL
+
+
 #endif

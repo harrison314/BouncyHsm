@@ -103,6 +103,18 @@ internal static class MechanismUtils
 
             // Generate symetric keys
             {CKM.CKM_GENERIC_SECRET_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
+            {CKM.CKM_SHA_1_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA384_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA512_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA512_224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA512_256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA512_T_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_384_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_512_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
 
             // Hmacing
             {CKM.CKM_MD2_HMAC, new MechanismInfo(16, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
