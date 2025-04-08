@@ -5,6 +5,7 @@ This package contains native PKCS#11 libraries for:
 * Windows x86
 * Windows x64
 * Linux x64 (for Debian based distributions)
+* RHEL x64 (for RHEL like distributions)
 
 this allows this nuget to be added to the _BouncyHsm_ tests available on localhost to be used immediately.
 
