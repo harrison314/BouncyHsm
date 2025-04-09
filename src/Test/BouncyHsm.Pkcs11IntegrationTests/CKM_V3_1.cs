@@ -34,4 +34,9 @@ internal static class CKM_V3_1
     public const CKM CKM_SHA3_512_HMAC = (CKM)0x000002d1;
     public const CKM CKM_SHA3_512_HMAC_GENERAL = (CKM)0x000002d2;
     public const CKM CKM_SHA3_512_KEY_GEN = (CKM)0x000002d3;
+
+    public const CKM CKM_SHA3_256_KEY_DERIVATION = (CKM)0x00000397;
+    public const CKM CKM_SHA3_224_KEY_DERIVATION = (CKM)0x00000398;
+    public const CKM CKM_SHA3_384_KEY_DERIVATION = (CKM)0x00000399;
+    public const CKM CKM_SHA3_512_KEY_DERIVATION = (CKM)0x0000039a;
 }

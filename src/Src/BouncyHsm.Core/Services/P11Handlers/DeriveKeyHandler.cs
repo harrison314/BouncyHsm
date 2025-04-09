@@ -104,6 +104,10 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             CKM.CKM_SHA512_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
             CKM.CKM_SHA512_224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512tDigest(224), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
             CKM.CKM_SHA512_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512tDigest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(224), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_384_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(384), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_512_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(512), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
 
             CKM.CKM_CONCATENATE_BASE_AND_DATA => new ConcatBaseAndDataDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatBaseAndDataDeriveKeyGenerator>()),
             CKM.CKM_CONCATENATE_DATA_AND_BASE => new ConcatDataAndBaseDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatDataAndBaseDeriveKeyGenerator>()),

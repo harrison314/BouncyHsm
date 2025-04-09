@@ -160,6 +160,11 @@ internal static class MechanismUtils
             {CKM.CKM_SHA512_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_224_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_256_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
+            {CKM.CKM_SHA3_256_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_224_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_384_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_512_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+
 
             // Derive using data
             {CKM.CKM_CONCATENATE_BASE_AND_DATA, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE, Pkcs11SpecVersion.V2_40) },
