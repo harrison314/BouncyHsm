@@ -194,6 +194,10 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_SHA512_HMAC_GENERAL:
     case CKM_SHA512_224_HMAC_GENERAL:
     case CKM_SHA512_256_HMAC_GENERAL:
+    case CKM_SHA3_224_HMAC_GENERAL:
+    case CKM_SHA3_256_HMAC_GENERAL:
+    case CKM_SHA3_384_HMAC_GENERAL:
+    case CKM_SHA3_512_HMAC_GENERAL:
     {
         if (pMechanism->ulParameterLen != sizeof(CK_MAC_GENERAL_PARAMS))
         {

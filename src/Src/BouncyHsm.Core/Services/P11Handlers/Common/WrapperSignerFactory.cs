@@ -77,6 +77,10 @@ internal class WrapperSignerFactory
             CKM.CKM_SHA512_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Sha512Digest(), CKK.CKK_SHA512_HMAC),
             CKM.CKM_SHA512_224_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Sha512tDigest(224), null),
             CKM.CKM_SHA512_256_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Sha512tDigest(256), null),
+            CKM.CKM_SHA3_224_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Sha3Digest(224), CKK.CKK_SHA3_224_HMAC),
+            CKM.CKM_SHA3_256_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Sha3Digest(256), CKK.CKK_SHA3_256_HMAC),
+            CKM.CKM_SHA3_384_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Sha3Digest(384), CKK.CKK_SHA3_384_HMAC),
+            CKM.CKM_SHA3_512_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Sha3Digest(512), CKK.CKK_SHA3_512_HMAC),
 
             CKM.CKM_MD2_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new MD2Digest(), null),
             CKM.CKM_MD5_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new MD5Digest(), CKK.CKK_MD5_HMAC),
@@ -89,7 +93,11 @@ internal class WrapperSignerFactory
             CKM.CKM_SHA512_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha512Digest(), CKK.CKK_SHA512_HMAC),
             CKM.CKM_SHA512_224_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha512tDigest(224), null),
             CKM.CKM_SHA512_256_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha512tDigest(256), null),
-
+            CKM.CKM_SHA3_224_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha3Digest(224), CKK.CKK_SHA3_224_HMAC),
+            CKM.CKM_SHA3_256_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha3Digest(256), CKK.CKK_SHA3_256_HMAC),
+            CKM.CKM_SHA3_384_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha3Digest(384), CKK.CKK_SHA3_384_HMAC),
+            CKM.CKM_SHA3_512_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new Sha3Digest(512), CKK.CKK_SHA3_512_HMAC),
+            
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for signing or validation.")
         };
     }

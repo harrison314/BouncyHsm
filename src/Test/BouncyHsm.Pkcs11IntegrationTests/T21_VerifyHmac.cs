@@ -19,7 +19,51 @@ public class T21_VerifyHmac
     [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 32)]
     [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 64)]
     [DataRow(CKK.CKK_SHA512_HMAC, CKM.CKM_SHA512_HMAC, 64)]
-    public void Sign_Hmac_Success(CKK type, CKM signatureMechanism, int size)
+    public void Verify_Hmac_Success(CKK type, CKM signatureMechanism, int size)
+    {
+        byte[] dataToSign = new byte[64];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        this.GenerateSeecret(type, size, factories, session, label, ckId);
+
+        IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(signatureMechanism);
+
+        byte[] signature = session.Sign(mechanism, handle, dataToSign);
+
+        session.Verify(mechanism, handle, dataToSign, signature, out bool isValid);
+        Assert.IsTrue(isValid, "Signature is not valid.");
+
+        signature[2] ^= 0x13;
+
+        session.Verify(mechanism, handle, dataToSign, signature, out isValid);
+        Assert.IsFalse(isValid, "Signature is valid.");
+
+        session.DestroyObject(handle);
+    }
+
+    [DataTestMethod]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_224_HMAC, 28)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_256_HMAC, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_256_HMAC, 14)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_256_HMAC, 1)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_384_HMAC, 48)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_512_HMAC, 64)]
+    public void Verify_HmacSha3_Success(CKK type, CKM signatureMechanism, int size)
     {
         byte[] dataToSign = new byte[64];
         Random.Shared.NextBytes(dataToSign);
@@ -62,7 +106,50 @@ public class T21_VerifyHmac
     [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC_GENERAL, 32)]
     [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC_GENERAL, 64)]
     [DataRow(CKK.CKK_SHA512_HMAC, CKM.CKM_SHA512_HMAC_GENERAL, 64)]
-    public void Sign_HmacGeneral_Success(CKK type, CKM signatureMechanism, int size)
+    public void Verify_HmacGeneral_Success(CKK type, CKM signatureMechanism, int size)
+    {
+        byte[] dataToSign = new byte[64];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        this.GenerateSeecret(type, size, factories, session, label, ckId);
+
+        IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkMacGeneralParams mechanismParam = factories.MechanismParamsFactory.CreateCkMacGeneralParams(4);
+        using IMechanism mechanism = factories.MechanismFactory.Create(signatureMechanism, mechanismParam);
+
+        byte[] signature = session.Sign(mechanism, handle, dataToSign);
+
+        session.Verify(mechanism, handle, dataToSign, signature, out bool isValid);
+        Assert.IsTrue(isValid, "Signature is not valid.");
+
+        signature[2] ^= 0x13;
+
+        session.Verify(mechanism, handle, dataToSign, signature, out isValid);
+        Assert.IsFalse(isValid, "Signature is valid.");
+
+        session.DestroyObject(handle);
+    }
+
+    [DataTestMethod]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_224_HMAC_GENERAL, 28)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_256_HMAC_GENERAL, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_384_HMAC_GENERAL, 48)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_512_HMAC_GENERAL, 64)]
+    public void Verify_HmacSha3General_Success(CKK type, CKM signatureMechanism, int size)
     {
         byte[] dataToSign = new byte[64];
         Random.Shared.NextBytes(dataToSign);
