@@ -22,6 +22,8 @@ public class Program
         };
 
         WebApplicationBuilder builder = WebApplication.CreateBuilder(webApplicationOptions);
+        builder.Configuration.AddEnvironmentVariables("BouncyHsm_");
+
 #if DEBUG
         builder.Host.UseDefaultServiceProvider((hotBuilder, options) =>
         {
