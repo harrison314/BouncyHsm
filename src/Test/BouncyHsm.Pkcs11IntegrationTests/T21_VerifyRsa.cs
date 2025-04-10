@@ -26,6 +26,10 @@ public class T21_VerifyRsa
     [DataRow(CKM.CKM_RIPEMD128_RSA_PKCS, false)]
     [DataRow(CKM.CKM_RIPEMD160_RSA_PKCS, false)]
     [DataRow(CKM.CKM_SHA1_RSA_X9_31, false)]
+    [DataRow(CKM_V3_1.CKM_SHA3_224_RSA_PKCS, false)]
+    [DataRow(CKM_V3_1.CKM_SHA3_256_RSA_PKCS, false)]
+    [DataRow(CKM_V3_1.CKM_SHA3_384_RSA_PKCS, false)]
+    [DataRow(CKM_V3_1.CKM_SHA3_512_RSA_PKCS, false)]
     public void VerifyRsaPkcs_SignAndVerify_Success(CKM mechnism, bool createPkcs1DigestInfo)
     {
         byte[] dataToSign = new byte[412];
@@ -276,6 +280,48 @@ public class T21_VerifyRsa
              32);
 
         using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_SHA256_RSA_PKCS_PSS, mParam);
+        byte[] signature = session.Sign(mechanism, privateKey, dataToSign);
+
+        session.Verify(mechanism, publicKey, dataToSign, signature, out bool isValid);
+
+        Assert.IsTrue(isValid, "Signature must by valid");
+
+        unchecked
+        {
+            signature[2]++;
+        }
+
+        session.Verify(mechanism, publicKey, dataToSign, signature, out bool isNotValid);
+        Assert.IsFalse(isNotValid, "Inconsistent signature is valid");
+    }
+
+    [TestMethod]
+    public void VerifyRsaPssSha3_256_SignAndVerify_Success()
+    {
+        byte[] dataToSign = new byte[412];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        CreateRsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkRsaPkcsPssParams mParam = factories.MechanismParamsFactory.CreateCkRsaPkcsPssParams((ulong)CKM_V3_1.CKM_SHA3_256,
+             (ulong)CKG_V3_1.CKG_MGF1_SHA3_256,
+             32);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_1.CKM_SHA3_256_RSA_PKCS_PSS, mParam);
         byte[] signature = session.Sign(mechanism, privateKey, dataToSign);
 
         session.Verify(mechanism, publicKey, dataToSign, signature, out bool isValid);
