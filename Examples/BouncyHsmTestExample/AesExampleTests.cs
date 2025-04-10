@@ -10,11 +10,15 @@ internal static class BchClient
 {
     private static HttpClient httpClient = new HttpClient();
 
-    private const string BouncyhsmEndpoint = "https://localhost:7007/";
+    private const string BouncyHsmEndpoint = "https://localhost:7007/";
+    private const string BouncyHsmEndpointDockerVariable = "BOUNCY_HSM_HTTP";
 
     public static IBouncyHsmClient Client
     {
-        get => new BouncyHsmClient(BouncyhsmEndpoint, httpClient);
+        get => new BouncyHsmClient(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(BouncyHsmEndpointDockerVariable))
+        ? BouncyHsmEndpoint
+        : Environment.GetEnvironmentVariable(BouncyHsmEndpointDockerVariable),
+        httpClient);
     }
 }
 
@@ -145,7 +149,7 @@ public class AesExampleTests
                 ForEncryption = true,
                 ForSigning = false,
                 ForWrap = false,
-                Senzitive = true
+                Sensitive = true
             }
         });
 
