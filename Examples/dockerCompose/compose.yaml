@@ -1,4 +1,3 @@
-# copy ../BouncyHsmTestExample TestContainer
 # docker compose up
 services:
   bouncy_hsm_server:
@@ -9,7 +8,7 @@ services:
   test_service:
     build: TestContainer
     environment:
-      BOUNCY_HSM_CFG_STRING: "Server=bouncy_hsm_server; Port=8765;"
+      BOUNCY_HSM_CFG_STRING: "Server=bouncy_hsm_server; Port=8765; LogTarget=Console; LogLevel=TRACE;"
       BOUNCY_HSM_HTTP: "http://bouncy_hsm_server:8080/"
     depends_on:
       - bouncy_hsm_server
