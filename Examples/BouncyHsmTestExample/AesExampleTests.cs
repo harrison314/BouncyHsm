@@ -10,15 +10,11 @@ internal static class BchClient
 {
     private static HttpClient httpClient = new HttpClient();
 
-    private const string BouncyHsmEndpoint = "https://localhost:7007/";
-    private const string BouncyHsmEndpointDockerVariable = "BOUNCY_HSM_HTTP";
+    private const string BouncyhsmEndpoint = "https://localhost:7007/";
 
     public static IBouncyHsmClient Client
     {
-        get => new BouncyHsmClient(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(BouncyHsmEndpointDockerVariable))
-        ? BouncyHsmEndpoint
-        : Environment.GetEnvironmentVariable(BouncyHsmEndpointDockerVariable),
-        httpClient);
+        get => new BouncyHsmClient(BouncyhsmEndpoint, httpClient);
     }
 }
 
