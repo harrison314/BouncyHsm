@@ -1,5 +1,5 @@
 # Docker support
-Bouncy Hsm does not publish a Docker image, but it is ready to use with Docker, both the server and the PKCS#11 library.
+_Bouncy Hsm_ does not publish a Docker image, but it is ready to use with Docker, both the server and the PKCS#11 library.
 
 ## Dockerize server
 The Docker image for the server can be created using the following Dockerfile:
@@ -43,7 +43,7 @@ I recommend copying your own `appsetings.json` configuration file into the image
 When dockerizing applications that use the native PKCS#11 library (_BouncyHsm.Pkcs11Lib.dll_, _BouncyHsm.Pkcs11Lib.so_),
 the `BOUNCY_HSM_CFG_STRING` environment variable is set in the container, which the library uses to find a TCP endpoint to connect to.
 
-For example, for a server on the *bouncy_hsm_server_ domain*, the `BOUNCY_HSM_CFG_STRING` variable is set as follows: `Server=bouncy_hsm_server; Port=8765;`,
+For example, for a server on the *bouncy_hsm_server* domain, the `BOUNCY_HSM_CFG_STRING` variable is set as follows: `Server=bouncy_hsm_server; Port=8765;`,
 to add logging to the console, use: `Server=bouncy_hsm_server; Port=8765; LogTarget=Console; LogLevel=TRACE;`.
 
 The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in the Bouncy Hsm web interface under _Configure PKCS#11 lib_.
@@ -51,12 +51,12 @@ The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in t
 
 ## Docker compose example
 In folder [Docker support](/Examples/DockerComposeExample) there is a demonstration of using Docker compose.
-In the first container, _Bouncy Hsm_ starts.
+In the first container is _Bouncy Hsm_ server, whose dockerfile is described above.
 In the second, an application that lists the supported mechanisms via the PKCS#11 library.
 
 In the second container, two environment variables are set:
 - `BOUNCY_HSM_CFG_STRING` - connection string for PKCS#11 library,
-- `BOUNCY_HSM_HTTP` - HTTP Bouncy Hsm endpoint for application.
+- `BOUNCY_HSM_HTTP` - HTTP _Bouncy Hsm_ endpoint for application.
 
 ```yaml
 services:
