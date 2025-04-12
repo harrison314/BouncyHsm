@@ -44,8 +44,8 @@ public partial class Build : NukeBuild
     AbsolutePath ArtifactsTmpDirectory => RootDirectory / "artifacts" / ".tmp";
 
     [NuGetPackage(
-        packageId: "dotnet-project-licenses",
-        packageExecutable: "NugetUtility.dll",
+        packageId: "nuget-license",
+        packageExecutable: "NuGetLicenseCore.dll",
         Framework = "net8.0")]
     readonly Tool DotnetProjectLicenses;
 
@@ -196,11 +196,11 @@ public partial class Build : NukeBuild
 
     private void CopyLicenses(AbsolutePath bouncyHsmPath)
     {
-        Log.Debug("Copy license files");
+        //Log.Debug("Copy license files");
 
-        AbsolutePath licensesFilePath = bouncyHsmPath / "LicensesThirdParty.txt";
-        // DotnetProjectLicenses($"--input \"{RootDirectory / "src" / "BouncyHsm.sln"}\" -o -t --outfile \"{licensesFilePath}\" -p false");
-        (RootDirectory / "LICENSE").Copy(bouncyHsmPath / "License.txt");
+        //AbsolutePath licensesFilePath = bouncyHsmPath / "LicensesThirdParty.txt";
+        //DotnetProjectLicenses($"--input \"{RootDirectory / "src" / "Src" / "BouncyHsm" / "BouncyHsm.csproj"}\" -o Table --file-output \"{licensesFilePath}\" -f net8.0");
+        //(RootDirectory / "LICENSE").Copy(bouncyHsmPath / "License.txt");
     }
 
     private void CreateZip(AbsolutePath dllFile, string platform, string version, AbsolutePath destination)
