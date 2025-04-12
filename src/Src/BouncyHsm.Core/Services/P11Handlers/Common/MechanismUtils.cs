@@ -25,8 +25,7 @@ internal static class MechanismUtils
     private const MechanismCkf EcdsaSignVerify = MechanismCkf.CKF_SIGN
         | MechanismCkf.CKF_VERIFY
         | MechanismCkf.CKF_EC_NAMEDCURVE
-        | MechanismCkf.CKF_EC_UNCOMPRESS
-        | MechanismCkf.CKF_EC_COMPRESS;
+        | MechanismCkf.CKF_EC_UNCOMPRESS;
 
 
     private readonly static Dictionary<CKM, MechanismInfo> originalMechanism;
