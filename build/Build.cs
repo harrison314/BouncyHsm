@@ -71,6 +71,8 @@ public partial class Build : NukeBuild
             .When(NetRuntime != NetRuntime.None, q => q.SetRuntime(NetRuntime))
             .SetProject(projectFile)
             .SetOutput(outputDir));
+
+            CopyLicenses(projectFile, outputDir);
         });
 
     Target BuildBouncyHsmCli => _ => _
@@ -87,7 +89,7 @@ public partial class Build : NukeBuild
             .SetProject(projectFile)
             .SetOutput(outputDir));
 
-            CopyLicenses(outputDir);
+            CopyLicenses(projectFile, outputDir);
         });
 
     Target BuildBouncyHsmClient => _ => _
@@ -184,9 +186,6 @@ public partial class Build : NukeBuild
                 Log.Warning("Native lib {0} not found.", linuxNativeLibx64);
             }
 
-            CopyLicenses(ArtifactsTmpDirectory / "BouncyHsm");
-
-
             (ArtifactsTmpDirectory / "BouncyHsm").ZipTo(ArtifactsDirectory / "BouncyHsm.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep" && t.Name != "appsettings.Development.json");
 
@@ -194,13 +193,20 @@ public partial class Build : NukeBuild
                t => t.Extension != ".pdb" && t.Name != ".gitkeep");
         });
 
-    private void CopyLicenses(AbsolutePath bouncyHsmPath)
+    private void CopyLicenses(AbsolutePath csprojProjectFile, AbsolutePath outFolder)
     {
-        //Log.Debug("Copy license files");
+        Log.Debug("Copy license files");
+        (RootDirectory / "LICENSE").Copy(outFolder / "License.txt");
 
-        //AbsolutePath licensesFilePath = bouncyHsmPath / "LicensesThirdParty.txt";
-        //DotnetProjectLicenses($"--input \"{RootDirectory / "src" / "Src" / "BouncyHsm" / "BouncyHsm.csproj"}\" -o Table --file-output \"{licensesFilePath}\" -f net8.0");
-        //(RootDirectory / "LICENSE").Copy(bouncyHsmPath / "License.txt");
+        try
+        {
+            AbsolutePath licensesFilePath = outFolder / "LicensesThirdParty.txt";
+            DotnetProjectLicenses($"--include-transitive --input \"{csprojProjectFile}\" -o Table --file-output \"{licensesFilePath}\" -f net8.0");
+        }
+        catch (ProcessException ex) when (ex.ExitCode == 3) // Workeround
+        {
+            Log.Warning(ex, "DotnetProjectLicenses exited with code {0}", ex.ExitCode);
+        }
     }
 
     private void CreateZip(AbsolutePath dllFile, string platform, string version, AbsolutePath destination)
