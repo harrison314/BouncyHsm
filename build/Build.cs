@@ -188,7 +188,7 @@ public partial class Build : NukeBuild
 
 
             (ArtifactsTmpDirectory / "BouncyHsm").ZipTo(ArtifactsDirectory / "BouncyHsm.zip",
-                t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep");
+                t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep" && t.Name != "appsettings.Development.json");
 
             (ArtifactsTmpDirectory / "BouncyHsm.Cli").ZipTo(ArtifactsDirectory / "BouncyHsm.Cli.zip",
                t => t.Extension != ".pdb" && t.Name != ".gitkeep");

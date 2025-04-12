@@ -16,9 +16,9 @@ internal static class BchClient
     public static IBouncyHsmClient Client
     {
         get => new BouncyHsmClient(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(BouncyHsmEndpointDockerVariable))
-        ? BouncyHsmEndpoint
-        : Environment.GetEnvironmentVariable(BouncyHsmEndpointDockerVariable),
-        httpClient);
+                       ? BouncyHsmEndpoint
+                       : Environment.GetEnvironmentVariable(BouncyHsmEndpointDockerVariable)!,
+                   httpClient);
     }
 }
 
@@ -29,20 +29,18 @@ public static class Program
         Console.WriteLine("Hello, Example app!");
         Console.WriteLine();
 
-       string contentDir =  Path.GetDirectoryName(typeof(Program).Assembly.Location);
+        // construct Pkcs11 lib location for use with "dotnet run"
+        string contentDir = Path.GetDirectoryName(typeof(Program).Assembly.Location)!;
         string pkcs11Location = Path.Combine(contentDir, BouncyHsmPkcs11Paths.CurrentPlatformSpecificPkcs11Path);
 
-        Console.WriteLine("Load lib from: {0}", pkcs11Location);
-        foreach(var ip in System.Net.Dns.GetHostAddresses("bouncy_hsm_server"))
-        {
-            Console.WriteLine(" > bouncy_hsm_server : {0}", ip );
-        }
-        
+        Console.WriteLine("Load PKCS#11 from: {0}", pkcs11Location);
+
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
-        pkcs11Location,
-        AppType.SingleThreaded);
+            pkcs11Location,
+            AppType.SingleThreaded);
 
+        // Create first slot
         string LoginPin = "123456";
         string runId = Guid.NewGuid().ToString();
         CreateSlotResultDto information = await BchClient.Client.CreateSlotAsync(new CreateSlotDto()
@@ -67,17 +65,36 @@ public static class Program
         int SlotId = information.SlotId;
         string TokenSerialNumber = information.TokenSerialNumber;
 
+        // Find slot
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.Where(t => t.GetTokenInfo().SerialNumber == TokenSerialNumber).Single();
 
-        var mechanisms = slot.GetMechanismList();
+        // Show slot info
+        ISlotInfo slotInfo = slot.GetSlotInfo();
+        Console.WriteLine("Slot info:");
+        Console.WriteLine(" FirmwareVersion: {0}", slotInfo.FirmwareVersion);
+        Console.WriteLine(" HardwareVersion: {0}", slotInfo.HardwareVersion);
+        Console.WriteLine(" ManufacturerId:  {0}", slotInfo.ManufacturerId);
+        Console.WriteLine(" SlotDescription: {0}", slotInfo.SlotDescription);
+        Console.WriteLine();
+
+        // List mechanisms
+        List<CKM> mechanisms = slot.GetMechanismList();
 
         Console.WriteLine("Mechanism list:");
-        foreach (var mechanism in mechanisms)
+        foreach (CKM mechanism in mechanisms)
         {
-            Console.WriteLine(" - {0}", mechanism);
+            if (Enum.IsDefined<CKM>(mechanism))
+            {
+                Console.WriteLine(" - {0}", mechanism);
+            }
+            else
+            {
+                Console.WriteLine(" - 0x{0:x8}", (uint)mechanism);
+            }
         }
 
+        // Remove slot
         await BchClient.Client.DeleteSlotAsync(SlotId);
     }
 }
