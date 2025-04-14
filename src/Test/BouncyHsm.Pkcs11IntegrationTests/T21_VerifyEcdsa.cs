@@ -20,6 +20,10 @@ public class T21_VerifyEcdsa
     [DataRow(CKM.CKM_ECDSA_SHA256)]
     [DataRow(CKM.CKM_ECDSA_SHA384)]
     [DataRow(CKM.CKM_ECDSA_SHA512)]
+    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_224)]
+    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_256)]
+    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_384)]
+    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_512)]
     public void VerifyEcdsa_SignAndVerify_Success(CKM mechnism)
     {
         byte[] dataToSign = new byte[32];

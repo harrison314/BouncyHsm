@@ -107,6 +107,10 @@ internal static class MechanismUtils
             {CKM.CKM_ECDSA_SHA256, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_ECDSA_SHA384, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_ECDSA_SHA512, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
+            {CKM.CKM_ECDSA_SHA3_224, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_ECDSA_SHA3_256, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_ECDSA_SHA3_384, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_ECDSA_SHA3_512, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
 
             // Generate symetric keys
             {CKM.CKM_GENERIC_SECRET_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },

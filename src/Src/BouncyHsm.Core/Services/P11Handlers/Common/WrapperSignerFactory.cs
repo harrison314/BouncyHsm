@@ -72,6 +72,11 @@ internal class WrapperSignerFactory
             CKM.CKM_ECDSA_SHA256 => this.CreateEcdsaSigner(ckMechanism, new Sha256Digest()),
             CKM.CKM_ECDSA_SHA384 => this.CreateEcdsaSigner(ckMechanism, new Sha384Digest()),
             CKM.CKM_ECDSA_SHA512 => this.CreateEcdsaSigner(ckMechanism, new Sha512Digest()),
+            CKM.CKM_ECDSA_SHA3_224 => this.CreateEcdsaSigner(ckMechanism, new Sha3Digest(224)),
+            CKM.CKM_ECDSA_SHA3_256 => this.CreateEcdsaSigner(ckMechanism, new Sha3Digest(256)),
+            CKM.CKM_ECDSA_SHA3_384 => this.CreateEcdsaSigner(ckMechanism, new Sha3Digest(384)),
+            CKM.CKM_ECDSA_SHA3_512 => this.CreateEcdsaSigner(ckMechanism, new Sha3Digest(512)),
+
 
             CKM.CKM_RSA_9796 => new RsaWrapperSigner(new Iso9796Signer(new RsaBlindedEngine(), new NullDigest()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 

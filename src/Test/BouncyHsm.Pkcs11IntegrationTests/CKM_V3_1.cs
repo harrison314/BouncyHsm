@@ -48,4 +48,10 @@ internal static class CKM_V3_1
     public const CKM CKM_SHA3_512_RSA_PKCS_PSS = (CKM)0x00000065;
     public const CKM CKM_SHA3_224_RSA_PKCS = (CKM)0x00000066;
     public const CKM CKM_SHA3_224_RSA_PKCS_PSS = (CKM)0x00000067;
+
+
+    public const CKM CKM_ECDSA_SHA3_224 = (CKM)0x00001047;
+    public const CKM CKM_ECDSA_SHA3_256 = (CKM)0x00001048;
+    public const CKM CKM_ECDSA_SHA3_384 = (CKM)0x00001049;
+    public const CKM CKM_ECDSA_SHA3_512 = (CKM)0x0000104a;
 }
