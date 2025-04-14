@@ -29,6 +29,10 @@ internal static class DigestUtils
             CKM.CKM_SHA3_224 => new Sha3Digest(224),
             CKM.CKM_SHA3_384 => new Sha3Digest(384),
             CKM.CKM_SHA3_512 => new Sha3Digest(512),
+            CKM.CKM_BLAKE2B_160 => new Blake2bDigest(160),
+            CKM.CKM_BLAKE2B_256 => new Blake2bDigest(256),
+            CKM.CKM_BLAKE2B_384 => new Blake2bDigest(384),
+            CKM.CKM_BLAKE2B_512 => new Blake2bDigest(512),
 
             _ => null
         };

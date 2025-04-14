@@ -75,6 +75,11 @@ public partial class DigestInitHandler : IRpcRequestHandler<DigestInitRequest, D
             CKM.CKM_GOSTR3411 => new Gost3411Digest(),
             CKM.CKM_FASTHASH => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Not support digest algorithm {ckMechanism}."),
 
+            CKM.CKM_BLAKE2B_160 => new Blake2bDigest(160),
+            CKM.CKM_BLAKE2B_256 => new Blake2bDigest(256),
+            CKM.CKM_BLAKE2B_384 => new Blake2bDigest(384),
+            CKM.CKM_BLAKE2B_512 => new Blake2bDigest(512),
+
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for digesting.")
         };
 
