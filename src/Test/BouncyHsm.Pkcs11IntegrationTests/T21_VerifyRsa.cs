@@ -26,10 +26,10 @@ public class T21_VerifyRsa
     [DataRow(CKM.CKM_RIPEMD128_RSA_PKCS, false)]
     [DataRow(CKM.CKM_RIPEMD160_RSA_PKCS, false)]
     [DataRow(CKM.CKM_SHA1_RSA_X9_31, false)]
-    [DataRow(CKM_V3_1.CKM_SHA3_224_RSA_PKCS, false)]
-    [DataRow(CKM_V3_1.CKM_SHA3_256_RSA_PKCS, false)]
-    [DataRow(CKM_V3_1.CKM_SHA3_384_RSA_PKCS, false)]
-    [DataRow(CKM_V3_1.CKM_SHA3_512_RSA_PKCS, false)]
+    [DataRow(CKM_V3_0.CKM_SHA3_224_RSA_PKCS, false)]
+    [DataRow(CKM_V3_0.CKM_SHA3_256_RSA_PKCS, false)]
+    [DataRow(CKM_V3_0.CKM_SHA3_384_RSA_PKCS, false)]
+    [DataRow(CKM_V3_0.CKM_SHA3_512_RSA_PKCS, false)]
     public void VerifyRsaPkcs_SignAndVerify_Success(CKM mechnism, bool createPkcs1DigestInfo)
     {
         byte[] dataToSign = new byte[412];
@@ -317,11 +317,11 @@ public class T21_VerifyRsa
 
         CreateRsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
-        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkRsaPkcsPssParams mParam = factories.MechanismParamsFactory.CreateCkRsaPkcsPssParams((ulong)CKM_V3_1.CKM_SHA3_256,
-             (ulong)CKG_V3_1.CKG_MGF1_SHA3_256,
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkRsaPkcsPssParams mParam = factories.MechanismParamsFactory.CreateCkRsaPkcsPssParams((ulong)CKM_V3_0.CKM_SHA3_256,
+             (ulong)CKG_V3_0.CKG_MGF1_SHA3_256,
              32);
 
-        using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_1.CKM_SHA3_256_RSA_PKCS_PSS, mParam);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_SHA3_256_RSA_PKCS_PSS, mParam);
         byte[] signature = session.Sign(mechanism, privateKey, dataToSign);
 
         session.Verify(mechanism, publicKey, dataToSign, signature, out bool isValid);

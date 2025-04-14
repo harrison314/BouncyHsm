@@ -36,7 +36,7 @@ public enum CKG : uint
     /// </summary>
     CKG_MGF1_SHA224 = 0x00000005,
 
-    // PKCS#11 Spec 3.1
+    // PKCS#11 Spec 3.0
 
     /// <summary>
     /// PKCS #1 Mask Generation Function with SHA-3 224 digest algorithm

@@ -25,6 +25,7 @@ internal static class MechanismUtils
     private const MechanismCkf EcdsaSignVerify = MechanismCkf.CKF_SIGN
         | MechanismCkf.CKF_VERIFY
         | MechanismCkf.CKF_EC_NAMEDCURVE
+        | MechanismCkf.CKF_EC_ECPARAMETERS
         | MechanismCkf.CKF_EC_UNCOMPRESS;
 
 
@@ -51,14 +52,14 @@ internal static class MechanismUtils
              { CKM.CKM_RIPEMD128, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
              { CKM.CKM_RIPEMD160, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
              { CKM.CKM_GOSTR3411, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-             { CKM.CKM_SHA3_256, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-             { CKM.CKM_SHA3_224, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-             { CKM.CKM_SHA3_384, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-             { CKM.CKM_SHA3_512, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-             { CKM.CKM_BLAKE2B_160, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-             { CKM.CKM_BLAKE2B_256, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-             { CKM.CKM_BLAKE2B_384, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-             { CKM.CKM_BLAKE2B_512, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+             { CKM.CKM_SHA3_256, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+             { CKM.CKM_SHA3_224, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+             { CKM.CKM_SHA3_384, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+             { CKM.CKM_SHA3_512, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+             { CKM.CKM_BLAKE2B_160, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+             { CKM.CKM_BLAKE2B_256, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+             { CKM.CKM_BLAKE2B_384, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+             { CKM.CKM_BLAKE2B_512, new MechanismInfo(0,0, MechanismCkf.CKF_DIGEST, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
             // Generate Key pairs
             {CKM.CKM_RSA_PKCS_KEY_PAIR_GEN, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
@@ -75,10 +76,10 @@ internal static class MechanismUtils
             {CKM.CKM_MD5_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_RIPEMD128_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_RIPEMD160_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_SHA3_224_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_256_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_384_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_512_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_224_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_256_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_384_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_512_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             
             {CKM.CKM_RSA_PKCS_OAEP, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40) },
 
@@ -93,10 +94,10 @@ internal static class MechanismUtils
             {CKM.CKM_SHA256_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA384_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, /*MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT |*/ MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_SHA3_224_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_256_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_384_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_512_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_224_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_256_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_384_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_512_RSA_PKCS_PSS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.CKF_SIGN|MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
 
             //RSA ISO 9796-2
             {CKM.CKM_RSA_9796, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY | MechanismCkf.CKF_SIGN_RECOVER | MechanismCkf.CKF_VERIFY_RECOVER , MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
@@ -110,25 +111,25 @@ internal static class MechanismUtils
             {CKM.CKM_ECDSA_SHA256, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_ECDSA_SHA384, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_ECDSA_SHA512, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_ECDSA_SHA3_224, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_ECDSA_SHA3_256, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_ECDSA_SHA3_384, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_ECDSA_SHA3_512, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_ECDSA_SHA3_224, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_ECDSA_SHA3_256, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_ECDSA_SHA3_384, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_ECDSA_SHA3_512, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
             // Generate symetric keys
             {CKM.CKM_GENERIC_SECRET_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_SHA_1_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA384_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA512_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA512_224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA512_256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA512_T_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_384_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_512_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA_1_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA384_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA512_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA512_224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA512_256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA512_T_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_224_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_256_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_384_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_512_KEY_GEN, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
             // Hmacing
             {CKM.CKM_MD2_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
@@ -142,14 +143,14 @@ internal static class MechanismUtils
             {CKM.CKM_SHA512_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_224_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_256_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_SHA3_256_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_224_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_384_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_512_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_160_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_256_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_384_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_512_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_256_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_224_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_384_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_512_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_160_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_256_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_384_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_512_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
             //General hmacing
             {CKM.CKM_MD2_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
@@ -163,14 +164,14 @@ internal static class MechanismUtils
             {CKM.CKM_SHA512_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_224_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_256_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_SHA3_256_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_224_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_384_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_512_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_160_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_256_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_384_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_BLAKE2B_512_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_256_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_224_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_384_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_512_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_160_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_256_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_384_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_512_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V3_0) },
 
             // Derive using digest
             {CKM.CKM_MD2_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
@@ -182,10 +183,10 @@ internal static class MechanismUtils
             {CKM.CKM_SHA512_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_224_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_SHA512_256_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_SHA3_256_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_224_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_384_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
-            {CKM.CKM_SHA3_512_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_SHA3_256_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_224_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_384_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SHA3_512_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
 
             // Derive using data

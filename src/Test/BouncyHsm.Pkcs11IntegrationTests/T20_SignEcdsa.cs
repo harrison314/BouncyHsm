@@ -53,10 +53,10 @@ public class T20_SignEcdsa
     [DataRow(CKM.CKM_ECDSA_SHA256)]
     [DataRow(CKM.CKM_ECDSA_SHA384)]
     [DataRow(CKM.CKM_ECDSA_SHA512)]
-    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_224)]
-    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_256)]
-    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_384)]
-    [DataRow(CKM_V3_1.CKM_ECDSA_SHA3_512)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_224)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_256)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_384)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_512)]
     public void SignEcdsaWithHash_WithDotnetWerify_Success(CKM signMechanism)
     {
         byte[] dataToSign = new byte[412];

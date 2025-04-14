@@ -232,7 +232,7 @@ public enum CKK : uint
     CKK_VENDOR_DEFINED = 0x80000000,
 
     /*
-     * Version 3.1
+     * Version 3.0
     */
 
     CKK_CHACHA20 = 0x00000033,

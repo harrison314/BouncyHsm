@@ -212,10 +212,10 @@ public class T23_DeriveKey
     }
 
     [DataTestMethod]
-    [DataRow(CKM_V3_1.CKM_SHA3_224_KEY_DERIVATION)]
-    [DataRow(CKM_V3_1.CKM_SHA3_256_KEY_DERIVATION)]
-    [DataRow(CKM_V3_1.CKM_SHA3_384_KEY_DERIVATION)]
-    [DataRow(CKM_V3_1.CKM_SHA3_512_KEY_DERIVATION)]
+    [DataRow(CKM_V3_0.CKM_SHA3_224_KEY_DERIVATION)]
+    [DataRow(CKM_V3_0.CKM_SHA3_256_KEY_DERIVATION)]
+    [DataRow(CKM_V3_0.CKM_SHA3_384_KEY_DERIVATION)]
+    [DataRow(CKM_V3_0.CKM_SHA3_512_KEY_DERIVATION)]
     public void Derive_Sha3Digest_Success(CKM mechanismType)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();

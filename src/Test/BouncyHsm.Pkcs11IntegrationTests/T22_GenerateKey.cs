@@ -102,19 +102,19 @@ public class T22_GenerateKey
     }
 
     [DataTestMethod]
-    [DataRow(CKM_V3_1.CKM_SHA_1_KEY_GEN, 20)]
-    [DataRow(CKM_V3_1.CKM_SHA224_KEY_GEN, 25)]
-    [DataRow(CKM_V3_1.CKM_SHA256_KEY_GEN, 32)]
-    [DataRow(CKM_V3_1.CKM_SHA384_KEY_GEN, 38)]
-    [DataRow(CKM_V3_1.CKM_SHA512_KEY_GEN, 64)]
-    [DataRow(CKM_V3_1.CKM_SHA512_224_KEY_GEN, 32)]
-    [DataRow(CKM_V3_1.CKM_SHA512_256_KEY_GEN, 32)]
-    [DataRow(CKM_V3_1.CKM_SHA512_224_KEY_GEN, 32)]
-    [DataRow(CKM_V3_1.CKM_SHA512_T_KEY_GEN, 32)]
-    [DataRow(CKM_V3_1.CKM_SHA3_224_KEY_GEN, 28)]
-    [DataRow(CKM_V3_1.CKM_SHA3_256_KEY_GEN, 32)]
-    [DataRow(CKM_V3_1.CKM_SHA3_384_KEY_GEN, 38)]
-    [DataRow(CKM_V3_1.CKM_SHA3_512_KEY_GEN, 64)]
+    [DataRow(CKM_V3_0.CKM_SHA_1_KEY_GEN, 20)]
+    [DataRow(CKM_V3_0.CKM_SHA224_KEY_GEN, 25)]
+    [DataRow(CKM_V3_0.CKM_SHA256_KEY_GEN, 32)]
+    [DataRow(CKM_V3_0.CKM_SHA384_KEY_GEN, 38)]
+    [DataRow(CKM_V3_0.CKM_SHA512_KEY_GEN, 64)]
+    [DataRow(CKM_V3_0.CKM_SHA512_224_KEY_GEN, 32)]
+    [DataRow(CKM_V3_0.CKM_SHA512_256_KEY_GEN, 32)]
+    [DataRow(CKM_V3_0.CKM_SHA512_224_KEY_GEN, 32)]
+    [DataRow(CKM_V3_0.CKM_SHA512_T_KEY_GEN, 32)]
+    [DataRow(CKM_V3_0.CKM_SHA3_224_KEY_GEN, 28)]
+    [DataRow(CKM_V3_0.CKM_SHA3_256_KEY_GEN, 32)]
+    [DataRow(CKM_V3_0.CKM_SHA3_384_KEY_GEN, 38)]
+    [DataRow(CKM_V3_0.CKM_SHA3_512_KEY_GEN, 64)]
     public void Ganerate_GenericHmacKey_Success(CKM mechanismType, int size)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();

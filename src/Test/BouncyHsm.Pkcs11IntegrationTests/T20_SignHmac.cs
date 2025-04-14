@@ -54,12 +54,12 @@ public class T20_SignHmac
     }
 
     [DataTestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_224_HMAC, 28)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_256_HMAC, 32)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_256_HMAC, 14)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_256_HMAC, 1)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_384_HMAC, 48)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_SHA3_512_HMAC, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_224_HMAC, 28)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 14)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 1)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_384_HMAC, 48)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC, 64)]
     public void Sign_HmacSha3_Success(CKK type, CKM signatureMechanism, int size)
     {
         byte[] dataToSign = new byte[64];
@@ -93,12 +93,12 @@ public class T20_SignHmac
     }
 
     [DataTestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_BLAKE2B_160_HMAC, 28)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_BLAKE2B_256_HMAC, 32)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_BLAKE2B_384_HMAC, 14)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_BLAKE2B_256_HMAC, 1)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_BLAKE2B_384_HMAC, 48)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_1.CKM_BLAKE2B_512_HMAC, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_160_HMAC, 28)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 14)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 1)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 48)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_512_HMAC, 64)]
     public void Sign_HmacBlake2_Success(CKK type, CKM signatureMechanism, int size)
     {
         byte[] dataToSign = new byte[64];
@@ -138,10 +138,10 @@ public class T20_SignHmac
             CKM.CKM_SHA512_HMAC => HMACSHA512.HashData(key, data),
             CKM.CKM_SHA_1_HMAC => HMACSHA1.HashData(key, data),
             CKM.CKM_SHA384_HMAC => HMACSHA384.HashData(key, data),
-            CKM_V3_1.CKM_SHA3_224_HMAC => null,
-            CKM_V3_1.CKM_SHA3_256_HMAC => HMACSHA3_256.HashData(key, data),
-            CKM_V3_1.CKM_SHA3_384_HMAC => HMACSHA3_384.HashData(key, data),
-            CKM_V3_1.CKM_SHA3_512_HMAC => HMACSHA3_512.HashData(key, data),
+            CKM_V3_0.CKM_SHA3_224_HMAC => null,
+            CKM_V3_0.CKM_SHA3_256_HMAC => HMACSHA3_256.HashData(key, data),
+            CKM_V3_0.CKM_SHA3_384_HMAC => HMACSHA3_384.HashData(key, data),
+            CKM_V3_0.CKM_SHA3_512_HMAC => HMACSHA3_512.HashData(key, data),
             _ => throw new InvalidOperationException()
         };
 

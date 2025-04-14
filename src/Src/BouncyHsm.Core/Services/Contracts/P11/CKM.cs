@@ -1677,10 +1677,8 @@ public enum CKM : uint
     /// </summary>
     CKM_VENDOR_DEFINED = 0x80000000,
 
-
-
     /*
-     *  From PKCS#11 version 3.1
+     *  From PKCS#11 version 3.0
      */
 
     CKM_SHA_1_KEY_GEN = 0x00004003,
