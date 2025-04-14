@@ -90,7 +90,7 @@ internal class Iso9796Signer : ISigner
             System.Security.Cryptography.CryptographicOperations.ZeroMemory(verificationMessage);
             return isValid;
         }
-        catch (InvalidCipherTextException ex)
+        catch (InvalidCipherTextException)
         {
             return false;
         }

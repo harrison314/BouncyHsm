@@ -5,15 +5,21 @@ using System.Buffers;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
-internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<StorageObjectMemento>
+internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<StorageObjectMemento?>
 {
     public StorageObjectMementoMessagePackFormatter()
     {
 
     }
 
-    public void Serialize(ref MessagePackWriter writer, StorageObjectMemento value, MessagePackSerializerOptions options)
+    public void Serialize(ref MessagePackWriter writer, StorageObjectMemento? value, MessagePackSerializerOptions options)
     {
+        if (value == null)
+        {
+            writer.WriteNil();
+            return;
+        }
+
         writer.WriteArrayHeader(3);
         writer.Write(1); // Version
         writer.Write(value.Id.ToByteArray());
@@ -56,7 +62,7 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         }
     }
 
-    public StorageObjectMemento Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+    public StorageObjectMemento? Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
     {
         options.Security.DepthStep(ref reader);
 
