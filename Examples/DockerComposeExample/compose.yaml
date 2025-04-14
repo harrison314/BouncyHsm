@@ -1,0 +1,13 @@
+services:
+  bouncy_hsm_server:
+    build: BouncyHsmServer
+    ports:
+      - "8080:8080"
+      - "8765:8765"
+  test_service:
+    build: TestContainer
+    environment:
+      BOUNCY_HSM_CFG_STRING: "Server=bouncy_hsm_server; Port=8765;"
+      BOUNCY_HSM_HTTP: "http://bouncy_hsm_server:8080/"
+    depends_on:
+      - bouncy_hsm_server

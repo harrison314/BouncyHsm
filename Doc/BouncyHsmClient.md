@@ -1,10 +1,11 @@
 # BouncyHsm Client
-A REST API client for [BouncyHSM](https://github.com/harrison314/BouncyHsm) that allows you to manage BouncyHSM programmatically using code. This package is recommended for use in unit tests.
+A REST API client for [Bouncy Hsm](https://github.com/harrison314/BouncyHsm) that allows you to manage BouncyHSM programmatically using code. This package is recommended for use in unit tests.
 
 This package contains native PKCS#11 libraries for:
 * Windows x86
 * Windows x64
 * Linux x64 (for Debian based distributions)
+* RHEL x64 (for RHEL like distributions)
 
 this allows this nuget to be added to the _BouncyHsm_ tests available on localhost to be used immediately.
 
