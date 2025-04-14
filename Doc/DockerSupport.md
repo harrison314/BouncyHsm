@@ -50,7 +50,7 @@ The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in t
 
 
 ## Docker compose example
-In folder [Docker support](/Examples/DockerComposeExample) there is a demonstration of using Docker compose.
+In folder [/Examples/DockerComposeExample](/Examples/DockerComposeExample) there is a demonstration of using Docker compose.
 In the first container is _Bouncy Hsm_ server, whose dockerfile is described above.
 In the second, an application that lists the supported mechanisms via the PKCS#11 library.
 
@@ -75,3 +75,24 @@ services:
 ```
 
 To run the example, use the command: `docker compose up`.
+
+_TestContainer_ uses the PKCS#11 library  _BouncyHsm.Pkcs11Lib.so_, which is obtained from the nuget package BouncyHsm.Client, for other applications the library must be obtained in other ways.
+
+For example - download from release:
+
+```dockerfile
+FROM alpine:3.20.3
+
+ENV APP_VERSION=1.3.1
+
+WORKDIR /unzip
+ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .
+RUN apk --update add unzip && rm -rf /var/cache/apk/* && unzip BouncyHsm.zip && rm BouncyHsm.zip
+
+FROM debian
+WORKDIR /App
+
+COPY --from=0 /unzip/native/Linux-x64 /App/NativeLibLocation
+
+CMD ["example_application", "-p11libPath", "/App/NativeLibLocation/BouncyHsm.Pkcs11Lib.so"]
+```
