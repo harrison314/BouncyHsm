@@ -191,6 +191,10 @@ internal static class MechanismUtils
             {CKM.CKM_SHA3_224_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_SHA3_384_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_SHA3_512_KEY_DERIVATION, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_160_KEY_DERIVE, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_256_KEY_DERIVE, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_384_KEY_DERIVE, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_BLAKE2B_512_KEY_DERIVE, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
 
             // Derive using data
