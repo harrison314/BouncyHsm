@@ -106,5 +106,10 @@ public enum MechanismCkf : uint
     /// <summary>
     /// True if there is an extension to the flags; false if no extensions. Must be false for this version. 
     /// </summary>
-    CKF_EXTENSION =	0x80000000 	
+    CKF_EXTENSION = 0x80000000,
+
+    /// <summary>
+    /// True if the mechanism can be used with EC domain parameters of the choice curveName (ASN1 printed string)
+    /// </summary>
+    CKF_EC_CURVENAME = 0x04000000
 }
