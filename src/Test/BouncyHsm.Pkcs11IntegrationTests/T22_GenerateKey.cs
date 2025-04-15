@@ -115,6 +115,12 @@ public class T22_GenerateKey
     [DataRow(CKM_V3_0.CKM_SHA3_256_KEY_GEN, 32)]
     [DataRow(CKM_V3_0.CKM_SHA3_384_KEY_GEN, 38)]
     [DataRow(CKM_V3_0.CKM_SHA3_512_KEY_GEN, 64)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_160_KEY_GEN, 20)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_256_KEY_GEN, 32)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_256_KEY_GEN, 10)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_256_KEY_GEN, 512)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_384_KEY_GEN, 60)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_512_KEY_GEN, 64)]
     public void Ganerate_GenericHmacKey_Success(CKM mechanismType, int size)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();

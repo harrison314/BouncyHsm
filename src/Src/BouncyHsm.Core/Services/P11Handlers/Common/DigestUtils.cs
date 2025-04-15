@@ -77,6 +77,7 @@ internal static class DigestUtils
             CKG.CKG_MGF1_SHA3_224 => new Sha3Digest(224),
             CKG.CKG_MGF1_SHA3_384 => new Sha3Digest(384),
             CKG.CKG_MGF1_SHA3_512 => new Sha3Digest(512),
+
             _ => null
         };
     }

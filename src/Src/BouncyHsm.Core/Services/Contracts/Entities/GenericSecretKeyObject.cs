@@ -138,6 +138,11 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
             CKK.CKK_SHA3_512_HMAC => true,
             CKK.CKK_SHA512_T_HMAC => true,
 
+            CKK.CKK_BLAKE2B_160_HMAC => true,
+            CKK.CKK_BLAKE2B_256_HMAC => true,
+            CKK.CKK_BLAKE2B_384_HMAC => true,
+            CKK.CKK_BLAKE2B_512_HMAC => true,
+
             _ => false
         };
     }
@@ -163,6 +168,11 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
             CKK.CKK_SHA3_384_HMAC => 48,
             CKK.CKK_SHA3_512_HMAC => 64,
             CKK.CKK_SHA512_T_HMAC => 28,
+
+            CKK.CKK_BLAKE2B_160_HMAC => 20,
+            CKK.CKK_BLAKE2B_256_HMAC => 32,
+            CKK.CKK_BLAKE2B_384_HMAC => 48,
+            CKK.CKK_BLAKE2B_512_HMAC => 64,
 
             _ => throw new InvalidProgramException($"Enum value {keyType} is not supported.")
         };

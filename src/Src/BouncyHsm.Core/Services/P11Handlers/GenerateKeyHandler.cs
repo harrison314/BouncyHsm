@@ -101,6 +101,10 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
             CKM.CKM_SHA3_256_KEY_GEN => new GenericSecretHmacKeyGenerator(CKK.CKK_SHA3_256_HMAC, this.loggerFactory.CreateLogger<GenericSecretHmacKeyGenerator>()),
             CKM.CKM_SHA3_384_KEY_GEN => new GenericSecretHmacKeyGenerator(CKK.CKK_SHA3_384_HMAC, this.loggerFactory.CreateLogger<GenericSecretHmacKeyGenerator>()),
             CKM.CKM_SHA3_512_KEY_GEN => new GenericSecretHmacKeyGenerator(CKK.CKK_SHA3_512_HMAC, this.loggerFactory.CreateLogger<GenericSecretHmacKeyGenerator>()),
+            CKM.CKM_BLAKE2B_160_KEY_GEN => new GenericSecretHmacKeyGenerator(CKK.CKK_BLAKE2B_160_HMAC, this.loggerFactory.CreateLogger<GenericSecretHmacKeyGenerator>()),
+            CKM.CKM_BLAKE2B_256_KEY_GEN => new GenericSecretHmacKeyGenerator(CKK.CKK_BLAKE2B_256_HMAC, this.loggerFactory.CreateLogger<GenericSecretHmacKeyGenerator>()),
+            CKM.CKM_BLAKE2B_384_KEY_GEN => new GenericSecretHmacKeyGenerator(CKK.CKK_BLAKE2B_384_HMAC, this.loggerFactory.CreateLogger<GenericSecretHmacKeyGenerator>()),
+            CKM.CKM_BLAKE2B_512_KEY_GEN => new GenericSecretHmacKeyGenerator(CKK.CKK_BLAKE2B_512_HMAC, this.loggerFactory.CreateLogger<GenericSecretHmacKeyGenerator>()),
 
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for generate key.")
