@@ -134,6 +134,15 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
             CKD.CKD_SHA256_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha256Digest(), sharedData),
             CKD.CKD_SHA384_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha384Digest(), sharedData),
             CKD.CKD_SHA512_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha512Digest(), sharedData),
+            CKD.CKD_SHA3_224_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(224), sharedData),
+            CKD.CKD_SHA3_256_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(256), sharedData),
+            CKD.CKD_SHA3_384_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(384), sharedData),
+            CKD.CKD_SHA3_512_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(512), sharedData),
+            CKD.CKD_BLAKE2B_160_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(160), sharedData),
+            CKD.CKD_BLAKE2B_256_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(256), sharedData),
+            CKD.CKD_BLAKE2B_384_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(384), sharedData),
+            CKD.CKD_BLAKE2B_512_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(512), sharedData),
+
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"kdf {kdfFunction} from CK_ECDH1_DERIVE_PARAMS is not supported or invalid.")
         };
     }
