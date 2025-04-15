@@ -103,7 +103,7 @@ internal static class MechanismUtils
             {CKM.CKM_RSA_9796, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY | MechanismCkf.CKF_SIGN_RECOVER | MechanismCkf.CKF_VERIFY_RECOVER , MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
 
             // Generate EC Key pair
-            {CKM.CKM_ECDSA_KEY_PAIR_GEN, new MechanismInfo(EcMinKeySize, EcMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR|MechanismCkf.CKF_EC_NAMEDCURVE| MechanismCkf.CKF_EC_UNCOMPRESS, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
+            {CKM.CKM_ECDSA_KEY_PAIR_GEN, new MechanismInfo(EcMinKeySize, EcMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR | MechanismCkf.CKF_EC_NAMEDCURVE | MechanismCkf.CKF_EC_UNCOMPRESS | MechanismCkf.CKF_EC_ECPARAMETERS, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
 
             {CKM.CKM_ECDSA, new MechanismInfo(EcMinKeySize, EcMaxKeySize,EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_ECDSA_SHA1, new MechanismInfo(EcMinKeySize, EcMaxKeySize, EcdsaSignVerify, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
