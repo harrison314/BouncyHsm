@@ -1,0 +1,25 @@
+﻿@using BouncyHsm.Client
+@if (this.Version != Pkcs11SpecVersion.V2_40)
+{
+    <sub>@this.GetVersion()</sub>
+}
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public Pkcs11SpecVersion Version
+    {
+        get;
+        set;
+    }
+
+    private string GetVersion()
+    {
+        return this.Version switch
+        {
+            Pkcs11SpecVersion.V2_40 => "v2.40",
+            Pkcs11SpecVersion.V3_0 => "v3.0",
+            _ => throw new InvalidProgramException($"Enum value {this.Version} is not supported")
+        };
+    }
+}
