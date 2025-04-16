@@ -1,0 +1,147 @@
+﻿@using BouncyHsm.Client;
+@inject IBouncyHsmClient bouncyHsmClient
+@inject NavigationManager Navigation
+@inject ILogger<GenerateRsaKeys> logger
+
+@if (this.isInLoading)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        <div class="row mb-1">
+            <label for="i-ckaid" class="form-label">CKA ID</label>
+
+            <div class="row">
+                <div class="col-9">
+                    <InputText id="i-ckaid" class="form-control" @bind-Value="this.model.CkaIdText" />
+                </div>
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="this.model.CkaIdForm">
+                        <option value="@BinaryForm.Utf8">UTF-8</option>
+                        <option value="@BinaryForm.Hex">HEX</option>
+                        <option value="@BinaryForm.Base64">Base64</option>
+                    </InputSelect>
+                </div>
+            </div>
+            <div class="form-text">Value for CKA_ID is optinal. If is empty then will be generated on server.</div>
+        </div>
+
+
+        <div class="mb-1">
+            <label for="i-ckaid" class="form-label">CKA LABEL</label>
+            <InputText class="form-control" @bind-Value="this.model.CkaLabel" />
+            <div class="form-text">Value for CKA_LABEL.</div>
+            <ValidationMessage For="() => this.model.CkaLabel" />
+        </div>
+
+
+        <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-forsigning" @bind-Value="this.model.ForSigning" />
+            <label class="form-check-label" for="i-forsigning">For signing and verification</label>
+            <ValidationMessage For="() => this.model.ForSigning" />
+        </div>
+        <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-encryption" @bind-Value="this.model.ForEncryption" />
+            <label class="form-check-label" for="i-encryption">For encryption and decryption</label>
+            <ValidationMessage For="() => this.model.ForEncryption" />
+        </div>
+        <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.ForWrap" />
+            <label class="form-check-label" for="i-wrap">For wrap and unwrap</label>
+            <ValidationMessage For="() => this.model.ForWrap" />
+        </div>
+        <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.Sensitive" />
+            <label class="form-check-label" for="i-wrap">Key is sensitive</label>
+            <ValidationMessage For="() => this.model.Sensitive" />
+        </div>
+        <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-exportable" @bind-Value="this.model.Exportable" />
+            <label class="form-check-label" for="i-exportable">Key is exportable</label>
+            <ValidationMessage For="() => this.model.Exportable" />
+        </div>
+
+        <div class="justify-content-end pt-4">
+            <button type="submit" class="btn btn-primary"><span class="icon-plus icon-1x"></span> Submit</button>
+        </div>
+    </EditForm>
+}
+@code {
+
+    [Parameter, EditorRequired]
+    public int SlotId
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<bool> OnLoadingChanged
+    {
+        get;
+        set;
+    }
+
+    private EditContext? editContext;
+    private Poly1305GenModel model = new Poly1305GenModel();
+    private bool isInLoading = false;
+
+    protected override Task OnInitializedAsync()
+    {
+        this.editContext = new EditContext(this.model);
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleSubmit()
+    {
+        this.isInLoading = true;
+        await this.OnLoadingChanged.InvokeAsync(true);
+        await Task.Yield();
+        try
+        {
+            _ = await this.bouncyHsmClient.GeneratePoly1305KeyAsync(this.SlotId, this.model.ToDto());
+            this.Navigation.NavigateTo($"Slots/{this.SlotId}/Pkcs");
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error during GeneratePoly1305KeyAsync.");
+        }
+        finally
+        {
+            this.isInLoading = false;
+            await this.OnLoadingChanged.InvokeAsync(false);
+        }
+    }
+
+    #region Model
+
+    internal class Poly1305GenModel : BaseGenerateModel
+    {
+
+        public Poly1305GenModel()
+        {
+            this.Sensitive = true;
+            this.Exportable = false;
+
+            this.ForWrap = false;
+            this.ForEncryption = true;
+            this.ForSigning = false;
+            this.ForDerivation = false;
+        }
+
+        internal GeneratePoly1305KeyRequestDto ToDto()
+        {
+            return new GeneratePoly1305KeyRequestDto()
+            {
+                KeyAttributes = this.ToGenerateKeyAttributesDto()
+            };
+        }
+    }
+
+    #endregion
+}

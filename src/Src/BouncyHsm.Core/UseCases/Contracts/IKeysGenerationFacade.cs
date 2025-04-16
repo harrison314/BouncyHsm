@@ -15,4 +15,6 @@ public interface IKeysGenerationFacade
     Task<DomainResult<GeneratedSecretId>> GenerateSecretKey(uint slotId, GenerateSecretKeyRequest request, CancellationToken cancellationToken);
 
     Task<DomainResult<GeneratedSecretId>> GenerateAesKey(uint slotId, GenerateAesKeyRequest request, CancellationToken cancellationToken);
+    
+    Task<DomainResult<GeneratedSecretId>> GeneratePoly1305Key(uint slotId, GeneratePoly1305KeyRequest request, CancellationToken cancellationToken);
 }

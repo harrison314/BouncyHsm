@@ -55,6 +55,18 @@ public class KeyGenerationController : Controller
         return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
     }
 
+    [HttpPost("{slotId}/GeneratePoly1305Key", Name = nameof(GeneratePoly1305Key))]
+    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    public async Task<IActionResult> GeneratePoly1305Key(uint slotId, [FromBody] GeneratePoly1305KeyRequestDto model)
+    {
+        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}.", slotId);
+
+        GeneratePoly1305KeyRequest request = KeyGenerationControllerMapper.MapFromDto(model);
+        DomainResult<GeneratedSecretId> result = await this.keyGenerationFacade.GeneratePoly1305Key(slotId, request, this.HttpContext.RequestAborted);
+
+        return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
+    }
+
     [HttpPost("{slotId}/GenerateSecretKey", Name = nameof(GenerateSecretKey))]
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateSecretKey(uint slotId, [FromBody] GenerateSecretKeyRequestDto model)

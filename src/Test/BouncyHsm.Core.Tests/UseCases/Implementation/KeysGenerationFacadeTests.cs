@@ -151,6 +151,39 @@ public class KeysGenerationFacadeTests
         Assert.IsTrue(result.MatchOk(_ => true, () => false));
     }
 
+    [TestMethod]
+    public async Task GeneratePoly1305Key_Call_Success()
+    {
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.StoreObject(12U, It.Is<StorageObject>(q => q is Poly1305KeyObject), It.IsAny<CancellationToken>()))
+            .Returns(new ValueTask())
+            .Verifiable();
+
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(this.GetClotEnity())
+            .Verifiable();
+
+        KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
+
+        GeneratePoly1305KeyRequest request = new GeneratePoly1305KeyRequest()
+        {
+            KeyAttributes = new GenerateKeyAttributes()
+            {
+                CkaId = null,
+                CkaLabel = "test1",
+                Exportable = false,
+                ForDerivation = false,
+                ForEncryption = true,
+                ForSigning = true,
+                ForWrap = false,
+                Sensitive = true,
+            }
+        };
+
+        DomainResult<GeneratedSecretId> result = await pkcsFacade.GeneratePoly1305Key(12U, request, default);
+        Assert.IsTrue(result.MatchOk(_ => true, () => false));
+    }
+
     private SlotEntity GetClotEnity()
     {
         return new SlotEntity()
