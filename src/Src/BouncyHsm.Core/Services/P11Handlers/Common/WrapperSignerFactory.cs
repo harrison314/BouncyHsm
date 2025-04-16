@@ -101,6 +101,8 @@ internal class WrapperSignerFactory
             CKM.CKM_BLAKE2B_384_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Blake2bDigest(384), CKK.CKK_BLAKE2B_384_HMAC),
             CKM.CKM_BLAKE2B_512_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Blake2bDigest(512), CKK.CKK_BLAKE2B_512_HMAC),
 
+            CKM.CKM_POLY1305 => new PlainMacWrapperSigner(ckMechanism, new Org.BouncyCastle.Crypto.Macs.Poly1305(), this.loggerFactory.CreateLogger<PlainMacWrapperSigner>(), CKK.CKK_POLY1305),
+
             CKM.CKM_MD2_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new MD2Digest(), null),
             CKM.CKM_MD5_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new MD5Digest(), CKK.CKK_MD5_HMAC),
             CKM.CKM_RIPEMD128_HMAC_GENERAL => this.CreateHmacGeneralWrapperSigner(mechanism, new RipeMD128Digest(), CKK.CKK_RIPEMD128_HMAC),

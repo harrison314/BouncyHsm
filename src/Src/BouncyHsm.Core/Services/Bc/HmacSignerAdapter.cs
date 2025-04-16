@@ -10,7 +10,7 @@ namespace BouncyHsm.Core.Services.Bc;
 
 internal class HmacSignerAdapter : ISigner
 {
-    private readonly HMac hmac;
+    private readonly IMac hmac;
     private bool? forSigning;
 
     public string AlgorithmName
@@ -18,7 +18,7 @@ internal class HmacSignerAdapter : ISigner
         get => this.hmac.AlgorithmName;
     }
 
-    public HmacSignerAdapter(HMac hmac)
+    public HmacSignerAdapter(IMac hmac)
     {
         this.hmac = hmac;
         this.forSigning = null;

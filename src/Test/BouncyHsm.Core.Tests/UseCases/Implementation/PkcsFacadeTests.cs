@@ -273,6 +273,17 @@ public class PkcsFacadeTests
     }
 
     [TestMethod]
+    public async Task ImportPem_Poly1305Key_Success()
+    {
+        string pem = """
+           -----BEGIN POLY1305 SECRET KEY-----
+           W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
+           -----END POLY1305 SECRET KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
     public async Task ImportPem_GenericSecret_Success()
     {
         string pem = """

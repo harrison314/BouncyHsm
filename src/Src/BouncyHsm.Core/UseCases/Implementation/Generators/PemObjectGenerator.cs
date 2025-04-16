@@ -95,6 +95,7 @@ internal class PemObjectGenerator
         {
             "GENERIC SECRET" => this.CreateGenericSecret(pemObject.Content, pemObject.Headers),
             "AES SECRET KEY" => this.CreateAesKey(pemObject.Content),
+            "POLY1305 SECRET KEY" => this.CreatePoly1305Key(pemObject.Content),
             "DATA OBJECT" => this.CreateDataObject(pemObject.Content, pemObject.Headers),
             _ => throw new IOException($"PEM object not supported ({pemObject.Type}).")
         };
@@ -150,6 +151,32 @@ internal class PemObjectGenerator
     private StorageObject CreateAesKey(byte[] content)
     {
         AesKeyObject aesKeyObject = new AesKeyObject();
+        aesKeyObject.CkaCopyable = false;
+        aesKeyObject.CkaDecrypt = this.ForEncryption;
+        aesKeyObject.CkaDerive = this.ForDerivation;
+        aesKeyObject.CkaDestroyable = true;
+        aesKeyObject.CkaEncrypt = this.ForEncryption;
+        aesKeyObject.CkaId = this.ckaId;
+        aesKeyObject.CkaLabel = this.ckaLabel;
+        aesKeyObject.CkaModifiable = false;
+        aesKeyObject.CkaPrivate = true;
+        aesKeyObject.CkaSign = this.ForSigning;
+        aesKeyObject.CkaToken = true;
+        aesKeyObject.CkaTrusted = true;
+        aesKeyObject.CkaUnwrap = this.ForWrap;
+
+        aesKeyObject.SetSecret(content);
+
+        this.UpdateAttributesByMode(aesKeyObject);
+
+        aesKeyObject.ReComputeAttributes();
+
+        return aesKeyObject;
+    }
+
+    private StorageObject CreatePoly1305Key(byte[] content)
+    {
+        Poly1305KeyObject aesKeyObject = new Poly1305KeyObject();
         aesKeyObject.CkaCopyable = false;
         aesKeyObject.CkaDecrypt = this.ForEncryption;
         aesKeyObject.CkaDerive = this.ForDerivation;
