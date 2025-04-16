@@ -80,7 +80,7 @@ internal static class MechanismUtils
             {CKM.CKM_SHA3_256_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_SHA3_384_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_SHA3_512_RSA_PKCS, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_SIGN | /*MechanismCkf.CKF_SIGN_RECOVER |*/ MechanismCkf.CKF_VERIFY /*| MechanismCkf.CKF_VERIFY_RECOVER*/ /*| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP*/, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
-            
+
             {CKM.CKM_RSA_PKCS_OAEP, new MechanismInfo(RsaMinKeySize, RsaMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40) },
 
             //CKM.CKM_SHA1_RSA_X9_31
@@ -228,6 +228,10 @@ internal static class MechanismUtils
             {CKM.CKM_AES_CCM, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40) },
 
             {CKM.CKM_AES_KEY_WRAP_PAD, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
+            
+            //POLY1305
+            {CKM.CKM_POLY1305_KEY_GEN, new MechanismInfo(32, 32, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+
 
         };
 

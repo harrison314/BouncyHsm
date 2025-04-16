@@ -75,4 +75,9 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
     {
         return $"AES-{aesKeyObject.CkaValueLen * 8} Key";
     }
+
+    public string Visit(Poly1305KeyObject poly1305KeyObject)
+    {
+        return "POLY1305 Key";
+    }
 }

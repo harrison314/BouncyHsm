@@ -60,6 +60,8 @@ internal abstract class BaseKeyTimeVisitor : ICryptoApiObjectVisitor<TimeSpan>
 
     public abstract TimeSpan Visit(AesKeyObject aesKeyObject);
 
+    public abstract TimeSpan Visit(Poly1305KeyObject poly1305KeyObject);
+
     [DoesNotReturn]
     protected virtual void NotSupported(ICryptoApiObject cryptoApiObject)
     {

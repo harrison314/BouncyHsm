@@ -47,14 +47,17 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
 
     public override TimeSpan Visit(GenericSecretKeyObject generalSecretKeyObject)
     {
-        double result = generalSecretKeyObject.CkaValueLen * 8 * this.GetMultiplicator(0);
-        return TimeSpan.FromMilliseconds(result);
+        return this.GetSimetricKeyTimeSpan(generalSecretKeyObject.CkaValueLen);
     }
 
     public override TimeSpan Visit(AesKeyObject aesKeyObject)
     {
-        double result = aesKeyObject.CkaValueLen * 8 * this.GetMultiplicator(0);
-        return TimeSpan.FromMilliseconds(result);
+        return this.GetSimetricKeyTimeSpan(aesKeyObject.CkaValueLen);
+    }
+
+    public override TimeSpan Visit(Poly1305KeyObject poly1305KeyObject)
+    {
+        return this.GetSimetricKeyTimeSpan(poly1305KeyObject.CkaValueLen);
     }
 
     private double GetMultiplicator(int pi)
@@ -65,5 +68,11 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
         }
 
         return 1.0;
+    }
+
+    private TimeSpan GetSimetricKeyTimeSpan(uint keySizeInBytes)
+    {
+        double result = keySizeInBytes * 8 * this.GetMultiplicator(0);
+        return TimeSpan.FromMilliseconds(result);
     }
 }

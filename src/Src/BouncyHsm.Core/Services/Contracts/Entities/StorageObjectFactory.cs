@@ -23,7 +23,8 @@ public static class StorageObjectFactory
         EcdsaPublicKeyObject,
         EcdsaPrivateKeyObject,
         GenericSecretKeyObject,
-        AesKeyObject
+        AesKeyObject,
+        Poly1305KeyObject
     }
 
     internal interface IStorageObjectInternalFactory
@@ -52,6 +53,7 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.EcdsaPrivateKeyObject => new EcdsaPrivateKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN),
                 StorageObjectInternalType.GenericSecretKeyObject => new GenericSecretKeyObject(),
                 StorageObjectInternalType.AesKeyObject => new AesKeyObject(),
+                StorageObjectInternalType.Poly1305KeyObject => new Poly1305KeyObject(),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -80,6 +82,7 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.EcdsaPrivateKeyObject => new EcdsaPrivateKeyObject(this.memento),
                 StorageObjectInternalType.GenericSecretKeyObject => new GenericSecretKeyObject(this.memento),
                 StorageObjectInternalType.AesKeyObject => new AesKeyObject(this.memento),
+                StorageObjectInternalType.Poly1305KeyObject => new Poly1305KeyObject(this.memento),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -227,6 +230,7 @@ public static class StorageObjectFactory
             CKK.CKK_BLAKE2B_512_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
 
             CKK.CKK_AES => factory.Create(StorageObjectInternalType.AesKeyObject),
+            CKK.CKK_POLY1305 => factory.Create(StorageObjectInternalType.Poly1305KeyObject),
             _ => throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"Value {keyType} for CKO_SECRET_KEY is not defined.")
         };
 

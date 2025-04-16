@@ -74,4 +74,7 @@ public static class CKM_V3_0
     public const CKM CKM_BLAKE2B_512_HMAC_GENERAL = (CKM)0x0000401d;
     public const CKM CKM_BLAKE2B_512_KEY_DERIVE = (CKM)0x0000401e;
     public const CKM CKM_BLAKE2B_512_KEY_GEN = (CKM)0x0000401f;
+
+    public const CKM CKM_POLY1305_KEY_GEN = (CKM)0x00001227;
+    public const CKM CKM_POLY1305 = (CKM)0x00001228;
 }

@@ -23,6 +23,8 @@ public interface ICryptoApiObjectVisitor
     void Visit(GenericSecretKeyObject generalSecretKeyObject);
 
     void Visit(AesKeyObject aesKeyObject);
+
+    void Visit(Poly1305KeyObject poly1305KeyObject);
 }
 
 public interface ICryptoApiObjectVisitor<out T>
@@ -48,4 +50,6 @@ public interface ICryptoApiObjectVisitor<out T>
     T Visit(GenericSecretKeyObject generalSecretKeyObject);
 
     T Visit(AesKeyObject aesKeyObject);
+
+    T Visit(Poly1305KeyObject poly1305KeyObject);
 }
