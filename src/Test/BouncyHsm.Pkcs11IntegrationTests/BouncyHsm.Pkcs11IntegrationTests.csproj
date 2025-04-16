@@ -35,4 +35,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pkcs11Interop.Ext\Pkcs11Interop.Ext.csproj" />
+  </ItemGroup>
+
 </Project>
