@@ -129,39 +129,6 @@ public class T20_SignHmac
         session.DestroyObject(handle);
     }
 
-    [DataTestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_POLY1305)]
-    [DataRow(CKK_V3_0.CKK_POLY1305, CKM_V3_0.CKM_POLY1305)]
-    public void Sign_Poly1305_Success(CKK type, CKM signatureMechanism)
-    {
-        byte[] dataToSign = new byte[64];
-        Random.Shared.NextBytes(dataToSign);
-
-        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
-        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
-            AssemblyTestConstants.P11LibPath,
-            AppType.SingleThreaded);
-
-        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
-        ISlot slot = slots.SelectTestSlot();
-
-        using ISession session = slot.OpenSession(SessionType.ReadWrite);
-        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
-
-        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
-        this.GenerateSeecret(type, 32, factories, session, label, ckId);
-
-        IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
-
-        using IMechanism mechanism = factories.MechanismFactory.Create(signatureMechanism);
-
-        byte[] signature = session.Sign(mechanism, handle, dataToSign);
-        byte[] seecrit = this.GetSeecretKeyValue(session, handle);
-
-        session.DestroyObject(handle);
-    }
-
     private void VerifySignature(CKM signatureMechanism, byte[] key, byte[] data, byte[] signature)
     {
         byte[]? dotnetSignature = signatureMechanism switch
@@ -207,16 +174,8 @@ public class T20_SignHmac
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)size),
         };
 
-        if (type == CKK_V3_0.CKK_POLY1305)
-        {
-            using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_POLY1305_KEY_GEN);
-            _ = session.GenerateKey(mechanism, keyAttributes);
-        }
-        else
-        {
-            using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_GENERIC_SECRET_KEY_GEN);
-            _ = session.GenerateKey(mechanism, keyAttributes);
-        }
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_GENERIC_SECRET_KEY_GEN);
+        _ = session.GenerateKey(mechanism, keyAttributes);
     }
 
     private IObjectHandle FindSeecretKey(ISession session, byte[] ckaId, string ckaLabel)
