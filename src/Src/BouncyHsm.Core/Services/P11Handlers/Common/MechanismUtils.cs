@@ -33,6 +33,8 @@ internal static class MechanismUtils
     private static IDictionary<CKM, MechanismInfo> mechanism;
     private static string? profileName = null;
 
+    private const int Poly1305KeySize = 32;
+
     // Another mechanisms https://nshielddocs.entrust.com/api-generic/12.80/pkcs11
     static MechanismUtils()
     {
@@ -156,7 +158,8 @@ internal static class MechanismUtils
             {CKM.CKM_BLAKE2B_384_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_BLAKE2B_512_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             
-            {CKM.CKM_POLY1305, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            // Sign using POLY1305
+            {CKM.CKM_POLY1305, new MechanismInfo(Poly1305KeySize, Poly1305KeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
             //General hmacing
             {CKM.CKM_MD2_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, Pkcs11SpecVersion.V2_40) },
@@ -232,7 +235,7 @@ internal static class MechanismUtils
             {CKM.CKM_AES_KEY_WRAP_PAD, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
             
             //POLY1305
-            {CKM.CKM_POLY1305_KEY_GEN, new MechanismInfo(32, 32, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_POLY1305_KEY_GEN, new MechanismInfo(Poly1305KeySize, Poly1305KeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
 
 
         };
