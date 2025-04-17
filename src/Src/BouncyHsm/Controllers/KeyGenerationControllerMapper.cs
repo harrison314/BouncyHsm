@@ -24,4 +24,6 @@ internal static partial class KeyGenerationControllerMapper
     public static partial GenerateSecretKeyRequest MapFromDto(GenerateSecretKeyRequestDto dto);
 
     public static partial GeneratePoly1305KeyRequest MapFromDto(GeneratePoly1305KeyRequestDto dto);
+
+    public static partial GenerateChaCha20KeyRequest MapFromDto(GenerateChaCha20KeyRequestDto dto);
 }

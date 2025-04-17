@@ -284,6 +284,17 @@ public class PkcsFacadeTests
     }
 
     [TestMethod]
+    public async Task ImportPem_ChaCha20Key_Success()
+    {
+        string pem = """
+           -----BEGIN CHACHA20 SECRET KEY-----
+           W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
+           -----END CHACHA20 SECRET KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
     public async Task ImportPem_GenericSecret_Success()
     {
         string pem = """

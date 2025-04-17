@@ -62,6 +62,8 @@ internal abstract class BaseKeyTimeVisitor : ICryptoApiObjectVisitor<TimeSpan>
 
     public abstract TimeSpan Visit(Poly1305KeyObject poly1305KeyObject);
 
+    public abstract TimeSpan Visit(ChaCha20KeyObject chaCha20KeyObject);
+
     [DoesNotReturn]
     protected virtual void NotSupported(ICryptoApiObject cryptoApiObject)
     {

@@ -67,6 +67,18 @@ public class KeyGenerationController : Controller
         return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
     }
 
+    [HttpPost("{slotId}/GenerateChaCha20Key", Name = nameof(GenerateChaCha20Key))]
+    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    public async Task<IActionResult> GenerateChaCha20Key(uint slotId, [FromBody] GenerateChaCha20KeyRequestDto model)
+    {
+        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}.", slotId);
+
+        GenerateChaCha20KeyRequest request = KeyGenerationControllerMapper.MapFromDto(model);
+        DomainResult<GeneratedSecretId> result = await this.keyGenerationFacade.GenerateChaCha20Key(slotId, request, this.HttpContext.RequestAborted);
+
+        return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
+    }
+
     [HttpPost("{slotId}/GenerateSecretKey", Name = nameof(GenerateSecretKey))]
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateSecretKey(uint slotId, [FromBody] GenerateSecretKeyRequestDto model)

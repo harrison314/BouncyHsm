@@ -78,6 +78,11 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
 
     public string Visit(Poly1305KeyObject poly1305KeyObject)
     {
-        return "POLY1305 Key";
+        return "Poly1305 Key";
+    }
+
+    public string Visit(ChaCha20KeyObject chaCha20KeyObject)
+    {
+        return "ChaCha20 Key";
     }
 }

@@ -36,6 +36,7 @@ else
                         <option value="@GeneratedKeyType.Ec">EC key pair</option>
                         <option value="@GeneratedKeyType.Aes">AES key</option>
                         <option value="@GeneratedKeyType.Poly1305">POLY1305 key</option>
+                        <option value="@GeneratedKeyType.ChaCha20">ChaCha20 key</option>
                         <option value="@GeneratedKeyType.Secret">Secret key</option>
                     </select>
                 </div>
@@ -59,6 +60,10 @@ else
             {
                 <GeneratePoly1305Key SlotId="@this.SlotId" OnLoadingChanged="e=>this.isInLoading = e" />
             }
+            else if (this.KeyType == GeneratedKeyType.ChaCha20)
+            {
+                <GenerateChaChaKey SlotId="@this.SlotId" OnLoadingChanged="e=>this.isInLoading = e" />
+            }
             else if (this.KeyType == GeneratedKeyType.Secret)
             {
                 <GenerateSecretKey SlotId="@this.SlotId" OnLoadingChanged="e=>this.isInLoading = e" />
@@ -68,7 +73,7 @@ else
 }
 
 @code {
-    internal enum GeneratedKeyType { None, Rsa, Ec, Aes, Poly1305, Secret }
+    internal enum GeneratedKeyType { None, Rsa, Ec, Aes, Poly1305, ChaCha20, Secret }
 
     [Parameter]
     public int SlotId

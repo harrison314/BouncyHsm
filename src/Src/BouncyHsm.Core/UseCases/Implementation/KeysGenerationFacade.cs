@@ -316,6 +316,56 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         return new DomainResult<GeneratedSecretId>.Ok(new GeneratedSecretId(secretKeyObject.Id));
     }
 
+    public async Task<DomainResult<GeneratedSecretId>> GenerateChaCha20Key(uint slotId, GenerateChaCha20KeyRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateChaCha20Key with slotId {slotId}, label {label}.", slotId, request.KeyAttributes.CkaLabel);
+
+        if (await this.persistentRepository.GetSlot(slotId, cancellationToken) == null)
+        {
+            this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
+            return new DomainResult<GeneratedSecretId>.InvalidInput("Invalid slotId.");
+        }
+
+        if (request.KeyAttributes.ForDerivation)
+        {
+            this.logger.LogError("ChaCha20 keys can not support derivation.");
+            return new DomainResult<GeneratedSecretId>.InvalidInput("ChaCha20 keys can not support derivation.");
+        }
+
+        byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
+        Dictionary<CKA, IAttributeValue> template = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_ENCRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
+            { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
+
+            { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+
+            { CKA.CKA_VALUE_LEN, AttributeValue.Create(32) },
+        };
+
+        ChaCha20KeyGenerator generator = new ChaCha20KeyGenerator(this.loggerFactory.CreateLogger<ChaCha20KeyGenerator>());
+        generator.Init(template);
+        SecretKeyObject secretKeyObject = generator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
+
+        this.UpdateKey(secretKeyObject);
+        secretKeyObject.Validate();
+
+        await this.persistentRepository.StoreObject(slotId, secretKeyObject, cancellationToken);
+
+        return new DomainResult<GeneratedSecretId>.Ok(new GeneratedSecretId(secretKeyObject.Id));
+    }
+
     private void UpdatePrivateKey(bool simulateQualifiedArea, PrivateKeyObject privateKeyObject)
     {
         privateKeyObject.CkaLocal = true;

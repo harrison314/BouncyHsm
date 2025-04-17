@@ -84,6 +84,14 @@
 #define CKM_POLY1305_KEY_GEN           0x00001227UL
 #define CKM_POLY1305                   0x00001228UL
 
+#define CKM_CHACHA20_KEY_GEN           0x00001225UL
+#define CKM_CHACHA20                   0x00001226UL
+#define CKM_CHACHA20_POLY1305          0x00004021UL
+
+#define CKM_SALSA20_KEY_GEN            0x0000402dUL
+#define CKM_SALSA20                    0x00004020UL
+#define CKM_SALSA20_POLY1305           0x00004022UL
+
 #define CKK_GOSTR3410           0x00000030UL
 #define CKK_GOSTR3411           0x00000031UL
 #define CKK_GOST28147           0x00000032UL

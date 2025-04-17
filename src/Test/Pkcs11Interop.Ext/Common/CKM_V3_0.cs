@@ -77,4 +77,12 @@ public static class CKM_V3_0
 
     public const CKM CKM_POLY1305_KEY_GEN = (CKM)0x00001227;
     public const CKM CKM_POLY1305 = (CKM)0x00001228;
+
+    public const CKM CKM_CHACHA20_KEY_GEN = (CKM)0x00001225;
+    public const CKM CKM_CHACHA20 = (CKM)0x00001226;
+    public const CKM CKM_CHACHA20_POLY1305 = (CKM)0x00004021;
+
+    public const CKM CKM_SALSA20_KEY_GEN = (CKM)0x0000402d;
+    public const CKM CKM_SALSA20 = (CKM)0x00004020;
+    public const CKM CKM_SALSA20_POLY1305 = (CKM)0x00004022;
 }

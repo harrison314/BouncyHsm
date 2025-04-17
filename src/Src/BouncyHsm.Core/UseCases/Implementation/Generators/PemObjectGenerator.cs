@@ -96,6 +96,7 @@ internal class PemObjectGenerator
             "GENERIC SECRET" => this.CreateGenericSecret(pemObject.Content, pemObject.Headers),
             "AES SECRET KEY" => this.CreateAesKey(pemObject.Content),
             "POLY1305 SECRET KEY" => this.CreatePoly1305Key(pemObject.Content),
+            "CHACHA20 SECRET KEY" => this.CreateChaCha20Key(pemObject.Content),
             "DATA OBJECT" => this.CreateDataObject(pemObject.Content, pemObject.Headers),
             _ => throw new IOException($"PEM object not supported ({pemObject.Type}).")
         };
@@ -176,28 +177,54 @@ internal class PemObjectGenerator
 
     private StorageObject CreatePoly1305Key(byte[] content)
     {
-        Poly1305KeyObject aesKeyObject = new Poly1305KeyObject();
-        aesKeyObject.CkaCopyable = false;
-        aesKeyObject.CkaDecrypt = this.ForEncryption;
-        aesKeyObject.CkaDerive = this.ForDerivation;
-        aesKeyObject.CkaDestroyable = true;
-        aesKeyObject.CkaEncrypt = this.ForEncryption;
-        aesKeyObject.CkaId = this.ckaId;
-        aesKeyObject.CkaLabel = this.ckaLabel;
-        aesKeyObject.CkaModifiable = false;
-        aesKeyObject.CkaPrivate = true;
-        aesKeyObject.CkaSign = this.ForSigning;
-        aesKeyObject.CkaToken = true;
-        aesKeyObject.CkaTrusted = true;
-        aesKeyObject.CkaUnwrap = this.ForWrap;
+        Poly1305KeyObject keyObject = new Poly1305KeyObject();
+        keyObject.CkaCopyable = false;
+        keyObject.CkaDecrypt = this.ForEncryption;
+        keyObject.CkaDerive = this.ForDerivation;
+        keyObject.CkaDestroyable = true;
+        keyObject.CkaEncrypt = this.ForEncryption;
+        keyObject.CkaId = this.ckaId;
+        keyObject.CkaLabel = this.ckaLabel;
+        keyObject.CkaModifiable = false;
+        keyObject.CkaPrivate = true;
+        keyObject.CkaSign = this.ForSigning;
+        keyObject.CkaToken = true;
+        keyObject.CkaTrusted = true;
+        keyObject.CkaUnwrap = this.ForWrap;
 
-        aesKeyObject.SetSecret(content);
+        keyObject.SetSecret(content);
 
-        this.UpdateAttributesByMode(aesKeyObject);
+        this.UpdateAttributesByMode(keyObject);
 
-        aesKeyObject.ReComputeAttributes();
+        keyObject.ReComputeAttributes();
 
-        return aesKeyObject;
+        return keyObject;
+    }
+
+    private StorageObject CreateChaCha20Key(byte[] content)
+    {
+        ChaCha20KeyObject keyObject = new ChaCha20KeyObject();
+        keyObject.CkaCopyable = false;
+        keyObject.CkaDecrypt = this.ForEncryption;
+        keyObject.CkaDerive = this.ForDerivation;
+        keyObject.CkaDestroyable = true;
+        keyObject.CkaEncrypt = this.ForEncryption;
+        keyObject.CkaId = this.ckaId;
+        keyObject.CkaLabel = this.ckaLabel;
+        keyObject.CkaModifiable = false;
+        keyObject.CkaPrivate = true;
+        keyObject.CkaSign = this.ForSigning;
+        keyObject.CkaToken = true;
+        keyObject.CkaTrusted = true;
+        keyObject.CkaUnwrap = this.ForWrap;
+
+        keyObject.SetSecret(content);
+
+        this.UpdateAttributesByMode(keyObject);
+
+        keyObject.ReComputeAttributes();
+
+        return keyObject;
     }
 
     private StorageObject CreateDataObject(byte[] content, IList<Org.BouncyCastle.Utilities.IO.Pem.PemHeader> headers)

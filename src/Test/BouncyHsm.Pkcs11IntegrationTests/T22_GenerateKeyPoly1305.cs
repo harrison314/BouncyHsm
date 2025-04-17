@@ -13,7 +13,7 @@ public class T22_GenerateKeyPoly1305
     }
 
     [TestMethod]
-    public void Ganerate_Ppoly1305_Success()
+    public void Ganerate_Poly1305_Success()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
@@ -43,7 +43,7 @@ public class T22_GenerateKeyPoly1305
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)32),
         };
 
-        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_POLY1305_KEY_GEN);
 
         IObjectHandle handle = session.GenerateKey(mechanism, keyAttributes);
         this.TestContext?.WriteLine("Object created");

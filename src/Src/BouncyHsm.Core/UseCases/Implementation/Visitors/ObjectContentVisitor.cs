@@ -78,6 +78,11 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
         return new DomainResult<ObjectContent>.Ok(new ObjectContent("poly1305_key.bin", poly1305KeyObject.CkaValue));
     }
 
+    public DomainResult<ObjectContent> Visit(ChaCha20KeyObject chaCha20KeyObject)
+    {
+        return new DomainResult<ObjectContent>.Ok(new ObjectContent("chacha20_key.bin", chaCha20KeyObject.CkaValue));
+    }
+
     private DomainResult<ObjectContent> CreatePemResult(string fileName, object pemObject)
     {
         using MemoryStream ms = new MemoryStream();
