@@ -1,4 +1,5 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.Services.P11Handlers.Common;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
@@ -65,8 +66,7 @@ public sealed class Poly1305KeyObject : SecretKeyObject
             this.CkaValueLen = (uint)this.CkaValue.Length;
         }
 
-        //TODO: Implement CKA_CHECK_VALUE for POLY1305
-        this.CkaCheckValue = Array.Empty<byte>();
+        this.CkaCheckValue = DigestUtils.ComputeCheckValue(this.CkaValue);
     }
 
     public override void Validate()

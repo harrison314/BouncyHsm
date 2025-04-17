@@ -1,4 +1,5 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.Services.P11Handlers.Common;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
@@ -65,8 +66,7 @@ public sealed class ChaCha20KeyObject : SecretKeyObject
             this.CkaValueLen = (uint)this.CkaValue.Length;
         }
 
-        //TODO: Implement CKA_CHECK_VALUE for CHACHA20
-        this.CkaCheckValue = Array.Empty<byte>();
+        this.CkaCheckValue = DigestUtils.ComputeCheckValue(this.CkaValue);
     }
 
     public override void Validate()
