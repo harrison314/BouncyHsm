@@ -65,8 +65,16 @@ public class T20_SignPoly1305
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)size),
         };
 
-        using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_POLY1305_KEY_GEN);
-        _ = session.GenerateKey(mechanism, keyAttributes);
+        if (type == CKK_V3_0.CKK_POLY1305)
+        {
+            using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_POLY1305_KEY_GEN);
+            _ = session.GenerateKey(mechanism, keyAttributes);
+        }
+        else
+        {
+            using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_GENERIC_SECRET_KEY_GEN);
+            _ = session.GenerateKey(mechanism, keyAttributes);
+        }
     }
 
     private IObjectHandle FindSeecretKey(ISession session, byte[] ckaId, string ckaLabel)
