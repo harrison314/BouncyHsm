@@ -9,6 +9,17 @@ Due to the mutual incompatibility of some Linux distributions, it will be necess
 
 The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
 
+## Makefile parameters
+To facilitate building for other platforms (ARM, MAC OS), it is possible to parameterize the makefile:
+- `CC` - for compiler, default is `clang`,
+- `ARCH_FLAGS` - for architcture, default is `-m64`,
+- `EXTRA_FLAGS` - for extra compilation flags.
+
+Example build command for _ARM_ with _gcc_:
+```
+make CC=gcc ARCH_FLAGS="-march=armv8-a"
+```
+
 ## Example compilation for Alpine Linux
 Install prerequisites:
 
@@ -22,15 +33,12 @@ Clone repository:
 git clone https://github.com/harrison314/BouncyHsm.git
 ```
 
-Edit Makefile:  
-Edit `BouncyHsm/build_linux/Makefile` and change `CC=clang` to `CC=gcc`.
-
 Build:
 ```
 cd BouncyHsm
 # git checkout <last tag>
 cd build_linux
-make
+make CC=gcc
 ```
 
 ## Example compilation for Rocky Linux 9/AlmaLinux OS 9
