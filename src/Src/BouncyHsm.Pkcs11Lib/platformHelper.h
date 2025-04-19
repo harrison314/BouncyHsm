@@ -10,6 +10,7 @@
 
 #define NEW_LINE_STR "\r\n"
 #define GetCurrentPid() ((uint64_t)GetCurrentProcessId())
+#define _InsertBreakpoint() DebugBreak()
 
 #endif
 
@@ -20,7 +21,7 @@
 
 #define NEW_LINE_STR "\n"
 #define GetCurrentPid() ((uint64_t)getpid())
-
+#define _InsertBreakpoint() __asm__("int3")
 
 #ifdef __GNUC__
 int strcpy_s(char* destination, size_t SizeInBytes, const char* _Source);
