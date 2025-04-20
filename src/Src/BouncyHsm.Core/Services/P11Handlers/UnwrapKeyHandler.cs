@@ -40,7 +40,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_UNWRAP);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
-        IBufferedCipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
+        ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
         Org.BouncyCastle.Crypto.IWrapper unwrapper = cipherWrapper.IntoUnwrapping(wrappingKey);
 
         Dictionary<CKA, IAttributeValue> template = AttrTypeUtils.BuildDictionaryTemplate(request.Template);

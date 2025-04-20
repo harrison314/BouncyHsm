@@ -1285,3 +1285,12 @@ Messages:
     Fields:
       Iv: binary
       Data: binary
+
+  Ckp_CkChaCha20Params:
+    Summary: Representes CK_CHACHA20_PARAMS
+    Fields:
+      BlockCounterLower: uint32
+      BlockCounterUpper: uint32
+      BlockCounterIsSet: bool
+      BlockCounterBits: uint32
+      Nonce: binary

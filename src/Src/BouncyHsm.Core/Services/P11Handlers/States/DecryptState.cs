@@ -1,13 +1,11 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.P11;
-using Org.BouncyCastle.Crypto;
 
 namespace BouncyHsm.Core.Services.P11Handlers.States;
 
-internal class DecryptState : ISessionState
+internal abstract class DecryptState : ISessionState
 {
-    private readonly IBufferedCipher bufferedCipher;
-    private readonly CKM mechanism;
+    protected readonly CKM mechanism;
 
     public bool IsUpdated
     {
@@ -15,56 +13,47 @@ internal class DecryptState : ISessionState
         private set;
     }
 
-    public DecryptState(IBufferedCipher bufferedCipher, CKM mechanism)
+    protected DecryptState(CKM mechanism)
     {
-        this.bufferedCipher = bufferedCipher;
         this.mechanism = mechanism;
         this.IsUpdated = false;
     }
 
-    public uint GetUpdateSize(byte[] partData)
-    {
-        return (uint)this.bufferedCipher.GetUpdateOutputSize(partData.Length);
-    }
+    public abstract uint GetUpdateSize(byte[] partData);
 
-    public uint GetFinalSize(byte[] data)
-    {
-        return (uint)this.bufferedCipher.GetOutputSize(data.Length);
-    }
+    public abstract uint GetFinalSize(byte[] data);
 
-    public uint GetFinalSize()
-    {
-        return (uint)this.bufferedCipher.GetOutputSize(0);
-    }
+    public abstract uint GetFinalSize();
 
     public byte[] Update(byte[] partData)
     {
-        byte[]? plainText = this.bufferedCipher.ProcessBytes(partData);
+        byte[]? plainText = this.UpdateInternal(partData);
         this.IsUpdated = true;
 
         return plainText ?? Array.Empty<byte>();
     }
 
+    protected abstract byte[]? UpdateInternal(byte[] partData);
+
     public byte[] DoFinal(byte[] partData)
     {
-        byte[]? plainText = this.bufferedCipher.DoFinal(partData);
+        byte[]? cipherText = this.DoFinalInternal(partData);
         this.IsUpdated = false;
 
-        return plainText ?? Array.Empty<byte>();
+        return cipherText ?? Array.Empty<byte>();
     }
+
+    protected abstract byte[]? DoFinalInternal(byte[] partData);
 
     public byte[] DoFinal()
     {
         if (!this.IsUpdated)
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: Decrypt empty data.");
+            throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Error: Decrypt empty data.");
         }
 
-        return this.bufferedCipher.DoFinal() ?? Array.Empty<byte>();
+        return this.DoFinalInternal() ?? Array.Empty<byte>();
     }
 
-    public override string ToString()
-    {
-        return $"Decrypt state with {this.bufferedCipher.AlgorithmName} for mechanism {this.mechanism}.";
-    }
+    protected abstract byte[]? DoFinalInternal();
 }

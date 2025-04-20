@@ -7,7 +7,7 @@ using Org.BouncyCastle.Crypto;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
-internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
+internal class RsaBufferedCipherWrapper : ICipherWrapper
 {
     private readonly IBufferedCipher bufferedCipher;
     private readonly CKM mechanismType;
@@ -20,7 +20,7 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
         this.logger = logger;
     }
 
-    public IBufferedCipher IntoDecryption(KeyObject keyObject)
+    public CipherUinion IntoDecryption(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoEncryption with object id {objectId}.", keyObject);
 
@@ -35,7 +35,7 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
 
             this.bufferedCipher.Init(false, rsaPrivateKeyObject.GetPrivateKey());
 
-            return this.bufferedCipher;
+            return new CipherUinion.BufferedCipher(this.bufferedCipher);
         }
         else
         {
@@ -43,7 +43,7 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
         }
     }
 
-    public IBufferedCipher IntoEncryption(KeyObject keyObject)
+    public CipherUinion IntoEncryption(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoDecryption with object id {objectId}.", keyObject);
 
@@ -58,7 +58,7 @@ internal class RsaBufferedCipherWrapper : IBufferedCipherWrapper
 
             this.bufferedCipher.Init(true, rsaPublicKeyObject.GetPublicKey());
 
-            return this.bufferedCipher;
+            return new CipherUinion.BufferedCipher(this.bufferedCipher);
         }
         else
         {

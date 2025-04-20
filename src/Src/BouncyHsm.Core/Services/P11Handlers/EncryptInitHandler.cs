@@ -37,10 +37,13 @@ public partial class EncryptInitHandler : IRpcRequestHandler<EncryptInitRequest,
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_ENCRYPT);
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
-        IBufferedCipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
-        Org.BouncyCastle.Crypto.IBufferedCipher bufferedCipher = cipherWrapper.IntoEncryption(objectInstance);
+        ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
+        CipherUinion cipher = cipherWrapper.IntoEncryption(objectInstance);
 
-        p11Session.State = new EncryptState(bufferedCipher, (CKM)request.Mechanism.MechanismType);
+        p11Session.State = cipher.Match<EncryptState>(bufferedCipher => new EncryptStateWithBufferedChipher(bufferedCipher.Buffered, (CKM)request.Mechanism.MechanismType),
+            setreamCipher => new EncryptStateWithStreamChipher(setreamCipher.Stream, (CKM)request.Mechanism.MechanismType),
+            aeadCipher => throw new NotImplementedException("Aead cipher state is not implemented"),
+            aeadBlockCipher => throw new NotImplementedException("Aead block cipher state is not implemented"));
 
         return new EncryptInitEnvelope()
         {

@@ -40,7 +40,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         this.CheckExtractable(key);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
-        IBufferedCipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
+        ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
         Org.BouncyCastle.Crypto.IWrapper wrapper = cipherWrapper.IntoWrapping(wrappingKey);
 
         byte[] keyData = this.EncodeKey(key);

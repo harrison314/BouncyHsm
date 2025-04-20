@@ -112,4 +112,17 @@
 #define CKK_EC_MONTGOMERY       0x00000041UL
 #define CKK_HKDF                0x00000042UL
 
+
+// Data structures
+
+typedef struct CK_CHACHA20_PARAMS {
+    CK_BYTE_PTR	pBlockCounter;
+    CK_ULONG	blockCounterBits;
+    CK_BYTE_PTR	pNonce;
+    CK_ULONG	ulNonceBits;
+} CK_CHACHA20_PARAMS;
+
+typedef CK_CHACHA20_PARAMS CK_PTR CK_CHACHA20_PARAMS_PTR;
+
+
 #endif

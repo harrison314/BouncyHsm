@@ -158,9 +158,6 @@ public class T26_WrapKey
     [TestMethod]
     public void Wrap_RSAPkcs1_Success()
     {
-        byte[] plainText = new byte[64];
-        Random.Shared.NextBytes(plainText);
-
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
             AssemblyTestConstants.P11LibPath,

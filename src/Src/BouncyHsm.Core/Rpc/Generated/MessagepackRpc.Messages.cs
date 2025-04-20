@@ -3886,3 +3886,44 @@ public partial class Ckp_CkAesCbcEnryptDataParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
+public partial class Ckp_CkChaCha20Params
+{
+    [Key(0)]
+    public uint BlockCounterLower
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public uint BlockCounterUpper
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public bool BlockCounterIsSet
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public uint BlockCounterBits
+    {
+        get;
+        set;
+    }
+
+    [Key(4)]
+    public byte[] Nonce
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+}
+

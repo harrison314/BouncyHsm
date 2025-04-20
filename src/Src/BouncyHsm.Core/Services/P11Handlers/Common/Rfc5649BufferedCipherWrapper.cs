@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
-internal class Rfc5649BufferedCipherWrapper : IBufferedCipherWrapper
+internal class Rfc5649BufferedCipherWrapper : ICipherWrapper
 {
     private readonly IBlockCipher bufferedCipher;
     private readonly CKM mechanismType;
@@ -28,19 +28,19 @@ internal class Rfc5649BufferedCipherWrapper : IBufferedCipherWrapper
         this.logger = logger;
     }
 
-    public IBufferedCipher IntoDecryption(KeyObject keyObject)
+    public CipherUinion IntoDecryption(KeyObject keyObject)
     {
         throw new NotSupportedException("In Rfc5649BufferedCipherWrapper is not supported decryption.");
     }
 
-    public IBufferedCipher IntoEncryption(KeyObject keyObject)
+    public CipherUinion IntoEncryption(KeyObject keyObject)
     {
         throw new NotSupportedException("In Rfc5649BufferedCipherWrapper is not supported encryption.");
     }
 
     public IWrapper IntoWrapping(KeyObject keyObject)
     {
-        this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject);
+        this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject.Id);
         Rfc5649WrapEngine wrapper = new Rfc5649WrapEngine(this.bufferedCipher);
         wrapper.Init(true, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject));
 
@@ -49,7 +49,7 @@ internal class Rfc5649BufferedCipherWrapper : IBufferedCipherWrapper
 
     public IWrapper IntoUnwrapping(KeyObject keyObject)
     {
-        this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject);
+        this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject.Id);
 
         Rfc5649WrapEngine wrapper = new Rfc5649WrapEngine(this.bufferedCipher);
         wrapper.Init(false, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject));

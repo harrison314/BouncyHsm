@@ -8,7 +8,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
-internal class AesAeadBufferedCipherWrapper : IBufferedCipherWrapper
+internal class AesAeadBufferedCipherWrapper : ICipherWrapper
 {
     private readonly IBufferedCipher bufferedCipher;
     private readonly int macSize;
@@ -32,20 +32,20 @@ internal class AesAeadBufferedCipherWrapper : IBufferedCipherWrapper
         this.logger = logger;
     }
 
-    public IBufferedCipher IntoEncryption(KeyObject keyObject)
+    public CipherUinion IntoEncryption(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoEncryption with object id {objectId}.", keyObject);
         this.bufferedCipher.Init(true, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_ENCRYPT, keyObject));
 
-        return this.bufferedCipher;
+        return new CipherUinion.BufferedCipher(this.bufferedCipher);
     }
 
-    public IBufferedCipher IntoDecryption(KeyObject keyObject)
+    public CipherUinion IntoDecryption(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoDecryption with object id {objectId}.", keyObject);
         this.bufferedCipher.Init(false, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_DECRYPT, keyObject));
 
-        return this.bufferedCipher;
+        return new CipherUinion.BufferedCipher(this.bufferedCipher);
     }
 
     public IWrapper IntoWrapping(KeyObject keyObject)

@@ -525,6 +525,59 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     }
     break;
 
+    case CKM_CHACHA20:
+        if (pMechanism->ulParameterLen != sizeof(CK_CHACHA20_PARAMS))
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted CK_CHACHA20_PARAMS in mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CK_CHACHA20_PARAMS_PTR chaCha20Params = (CK_CHACHA20_PARAMS_PTR)pMechanism->pParameter;
+        Ckp_CkChaCha20Params chaCha20DeriveParams = { 0 };
+
+        if (chaCha20Params->pNonce == NULL && chaCha20Params->ulNonceBits != 0)
+        {
+            log_message(LOG_LEVEL_ERROR, "Nonce value in CK_CHACHA20_PARAMS_PTR is NULL and ulNonceBits is not zero.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        chaCha20DeriveParams.BlockCounterUpper = 0;
+        chaCha20DeriveParams.BlockCounterLower = 0;
+        chaCha20DeriveParams.BlockCounterBits = (uint32_t)chaCha20Params->blockCounterBits;
+        chaCha20DeriveParams.BlockCounterIsSet = false;
+        chaCha20DeriveParams.Nonce.data = (uint8_t*)chaCha20Params->pNonce;
+        chaCha20DeriveParams.Nonce.size = (size_t)(chaCha20Params->ulNonceBits / 8);
+
+        if (chaCha20Params->pBlockCounter == NULL)
+        {
+            log_message(LOG_LEVEL_TRACE, "pBlockCounter value in CK_CHACHA20_PARAMS_PTR is NULL");
+            chaCha20DeriveParams.BlockCounterIsSet = false;
+        }
+        else
+        {
+            chaCha20DeriveParams.BlockCounterIsSet = true;
+            if (chaCha20Params->blockCounterBits == 32)
+            {
+                uint32_t blockCounterValue = *((uint32_t*)chaCha20Params->pBlockCounter);
+                chaCha20DeriveParams.BlockCounterUpper = 0;
+                chaCha20DeriveParams.BlockCounterLower = blockCounterValue;
+            }
+
+            if (chaCha20Params->blockCounterBits == 64)
+            {
+                uint64_t blockCounterValue = *((uint64_t*)chaCha20Params->pBlockCounter);
+                chaCha20DeriveParams.BlockCounterUpper = (uint32_t)((blockCounterValue >> 32) & 0xFFFFFFFF);
+                chaCha20DeriveParams.BlockCounterLower = (uint32_t)(blockCounterValue & 0xFFFFFFFF);
+            }
+        }
+
+        result = nmrpc_writeAsBinary(&chaCha20DeriveParams, (SerializeFnPtr_t)Ckp_CkChaCha20Params_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+        break;
+
     default:
         break;
     }
@@ -650,7 +703,7 @@ void ExecutePing(void* pUserData)
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "P11SocketInit failed in line %i in function %s.",  __LINE__, __FUNCTION__);
+        log_message(LOG_LEVEL_ERROR, "P11SocketInit failed in line %i in function %s.", __LINE__, __FUNCTION__);
         return;
     }
 

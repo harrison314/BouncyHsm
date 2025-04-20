@@ -5,6 +5,7 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
+using static BouncyHsm.Core.Services.P11Handlers.Common.CipherUinion;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -37,10 +38,13 @@ public partial class DecryptInitHandler : IRpcRequestHandler<DecryptInitRequest,
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_DECRYPT);
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
-        IBufferedCipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
-        Org.BouncyCastle.Crypto.IBufferedCipher bufferedCipher = cipherWrapper.IntoDecryption(objectInstance);
+        ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
+        CipherUinion cipherUinon = cipherWrapper.IntoDecryption(objectInstance);
 
-        p11Session.State = new DecryptState(bufferedCipher, (CKM)request.Mechanism.MechanismType);
+        p11Session.State = cipherUinon.Match<DecryptState>(bufferedCipher => new DecryptStateWithBufferedCipher(bufferedCipher.Buffered, (CKM)request.Mechanism.MechanismType),
+            setreamCipher => new DecryptStateWithStreamChipher(setreamCipher.Stream, (CKM)request.Mechanism.MechanismType),
+            aeadCipher => throw new NotImplementedException("Aead cipher state is not implemented"),
+            aeadBlockCipher => throw new NotImplementedException("Aead block cipher state is not implemented"));
 
         return new DecryptInitEnvelope()
         {

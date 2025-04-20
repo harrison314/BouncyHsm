@@ -25,7 +25,7 @@ internal class BufferedCipherWrapperFactory
         this.loggerFactory = loggerFactory;
     }
 
-    public IBufferedCipherWrapper CreateCipherAlgorithm(MechanismValue mechanism)
+    public ICipherWrapper CreateCipherAlgorithm(MechanismValue mechanism)
     {
         this.logger.LogTrace("Entering to CreateCipherAlgorithm with mechanism type {mechanismType}", mechanism.MechanismType);
 
@@ -54,6 +54,8 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_RSA_PKCS_OAEP => this.CreateRsaOaep(mechanism),
 
             CKM.CKM_AES_KEY_WRAP_PAD => this.CreateAesKeyWrap(ckMechanism),
+
+            CKM.CKM_CHACHA20 => this.CreateChaCha20(mechanism),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
@@ -212,5 +214,56 @@ internal class BufferedCipherWrapperFactory
         return new Rfc5649BufferedCipherWrapper(AesUtilities.CreateEngine(),
             ckMechanism,
             this.loggerFactory.CreateLogger<Rfc5649BufferedCipherWrapper>());
+    }
+
+    private ICipherWrapper CreateChaCha20(MechanismValue mechanism)
+    {
+        try
+        {
+            Ckp_CkChaCha20Params chaCha20params = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkChaCha20Params>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            if (this.logger.IsEnabled(LogLevel.Trace))
+            {
+                this.logger.LogTrace("Using CHACHA20_PARAMS params with blockCounter {blockCounter}, blockCounterBits {blockCounterBits}, is blockCounterSet {isBlockCounterSet}, nonce len {nonceLen}.",
+                    chaCha20params.BlockCounterLower,
+                    chaCha20params.BlockCounterBits,
+                    chaCha20params.BlockCounterIsSet,
+                    chaCha20params.Nonce.Length);
+            }
+
+            if (!chaCha20params.BlockCounterIsSet)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType} - pBlockCounter is NULL.");
+            }
+
+            if (chaCha20params.BlockCounterBits != 32 && chaCha20params.BlockCounterBits != 64)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType} - blockCounterBits must be 32 or 64.");
+            }
+
+            // BouncyHsm implementation errors
+            if (chaCha20params.BlockCounterLower != 0 || chaCha20params.BlockCounterUpper != 0)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only value 0 for blockCounter in CHACHA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
+            }
+
+            if (chaCha20params.Nonce.Length != 8)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only 64 bits nonce length in CHACHA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
+            }
+
+            return new ChaCha20CipherWrapper(chaCha20params.Nonce,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<ChaCha20CipherWrapper>());
+        }
+        catch (RpcPkcs11Exception)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
     }
 }

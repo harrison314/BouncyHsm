@@ -167,6 +167,7 @@ typedef struct _Ckp_CkGcmParams Ckp_CkGcmParams;
 typedef struct _Ckp_CkCcmParams Ckp_CkCcmParams;
 typedef struct _Ckp_CkRsaPkcsOaepParams Ckp_CkRsaPkcsOaepParams;
 typedef struct _Ckp_CkAesCbcEnryptDataParams Ckp_CkAesCbcEnryptDataParams;
+typedef struct _Ckp_CkChaCha20Params Ckp_CkChaCha20Params;
 
 typedef struct _Binary Binary;
 
@@ -1881,6 +1882,19 @@ typedef struct _Ckp_CkAesCbcEnryptDataParams
 int Ckp_CkAesCbcEnryptDataParams_Serialize(cmp_ctx_t* ctx, Ckp_CkAesCbcEnryptDataParams* value);
 int Ckp_CkAesCbcEnryptDataParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkAesCbcEnryptDataParams* value);
 int Ckp_CkAesCbcEnryptDataParams_Release(Ckp_CkAesCbcEnryptDataParams* value);
+
+typedef struct _Ckp_CkChaCha20Params
+{
+    uint32_t BlockCounterLower;
+    uint32_t BlockCounterUpper;
+    bool BlockCounterIsSet;
+    uint32_t BlockCounterBits;
+    Binary Nonce;
+} Ckp_CkChaCha20Params;
+
+int Ckp_CkChaCha20Params_Serialize(cmp_ctx_t* ctx, Ckp_CkChaCha20Params* value);
+int Ckp_CkChaCha20Params_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkChaCha20Params* value);
+int Ckp_CkChaCha20Params_Release(Ckp_CkChaCha20Params* value);
 
 
 typedef void* (*nmrpc_malloc_fn_t)(size_t size);
