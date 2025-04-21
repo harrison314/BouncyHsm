@@ -247,9 +247,10 @@ internal class BufferedCipherWrapperFactory
                 throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only value 0 for blockCounter in CHACHA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
             }
 
-            if (chaCha20params.Nonce.Length != 8)
+            if (chaCha20params.Nonce.Length != ChaCha20CipherWrapper.Chacha20NonceSize
+                && chaCha20params.Nonce.Length != ChaCha20CipherWrapper.Chacha20_7539NonceSize)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only 64 bits nonce length in CHACHA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only 64 and 96 bits nonce length in CHACHA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
             }
 
             return new ChaCha20CipherWrapper(chaCha20params.Nonce,

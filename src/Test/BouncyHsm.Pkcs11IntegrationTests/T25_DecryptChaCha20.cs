@@ -21,7 +21,7 @@ public class T25_DecryptChaCha20
 
     [DataTestMethod]
     [DataRow(0, 64, 256)]
-    //[DataRow(0, 96, 256)]
+    [DataRow(0, 96, 256)]
     //[DataRow(0, 192, 256)]
     //[DataRow(51, 64, 87)]
     //[DataRow(13, 96, 20786)]
@@ -60,7 +60,7 @@ public class T25_DecryptChaCha20
 
     [DataTestMethod]
     [DataRow(0, 64, 256)]
-    //[DataRow(0, 96, 256)]
+    [DataRow(0, 96, 256)]
     //[DataRow(0, 192, 256)]
     //[DataRow(51, 64, 87)]
     //[DataRow(13, 96, 20786)]
@@ -99,7 +99,7 @@ public class T25_DecryptChaCha20
 
     [DataTestMethod]
     [DataRow(0, 64, 256, 32)]
-    //[DataRow(0, 96, 256, 16)]
+    [DataRow(0, 96, 256, 16)]
     //[DataRow(0, 192, 256, 122)]
     //[DataRow(51, 64, 87, 52)]
     //[DataRow(13, 96, 20786, 200)]
@@ -138,7 +138,7 @@ public class T25_DecryptChaCha20
 
     [DataTestMethod]
     [DataRow(0, 64, 256, 32)]
-    //[DataRow(0, 96, 256, 16)]
+    [DataRow(0, 96, 256, 16)]
     //[DataRow(0, 192, 256, 122)]
     //[DataRow(51, 64, 87, 52)]
     //[DataRow(13, 96, 20786, 200)]
