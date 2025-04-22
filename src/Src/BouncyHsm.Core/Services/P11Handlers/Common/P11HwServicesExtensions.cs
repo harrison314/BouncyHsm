@@ -67,7 +67,7 @@ internal static class P11HwServicesExtensions
         }
         else
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, $"Object handle {objectHandle} with object id {cryptoApiObject} is not type {typeof(T).Name}.");
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_OBJECT_HANDLE_INVALID, $"Object handle {objectHandle} with object id {cryptoApiObject} is not type {typeof(T).Name}.");
         }
     }
 
