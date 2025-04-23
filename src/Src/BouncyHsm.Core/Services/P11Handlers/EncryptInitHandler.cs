@@ -42,8 +42,7 @@ public partial class EncryptInitHandler : IRpcRequestHandler<EncryptInitRequest,
 
         p11Session.State = cipher.Match<EncryptState>(bufferedCipher => new EncryptStateWithBufferedChipher(bufferedCipher.Buffered, (CKM)request.Mechanism.MechanismType),
             setreamCipher => new EncryptStateWithStreamChipher(setreamCipher.Stream, (CKM)request.Mechanism.MechanismType),
-            aeadCipher => throw new NotImplementedException("Aead cipher state is not implemented"),
-            aeadBlockCipher => throw new NotImplementedException("Aead block cipher state is not implemented"));
+            aeadCipher => new EncryptStateWithAeadChipher(aeadCipher.Aead, (CKM)request.Mechanism.MechanismType));
 
         return new EncryptInitEnvelope()
         {

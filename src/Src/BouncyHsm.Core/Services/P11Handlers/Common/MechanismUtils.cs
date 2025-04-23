@@ -240,6 +240,7 @@ internal static class MechanismUtils
             //ChaCha20
             {CKM.CKM_CHACHA20_KEY_GEN, new MechanismInfo(ChaCha20KeySize, ChaCha20KeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_CHACHA20, new MechanismInfo(ChaCha20KeySize, ChaCha20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_CHACHA20_POLY1305, new MechanismInfo(ChaCha20KeySize, ChaCha20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V3_0) },
 
 
         };

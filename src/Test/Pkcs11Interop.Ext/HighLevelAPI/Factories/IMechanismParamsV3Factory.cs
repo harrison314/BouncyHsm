@@ -12,4 +12,6 @@ public interface IMechanismParamsV3Factory
     ICkChaCha20Params CreateCkChaCha20Params(uint blockCounterU32, byte[] nonce);
 
     ICkChaCha20Params CreateCkChaCha20Params(ulong blockCounterU64, byte[] nonce);
+
+    ICkSalsa20ChaCha20Polly1305Params CreateCkSalsa20ChaCha20Polly1305Params(byte[] nonce, byte[]? aadData);
 }

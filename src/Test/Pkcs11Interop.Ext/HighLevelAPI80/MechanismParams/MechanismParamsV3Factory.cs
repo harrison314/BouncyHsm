@@ -14,4 +14,9 @@ internal class MechanismParamsV3Factory : IMechanismParamsV3Factory
     {
         return new CkChaCha20Params(blockCounter, nonce);
     }
+
+    public ICkSalsa20ChaCha20Polly1305Params CreateCkSalsa20ChaCha20Polly1305Params(byte[] nonce, byte[]? aadData)
+    {
+        return new CkSalsa20ChaCha20Polly1305Params(nonce, aadData);
+    }
 }

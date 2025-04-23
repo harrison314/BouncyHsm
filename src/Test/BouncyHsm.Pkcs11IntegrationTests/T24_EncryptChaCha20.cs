@@ -123,6 +123,47 @@ public class T24_EncryptChaCha20
         Assert.AreEqual(plainText.Length, cipherText.Length, "Mismatch length.");
     }
 
+    [DataTestMethod]
+    [DataRow(96, 256, 0)]
+    [DataRow(96, 256, 59)]
+    [DataRow(96, 217, 0)]
+    [DataRow(96, 217, 4)]
+    [DataRow(96, 43, 59)]
+    public void Encrypt_ChaCha20Polly_Success(int nonceBits, int plainTextLen, int aadDataLen)
+    {
+        byte[] plainText = new byte[plainTextLen];
+        Random.Shared.NextBytes(plainText);
+
+        byte[]? aadData = null;
+        if (aadDataLen > 0)
+        {
+            aadData = new byte[aadDataLen];
+            Random.Shared.NextBytes(aadData);
+        }
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle key = this.GenerateChaCha20Key(session);
+
+        byte[] nonce = new byte[nonceBits / 8];
+        Random.Shared.NextBytes(nonce);
+        using IMechanismParams chachaParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateCkSalsa20ChaCha20Polly1305Params(nonce, aadData);
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM_V3_0.CKM_CHACHA20_POLY1305, chachaParams);
+
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
+
+        Assert.IsNotNull(cipherText);
+    }
+
     private IObjectHandle GenerateChaCha20Key(ISession session)
     {
         string label = $"ChaCha20-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

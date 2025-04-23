@@ -9,5 +9,4 @@ internal partial record CipherUinion
     partial record BufferedCipher(IBufferedCipher Buffered);
     partial record StreamCipher(IStreamCipher Stream);
     partial record AeadCipher(IAeadCipher Aead);
-    partial record AeadBlockCipher(IAeadBlockCipher AeadBlock);
 }

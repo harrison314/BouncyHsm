@@ -578,6 +578,44 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         }
         break;
 
+    case CKM_CHACHA20_POLY1305:
+    {
+        //CK_SALSA20_CHACHA20_POLY1305_PARAMS
+        if (pMechanism->ulParameterLen != sizeof(CK_SALSA20_CHACHA20_POLY1305_PARAMS))
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted CK_SALSA20_CHACHA20_POLY1305_PARAMS in mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CK_SALSA20_CHACHA20_POLY1305_PARAMS_PTR salsa20Chacha20Poly1305Params = (CK_SALSA20_CHACHA20_POLY1305_PARAMS_PTR)pMechanism->pParameter;
+        Ckp_CkSalsa20ChaCha20Poly1305Params salsa20Chacha20Poly1305Derivedparams = { 0 };
+
+        if (salsa20Chacha20Poly1305Params->pNonce == NULL || salsa20Chacha20Poly1305Params->ulNonceLen == 0)
+        {
+            log_message(LOG_LEVEL_ERROR, "Nonce value in CK_SALSA20_CHACHA20_POLY1305_PARAMS_PTR is NULL and ulNonceLen is not zero.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        Binary aadData;
+
+        salsa20Chacha20Poly1305Derivedparams.Nonce.data = (uint8_t*)salsa20Chacha20Poly1305Params->pNonce;
+        salsa20Chacha20Poly1305Derivedparams.Nonce.size = (size_t)salsa20Chacha20Poly1305Params->ulNonceLen;
+        salsa20Chacha20Poly1305Derivedparams.AadData = NULL;
+        if (salsa20Chacha20Poly1305Params->pAAD != NULL)
+        {
+            aadData.data = (uint8_t*)salsa20Chacha20Poly1305Params->pAAD;
+            aadData.size = (size_t)salsa20Chacha20Poly1305Params->ulAADLen;
+            salsa20Chacha20Poly1305Derivedparams.AadData = &aadData;
+        }
+
+        result = nmrpc_writeAsBinary(&salsa20Chacha20Poly1305Derivedparams, (SerializeFnPtr_t)Ckp_CkSalsa20ChaCha20Poly1305Params_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+    }
+    break;
+
     default:
         break;
     }

@@ -5,7 +5,6 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
-using static BouncyHsm.Core.Services.P11Handlers.Common.CipherUinion;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -43,8 +42,7 @@ public partial class DecryptInitHandler : IRpcRequestHandler<DecryptInitRequest,
 
         p11Session.State = cipherUinon.Match<DecryptState>(bufferedCipher => new DecryptStateWithBufferedCipher(bufferedCipher.Buffered, (CKM)request.Mechanism.MechanismType),
             setreamCipher => new DecryptStateWithStreamChipher(setreamCipher.Stream, (CKM)request.Mechanism.MechanismType),
-            aeadCipher => throw new NotImplementedException("Aead cipher state is not implemented"),
-            aeadBlockCipher => throw new NotImplementedException("Aead block cipher state is not implemented"));
+            aeadCipher => new DecryptStateWithAeadChipher(aeadCipher.Aead, (CKM)request.Mechanism.MechanismType));
 
         return new DecryptInitEnvelope()
         {

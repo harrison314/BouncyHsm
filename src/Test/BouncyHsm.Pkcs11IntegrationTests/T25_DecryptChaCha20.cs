@@ -127,7 +127,6 @@ public class T25_DecryptChaCha20
 
         byte[] cipherText = this.EncryptData(session, key, plainText, counter, nonce, streamBufferLen);
 
-
         using IMechanismParams chachaParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateCkChaCha20Params((uint)counter, nonce);
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM_V3_0.CKM_CHACHA20, chachaParams);
 
@@ -178,6 +177,61 @@ public class T25_DecryptChaCha20
         byte[] newPlainText = plaintextMx.ToArray();
 
         Assert.IsTrue(newPlainText.SequenceEqual(plainText), $"Decryption error. Excepted: {Convert.ToHexString(plainText)}, actual: {Convert.ToHexString(newPlainText)}");
+    }
+
+    [DataTestMethod]
+    [DataRow(96, 256, 0)]
+    [DataRow(96, 256, 59)]
+    [DataRow(96, 217, 0)]
+    [DataRow(96, 217, 8)]
+    [DataRow(96, 43, 59)]
+    public void Decrypt_ChaCha20Polly_Success(int nonceBits, int plainTextLen, int aadDataLen)
+    {
+        byte[] plainText = new byte[plainTextLen];
+        Random.Shared.NextBytes(plainText);
+
+        byte[]? aadData = null;
+        if (aadDataLen > 0)
+        {
+            aadData = new byte[aadDataLen];
+            Random.Shared.NextBytes(aadData);
+        }
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle key = this.GenerateChaCha20Key(session);
+
+        byte[] nonce = new byte[nonceBits / 8];
+        Random.Shared.NextBytes(nonce);
+
+        byte[] cipherText;
+
+        {
+            using IMechanismParams chachaParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateCkSalsa20ChaCha20Polly1305Params(nonce, aadData);
+            using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM_V3_0.CKM_CHACHA20_POLY1305, chachaParams);
+
+            cipherText = session.Encrypt(mechanism, key, plainText);
+        }
+
+        Assert.IsNotNull(cipherText);
+
+        {
+            using IMechanismParams chachaParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateCkSalsa20ChaCha20Polly1305Params(nonce, aadData);
+            using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM_V3_0.CKM_CHACHA20_POLY1305, chachaParams);
+
+            byte[] newPlainText = session.Decrypt(mechanism, key, cipherText);
+
+            Assert.IsTrue(newPlainText.SequenceEqual(plainText), $"Decryption error. Excepted: {Convert.ToHexString(plainText)}, actual: {Convert.ToHexString(newPlainText)}");
+        }
     }
 
     private byte[] EncryptData(ISession session, IObjectHandle key, byte[] plainText, int counter, byte[] nonce, int? bufferlength)

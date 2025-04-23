@@ -56,6 +56,7 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_KEY_WRAP_PAD => this.CreateAesKeyWrap(ckMechanism),
 
             CKM.CKM_CHACHA20 => this.CreateChaCha20(mechanism),
+            CKM.CKM_CHACHA20_POLY1305 => this.CreateChaCha20Poly1305(mechanism),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
@@ -256,6 +257,41 @@ internal class BufferedCipherWrapperFactory
             return new ChaCha20CipherWrapper(chaCha20params.Nonce,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<ChaCha20CipherWrapper>());
+        }
+        catch (RpcPkcs11Exception)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private ICipherWrapper CreateChaCha20Poly1305(MechanismValue mechanism)
+    {
+        try
+        {
+            Ckp_CkSalsa20ChaCha20Poly1305Params chaCha20Poly1305params = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkSalsa20ChaCha20Poly1305Params>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            if (this.logger.IsEnabled(LogLevel.Trace))
+            {
+                this.logger.LogTrace("Using CK_SALSA20_CHACHA20_POLY1305_PARAMS params with Nonce len {nonceLen}, AAD data len {aadDataLen}.",
+                    chaCha20Poly1305params.Nonce.Length,
+                    chaCha20Poly1305params.AadData?.Length);
+            }
+
+            // BouncyHsm implementation errors
+            if (chaCha20Poly1305params.Nonce.Length != 12)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only 96 bits nonce CK_SALSA20_CHACHA20_POLY1305_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
+            }
+
+            return new ChaCha20Poly1305CipherWrapper(chaCha20Poly1305params.Nonce,
+                chaCha20Poly1305params.AadData,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<ChaCha20Poly1305CipherWrapper>());
         }
         catch (RpcPkcs11Exception)
         {

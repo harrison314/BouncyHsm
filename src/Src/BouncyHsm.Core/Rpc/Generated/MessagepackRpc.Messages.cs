@@ -3927,3 +3927,23 @@ public partial class Ckp_CkChaCha20Params
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
+public partial class Ckp_CkSalsa20ChaCha20Poly1305Params
+{
+    [Key(0)]
+    public byte[] Nonce
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+    [Key(1)]
+    public byte[]? AadData
+    {
+        get;
+        set;
+    }
+
+}
+

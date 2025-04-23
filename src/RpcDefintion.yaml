@@ -1294,3 +1294,9 @@ Messages:
       BlockCounterIsSet: bool
       BlockCounterBits: uint32
       Nonce: binary
+  
+  Ckp_CkSalsa20ChaCha20Poly1305Params:
+    Summary: Representes CK_SALSA20_CHACHA20_POLY1305_PARAMS
+    Fields:
+      Nonce: binary
+      AadData: binary?
