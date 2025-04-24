@@ -51,7 +51,7 @@ internal class AesBufferedCipherWrapper : IBufferedCipherWrapper
     {
         this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject);
 
-        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.CreateWrappingCipher(this.bufferedCipher));
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, this.padZeroForWrap);
         wrapper.Init(true, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject));
 
         return wrapper;
@@ -61,38 +61,10 @@ internal class AesBufferedCipherWrapper : IBufferedCipherWrapper
     {
         this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject);
 
-        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.CreateWrappingCipher(this.bufferedCipher));
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, this.padZeroForWrap);
         wrapper.Init(false, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject));
 
         return wrapper;
-    }
-
-    private IBufferedCipher CreateWrappingCipher(IBufferedCipher origoinalCipher)
-    {
-        if (!this.padZeroForWrap)
-        {
-            return origoinalCipher;
-        }
-
-        this.logger.LogTrace("Change cipher for Wrap/Unwrap operation.");
-        string name = origoinalCipher.AlgorithmName;
-        if (name.EndsWith("/NOPADDING"))
-        {
-            name = name.Substring(0, name.Length - "/NOPADDING".Length);
-        }
-
-        name = string.Concat(name, "/ZEROBYTEPADDING");
-        this.logger.LogTrace("Cipher name for wrap/unwrap operation changed from {cipherName} to {newCipherName}.",
-            origoinalCipher.AlgorithmName,
-            name);
-
-        IBufferedCipher? cipher = Org.BouncyCastle.Security.CipherUtilities.GetCipher(name);
-        if (cipher == null)
-        {
-            throw new InvalidOperationException($"Cipher {name} not found, original cipher {origoinalCipher.AlgorithmName} for mechanism {this.mechanismType}.");
-        }
-
-        return cipher;
     }
 
     private ICipherParameters CreateCipherParams(BufferedCipherWrapperOperation operation, KeyObject keyObject)
