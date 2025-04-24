@@ -16,6 +16,7 @@
     "SimulateHwRng": true,
     "SimulateHwMechanism": true,
     "SimulateQualifiedArea": false,
+    "SpeedMode": "WithoutRestriction",
     "UserPin": "123456",
     "SoPin": "12345678",
     "SignaturePin": null
