@@ -114,6 +114,11 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
         return this.GetMinKeySize(this.CkaKeyType);
     }
 
+    public override uint? GetRequiredSecretLen()
+    {
+        return null;
+    }
+
     private bool IsKeyTypeSupported(CKK keyType)
     {
         return keyType switch

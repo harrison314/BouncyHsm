@@ -95,6 +95,11 @@ public sealed class AesKeyObject : SecretKeyObject
         return 16;
     }
 
+    public override uint? GetRequiredSecretLen()
+    {
+        return null;
+    }
+
     public override void SetValue(CKA attributeType, IAttributeValue value, bool isUpdating)
     {
         if (attributeType == CKA.CKA_KEY_TYPE)
