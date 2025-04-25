@@ -101,6 +101,7 @@ public class Program
 
         WebApplication app = builder.Build();
         UseBasePath(app);
+        LogStartup(app);
 
         app.UseForwardedHeaders();
 
@@ -140,5 +141,12 @@ public class Program
             app.UsePathBase(basePath);
             app.Logger.LogDebug("Start with base path {basePath}.", basePath);
         }
+    }
+
+    private static void LogStartup(WebApplication app)
+    {
+        BouncyHsm.Core.UseCases.Implementation.HsmInfoFacade hsmInfoFacade = new Core.UseCases.Implementation.HsmInfoFacade();
+        Core.UseCases.Contracts.BouncyHsmVersion version = hsmInfoFacade.GetVersions();
+        app.Logger.LogInformation("Starting BouncyHsm version: {version}, commit: {commit}", version.Version, version.Commit);
     }
 }
