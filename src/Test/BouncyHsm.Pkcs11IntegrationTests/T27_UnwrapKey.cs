@@ -213,6 +213,128 @@ public class T27_UnwrapKey
         IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, privateKey, wrappedKey, this.GetAesKeytamplate(session));
     }
 
+    [DataTestMethod]
+    [DataRow(CKM.CKM_AES_CBC, 16)]
+    [DataRow(CKM.CKM_AES_ECB, 0)]
+    [DataRow(CKM.CKM_AES_OFB, 16)]
+    [DataRow(CKM.CKM_AES_CFB64, 16)]
+    [DataRow(CKM.CKM_AES_CFB8, 16)]
+    [DataRow(CKM.CKM_AES_CFB128, 16)]
+    [DataRow(CKM.CKM_AES_CFB1, 16)]
+    public void Unwrap_AesKeyUpadedSecret_Success(CKM aesMechanism, int ivLen)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        byte[] secretValue = session.GenerateRandom(21);
+
+        List<IObjectAttribute> secretAttribute = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"GSecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, secretValue),
+        };
+
+        IObjectHandle secretKeyHandle = session.CreateObject(secretAttribute);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] iv = (ivLen > 0)
+            ? session.GenerateRandom(ivLen)
+            : Array.Empty<byte>();
+
+        using IMechanism mechanism = (ivLen > 0)
+            ? session.Factories.MechanismFactory.Create(aesMechanism, iv)
+            : session.Factories.MechanismFactory.Create(aesMechanism);
+
+        byte[] wrappedKey = session.WrapKey(mechanism, key, secretKeyHandle);
+
+        Assert.IsNotNull(wrappedKey);
+
+        List<IObjectAttribute> secretTemplate = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"GSecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint) secretValue.Length),
+        };
+
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, secretTemplate);
+
+        byte[] unwrapedSecretValue = session.GetAttributeValue(unwrappedKey, new List<CKA>() { CKA.CKA_VALUE })[0].GetValueAsByteArray();
+    
+        Assert.AreEqual(Convert.ToHexString(secretValue), Convert.ToHexString(unwrapedSecretValue), "Error during unwrap secret key - keys mismtch.");
+    }
+
+    [DataTestMethod]
+    [DataRow(CKM.CKM_AES_CBC, 16)]
+    [DataRow(CKM.CKM_AES_ECB, 0)]
+    [DataRow(CKM.CKM_AES_OFB, 16)]
+    [DataRow(CKM.CKM_AES_CFB64, 16)]
+    [DataRow(CKM.CKM_AES_CFB8, 16)]
+    [DataRow(CKM.CKM_AES_CFB128, 16)]
+    [DataRow(CKM.CKM_AES_CFB1, 16)]
+    public void Unwrap_AesKeyUpadedRsa_Success(CKM aesMechanism, int ivLen)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] iv = (ivLen > 0)
+            ? session.GenerateRandom(ivLen)
+            : Array.Empty<byte>();
+
+        using IMechanism mechanism = (ivLen > 0)
+            ? session.Factories.MechanismFactory.Create(aesMechanism, iv)
+            : session.Factories.MechanismFactory.Create(aesMechanism);
+
+        byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
+
+        Assert.IsNotNull(wrappedKey);
+
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
+    }
+
     public IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

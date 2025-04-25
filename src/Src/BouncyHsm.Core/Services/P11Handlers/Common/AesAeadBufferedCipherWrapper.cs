@@ -51,7 +51,7 @@ internal class AesAeadBufferedCipherWrapper : IBufferedCipherWrapper
     public IWrapper IntoWrapping(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject);
-        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, false);
         wrapper.Init(true, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject));
 
         return wrapper;
@@ -61,7 +61,7 @@ internal class AesAeadBufferedCipherWrapper : IBufferedCipherWrapper
     {
         this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject);
 
-        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, false);
         wrapper.Init(false, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject));
 
         return wrapper;

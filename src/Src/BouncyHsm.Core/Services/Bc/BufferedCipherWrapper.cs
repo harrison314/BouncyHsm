@@ -10,6 +10,7 @@ namespace BouncyHsm.Core.Services.Bc;
 internal class BufferedCipherWrapper : IWrapper
 {
     private readonly IBufferedCipher bufferedCipher;
+    private readonly bool padZeros;
     private ICipherParameters? parameters;
     private bool forWrapping;
 
@@ -18,9 +19,10 @@ internal class BufferedCipherWrapper : IWrapper
         get => this.bufferedCipher.AlgorithmName;
     }
 
-    public BufferedCipherWrapper(IBufferedCipher bufferedCipher, bool forWrapping = false)
+    public BufferedCipherWrapper(IBufferedCipher bufferedCipher, bool padZeros, bool forWrapping = false)
     {
         this.bufferedCipher = bufferedCipher;
+        this.padZeros = padZeros;
         this.forWrapping = forWrapping;
         this.parameters = null;
     }
@@ -42,6 +44,21 @@ internal class BufferedCipherWrapper : IWrapper
 
         System.Diagnostics.Debug.Assert(this.parameters != null);
         this.bufferedCipher.Init(true, this.parameters);
+
+        int blockSize = this.bufferedCipher.GetBlockSize();
+        if (this.padZeros && length % blockSize != 0)
+        {
+            int padding = blockSize - (length % blockSize);
+            byte[] paddedInput = new byte[length + padding];
+            Array.Copy(input, inOff, paddedInput, 0, length);
+            for (int i = 0; i < padding; i++)
+            {
+                paddedInput[length + i] = 0;
+            }
+
+            return this.bufferedCipher.DoFinal(paddedInput, 0, paddedInput.Length);
+        }
+
         return this.bufferedCipher.DoFinal(input, inOff, length);
     }
 

@@ -4,6 +4,8 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
@@ -12,16 +14,19 @@ internal class AesBufferedCipherWrapper : IBufferedCipherWrapper
 {
     private readonly IBufferedCipher bufferedCipher;
     private readonly byte[]? iv;
+    private readonly bool padZeroForWrap;
     private readonly CKM mechanismType;
     private readonly ILogger<AesBufferedCipherWrapper> logger;
 
     public AesBufferedCipherWrapper(IBufferedCipher bufferedCipher,
         byte[]? iv,
+        bool padZeroForWrap,
         CKM mechanismType,
         ILogger<AesBufferedCipherWrapper> logger)
     {
         this.bufferedCipher = bufferedCipher;
         this.iv = iv;
+        this.padZeroForWrap = padZeroForWrap;
         this.mechanismType = mechanismType;
         this.logger = logger;
     }
@@ -45,7 +50,8 @@ internal class AesBufferedCipherWrapper : IBufferedCipherWrapper
     public IWrapper IntoWrapping(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject);
-        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, this.padZeroForWrap);
         wrapper.Init(true, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject));
 
         return wrapper;
@@ -55,7 +61,7 @@ internal class AesBufferedCipherWrapper : IBufferedCipherWrapper
     {
         this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject);
 
-        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+        BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, this.padZeroForWrap);
         wrapper.Init(false, this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject));
 
         return wrapper;

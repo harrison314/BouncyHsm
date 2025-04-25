@@ -144,6 +144,8 @@ public abstract class SecretKeyObject : KeyObject
 
     public abstract uint GetMinimalSecretLen();
 
+    public abstract uint? GetRequiredSecretLen();
+
     internal double GetKeyEntropy()
     {
         Span<uint> histogram = stackalloc uint[256];

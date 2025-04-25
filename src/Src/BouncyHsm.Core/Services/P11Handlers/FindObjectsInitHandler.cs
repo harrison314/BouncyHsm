@@ -66,10 +66,16 @@ public partial class FindObjectsInitHandler : IRpcRequestHandler<FindObjectsInit
     {
         List<uint> result = new List<uint>();
 
-        ClockObject clockObject = new ClockObject(this.hwServices.Time);
-        if (clockObject.IsMatch(searchTemplate))
+        // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
+        // See 4.3 Hardware Feature Objects - 4.3.2 Overview
+        if (searchTemplate.TryGetValue(CKA.CKA_CLASS, out IAttributeValue? atrValue)
+            && atrValue.Equals((uint)CKO.CKO_HW_FEATURE))
         {
-            result.Add(ClockObject.HwHandle);
+            ClockObject clockObject = new ClockObject(this.hwServices.Time);
+            if (clockObject.IsMatch(searchTemplate))
+            {
+                result.Add(ClockObject.HwHandle);
+            }
         }
 
         return result;
