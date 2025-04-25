@@ -1,6 +1,6 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 1.3.1.0 (commit _465bdb5629421325d63e0348de910d166d688afd_).
+Supported algorithms for _Bouncy Hsm_ version 1.4.0.0 (commit _1572cf748ee0a2d5e5f97b75981cfbb7b4d3a3c7_).
 
 ## Mechanisms
 _Bouncy Hsm_ supports 96 mechanisms.
@@ -87,8 +87,8 @@ _Bouncy Hsm_ supports 96 mechanisms.
 | `CKM_ECDH1_DERIVE` | 192  | 521 |   |   |   | ✓ |   |   |   |   |
 | `CKM_ECDH1_COFACTOR_DERIVE` | 192  | 521 |   |   |   | ✓ |   |   |   |   |
 | `CKM_AES_KEY_GEN` | 16  | 32 |   |   |   |   |   |   | ✓ |   |
-| `CKM_AES_ECB` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
-| `CKM_AES_CBC` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
+| `CKM_AES_ECB` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
+| `CKM_AES_CBC` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
 | `CKM_AES_CBC_PAD` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
 | `CKM_AES_CTR` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
 | `CKM_AES_GCM` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
@@ -97,11 +97,11 @@ _Bouncy Hsm_ supports 96 mechanisms.
 | `CKM_AES_ECB_ENCRYPT_DATA` | 16  | 32 |   |   |   | ✓ |   |   |   |   |
 | `CKM_AES_CBC_ENCRYPT_DATA` | 16  | 32 |   |   |   | ✓ |   |   |   |   |
 | `CKM_GOSTR3411` | 0  | 0 | ✓ |   |   |   |   |   |   |   |
-| `CKM_AES_OFB` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
-| `CKM_AES_CFB64` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
-| `CKM_AES_CFB8` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
-| `CKM_AES_CFB128` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
-| `CKM_AES_CFB1` | 16  | 32 |   |   |   |   | ✓ |   |   |   |
+| `CKM_AES_OFB` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
+| `CKM_AES_CFB64` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
+| `CKM_AES_CFB8` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
+| `CKM_AES_CFB128` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
+| `CKM_AES_CFB1` | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
 | `CKM_AES_KEY_WRAP_PAD` | 16  | 32 |   |   |   |   |   |   |   | ✓ |
 
 ## Elliptic curves
