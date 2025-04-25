@@ -32,7 +32,6 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-
         if (!memorySession.IsUserLogged(p11Session.SlotId))
         {
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "DestroyObject requires login");
@@ -66,7 +65,6 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             memorySession.DestroyObjectHandle(storageObject.Id);
             p11Session.DestroyObject(storageObject);
         }
-
 
         this.logger.LogInformation("Destroy object <Id: {objectKeyId}, CK_LABEL: {objectKeyCkLabel}>.",
             storageObject.Id,

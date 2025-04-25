@@ -215,18 +215,20 @@ internal static class MechanismUtils
             {CKM.CKM_AES_ECB_ENCRYPT_DATA,  new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_AES_CBC_ENCRYPT_DATA,  new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE, Pkcs11SpecVersion.V2_40) },
             
+
             // AES
-            {CKM.CKM_AES_KEY_GEN, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_ECB, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CBC, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CBC_PAD, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CFB1, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT , MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CFB8, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CFB64, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CFB128, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_OFB, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CTR, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
-            {CKM.CKM_AES_CTS, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40) },
+            {CKM.CKM_AES_KEY_GEN, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_ECB, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.NONE, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CBC, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CBC_PAD, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CFB1, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CFB8, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CFB64, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CFB128, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_OFB, new MechanismInfo(AesMinKeySize, AesMaxKeySize,  MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CTR, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40)},
+            {CKM.CKM_AES_CTS, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V2_40)},
+
 
             {CKM.CKM_AES_GCM, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_AES_CCM, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT | MechanismCkf.CKF_DECRYPT| MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V2_40) },
@@ -236,6 +238,7 @@ internal static class MechanismUtils
             //POLY1305
             {CKM.CKM_POLY1305_KEY_GEN, new MechanismInfo(Poly1305KeySize, Poly1305KeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_POLY1305, new MechanismInfo(Poly1305KeySize, Poly1305KeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+
 
             //ChaCha20
             {CKM.CKM_CHACHA20_KEY_GEN, new MechanismInfo(ChaCha20KeySize, ChaCha20KeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
@@ -323,6 +326,29 @@ internal static class MechanismUtils
                 throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"In digest algorithm {ckMechanism} required empty mechanism params.");
             }
         }
+    }
+
+    public static bool IsUnwrapMechanismWithExplicitPading(CKM mechanismType)
+    {
+#if DEBUG
+        if (!mechanism.TryGetValue(mechanismType, out MechanismInfo info)
+            || !info.Flags.HasFlag(MechanismCkf.CKF_UNWRAP))
+        {
+            throw new ArgumentException($"Mechanism {mechanismType} is not for unwrap", nameof(mechanismType));
+        }
+#endif
+
+        return mechanismType switch
+        {
+            CKM.CKM_AES_CBC => true,
+            CKM.CKM_AES_ECB => true,
+            CKM.CKM_AES_OFB => true,
+            CKM.CKM_AES_CFB64 => true,
+            CKM.CKM_AES_CFB8 => true,
+            CKM.CKM_AES_CFB128 => true,
+            CKM.CKM_AES_CFB1 => true,
+            _ => false
+        };
     }
 
     public static bool IsVendorDefined(CKM mechanismType)

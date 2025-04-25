@@ -1,27 +1,25 @@
 SRC_DIR=../src/Src/BouncyHsm.Pkcs11Lib
 
-CC= clang
-#CC= gcc
-ARCH_FLAGS=
-CFLAGS= $(ARCH_FLAGS) -Wall -Wextra -O2 -I$(SRC_DIR)
-# -Werror
+EXTRA_FLAGS=
+CC=clang
+CFLAGS= $(ARCH_FLAGS) -Wall -Wextra -O2 -I$(SRC_DIR) $(EXTRA_FLAGS)
+
 HEADERFILES=$(SRC_DIR)/*.h $(SRC_DIR)/rpc/*.h $(SRC_DIR)/utils/*.h
-LIBNAME=BouncyHsm.Pkcs11Lib-x86.so
 
 ifeq ($(origin BOUNCYOSENVIROMENT), environment)
 CFLAGS += -DBUILD_ENV=${BOUNCYOSENVIROMENT}
 endif
 
 
-all: ARCH_FLAGS += -m64
+all: ARCH_FLAGS = -m64
 all: LIBNAME=BouncyHsm.Pkcs11Lib-x64.so
 all: build
 
-build64: ARCH_FLAGS += -m64
+build64: ARCH_FLAGS = -m64
 build64: LIBNAME=BouncyHsm.Pkcs11Lib-x64.so
 build64: build cleao
 
-build32: ARCH_FLAGS += -m32
+build32: ARCH_FLAGS = -m32
 build32: LIBNAME=BouncyHsm.Pkcs11Lib-x86.so
 build32: build cleao
 

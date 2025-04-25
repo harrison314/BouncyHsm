@@ -79,7 +79,7 @@ internal class RsaBufferedCipherWrapper : ICipherWrapper
                     "The operation is not allowed because objet is not authorized to decrypt (CKA_UNWRAP must by true).");
             }
 
-            BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+            BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, false);
             wrapper.Init(false, rsaPrivateKeyObject.GetPrivateKey());
 
             return wrapper;
@@ -103,7 +103,7 @@ internal class RsaBufferedCipherWrapper : ICipherWrapper
                     "The operation is not allowed because objet is not authorized to encrypt (CKA_WRAP must by true).");
             }
 
-            BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher);
+            BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, false);
             wrapper.Init(true, rsaPublicKeyObject.GetPublicKey());
 
             return wrapper;

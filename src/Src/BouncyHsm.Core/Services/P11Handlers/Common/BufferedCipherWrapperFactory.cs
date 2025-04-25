@@ -35,17 +35,17 @@ internal class BufferedCipherWrapperFactory
         return ckMechanism switch
         {
             CKM.CKM_AES_ECB => this.CreateAesWithoutIv(CipherUtilities.GetCipher("AES/ECB/NOPADDING"), mechanism), //TODO: padding question
-            CKM.CKM_AES_CBC => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/NOPADDING"), mechanism),
-            CKM.CKM_AES_CBC_PAD => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/PKCS7PADDING"), mechanism),
+            CKM.CKM_AES_CBC => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CBC_PAD => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/PKCS7PADDING"), false, mechanism),
 
-            CKM.CKM_AES_CFB1 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB/NOPADDING"), mechanism), //TODO: check with specification
-            CKM.CKM_AES_CFB8 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB8/NOPADDING"), mechanism),
-            CKM.CKM_AES_CFB64 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB64/NOPADDING"), mechanism),
-            CKM.CKM_AES_CFB128 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB128/NOPADDING"), mechanism),
+            CKM.CKM_AES_CFB1 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB/NOPADDING"), true, mechanism), //TODO: check with specification
+            CKM.CKM_AES_CFB8 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB8/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CFB64 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB64/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CFB128 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB128/NOPADDING"), true, mechanism),
 
-            CKM.CKM_AES_OFB => this.CreateAes(CipherUtilities.GetCipher("AES/OFB/NOPADDING"), mechanism),
-            CKM.CKM_AES_CTR => this.CreateAes(CipherUtilities.GetCipher("AES/CTR/NOPADDING"), mechanism),
-            CKM.CKM_AES_CTS => this.CreateAes(CipherUtilities.GetCipher("AES/CTS/NOPADDING"), mechanism),
+            CKM.CKM_AES_OFB => this.CreateAes(CipherUtilities.GetCipher("AES/OFB/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CTR => this.CreateAes(CipherUtilities.GetCipher("AES/CTR/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CTS => this.CreateAes(CipherUtilities.GetCipher("AES/CTS/NOPADDING"), true, mechanism),
 
             CKM.CKM_AES_GCM => this.CreateAesGcm(CipherUtilities.GetCipher("AES/GCM/NOPADDING"), mechanism),
             CKM.CKM_AES_CCM => this.CreateAesCcm(CipherUtilities.GetCipher("AES/CCM/NOPADDING"), mechanism),
@@ -66,11 +66,12 @@ internal class BufferedCipherWrapperFactory
     {
         return new AesBufferedCipherWrapper(bufferedCipher,
             null,
+            true,
             (CKM)mechanism.MechanismType,
             this.loggerFactory.CreateLogger<AesBufferedCipherWrapper>());
     }
 
-    private AesBufferedCipherWrapper CreateAes(IBufferedCipher bufferedCipher, MechanismValue mechanism)
+    private AesBufferedCipherWrapper CreateAes(IBufferedCipher bufferedCipher, bool padZeroForWrap, MechanismValue mechanism)
     {
         try
         {
@@ -82,6 +83,7 @@ internal class BufferedCipherWrapperFactory
 
             return new AesBufferedCipherWrapper(bufferedCipher,
                 rawDataParams.Value,
+                padZeroForWrap,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<AesBufferedCipherWrapper>());
         }

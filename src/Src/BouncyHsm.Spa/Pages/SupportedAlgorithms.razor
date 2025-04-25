@@ -57,14 +57,14 @@ else
                     <td class="code">@mi.MechanismType <Pkcs11Version Version="@mi.SpecificationVersion" /></td>
                     <td class="text-end">@mi.MinKeySize</td>
                     <td class="text-end">@mi.MaxKeySize</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Digest)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Sign, mi.Flags.Verify)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.SignRecover, mi.Flags.VerifyRecover)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Derive)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Encrypt, mi.Flags.Decrypt)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.GenerateKeyPair)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Generate)</td>
-                    <td class="text-center">@ShowFlag(mi.Flags.Wrap, mi.Flags.Unwrap)</td>
+                    <td class="text-center" title="Digest">@ShowFlag(mi.Flags.Digest)</td>
+                    <td class="text-center" title="Sign, Verify">@ShowFlag(mi.Flags.Sign, mi.Flags.Verify)</td>
+                    <td class="text-center" title="SignRecover, VerifyRecover">@ShowFlag(mi.Flags.SignRecover, mi.Flags.VerifyRecover)</td>
+                    <td class="text-center" title="Derive">@ShowFlag(mi.Flags.Derive)</td>
+                    <td class="text-center" title="Encrypt, Decrypt">@ShowFlag(mi.Flags.Encrypt, mi.Flags.Decrypt)</td>
+                    <td class="text-center" title="Generate key pair">@ShowFlag(mi.Flags.GenerateKeyPair)</td>
+                    <td class="text-center" title="Generate key">@ShowFlag(mi.Flags.Generate)</td>
+                    <td class="text-center" title="Wrap, Unwrap">@ShowFlag(mi.Flags.Wrap, mi.Flags.Unwrap)</td>
                 </tr>
             }
         </tbody>

@@ -45,7 +45,12 @@ public sealed class Poly1305KeyObject : SecretKeyObject
 
     public override uint GetMinimalSecretLen()
     {
-        return 32;
+        return 32U;
+    }
+
+    public override uint? GetRequiredSecretLen()
+    {
+        return 32U;
     }
 
     public override void Accept(ICryptoApiObjectVisitor visitor)

@@ -9,6 +9,7 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X9;
+using BouncyHsm.Core.Services.Bc;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -51,7 +52,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         }
 
         byte[] unwrappedKey = unwrapper.Unwrap(request.WrappedKeyData, 0, request.WrappedKeyData.Length);
-        this.SetKeyValues(storageObject, unwrappedKey);
+        this.SetKeyValues(storageObject, unwrappedKey, (CKM)request.Mechanism.MechanismType, template);
 
         storageObject.ReComputeAttributes();
         storageObject.Validate();
@@ -79,12 +80,27 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         };
     }
 
-    private void SetKeyValues(StorageObject storageObject, byte[] unwrappedKey)
+    private void SetKeyValues(StorageObject storageObject, byte[] unwrappedKey, CKM mechanism, Dictionary<CKA, IAttributeValue> template)
     {
         this.logger.LogTrace("Entering to SetKeyValues.");
 
+        bool useExplicitPading = MechanismUtils.IsUnwrapMechanismWithExplicitPading(mechanism);
+
         if (storageObject is SecretKeyObject secretKeyObject)
         {
+            if (useExplicitPading)
+            {
+                uint? requiredLength = secretKeyObject.GetRequiredSecretLen();
+                if (requiredLength.HasValue)
+                {
+                    unwrappedKey = unwrappedKey[..((int)requiredLength.Value)];
+                }
+                else
+                {
+                    unwrappedKey = this.PadSecretKeyByTemplate(unwrappedKey, mechanism, template);
+                }
+            }
+
             secretKeyObject.SetSecret(unwrappedKey);
             secretKeyObject.CkaLocal = false;
             secretKeyObject.CkaNewerExtractable = false;
@@ -95,7 +111,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         else if (storageObject is RsaPrivateKeyObject privateKeyObject)
         {
             PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(PkcsObjectIdentifiers.RsaEncryption),
-                Asn1Object.FromByteArray(unwrappedKey));
+                Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
             privateKeyObject.SetPrivateKey(asymmetricParams);
@@ -111,7 +127,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
             Asn1Object asn1EcParams = EcdsaUtils.ParseEcParamsToAsn1Object(ecPrivateKeyObject.CkaEcParams);
 
             PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, asn1EcParams),
-                Asn1Object.FromByteArray(unwrappedKey));
+                Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
             ecPrivateKeyObject.SetPrivateKey(asymmetricParams);
@@ -126,6 +142,33 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         {
             throw new RpcPkcs11Exception(CKR.CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT,
                 $"Can not crate key with invalid type {storageObject.GetType().Name}.");
+        }
+    }
+
+    private byte[] PadSecretKeyByTemplate(byte[] unwrappedKey, CKM mechanismType, Dictionary<CKA, IAttributeValue> template)
+    {
+        this.logger.LogTrace("Entering to PadSecretKeyByTemplate.");
+
+        if (template.TryGetValue(CKA.CKA_VALUE_LEN, out IAttributeValue? attributeValue))
+        {
+            int prefedLength = (int)attributeValue.AsUint();
+            if (unwrappedKey.Length < prefedLength)
+            {
+                this.logger.LogError("Invalid lenrth of CKA_VALUE_LEN ({actualValueLength}) but unwraped key has length {unwrapedKeyLen} for {mecyhnismType}.",
+                    prefedLength,
+                    unwrappedKey.Length,
+                    mechanismType);
+                throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
+                    $"Invalid lenrth of CKA_VALUE_LEN ({prefedLength}) but unwraped key has length {unwrappedKey.Length} for {mechanismType}.");
+            }
+
+            return unwrappedKey[..prefedLength];
+        }
+        else
+        {
+            this.logger.LogError("Unwrap with mechanism {mecyhnismType} required defined CKA_VALUE_LEN for secrets.", mechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
+                $"Unwrap with mechanism {mechanismType} required defined CKA_VALUE_LEN for secrets.");
         }
     }
 }
