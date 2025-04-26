@@ -56,6 +56,11 @@ internal class SignVisitor : BaseKeyTimeVisitor
         return this.GetSimetricKeyTimeSpan(chacha20KeyObject.CkaValueLen);
     }
 
+    public override TimeSpan Visit(Salsa20KeyObject salsa20KeyObject)
+    {
+        return this.GetSimetricKeyTimeSpan(salsa20KeyObject.CkaValueLen);
+    }
+
     private double GetMultiplicator(int pi)
     {
         if (pi < this.polynomialMultiplication.Length)

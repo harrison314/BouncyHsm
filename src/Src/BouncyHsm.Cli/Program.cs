@@ -48,6 +48,7 @@ public static class Program
                     generate.AddCommand<GenerateAesKeyCommand>("aes").WithDescription("Generate AES key.");
                     generate.AddCommand<GeneratePoly1305KeyCommand>("poly1305").WithDescription("Generate POLY1305 key.");
                     generate.AddCommand<GenerateChaCha20KeyCommand>("chacha20").WithDescription("Generate ChaCha20 key.");
+                    generate.AddCommand<GenerateSalsa20KeyCommand>("salsa20").WithDescription("Generate Salsa20 key.");
                     generate.AddCommand<GenerateSecretKeyCommand>("secret").WithDescription("Generate secret key.");
 
                     generate.SetDescription("Generating keys.");

@@ -71,7 +71,7 @@ internal class ChaCha20KeyGenerator : IKeyGenerator
         if (template.GetAttributeUint(CKA.CKA_VALUE_LEN, 32) != 32)
         {
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-              $"Attribute {CKA.CKA_VALUE_LEN} is invalid for POLY1305 key.");
+              $"Attribute {CKA.CKA_VALUE_LEN} is invalid for ChaCha20 key.");
         }
 
         if ((CKO)template.GetAttributeUint(CKA.CKA_CLASS, (uint)CKO.CKO_SECRET_KEY) != CKO.CKO_SECRET_KEY)

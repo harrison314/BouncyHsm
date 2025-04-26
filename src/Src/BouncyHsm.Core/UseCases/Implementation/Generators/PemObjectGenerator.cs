@@ -97,6 +97,7 @@ internal class PemObjectGenerator
             "AES SECRET KEY" => this.CreateAesKey(pemObject.Content),
             "POLY1305 SECRET KEY" => this.CreatePoly1305Key(pemObject.Content),
             "CHACHA20 SECRET KEY" => this.CreateChaCha20Key(pemObject.Content),
+            "SALSA20 SECRET KEY" => this.CreateSalsa20Key(pemObject.Content),
             "DATA OBJECT" => this.CreateDataObject(pemObject.Content, pemObject.Headers),
             _ => throw new IOException($"PEM object not supported ({pemObject.Type}).")
         };
@@ -204,6 +205,32 @@ internal class PemObjectGenerator
     private StorageObject CreateChaCha20Key(byte[] content)
     {
         ChaCha20KeyObject keyObject = new ChaCha20KeyObject();
+        keyObject.CkaCopyable = false;
+        keyObject.CkaDecrypt = this.ForEncryption;
+        keyObject.CkaDerive = this.ForDerivation;
+        keyObject.CkaDestroyable = true;
+        keyObject.CkaEncrypt = this.ForEncryption;
+        keyObject.CkaId = this.ckaId;
+        keyObject.CkaLabel = this.ckaLabel;
+        keyObject.CkaModifiable = false;
+        keyObject.CkaPrivate = true;
+        keyObject.CkaSign = this.ForSigning;
+        keyObject.CkaToken = true;
+        keyObject.CkaTrusted = true;
+        keyObject.CkaUnwrap = this.ForWrap;
+
+        keyObject.SetSecret(content);
+
+        this.UpdateAttributesByMode(keyObject);
+
+        keyObject.ReComputeAttributes();
+
+        return keyObject;
+    }
+
+    private StorageObject CreateSalsa20Key(byte[] content)
+    {
+        Salsa20KeyObject keyObject = new Salsa20KeyObject();
         keyObject.CkaCopyable = false;
         keyObject.CkaDecrypt = this.ForEncryption;
         keyObject.CkaDerive = this.ForDerivation;

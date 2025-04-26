@@ -19,4 +19,6 @@ public interface IKeysGenerationFacade
     Task<DomainResult<GeneratedSecretId>> GeneratePoly1305Key(uint slotId, GeneratePoly1305KeyRequest request, CancellationToken cancellationToken);
     
     Task<DomainResult<GeneratedSecretId>> GenerateChaCha20Key(uint slotId, GenerateChaCha20KeyRequest request, CancellationToken cancellationToken);
+    
+    Task<DomainResult<GeneratedSecretId>> GenerateSalsa20Key(uint slotId, GenerateSalsa20KeyRequest request, CancellationToken cancellationToken);
 }

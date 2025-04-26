@@ -35,6 +35,7 @@ internal static class MechanismUtils
 
     private const int Poly1305KeySize = 32;
     private const int ChaCha20KeySize = 32;
+    private const int Salsa20KeySize = 32;
 
     // Another mechanisms https://nshielddocs.entrust.com/api-generic/12.80/pkcs11
     static MechanismUtils()
@@ -245,6 +246,10 @@ internal static class MechanismUtils
             {CKM.CKM_CHACHA20, new MechanismInfo(ChaCha20KeySize, ChaCha20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_CHACHA20_POLY1305, new MechanismInfo(ChaCha20KeySize, ChaCha20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V3_0) },
 
+            // Salsa20
+            {CKM.CKM_SALSA20_KEY_GEN, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+            //{CKM.CKM_SALSA20, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V3_0) },
+            //{CKM.CKM_SALSA20_POLY1305, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V3_0) },
 
         };
 

@@ -85,4 +85,9 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
     {
         return "ChaCha20 Key";
     }
+
+    public string Visit(Salsa20KeyObject salsa20KeyObject)
+    {
+        return "Salsa20 Key";
+    }
 }
