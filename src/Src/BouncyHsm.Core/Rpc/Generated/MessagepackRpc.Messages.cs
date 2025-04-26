@@ -3929,6 +3929,33 @@ public partial class Ckp_CkChaCha20Params
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
+public partial class Ckp_CkSalsa20Params
+{
+    [Key(0)]
+    public ulong BlockCounter
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public bool BlockCounterIsSet
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
+    public byte[] Nonce
+    {
+        get;
+        set;
+    } = Array.Empty<byte>();
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class Ckp_CkSalsa20ChaCha20Poly1305Params
 {
     [Key(0)]

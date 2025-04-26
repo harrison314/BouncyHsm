@@ -58,6 +58,9 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_CHACHA20 => this.CreateChaCha20(mechanism),
             CKM.CKM_CHACHA20_POLY1305 => this.CreateChaCha20Poly1305(mechanism),
 
+            CKM.CKM_SALSA20 => this.CreateSalsa20(mechanism),
+
+
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
     }
@@ -294,6 +297,52 @@ internal class BufferedCipherWrapperFactory
                 chaCha20Poly1305params.AadData,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<ChaCha20Poly1305CipherWrapper>());
+        }
+        catch (RpcPkcs11Exception)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private ICipherWrapper CreateSalsa20(MechanismValue mechanism)
+    {
+        try
+        {
+            Ckp_CkSalsa20Params salsa20params = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkSalsa20Params>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            if (this.logger.IsEnabled(LogLevel.Trace))
+            {
+                this.logger.LogTrace("Using SALSA20_PARAMS params with blockCounter {blockCounter}, is blockCounterSet {isBlockCounterSet}, nonce len {nonceLen}.",
+                    salsa20params.BlockCounter,
+                    salsa20params.BlockCounterIsSet,
+                    salsa20params.Nonce.Length);
+            }
+
+            if (!salsa20params.BlockCounterIsSet)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType} - pBlockCounter is NULL.");
+            }
+
+            if (salsa20params.Nonce.Length != Salsa20CipherWrapper.Salsa20NonceSize
+                && salsa20params.Nonce.Length != Salsa20CipherWrapper.XSalsa20NonceSize)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"BouncyHsm accept only 64 and 192 bits nonce length in SALSA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
+            }
+
+            // BouncyHsm implementation errors
+            if (salsa20params.BlockCounter != 0UL)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only value 0 for blockCounter in SALSA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
+            }
+
+            return new Salsa20CipherWrapper(salsa20params.Nonce,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<Salsa20CipherWrapper>());
         }
         catch (RpcPkcs11Exception)
         {

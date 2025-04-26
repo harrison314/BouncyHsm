@@ -100,14 +100,14 @@ public sealed class Salsa20KeyObject : SecretKeyObject
     {
         if (attributeType == CKA.CKA_KEY_TYPE)
         {
-            if (value.Equals((uint)CKK.CKK_CHACHA20))
+            if (value.Equals((uint)CKK.CKK_SALSA20))
             {
                 return;
             }
             else
             {
                 throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                   $"Attribute {CKA.CKA_KEY_TYPE} is not {CKK.CKK_CHACHA20}.");
+                   $"Attribute {CKA.CKA_KEY_TYPE} is not {CKK.CKK_SALSA20}.");
             }
         }
 

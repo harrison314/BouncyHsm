@@ -248,7 +248,7 @@ internal static class MechanismUtils
 
             // Salsa20
             {CKM.CKM_SALSA20_KEY_GEN, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
-            //{CKM.CKM_SALSA20, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V3_0) },
+            {CKM.CKM_SALSA20, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V3_0) },
             //{CKM.CKM_SALSA20_POLY1305, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V3_0) },
 
         };

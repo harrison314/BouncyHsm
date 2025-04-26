@@ -578,6 +578,45 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         }
         break;
 
+    case CKM_SALSA20:
+        if (pMechanism->ulParameterLen != sizeof(CK_SALSA20_PARAMS))
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted CK_SALSA20_PARAMS in mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CK_SALSA20_PARAMS_PTR salsa20Params = (CK_SALSA20_PARAMS_PTR)pMechanism->pParameter;
+        Ckp_CkSalsa20Params salsa20DeriveParams = { 0 };
+
+        if (salsa20Params->pNonce == NULL)
+        {
+            log_message(LOG_LEVEL_ERROR, "Nonce value in CK_CK_SALSA20_PARAMS_PTR is NULL and ulNonceBits is not zero.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        salsa20DeriveParams.BlockCounter = 0;
+        salsa20DeriveParams.BlockCounterIsSet = false;
+        salsa20DeriveParams.Nonce.data = (uint8_t*)salsa20Params->pNonce;
+        salsa20DeriveParams.Nonce.size = (size_t)(salsa20Params->ulNonceBits / 8);
+
+        if (salsa20Params->pBlockCounter == NULL)
+        {
+            log_message(LOG_LEVEL_TRACE, "pBlockCounter value in CK_CK_SALSA20_PARAMS_PTR is NULL");
+            salsa20DeriveParams.BlockCounterIsSet = false;
+        }
+        else
+        {
+            salsa20DeriveParams.BlockCounterIsSet = true;
+            salsa20DeriveParams.BlockCounter= *((uint64_t*)salsa20Params->pBlockCounter);
+        }
+
+        result = nmrpc_writeAsBinary(&salsa20DeriveParams, (SerializeFnPtr_t)Ckp_CkSalsa20Params_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+        break;
+
     case CKM_CHACHA20_POLY1305:
     {
         //CK_SALSA20_CHACHA20_POLY1305_PARAMS
