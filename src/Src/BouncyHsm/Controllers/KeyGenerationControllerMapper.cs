@@ -19,6 +19,8 @@ internal static partial class KeyGenerationControllerMapper
 
     public static partial GenerateEcKeyPairRequest MapFromDto(GenerateEcKeyPairRequestDto dto);
 
+    public static partial GenerateEdwardsKeyPairRequest MapFromDto(GenerateEdwardsKeyPairRequestDto dto);
+
     public static partial GenerateAesKeyRequest MapFromDto(GenerateAesKeyRequestDto dto);
 
     public static partial GenerateSecretKeyRequest MapFromDto(GenerateSecretKeyRequestDto dto);

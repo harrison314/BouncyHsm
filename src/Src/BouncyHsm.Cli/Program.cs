@@ -45,6 +45,7 @@ public static class Program
                 {
                     generate.AddCommand<GenerateRsaKeyPairCommand>("rsa").WithDescription("Generate RSA key pair.");
                     generate.AddCommand<GenerateEcKeyPairCommand>("ec").WithDescription("Generate EC key pair.");
+                    generate.AddCommand<GenerateEdwardsKeyPairCommand>("edwards").WithDescription("Generate Edwards EC key pair.");
                     generate.AddCommand<GenerateAesKeyCommand>("aes").WithDescription("Generate AES key.");
                     generate.AddCommand<GeneratePoly1305KeyCommand>("poly1305").WithDescription("Generate POLY1305 key.");
                     generate.AddCommand<GenerateChaCha20KeyCommand>("chacha20").WithDescription("Generate ChaCha20 key.");

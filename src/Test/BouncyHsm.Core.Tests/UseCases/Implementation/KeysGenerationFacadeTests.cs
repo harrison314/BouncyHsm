@@ -84,6 +84,40 @@ public class KeysGenerationFacadeTests
     }
 
     [TestMethod]
+    public async Task GenerateEdwardsKeyPair_Call_Success()
+    {
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.StoreObject(12U, It.Is<StorageObject>(q => q is PrivateKeyObject || q is PublicKeyObject), It.IsAny<CancellationToken>()))
+            .Returns(new ValueTask())
+            .Verifiable();
+
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(this.GetClotEnity())
+            .Verifiable();
+
+        KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
+
+        GenerateEdwardsKeyPairRequest request = new GenerateEdwardsKeyPairRequest()
+        {
+            OidOrName = "id-Ed25519",
+            KeyAttributes = new GenerateKeyAttributes()
+            {
+                CkaId = null,
+                CkaLabel = "test1",
+                Exportable = false,
+                ForDerivation = false,
+                ForEncryption = true,
+                ForSigning = true,
+                ForWrap = false,
+                Sensitive = true,
+            }
+        };
+
+        DomainResult<GeneratedKeyPairIds> result = await pkcsFacade.GenerateEdwardsKeyPair(12U, request, default);
+        Assert.IsTrue(result.MatchOk(_ => true, () => false));
+    }
+
+    [TestMethod]
     public async Task GenerateSecretKey_Call_Success()
     {
         Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);

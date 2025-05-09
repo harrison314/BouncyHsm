@@ -72,6 +72,27 @@ internal static class EdEcUtils
             });
     }
 
+    public static byte[] CreateEcparam(string oidOrName)
+    {
+        if(oidOrName == null) throw new ArgumentNullException(nameof(oidOrName));
+
+        //TODO change after Restrictions
+        foreach (SupportedNameCurve supportedNameCurve in GetCurveNames())
+        {
+            if (string.Equals(oidOrName, supportedNameCurve.Oid, StringComparison.Ordinal))
+            {
+                return new DerObjectIdentifier(supportedNameCurve.Oid).GetEncoded();
+            }
+
+            if (string.Equals(oidOrName, supportedNameCurve.NamedCurve, StringComparison.OrdinalIgnoreCase))
+            {
+                return new DerPrintableString(supportedNameCurve.NamedCurve).GetEncoded();
+            }
+        }
+
+        throw new ArgumentException("Parameter oidOrName is not valid edwards curve name or OID.", nameof(oidOrName));
+    }
+
     private static EdUtilsInternalParams ParseEcParamsInternal(byte[] ecParams)
     {
         try

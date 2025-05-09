@@ -103,7 +103,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
 
     public async Task<DomainResult<GeneratedKeyPairIds>> GenerateEcKeyPair(uint slotId, GenerateEcKeyPairRequest request, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}, keySize {keySize}, OID or name {oidOrName}.", slotId, request.OidOrName, request.KeyAttributes.CkaLabel);
+        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}, OID or name {oidOrName}, label {label}.", slotId, request.OidOrName, request.KeyAttributes.CkaLabel);
 
         SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
         if (slotEntity == null)
@@ -157,6 +157,74 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         EcdsaKeyPairGenerator ecdsaKeyPairGenerator = new EcdsaKeyPairGenerator(this.loggerFactory.CreateLogger<EcdsaKeyPairGenerator>());
         ecdsaKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
         (PublicKeyObject publicKey, PrivateKeyObject privateKey) = ecdsaKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
+
+        this.UpdateKeys(slotEntity, publicKey, privateKey);
+
+        publicKey.Validate();
+        privateKey.Validate();
+
+        await this.persistentRepository.StoreObject(slotId, publicKey, cancellationToken);
+        await this.persistentRepository.StoreObject(slotId, privateKey, cancellationToken);
+
+        return new DomainResult<GeneratedKeyPairIds>.Ok(new GeneratedKeyPairIds(publicKey.Id, privateKey.Id));
+    }
+
+    public async Task<DomainResult<GeneratedKeyPairIds>> GenerateEdwardsKeyPair(uint slotId, GenerateEdwardsKeyPairRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateEdwardsKeyPair with slotId {slotId}, OID or name {oidOrName}, label {label}.", slotId, request.OidOrName, request.KeyAttributes.CkaLabel);
+
+        SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (slotEntity == null)
+        {
+            this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid slotId.");
+        }
+
+        byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
+        byte[] ecParams;
+        try
+        {
+            ecParams = EdEcUtils.CreateEcparam(request.OidOrName);
+        }
+        catch (ArgumentException ex)
+        {
+            this.logger.LogError(ex, "Parameter OidOrName {OidOrName} is invalid.", request.OidOrName);
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid OID or curve name.");
+        }
+
+        Dictionary<CKA, IAttributeValue> publicKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(false) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_ENCRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_EC_PARAMS, AttributeValue.Create(ecParams) },
+        };
+
+        Dictionary<CKA, IAttributeValue> privateKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
+            { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
+            { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
+        };
+
+        EdwardsKeyPairGenerator edwardsKeyPairGenerator = new EdwardsKeyPairGenerator(this.loggerFactory.CreateLogger<EdwardsKeyPairGenerator>());
+        edwardsKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
+        (PublicKeyObject publicKey, PrivateKeyObject privateKey) = edwardsKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
 
         this.UpdateKeys(slotEntity, publicKey, privateKey);
 

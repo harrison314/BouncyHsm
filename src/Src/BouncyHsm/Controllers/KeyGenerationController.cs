@@ -43,6 +43,18 @@ public class KeyGenerationController : Controller
         return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
     }
 
+    [HttpPost("{slotId}/GenerateEdwardsKeyPair", Name = nameof(GenerateEdwardsKeyPair))]
+    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    public async Task<IActionResult> GenerateEdwardsKeyPair(uint slotId, [FromBody] GenerateEdwardsKeyPairRequestDto model)
+    {
+        this.logger.LogTrace("Entering to GenerateEdwardsKeyPair with slotId {slotId}.", slotId);
+
+        GenerateEdwardsKeyPairRequest request = KeyGenerationControllerMapper.MapFromDto(model);
+        DomainResult<GeneratedKeyPairIds> result = await this.keyGenerationFacade.GenerateEdwardsKeyPair(slotId, request, this.HttpContext.RequestAborted);
+
+        return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
+    }
+
     [HttpPost("{slotId}/GenerateAesKey", Name = nameof(GenerateAesKey))]
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateAesKey(uint slotId, [FromBody] GenerateAesKeyRequestDto model)

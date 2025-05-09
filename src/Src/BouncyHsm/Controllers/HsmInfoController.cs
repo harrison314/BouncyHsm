@@ -38,11 +38,11 @@ public class HsmInfoController : Controller
         return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetCurves()));
     }
 
-    [HttpGet("SupportedEdwardsCurves", Name = nameof(GetSupportedGetEdwardsCurves))]
+    [HttpGet("SupportedEdwardsCurves", Name = nameof(GetSupportedEdwardsCurves))]
     [ProducesResponseType(typeof(IEnumerable<CurveInfoDto>), 200)]
-    public IActionResult GetSupportedGetEdwardsCurves()
+    public IActionResult GetSupportedEdwardsCurves()
     {
-        this.logger.LogTrace("Entering to GetSupportedGetEdwardsCurves");
+        this.logger.LogTrace("Entering to GetSupportedEdwardsCurves");
 
         return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetEdwardsCurves()));
     }

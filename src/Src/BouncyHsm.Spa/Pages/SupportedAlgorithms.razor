@@ -146,7 +146,9 @@ else
 
         await Task.Yield();
         this.curves = await this.bouncyHsmClient.GetSupportedEcCurvesAsync();
-        this.edwardsCurves = await this.bouncyHsmClient.GetSupportedGetEdwardsCurvesAsync();
+
+        await Task.Yield();
+        this.edwardsCurves = await this.bouncyHsmClient.GetSupportedEdwardsCurvesAsync();
     }
 
     private string ShowFlag(bool enabled)
