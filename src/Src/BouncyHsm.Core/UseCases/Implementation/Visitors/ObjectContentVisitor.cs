@@ -88,6 +88,17 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
         return new DomainResult<ObjectContent>.Ok(new ObjectContent("salsa20_key.bin", salsa20KeyObject.CkaValue));
     }
 
+    public DomainResult<ObjectContent> Visit(EdwardsPrivateKeyObject edwardsPrivateKey)
+    {
+        return this.CreatePemResult("ec_ed_private_key.pem", edwardsPrivateKey.GetPrivateKey());
+
+    }
+
+    public DomainResult<ObjectContent> Visit(EdwardsPublicKeyObject edwardsPublicKey)
+    {
+        return this.CreatePemResult("ec_ed_public_key.pem", edwardsPublicKey.GetPublicKey());
+    }
+
     private DomainResult<ObjectContent> CreatePemResult(string fileName, object pemObject)
     {
         using MemoryStream ms = new MemoryStream();

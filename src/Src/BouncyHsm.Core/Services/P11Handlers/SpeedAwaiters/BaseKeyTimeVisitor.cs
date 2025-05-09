@@ -66,6 +66,13 @@ internal abstract class BaseKeyTimeVisitor : ICryptoApiObjectVisitor<TimeSpan>
 
     public abstract TimeSpan Visit(Salsa20KeyObject salsa20KeyObject);
 
+    public abstract TimeSpan Visit(EdwardsPrivateKeyObject edwardsPrivateKey);
+
+    public TimeSpan Visit(EdwardsPublicKeyObject edwardsPublicKey)
+    {
+        this.NotSupported(edwardsPublicKey);
+        return default;
+    }
 
     [DoesNotReturn]
     protected virtual void NotSupported(ICryptoApiObject cryptoApiObject)

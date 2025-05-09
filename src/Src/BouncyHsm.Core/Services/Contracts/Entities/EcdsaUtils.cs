@@ -145,37 +145,37 @@ internal static class EcdsaUtils
     {
         foreach (string name in X962NamedCurves.Names)
         {
-            yield return new SupportedNameCurve("X962", name, X962NamedCurves.GetOid(name).Id);
+            yield return new SupportedNameCurve("X962", name, null, X962NamedCurves.GetOid(name).Id);
         }
 
         foreach (string name in SecNamedCurves.Names)
         {
-            yield return new SupportedNameCurve("SAC", name, SecNamedCurves.GetOid(name).Id);
+            yield return new SupportedNameCurve("SAC", name, null, SecNamedCurves.GetOid(name).Id);
         }
 
         foreach (string name in NistNamedCurves.Names)
         {
-            yield return new SupportedNameCurve("NIST", name, NistNamedCurves.GetOid(name).Id);
+            yield return new SupportedNameCurve("NIST", name, null, NistNamedCurves.GetOid(name).Id);
         }
 
         foreach (string name in TeleTrusTNamedCurves.Names)
         {
-            yield return new SupportedNameCurve("TeleTrusT", name, TeleTrusTNamedCurves.GetOid(name).Id);
+            yield return new SupportedNameCurve("TeleTrusT", name, null, TeleTrusTNamedCurves.GetOid(name).Id);
         }
 
         foreach (string name in AnssiNamedCurves.Names)
         {
-            yield return new SupportedNameCurve("Ancii", name, AnssiNamedCurves.GetOid(name).Id);
+            yield return new SupportedNameCurve("Ancii", name, null, AnssiNamedCurves.GetOid(name).Id);
         }
 
         foreach (string name in ECGost3410NamedCurves.Names)
         {
-            yield return new SupportedNameCurve("ECGost3410", name, ECGost3410NamedCurves.GetOid(name).Id);
+            yield return new SupportedNameCurve("ECGost3410", name, null, ECGost3410NamedCurves.GetOid(name).Id);
         }
 
         foreach (string name in GMNamedCurves.Names)
         {
-            yield return new SupportedNameCurve("GMN", name, GMNamedCurves.GetOid(name).Id);
+            yield return new SupportedNameCurve("GMN", name, null, GMNamedCurves.GetOid(name).Id);
         }
     }
 

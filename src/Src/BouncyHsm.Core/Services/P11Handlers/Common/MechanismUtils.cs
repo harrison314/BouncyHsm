@@ -251,6 +251,9 @@ internal static class MechanismUtils
             {CKM.CKM_SALSA20, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT | MechanismCkf.CKF_WRAP | MechanismCkf.CKF_UNWRAP, Pkcs11SpecVersion.V3_0) },
             //{CKM.CKM_SALSA20_POLY1305, new MechanismInfo(Salsa20KeySize, Salsa20KeySize, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, MechanismCkf.CKF_ENCRYPT| MechanismCkf.CKF_DECRYPT, Pkcs11SpecVersion.V3_0) },
 
+            // Edwards key
+            {CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN, new MechanismInfo(32, 57, MechanismCkf.CKF_GENERATE_KEY_PAIR | MechanismCkf.CKF_EC_NAMEDCURVE | MechanismCkf.CKF_EC_CURVENAME, MechanismCkf.NONE, Pkcs11SpecVersion.V3_0) },
+
         };
 
         mechanism = originalMechanism;

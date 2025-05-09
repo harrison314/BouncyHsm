@@ -70,6 +70,11 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
         return this.GetSimetricKeyTimeSpan(salsa20KeyObject.CkaValueLen);
     }
 
+    public override TimeSpan Visit(EdwardsPrivateKeyObject edwardsPrivateKey)
+    {
+        return this.GetSimetricKeyTimeSpan((uint)edwardsPrivateKey.CkaValue.Length);
+    }
+
     private double GetMultiplicator(int pi)
     {
         if (pi < this.polynomialMultiplication.Length)

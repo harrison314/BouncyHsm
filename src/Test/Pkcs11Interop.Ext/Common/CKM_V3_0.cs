@@ -85,4 +85,6 @@ public static class CKM_V3_0
     public const CKM CKM_SALSA20_KEY_GEN = (CKM)0x0000402d;
     public const CKM CKM_SALSA20 = (CKM)0x00004020;
     public const CKM CKM_SALSA20_POLY1305 = (CKM)0x00004022;
+
+    public const CKM CKM_EC_EDWARDS_KEY_PAIR_GEN = (CKM)0x00001055;
 }

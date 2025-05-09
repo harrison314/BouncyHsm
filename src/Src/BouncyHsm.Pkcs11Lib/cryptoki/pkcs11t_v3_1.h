@@ -92,6 +92,8 @@
 #define CKM_SALSA20                    0x00004020UL
 #define CKM_SALSA20_POLY1305           0x00004022UL
 
+#define CKM_EC_EDWARDS_KEY_PAIR_GEN    0x00001055UL
+
 #define CKK_GOSTR3410           0x00000030UL
 #define CKK_GOSTR3411           0x00000031UL
 #define CKK_GOST28147           0x00000032UL

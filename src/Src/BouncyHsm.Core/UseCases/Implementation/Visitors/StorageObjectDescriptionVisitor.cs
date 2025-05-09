@@ -90,4 +90,14 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
     {
         return "Salsa20 Key";
     }
+
+    public string Visit(EdwardsPrivateKeyObject edwardsPrivateKey)
+    {
+        return $"Private key {EdEcUtils.ParseEcParamsAsName(edwardsPrivateKey.CkaEcParams)}";
+    }
+
+    public string Visit(EdwardsPublicKeyObject edwardsPublicKey)
+    {
+        return $"Private key {EdEcUtils.ParseEcParamsAsName(edwardsPublicKey.CkaEcParams)}";
+    }
 }
