@@ -28,6 +28,17 @@ public class DocModel
         get => this.Ec.Select(t => t.Oid).Distinct().Count();
     }
 
+    public List<SupportedNameCurve> Edwards
+    {
+        get;
+        internal set;
+    }
+
+    public int EdwardsCount
+    {
+        get => this.Edwards.Select(t => t.Oid).Distinct().Count();
+    }
+
     public BouncyHsmVersion Versions
     {
         get;
@@ -38,6 +49,7 @@ public class DocModel
     {
         this.Mechanisms = new List<MechanismInfo>();
         this.Ec = new List<SupportedNameCurve>();
+        this.Edwards = new List<SupportedNameCurve>();
         this.Versions = new BouncyHsmVersion("", "", "", "");
     }
 }

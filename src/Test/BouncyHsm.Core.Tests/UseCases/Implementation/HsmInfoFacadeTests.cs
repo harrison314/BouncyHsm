@@ -41,4 +41,13 @@ public class HsmInfoFacadeTests
 
         Assert.IsNotNull(curves.ToList());
     }
+
+    [TestMethod]
+    public void GetEdwardsCurves_Call_Success()
+    {
+        HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
+        IEnumerable<BouncyHsm.Core.Services.Contracts.Entities.SupportedNameCurve> curves = hsmInfoFacade.GetEdwardsCurves();
+
+        Assert.IsNotNull(curves.ToList());
+    }
 }

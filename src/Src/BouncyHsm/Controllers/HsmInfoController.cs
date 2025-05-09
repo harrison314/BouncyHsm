@@ -30,12 +30,21 @@ public class HsmInfoController : Controller
 
 
     [HttpGet("SupportedCurves", Name = nameof(GetSupportedEcCurves))]
-    [ProducesResponseType(typeof(IEnumerable<EcCurveInfoDto>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<CurveInfoDto>), 200)]
     public IActionResult GetSupportedEcCurves()
     {
         this.logger.LogTrace("Entering to GetSupportedEcCurves");
 
         return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetCurves()));
+    }
+
+    [HttpGet("SupportedEdwardsCurves", Name = nameof(GetSupportedGetEdwardsCurves))]
+    [ProducesResponseType(typeof(IEnumerable<CurveInfoDto>), 200)]
+    public IActionResult GetSupportedGetEdwardsCurves()
+    {
+        this.logger.LogTrace("Entering to GetSupportedGetEdwardsCurves");
+
+        return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetEdwardsCurves()));
     }
 
     [HttpGet("GetMechanism", Name = nameof(GetMechanism))]

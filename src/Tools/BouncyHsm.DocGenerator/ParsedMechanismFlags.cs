@@ -50,6 +50,12 @@ public class ParsedMechanismFlags
         set;
     }
 
+    public bool IsVersion3_0
+    {
+        get;
+        set;
+    }
+
     public ParsedMechanismFlags()
     {
         

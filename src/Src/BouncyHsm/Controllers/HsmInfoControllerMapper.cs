@@ -12,9 +12,9 @@ namespace BouncyHsm.Controllers;
     ThrowOnPropertyMappingNullMismatch = true)]
 internal static partial class HsmInfoControllerMapper
 {
-    public static partial EcCurveInfoDto ToDto(SupportedNameCurve entity);
+    public static partial CurveInfoDto ToDto(SupportedNameCurve entity);
 
-    public static partial IEnumerable<EcCurveInfoDto> ToDto(IEnumerable<SupportedNameCurve> entitys);
+    public static partial IEnumerable<CurveInfoDto> ToDto(IEnumerable<SupportedNameCurve> entitys);
 
     public static partial BouncyHsmVersionDto ToDto(BouncyHsmVersion bouncyHsmVersion);
 

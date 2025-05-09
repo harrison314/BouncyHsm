@@ -31,6 +31,7 @@ public static class Program
         model.Versions = infoFacade.GetVersions();
         model.Mechanisms = Map(infoFacade.GetAllMechanism().Mechanisms).ToList();
         model.Ec = infoFacade.GetCurves().ToList();
+        model.Edwards = infoFacade.GetEdwardsCurves().ToList();
 
         return model;
     }
@@ -49,6 +50,8 @@ public static class Program
                 SignAndVerify = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_SIGN),
                 SignAndVerifyRecover = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_SIGN_RECOVER),
                 WrapAndUnwrap = infoData.Flags.HasFlag(Core.Services.Contracts.P11.MechanismCkf.CKF_WRAP),
+
+                IsVersion3_0 = infoData.SpecificationVersion == Core.Services.P11Handlers.Common.Pkcs11SpecVersion.V3_0
             };
 
             yield return new MechanismInfo(infoData.MechanismType.ToString(),

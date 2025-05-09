@@ -23,6 +23,11 @@ public class HsmInfoFacade : IHsmInfoFacade
         return EcdsaUtils.GetCurveNames();
     }
 
+    public IEnumerable<SupportedNameCurve> GetEdwardsCurves()
+    {
+        return EdEcUtils.GetCurveNames();
+    }
+
     public BouncyHsmVersion GetVersions()
     {
         AssemblyMetadataAttribute? commitHashAttribute = this.GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>()

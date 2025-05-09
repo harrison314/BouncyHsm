@@ -7,6 +7,14 @@ func toCheck(b)
       ret ' '
    end
 end
+
+func toVersion(b)
+   if b.Flags.IsVersion3_0
+      ret '<sub>v3.0</sub>'
+   else
+      ret ''
+   end
+end
 ~}}
 
 Supported algorithms for _Bouncy Hsm_ version {{ Versions.Version }} (commit _{{Versions.Commit}}_).
@@ -17,7 +25,7 @@ _Bouncy Hsm_ supports {{ MechanismsCount }} mechanisms.
 | Mechanism | Min key size | Max key size | Digest | Sign, Verify | SignRecover, VerifyRecover | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 {{~ for mi in Mechanisms ~}}
-| `{{ mi.MechanismType }}` | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags.Digest | toCheck }} | {{mi.Flags.SignAndVerify | toCheck }} | {{mi.Flags.SignAndVerifyRecover | toCheck }} | {{mi.Flags.Derive | toCheck }} | {{mi.Flags.EncryptAndDecrypt | toCheck }} | {{mi.Flags.GenerateKeyPair | toCheck }} | {{mi.Flags.Generate | toCheck }} | {{mi.Flags.WrapAndUnwrap | toCheck }} |
+| `{{ mi.MechanismType }}` {{ mi | toVersion }} | {{ mi.MinKeySize }}  | {{ mi.MaxKeySize }} | {{mi.Flags.Digest | toCheck }} | {{mi.Flags.SignAndVerify | toCheck }} | {{mi.Flags.SignAndVerifyRecover | toCheck }} | {{mi.Flags.Derive | toCheck }} | {{mi.Flags.EncryptAndDecrypt | toCheck }} | {{mi.Flags.GenerateKeyPair | toCheck }} | {{mi.Flags.Generate | toCheck }} | {{mi.Flags.WrapAndUnwrap | toCheck }} |
 {{~ end ~}}
 
 ## Elliptic curves
@@ -29,3 +37,11 @@ _Bouncy Hsm_ supports {{ EcCount }} different named elliptic curves.
 | {{ e.Kind }} | {{ e.Name }} | `{{ e.Oid }}` |
 {{~ end ~}}
 
+## Edwards curves
+_Bouncy Hsm_ supports {{ EcCount }} different named edwards curves.
+
+| Kind | Curve | Curve Name | OID |
+| ---  | --- | --- | --- |
+{{~ for e in Edwards ~}}
+| {{ e.Kind }} | {{ e.Name }} | `{{ e.NamedCurve }}` | `{{ e.Oid }}` |
+{{~ end ~}}
