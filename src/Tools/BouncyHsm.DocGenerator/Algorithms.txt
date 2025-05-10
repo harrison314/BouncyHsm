@@ -38,7 +38,7 @@ _Bouncy Hsm_ supports {{ EcCount }} different named elliptic curves.
 {{~ end ~}}
 
 ## Edwards curves
-_Bouncy Hsm_ supports {{ EcCount }} different named edwards curves.
+_Bouncy Hsm_ supports {{ EdwardsCount }} different named edwards curves.
 
 | Kind | Curve | Curve Name | OID |
 | ---  | --- | --- | --- |

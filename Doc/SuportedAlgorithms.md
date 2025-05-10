@@ -1,6 +1,6 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 1.4.0.0 (commit _56e1cc10828e7eb6eb8cb00fb70192d21c3366ac_).
+Supported algorithms for _Bouncy Hsm_ version 1.4.0.0 (commit _1c7f8c276d7e733799d45b0338a180c745aa43f7_).
 
 ## Mechanisms
 _Bouncy Hsm_ supports 164 mechanisms.
@@ -280,9 +280,9 @@ _Bouncy Hsm_ supports 84 different named elliptic curves.
 | GMN | sm2p256v1 | `1.2.156.10197.1.301` |
 
 ## Edwards curves
-_Bouncy Hsm_ supports 84 different named edwards curves.
+_Bouncy Hsm_ supports 2 different named edwards curves.
 
-| Kind | Curve | CurveName | OID |
+| Kind | Curve | Curve Name | OID |
 | ---  | --- | --- | --- |
 | Edwards | Ed25519 | `id-Ed25519` | `1.3.101.112` |
 | Edwards | Ed448 | `id-Ed448` | `1.3.101.113` |
