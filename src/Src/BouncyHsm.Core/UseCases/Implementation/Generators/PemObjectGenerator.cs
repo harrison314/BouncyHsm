@@ -75,7 +75,11 @@ internal class PemObjectGenerator
             StorageObject storageObject = internalObject switch
             {
                 ECPrivateKeyParameters key => this.CreateEcPrivateKey(key),
+                Ed25519PrivateKeyParameters key => this.CreateEd25519PrivateKey(key),
+                Ed448PrivateKeyParameters key => this.CreateEd448PrivateKey(key),
                 ECPublicKeyParameters key => this.CreateEcPublicKey(key),
+                Ed25519PublicKeyParameters key => this.CreateEd25519PublicKey(key),
+                Ed448PublicKeyParameters key => this.CreateEd448PublicKey(key),
                 RsaPrivateCrtKeyParameters key => this.CreateRsaPrivateKey(key),
                 RsaKeyParameters key => this.CreateRsaPublicKey(key),
                 X509Certificate certificate => this.CreateCertificate(certificate),
@@ -316,9 +320,111 @@ internal class PemObjectGenerator
         return publicKeyObject;
     }
 
+    private StorageObject CreateEd25519PublicKey(Ed25519PublicKeyParameters key)
+    {
+        EdwardsPublicKeyObject publicKeyObject = new EdwardsPublicKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN);
+        publicKeyObject.SetPublicKey(key);
+        publicKeyObject.CkaId = this.ckaId;
+        publicKeyObject.CkaLabel = this.ckaLabel;
+        publicKeyObject.CkaCopyable = false;
+        publicKeyObject.CkaDestroyable = true;
+        publicKeyObject.CkaModifiable = false;
+        publicKeyObject.CkaPrivate = false;
+        publicKeyObject.CkaToken = true;
+        publicKeyObject.CkaTrusted = false;
+
+        publicKeyObject.CkaVerify = this.ForSigning;
+        publicKeyObject.CkaVerifyRecover = false;
+        publicKeyObject.CkaEncrypt = this.ForEncryption;
+        publicKeyObject.CkaWrap = this.ForWrap;
+        publicKeyObject.CkaDerive = this.ForDerivation;
+
+        this.UpdateAttributesByMode(publicKeyObject);
+
+        publicKeyObject.ReComputeAttributes();
+
+        return publicKeyObject;
+    }
+
+    private StorageObject CreateEd448PublicKey(Ed448PublicKeyParameters key)
+    {
+        EdwardsPublicKeyObject publicKeyObject = new EdwardsPublicKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN);
+        publicKeyObject.SetPublicKey(key);
+        publicKeyObject.CkaId = this.ckaId;
+        publicKeyObject.CkaLabel = this.ckaLabel;
+        publicKeyObject.CkaCopyable = false;
+        publicKeyObject.CkaDestroyable = true;
+        publicKeyObject.CkaModifiable = false;
+        publicKeyObject.CkaPrivate = false;
+        publicKeyObject.CkaToken = true;
+        publicKeyObject.CkaTrusted = false;
+
+        publicKeyObject.CkaVerify = this.ForSigning;
+        publicKeyObject.CkaVerifyRecover = false;
+        publicKeyObject.CkaEncrypt = this.ForEncryption;
+        publicKeyObject.CkaWrap = this.ForWrap;
+        publicKeyObject.CkaDerive = this.ForDerivation;
+
+        this.UpdateAttributesByMode(publicKeyObject);
+
+        publicKeyObject.ReComputeAttributes();
+
+        return publicKeyObject;
+    }
+
     private StorageObject CreateEcPrivateKey(ECPrivateKeyParameters key)
     {
         EcdsaPrivateKeyObject privateKeyObject = new EcdsaPrivateKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN);
+
+        privateKeyObject.SetPrivateKey(key);
+        privateKeyObject.CkaId = this.ckaId;
+        privateKeyObject.CkaCopyable = false;
+        privateKeyObject.CkaDestroyable = true;
+        privateKeyObject.CkaLabel = this.ckaLabel;
+        privateKeyObject.CkaModifiable = false;
+        privateKeyObject.CkaPrivate = true;
+        privateKeyObject.CkaToken = true;
+
+        privateKeyObject.CkaSign = this.ForSigning;
+        privateKeyObject.CkaSignRecover = false;
+        privateKeyObject.CkaDecrypt = this.ForEncryption;
+        privateKeyObject.CkaUnwrap = this.ForWrap;
+        privateKeyObject.CkaDerive = this.ForDerivation;
+        this.UpdateAttributesByMode(privateKeyObject);
+
+        privateKeyObject.ReComputeAttributes();
+
+        return privateKeyObject;
+    }
+
+    private StorageObject CreateEd25519PrivateKey(Ed25519PrivateKeyParameters key)
+    {
+        EdwardsPrivateKeyObject privateKeyObject = new EdwardsPrivateKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN);
+
+        privateKeyObject.SetPrivateKey(key);
+        privateKeyObject.CkaId = this.ckaId;
+        privateKeyObject.CkaCopyable = false;
+        privateKeyObject.CkaDestroyable = true;
+        privateKeyObject.CkaLabel = this.ckaLabel;
+        privateKeyObject.CkaModifiable = false;
+        privateKeyObject.CkaPrivate = true;
+        privateKeyObject.CkaToken = true;
+
+        privateKeyObject.CkaSign = this.ForSigning;
+        privateKeyObject.CkaSignRecover = false;
+        privateKeyObject.CkaDecrypt = this.ForEncryption;
+        privateKeyObject.CkaUnwrap = this.ForWrap;
+        privateKeyObject.CkaDerive = this.ForDerivation;
+        this.UpdateAttributesByMode(privateKeyObject);
+
+        privateKeyObject.ReComputeAttributes();
+
+        return privateKeyObject;
+    }
+
+    private StorageObject CreateEd448PrivateKey(Ed448PrivateKeyParameters key)
+    {
+        EdwardsPrivateKeyObject privateKeyObject = new EdwardsPrivateKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN);
 
         privateKeyObject.SetPrivateKey(key);
         privateKeyObject.CkaId = this.ckaId;

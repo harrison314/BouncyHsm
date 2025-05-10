@@ -6,6 +6,7 @@ using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Core.UseCases.Implementation.Generators;
 using BouncyHsm.Core.UseCases.Implementation.Visitors;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Pkcs;
@@ -202,6 +203,7 @@ public class PkcsFacade : IPkcsFacade
         {
             CKK.CKK_RSA => "SHA224WITHRSA",
             CKK.CKK_ECDSA => "SHA256WITHECDSA",
+            CKK.CKK_EC_EDWARDS => this.GetEdwardsSignatureOid(privKo),
             _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
         };
 
@@ -263,6 +265,7 @@ public class PkcsFacade : IPkcsFacade
         {
             CKK.CKK_RSA => "SHA224WITHRSA",
             CKK.CKK_ECDSA => "SHA256WITHECDSA",
+            CKK.CKK_EC_EDWARDS => this.GetEdwardsSignatureOid(privKo),
             _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
         };
 
@@ -541,5 +544,16 @@ public class PkcsFacade : IPkcsFacade
         FindObjectSpecification specification = new FindObjectSpecification(searchTemplate, true);
         IReadOnlyList<StorageObject> result = await this.persistentRepository.FindObjects(slotId, specification, cancellationToken);
         return result.OfType<T>();
+    }
+
+    private string GetEdwardsSignatureOid(PrivateKeyObject privateKeyObject)
+    {
+        System.Diagnostics.Debug.Assert(privateKeyObject.CkaKeyType == CKK.CKK_EC_EDWARDS, "Key type is not Edwards.");
+        
+        IAttributeValue value = privateKeyObject.GetValue(CKA.CKA_EC_PARAMS).UnwrapOk().Value;
+        
+        // Works beacose OID for key is same as oid for singature
+        DerObjectIdentifier curveOid = EdEcUtils.GetOidFromParams(value.AsByteArray());
+        return curveOid.Id;
     }
 }

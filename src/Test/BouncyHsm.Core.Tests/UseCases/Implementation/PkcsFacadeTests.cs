@@ -352,6 +352,55 @@ public class PkcsFacadeTests
         await this.ImportPemTest(pem);
     }
 
+    [TestMethod]
+    public async Task ImportPem_Ed25519Private_Success()
+    {
+        string pem = """
+           -----BEGIN PRIVATE KEY-----
+           MFECAQEwBQYDK2VwBCIEIF81FEQ2hzC0Op/itfBNfKb6BsS2fJaan0JUQljZyNFw
+           gSEA30lwQHhDzxQOXx7rB/+8fiQIiT4Eh1XBtic/kvGzWKQ=
+           -----END PRIVATE KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_Ed25519Public_Success()
+    {
+        string pem = """
+           -----BEGIN PUBLIC KEY-----
+           MCowBQYDK2VwAyEA30lwQHhDzxQOXx7rB/+8fiQIiT4Eh1XBtic/kvGzWKQ=
+           -----END PUBLIC KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+
+    [TestMethod]
+    public async Task ImportPem_Ed448Private_Success()
+    {
+        string pem = """
+           -----BEGIN PRIVATE KEY-----
+           MIGDAgEBMAUGAytlcQQ7BDlbI3ZuBrhiPuDiNleGVMhqwDi8fnm4NtHQ4R0UpSyk
+           I9B5AZ/xob+dYNjSfqlwSHrl4IoWEcYNXXqBOgCHJ7H+QtuP8D3BzsVcbrOXS/RC
+           Y7e6JrvD0VFOnasANe4dAf9ScwjRwxjZ3MSrjsrZqnbhIu6wxQA=
+           -----END PRIVATE KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
+    [TestMethod]
+    public async Task ImportPem_Ed448Public_Success()
+    {
+        string pem = """
+           -----BEGIN PUBLIC KEY-----
+           MEMwBQYDK2VxAzoAhyex/kLbj/A9wc7FXG6zl0v0QmO3uia7w9FRTp2rADXuHQH/
+           UnMI0cMY2dzEq47K2ap24SLusMUA
+           -----END PUBLIC KEY-----
+           """;
+        await this.ImportPemTest(pem);
+    }
+
     private async Task ImportPemTest(string pem)
     {
         Mock<ITimeAccessor> timeAccessor = new Mock<ITimeAccessor>(MockBehavior.Strict);
