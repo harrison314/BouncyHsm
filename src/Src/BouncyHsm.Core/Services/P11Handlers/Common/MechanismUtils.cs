@@ -40,6 +40,9 @@ internal static class MechanismUtils
     private const int EdwardsMinKeySize = 32;
     private const int EdwardsMaxKeySize = 57;
 
+    private const int MontgomeryMinKeySize = 32;
+    private const int MontgomeryMaxKeySize = 57;
+
     // Another mechanisms https://nshielddocs.entrust.com/api-generic/12.80/pkcs11
     static MechanismUtils()
     {
@@ -257,6 +260,9 @@ internal static class MechanismUtils
             // Edwards key
             {CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN, new MechanismInfo(EdwardsMinKeySize, EdwardsMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR | MechanismCkf.CKF_EC_NAMEDCURVE | MechanismCkf.CKF_EC_CURVENAME, MechanismCkf.NONE, false, Pkcs11SpecVersion.V3_0) },
             {CKM.CKM_EDDSA, new MechanismInfo(EdwardsMinKeySize, EdwardsMaxKeySize, MechanismCkf.CKF_SIGN| MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN| MechanismCkf.CKF_VERIFY, true, Pkcs11SpecVersion.V3_0) },
+            
+            // Montgomery keys
+            {CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN, new MechanismInfo(MontgomeryMinKeySize, MontgomeryMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR | MechanismCkf.CKF_EC_NAMEDCURVE | MechanismCkf.CKF_EC_CURVENAME, MechanismCkf.NONE, false, Pkcs11SpecVersion.V3_0) },
         };
 
         mechanism = originalMechanism;

@@ -75,6 +75,11 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
         return this.GetSimetricKeyTimeSpan((uint)edwardsPrivateKey.CkaValue.Length);
     }
 
+    public override TimeSpan Visit(MontgomeryPrivateKeyObject montgomeryPrivateKey)
+    {
+        return this.GetSimetricKeyTimeSpan((uint)montgomeryPrivateKey.CkaValue.Length);
+    }
+
     private double GetMultiplicator(int pi)
     {
         if (pi < this.polynomialMultiplication.Length)

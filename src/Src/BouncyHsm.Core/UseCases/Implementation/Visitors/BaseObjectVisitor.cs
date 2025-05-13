@@ -89,6 +89,16 @@ internal abstract class BaseObjectVisitor<T> : ICryptoApiObjectVisitor<T>
         return this.ProcessStorageObject(edwardsPublicKey);
     }
 
+    public T Visit(MontgomeryPrivateKeyObject montgomeryPrivateKey)
+    {
+        return this.ProcessStorageObject(montgomeryPrivateKey);
+    }
+
+    public T Visit(MontgomeryPublicKeyObject montgomeryPublicKey)
+    {
+        return this.ProcessStorageObject(montgomeryPublicKey);
+    }
+
     protected virtual T ProcessStorageObject(ICryptoApiObject storageObject)
     {
         throw new NotSupportedException($"Object {storageObject.GetType().Name} is not supported.");

@@ -29,6 +29,8 @@ public static class StorageObjectFactory
         Salsa20KeyObject,
         EdPublicKeyObject,
         EdPrivateKeyObject,
+        MontgomeryPublicKeyObject,
+        MontgomeryPrivateKeyObject,
     }
 
     internal interface IStorageObjectInternalFactory
@@ -62,6 +64,8 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.Salsa20KeyObject => new Salsa20KeyObject(),
                 StorageObjectInternalType.EdPrivateKeyObject => new EdwardsPrivateKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN),
                 StorageObjectInternalType.EdPublicKeyObject => new EdwardsPublicKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN),
+                StorageObjectInternalType.MontgomeryPrivateKeyObject => new MontgomeryPrivateKeyObject(CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN),
+                StorageObjectInternalType.MontgomeryPublicKeyObject => new MontgomeryPublicKeyObject(CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -95,6 +99,8 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.Salsa20KeyObject => new Salsa20KeyObject(this.memento),
                 StorageObjectInternalType.EdPrivateKeyObject => new EdwardsPrivateKeyObject(this.memento),
                 StorageObjectInternalType.EdPublicKeyObject => new EdwardsPublicKeyObject(this.memento),
+                StorageObjectInternalType.MontgomeryPrivateKeyObject => new MontgomeryPrivateKeyObject(this.memento),
+                StorageObjectInternalType.MontgomeryPublicKeyObject => new MontgomeryPublicKeyObject(this.memento),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -170,6 +176,11 @@ public static class StorageObjectFactory
             {
                 return factory.Create(StorageObjectInternalType.EdPrivateKeyObject);
             }
+
+            if (keyType == CKK.CKK_EC_MONTGOMERY)
+            {
+                return factory.Create(StorageObjectInternalType.MontgomeryPrivateKeyObject);
+            }
         }
 
         if (classType == CKO.CKO_PUBLIC_KEY)
@@ -189,6 +200,11 @@ public static class StorageObjectFactory
             if (keyType == CKK.CKK_EC_EDWARDS)
             {
                 return factory.Create(StorageObjectInternalType.EdPublicKeyObject);
+            }
+
+            if (keyType == CKK.CKK_EC_MONTGOMERY)
+            {
+                return factory.Create(StorageObjectInternalType.MontgomeryPublicKeyObject);
             }
         }
 

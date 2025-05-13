@@ -29,8 +29,14 @@ public interface ICryptoApiObjectVisitor
     void Visit(ChaCha20KeyObject chaCha20KeyObject);
 
     void Visit(Salsa20KeyObject salsa20KeyObject);
+
     void Visit(EdwardsPrivateKeyObject edwardsPrivateKey);
+
     void Visit(EdwardsPublicKeyObject edwardsPublicKey);
+
+    void Visit(MontgomeryPrivateKeyObject montgomeryPrivateKeyObject);
+
+    void Visit(MontgomeryPublicKeyObject montgomeryPublicKeyObject);
 }
 
 public interface ICryptoApiObjectVisitor<out T>
@@ -62,6 +68,12 @@ public interface ICryptoApiObjectVisitor<out T>
     T Visit(ChaCha20KeyObject chaCha20KeyObject);
 
     T Visit(Salsa20KeyObject salsa20KeyObject);
+
     T Visit(EdwardsPrivateKeyObject edwardsPrivateKey);
+
     T Visit(EdwardsPublicKeyObject edwardsPublicKey);
+
+    T Visit(MontgomeryPrivateKeyObject montgomeryPrivateKeyObject);
+
+    T Visit(MontgomeryPublicKeyObject montgomeryPublicKeyObject);
 }

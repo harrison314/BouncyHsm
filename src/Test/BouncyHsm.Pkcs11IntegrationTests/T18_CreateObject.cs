@@ -627,4 +627,84 @@ TnCoPhVFsVeDjQwg");
 
         session.DestroyObject(handle);
     }
+
+    [TestMethod]
+    public void CreateObject_MontgomeryPrivateKey_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"X-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK_V3_0.CKK_EC_MONTGOMERY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, Convert.FromHexString("06032B656E")),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Convert.FromHexString("670C6C66F47DA1EB61365137D6FB8299E6879F12BDED475694C6D0167FE903F5"))
+        };
+
+        IObjectHandle handle = session.CreateObject(privateKeyAttributes);
+
+        session.DestroyObject(handle);
+    }
+
+    [TestMethod]
+    public void CreateObject_MongomeryPublicKey_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"X-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+
+        List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PUBLIC_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK_V3_0.CKK_EC_MONTGOMERY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, Convert.FromHexString("06032B656E")),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EC_POINT, Convert.FromHexString("17261FF1AE6D04FF6514F8DB90D3CDDBAC6F1B43536D8A68B3806C60BA497CD0"))
+        };
+
+        IObjectHandle handle = session.CreateObject(publicKeyAttributes);
+
+        session.DestroyObject(handle);
+    }
 }
