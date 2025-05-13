@@ -28,4 +28,9 @@ internal class MechanismParamsV3Factory : IMechanismParamsV3Factory
     {
         return new CkSalsa20Params(blockCounter, nonce);
     }
+
+    public ICkEddsaParams CreateCkEddsaParams(bool phFlag, byte[]? contextData)
+    {
+        return new CkEddsaParams(phFlag, contextData);
+    }
 }

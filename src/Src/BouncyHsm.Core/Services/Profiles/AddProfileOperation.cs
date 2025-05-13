@@ -69,6 +69,7 @@ public sealed class AddProfileOperation : ProfileOperation
             this.MaxKeySize,
             concatFlags,
             originalInfo.RequireParamsIn,
+            originalInfo.HasOptionalParams,
             originalInfo.SpecVersion));
     }
 }

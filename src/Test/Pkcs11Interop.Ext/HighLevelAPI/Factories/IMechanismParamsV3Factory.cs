@@ -16,4 +16,6 @@ public interface IMechanismParamsV3Factory
     ICkSalsa20ChaCha20Polly1305Params CreateCkSalsa20ChaCha20Polly1305Params(byte[] nonce, byte[]? aadData);
 
     ICkSalsa20Params CreateCkSalsa20Params(ulong blockCounter, byte[] nonce);
+
+    ICkEddsaParams CreateCkEddsaParams(bool phFlag, byte[]? contextData);
 }

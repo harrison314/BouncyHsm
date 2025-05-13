@@ -3974,3 +3974,23 @@ public partial class Ckp_CkSalsa20ChaCha20Poly1305Params
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
+public partial class Ckp_CkEddsaParams
+{
+    [Key(0)]
+    public bool PhFlag
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public byte[]? ContextData
+    {
+        get;
+        set;
+    }
+
+}
+

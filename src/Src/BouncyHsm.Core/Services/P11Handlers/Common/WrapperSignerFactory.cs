@@ -77,6 +77,7 @@ internal class WrapperSignerFactory
             CKM.CKM_ECDSA_SHA3_384 => this.CreateEcdsaSigner(ckMechanism, new Sha3Digest(384)),
             CKM.CKM_ECDSA_SHA3_512 => this.CreateEcdsaSigner(ckMechanism, new Sha3Digest(512)),
 
+            CKM.CKM_EDDSA => this.CreateEddsaSigner(mechanism),
 
             CKM.CKM_RSA_9796 => new RsaWrapperSigner(new Iso9796Signer(new RsaBlindedEngine(), new NullDigest()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 
@@ -237,5 +238,20 @@ internal class WrapperSignerFactory
     {
         RsaDigestSigner signer = new RsaDigestSigner(difest, new AlgorithmIdentifier(digestOid, DerNull.Instance));
         return new RsaWrapperSigner(signer, mechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>());
+    }
+
+    private EdDsaCipherWrapper CreateEddsaSigner(MechanismValue mechanism)
+    {
+        this.logger.LogTrace("Entering to CreateEddsaSigner.");
+
+        Ckp_CkEddsaParams? mechanismParams = null;
+
+        if (mechanism.MechanismParamMp != null)
+        {
+            mechanismParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkEddsaParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+        }
+
+        return new EdDsaCipherWrapper(mechanismParams,
+            this.loggerFactory.CreateLogger<EdDsaCipherWrapper>());
     }
 }

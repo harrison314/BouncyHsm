@@ -1307,3 +1307,9 @@ Messages:
     Fields:
       Nonce: binary
       AadData: binary?
+
+  Ckp_CkEddsaParams:
+    Summary: Representes CK_EDDSA_PARAMS
+    Fields:
+      PhFlag: bool
+      ContextData: binary?

@@ -655,6 +655,35 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     }
     break;
 
+    case CKM_EDDSA:
+    {
+        if (pMechanism->ulParameterLen != sizeof(CK_EDDSA_PARAMS))
+        {
+            log_message(LOG_LEVEL_ERROR, "Excepted CK_EDDSA_PARAMS in mechanism.");
+            return NMRPC_FATAL_ERROR;
+        }
+
+        CK_EDDSA_PARAMS_PTR eddsaParams = (CK_EDDSA_PARAMS_PTR)pMechanism->pParameter;
+        Ckp_CkEddsaParams eddsaParamsDerivedparams = { 0 };
+        Binary contextData;
+
+        eddsaParamsDerivedparams.PhFlag = (bool) eddsaParams->phFlag;
+        eddsaParamsDerivedparams.ContextData = NULL;
+        if (eddsaParams->pContextData != NULL)
+        {
+            contextData.data = (uint8_t*)eddsaParams->pContextData;
+            contextData.size = (size_t)eddsaParams->ulContextDataLen;
+            eddsaParamsDerivedparams.ContextData = &contextData;
+        }
+
+        result = nmrpc_writeAsBinary(&eddsaParamsDerivedparams, (SerializeFnPtr_t)Ckp_CkEddsaParams_Serialize, &value->MechanismParamMp);
+        if (result != NMRPC_OK)
+        {
+            return result;
+        }
+    }
+    break;
+
     default:
         break;
     }

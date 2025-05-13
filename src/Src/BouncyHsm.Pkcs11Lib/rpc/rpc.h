@@ -170,6 +170,7 @@ typedef struct _Ckp_CkAesCbcEnryptDataParams Ckp_CkAesCbcEnryptDataParams;
 typedef struct _Ckp_CkChaCha20Params Ckp_CkChaCha20Params;
 typedef struct _Ckp_CkSalsa20Params Ckp_CkSalsa20Params;
 typedef struct _Ckp_CkSalsa20ChaCha20Poly1305Params Ckp_CkSalsa20ChaCha20Poly1305Params;
+typedef struct _Ckp_CkEddsaParams Ckp_CkEddsaParams;
 
 typedef struct _Binary Binary;
 
@@ -1918,6 +1919,16 @@ typedef struct _Ckp_CkSalsa20ChaCha20Poly1305Params
 int Ckp_CkSalsa20ChaCha20Poly1305Params_Serialize(cmp_ctx_t* ctx, Ckp_CkSalsa20ChaCha20Poly1305Params* value);
 int Ckp_CkSalsa20ChaCha20Poly1305Params_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkSalsa20ChaCha20Poly1305Params* value);
 int Ckp_CkSalsa20ChaCha20Poly1305Params_Release(Ckp_CkSalsa20ChaCha20Poly1305Params* value);
+
+typedef struct _Ckp_CkEddsaParams
+{
+    bool PhFlag;
+    Binary* ContextData;
+} Ckp_CkEddsaParams;
+
+int Ckp_CkEddsaParams_Serialize(cmp_ctx_t* ctx, Ckp_CkEddsaParams* value);
+int Ckp_CkEddsaParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkEddsaParams* value);
+int Ckp_CkEddsaParams_Release(Ckp_CkEddsaParams* value);
 
 
 typedef void* (*nmrpc_malloc_fn_t)(size_t size);

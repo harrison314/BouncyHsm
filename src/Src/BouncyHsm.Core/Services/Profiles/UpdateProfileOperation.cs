@@ -84,6 +84,7 @@ public sealed class UpdateProfileOperation : ProfileOperation
             maxKeySize,
             concatFlags,
            originalInfo.RequireParamsIn,
+           originalInfo.HasOptionalParams,
            originalInfo.SpecVersion);
     }
 }
