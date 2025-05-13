@@ -27,7 +27,7 @@ internal static class EdEcUtils
 
     public static DerObjectIdentifier GetOidFromParams(byte[] ecParams)
     {
-        EdUtilsInternalParams paramsUinon = ParseEcParamsInternal(ecParams);
+        EdOrXUtilsInternalParams paramsUinon = ParseEcParamsInternal(ecParams);
         CheckIsSupported(paramsUinon);
 
         return paramsUinon.Match<DerObjectIdentifier>(static ecParams => throw new UnreachableException(),
@@ -46,7 +46,7 @@ internal static class EdEcUtils
 
     public static string? ParseEcParamsAsName(byte[] ecParams)
     {
-        EdUtilsInternalParams paramsUinon = ParseEcParamsInternal(ecParams);
+        EdOrXUtilsInternalParams paramsUinon = ParseEcParamsInternal(ecParams);
         CheckIsSupported(paramsUinon);
 
         return paramsUinon.Match<string>(static ecParams => throw new UnreachableException(),
@@ -93,7 +93,7 @@ internal static class EdEcUtils
         throw new ArgumentException("Parameter oidOrName is not valid edwards curve name or OID.", nameof(oidOrName));
     }
 
-    private static EdUtilsInternalParams ParseEcParamsInternal(byte[] ecParams)
+    private static EdOrXUtilsInternalParams ParseEcParamsInternal(byte[] ecParams)
     {
         try
         {
@@ -106,7 +106,7 @@ internal static class EdEcUtils
                 //    throw new RpcPkcs11Exception(CKR.CKR_CURVE_NOT_SUPPORTED, $"CKA_EC_PARAMS with name curve {curveOid} is not supported in this profile.");
                 //}
 
-                return new EdUtilsInternalParams.NamedCurve(curveOid);
+                return new EdOrXUtilsInternalParams.NamedCurve(curveOid);
             }
             else if (asn1Object is DerPrintableString printableString)
             {
@@ -116,14 +116,14 @@ internal static class EdEcUtils
                 //    throw new RpcPkcs11Exception(CKR.CKR_CURVE_NOT_SUPPORTED, $"CKA_EC_PARAMS with name curve {curveOid} is not supported in this profile.");
                 //}
 
-                return new EdUtilsInternalParams.PrintableString(printableString.GetString());
+                return new EdOrXUtilsInternalParams.PrintableString(printableString.GetString());
             }
             else if (asn1Object is DerSequence derSequence)
             {
                 try
                 {
                     X9ECParameters parsedParams = X9ECParameters.GetInstance(derSequence);
-                    return new EdUtilsInternalParams.EcParameters(parsedParams);
+                    return new EdOrXUtilsInternalParams.EcParameters(parsedParams);
                 }
                 catch (ArgumentException ex)
                 {
@@ -132,7 +132,7 @@ internal static class EdEcUtils
             }
             else if (asn1Object is DerNull)
             {
-                return new EdUtilsInternalParams.ImplicitlyCA();
+                return new EdOrXUtilsInternalParams.ImplicitlyCA();
             }
             else
             {
@@ -149,7 +149,7 @@ internal static class EdEcUtils
         }
     }
 
-    private static void CheckIsSupported(EdUtilsInternalParams ecParams)
+    private static void CheckIsSupported(EdOrXUtilsInternalParams ecParams)
     {
         ecParams.Match(
             static ecParams =>

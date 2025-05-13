@@ -51,7 +51,7 @@ public class EdwardsPublicKeyObject : PublicKeyObject
         }
         else
         {
-            throw new InvalidProgramException($"OID {oid} is not supported for public ED key.");
+            throw new InvalidProgramException($"OID {oid} is not supported for public edwards key.");
         }
     }
 
@@ -96,7 +96,7 @@ public class EdwardsPublicKeyObject : PublicKeyObject
         }
         else
         {
-            throw new InvalidProgramException($"OID {oid} is not supported for public ED key.");
+            throw new InvalidProgramException($"OID {oid} is not supported for public edwards key.");
         }
     }
 

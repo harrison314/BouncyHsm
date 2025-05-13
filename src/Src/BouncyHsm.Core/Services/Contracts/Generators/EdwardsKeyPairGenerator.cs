@@ -91,7 +91,7 @@ internal class EdwardsKeyPairGenerator : IKeyPairGenerator
     {
         this.logger.LogTrace("Entering to CreatePrivateKey.");
 
-        EdwardsPrivateKeyObject privateKeyObject = new EdwardsPrivateKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN);
+        EdwardsPrivateKeyObject privateKeyObject = new EdwardsPrivateKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN);
 
         foreach ((CKA attrType, IAttributeValue attrValue) in privateKeyTemplate)
         {
@@ -112,7 +112,7 @@ internal class EdwardsKeyPairGenerator : IKeyPairGenerator
     {
         this.logger.LogTrace("Entering to CreatePublicKey.");
 
-        EdwardsPublicKeyObject edPublicKeyObject = new EdwardsPublicKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN);
+        EdwardsPublicKeyObject edPublicKeyObject = new EdwardsPublicKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN);
 
         foreach ((CKA attrType, IAttributeValue attrValue) in publicKeyTemplate)
         {

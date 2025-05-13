@@ -4,7 +4,7 @@ using Org.BouncyCastle.Asn1;
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
 [Union]
-internal partial record EdUtilsInternalParams
+internal partial record EdOrXUtilsInternalParams
 {
     partial record EcParameters(Org.BouncyCastle.Asn1.X9.X9ECParameters Parameters);
 
