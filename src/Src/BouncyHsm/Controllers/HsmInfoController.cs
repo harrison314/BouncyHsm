@@ -47,6 +47,15 @@ public class HsmInfoController : Controller
         return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetEdwardsCurves()));
     }
 
+    [HttpGet("SupportedMontgomeryCurves", Name = nameof(GetSupportedMontgomeryCurves))]
+    [ProducesResponseType(typeof(IEnumerable<CurveInfoDto>), 200)]
+    public IActionResult GetSupportedMontgomeryCurves()
+    {
+        this.logger.LogTrace("Entering to GetSupportedMontgomeryCurves");
+
+        return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetMontgomeryCurves()));
+    }
+
     [HttpGet("GetMechanism", Name = nameof(GetMechanism))]
     [ProducesResponseType(typeof(MechanismProfileDto), 200)]
     public IActionResult GetMechanism()

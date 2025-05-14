@@ -127,6 +127,36 @@ else
                     }
                 </tbody>
             </table>
+
+            <h2>Montgomery curves</h2>
+            @if (this.montgomeryCurves == null)
+            {
+                <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+            }
+            else
+            {
+                <table class="table table-responsive-md table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Kind</th>
+                            <th>Curve</th>
+                            <th>Curve Name</th>
+                            <th>OID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (CurveInfoDto cr in this.montgomeryCurves)
+                        {
+                            <tr>
+                                <td>@cr.Kind</td>
+                                <td>@cr.Name</td>
+                                <td class="fst-italic">@cr.NamedCurve</td>
+                                <td class="fst-italic">@cr.Oid</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
         }
     }
 }
@@ -136,6 +166,7 @@ else
     private string? profileName = null;
     private IList<CurveInfoDto>? curves = null;
     private IList<CurveInfoDto>? edwardsCurves = null;
+    private IList<CurveInfoDto>? montgomeryCurves = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -149,6 +180,9 @@ else
 
         await Task.Yield();
         this.edwardsCurves = await this.bouncyHsmClient.GetSupportedEdwardsCurvesAsync();
+
+        await Task.Yield();
+        this.montgomeryCurves = await this.bouncyHsmClient.GetSupportedMontgomeryCurvesAsync();
     }
 
     private string ShowFlag(bool enabled)

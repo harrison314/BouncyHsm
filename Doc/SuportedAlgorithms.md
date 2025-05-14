@@ -1,9 +1,9 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 1.4.0.0 (commit _1c7f8c276d7e733799d45b0338a180c745aa43f7_).
+Supported algorithms for _Bouncy Hsm_ version 1.4.0.0 (commit _5e39e3ef845235c9266bacbe4024d58e9163c23a_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 164 mechanisms.
+_Bouncy Hsm_ supports 166 mechanisms.
 
 | Mechanism | Min key size | Max key size | Digest | Sign, Verify | SignRecover, VerifyRecover | Derive | Encrypt, Decrypt | Generate key pair | Generate key | Wrap, Unwrap |
 | :---  | ---: | ---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -105,7 +105,7 @@ _Bouncy Hsm_ supports 164 mechanisms.
 | `CKM_SHA3_224_KEY_DERIVATION` <sub>v3.0</sub> | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |
 | `CKM_SHA3_384_KEY_DERIVATION` <sub>v3.0</sub> | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |
 | `CKM_SHA3_512_KEY_DERIVATION` <sub>v3.0</sub> | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |
-| `CKM_EC_KEY_PAIR_GEN`  | 192  | 521 |   |   |   |   |   | ✓ |   |   |
+| `CKM_ECDSA_KEY_PAIR_GEN`  | 192  | 521 |   |   |   |   |   | ✓ |   |   |
 | `CKM_ECDSA`  | 192  | 521 |   | ✓ |   |   |   |   |   |   |
 | `CKM_ECDSA_SHA1`  | 192  | 521 |   | ✓ |   |   |   |   |   |   |
 | `CKM_ECDSA_SHA224`  | 192  | 521 |   | ✓ |   |   |   |   |   |   |
@@ -119,6 +119,8 @@ _Bouncy Hsm_ supports 164 mechanisms.
 | `CKM_ECDH1_DERIVE`  | 192  | 521 |   |   |   | ✓ |   |   |   |   |
 | `CKM_ECDH1_COFACTOR_DERIVE`  | 192  | 521 |   |   |   | ✓ |   |   |   |   |
 | `CKM_EC_EDWARDS_KEY_PAIR_GEN` <sub>v3.0</sub> | 32  | 57 |   |   |   |   |   | ✓ |   |   |
+| `CKM_EC_MONTGOMERY_KEY_PAIR_GEN` <sub>v3.0</sub> | 32  | 57 |   |   |   |   |   | ✓ |   |   |
+| `CKM_EDDSA` <sub>v3.0</sub> | 32  | 57 |   | ✓ |   |   |   |   |   |   |
 | `CKM_AES_KEY_GEN`  | 16  | 32 |   |   |   |   |   |   | ✓ |   |
 | `CKM_AES_ECB`  | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
 | `CKM_AES_CBC`  | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |
@@ -286,3 +288,11 @@ _Bouncy Hsm_ supports 2 different named edwards curves.
 | ---  | --- | --- | --- |
 | Edwards | Ed25519 | `id-Ed25519` | `1.3.101.112` |
 | Edwards | Ed448 | `id-Ed448` | `1.3.101.113` |
+
+## Montgomery curves
+_Bouncy Hsm_ supports 2 different named montgomery curves.
+
+| Kind | Curve | Curve Name | OID |
+| ---  | --- | --- | --- |
+| Montgomery | X25519 | `id-X25519` | `1.3.101.110` |
+| Montgomery | X448 | `id-X448` | `1.3.101.111` |

@@ -13,6 +13,8 @@ public interface IHsmInfoFacade
 
     IEnumerable<SupportedNameCurve> GetEdwardsCurves();
 
+    IEnumerable<SupportedNameCurve> GetMontgomeryCurves();
+
     BouncyHsmVersion GetVersions();
 
     MechanismProfile GetAllMechanism();

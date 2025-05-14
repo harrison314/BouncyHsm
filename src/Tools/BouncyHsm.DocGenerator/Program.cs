@@ -32,6 +32,7 @@ public static class Program
         model.Mechanisms = Map(infoFacade.GetAllMechanism().Mechanisms).ToList();
         model.Ec = infoFacade.GetCurves().ToList();
         model.Edwards = infoFacade.GetEdwardsCurves().ToList();
+        model.Montgomery = infoFacade.GetMontgomeryCurves().ToList();
 
         return model;
     }

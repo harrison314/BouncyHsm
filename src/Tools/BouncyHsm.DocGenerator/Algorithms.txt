@@ -45,3 +45,12 @@ _Bouncy Hsm_ supports {{ EdwardsCount }} different named edwards curves.
 {{~ for e in Edwards ~}}
 | {{ e.Kind }} | {{ e.Name }} | `{{ e.NamedCurve }}` | `{{ e.Oid }}` |
 {{~ end ~}}
+
+## Montgomery curves
+_Bouncy Hsm_ supports {{ MontgomeryCount }} different named montgomery curves.
+
+| Kind | Curve | Curve Name | OID |
+| ---  | --- | --- | --- |
+{{~ for e in Montgomery ~}}
+| {{ e.Kind }} | {{ e.Name }} | `{{ e.NamedCurve }}` | `{{ e.Oid }}` |
+{{~ end ~}}
