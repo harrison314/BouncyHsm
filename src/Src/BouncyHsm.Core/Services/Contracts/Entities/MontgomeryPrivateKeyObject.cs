@@ -48,11 +48,11 @@ public class MontgomeryPrivateKeyObject : PrivateKeyObject
         DerObjectIdentifier oid = MontgomeryEcUtils.GetOidFromParams(this.CkaEcParams);
         if (oid.Equals(EdECObjectIdentifiers.id_X25519))
         {
-            return new Ed25519PrivateKeyParameters(this.CkaValue);
+            return new X25519PrivateKeyParameters(this.CkaValue);
         }
         else if (oid.Equals(EdECObjectIdentifiers.id_X448))
         {
-            return new Ed448PrivateKeyParameters(this.CkaValue);
+            return new X448PrivateKeyParameters(this.CkaValue);
         }
         else
         {

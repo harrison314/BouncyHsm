@@ -50,4 +50,13 @@ public class HsmInfoFacadeTests
 
         Assert.IsNotNull(curves.ToList());
     }
+
+    [TestMethod]
+    public void GetMontgomeryCurves_Call_Success()
+    {
+        HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
+        IEnumerable<BouncyHsm.Core.Services.Contracts.Entities.SupportedNameCurve> curves = hsmInfoFacade.GetMontgomeryCurves();
+
+        Assert.IsNotNull(curves.ToList());
+    }
 }

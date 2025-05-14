@@ -118,6 +118,40 @@ public class KeysGenerationFacadeTests
     }
 
     [TestMethod]
+    public async Task GenerateMontgomeryKeyPair_Call_Success()
+    {
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.StoreObject(12U, It.Is<StorageObject>(q => q is PrivateKeyObject || q is PublicKeyObject), It.IsAny<CancellationToken>()))
+            .Returns(new ValueTask())
+            .Verifiable();
+
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(this.GetClotEnity())
+            .Verifiable();
+
+        KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
+
+        GenerateMontgomeryKeyPairRequest request = new GenerateMontgomeryKeyPairRequest()
+        {
+            OidOrName = "id-X25519",
+            KeyAttributes = new GenerateKeyAttributes()
+            {
+                CkaId = null,
+                CkaLabel = "test1",
+                Exportable = false,
+                ForDerivation = false,
+                ForEncryption = true,
+                ForSigning = true,
+                ForWrap = false,
+                Sensitive = true,
+            }
+        };
+
+        DomainResult<GeneratedKeyPairIds> result = await pkcsFacade.GenerateMontgomeryKeyPair(12U, request, default);
+        Assert.IsTrue(result.MatchOk(_ => true, () => false));
+    }
+
+    [TestMethod]
     public async Task GenerateSecretKey_Call_Success()
     {
         Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);

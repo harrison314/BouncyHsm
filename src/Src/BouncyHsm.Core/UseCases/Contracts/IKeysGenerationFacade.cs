@@ -23,4 +23,6 @@ public interface IKeysGenerationFacade
     Task<DomainResult<GeneratedSecretId>> GenerateSalsa20Key(uint slotId, GenerateSalsa20KeyRequest request, CancellationToken cancellationToken);
     
     Task<DomainResult<GeneratedKeyPairIds>> GenerateEdwardsKeyPair(uint slotId, GenerateEdwardsKeyPairRequest request, CancellationToken cancellationToken);
+    
+    Task<DomainResult<GeneratedKeyPairIds>> GenerateMontgomeryKeyPair(uint slotId, GenerateMontgomeryKeyPairRequest request, CancellationToken cancellationToken);
 }
