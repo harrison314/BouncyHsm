@@ -28,26 +28,28 @@
         <br />
     }
 
-    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY) && !this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE))
+    @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PRIVATE_KEY) 
+        && !this.ContainsObj(this.SelectedObject, CKO.CKO_CERTIFICATE)
+        && this.SelectedObject.CanSign)
     {
         <hr />
 
         @if (this.ContainsObj(this.SelectedObject, CKO.CKO_PUBLIC_KEY))
         {
             <NavLink href="@($"Slots/{this.SlotId}/Pkcs/GenerateCsr/{this.GetObjectId(this.SelectedObject, CKO.CKO_PRIVATE_KEY)}/{this.GetObjectId(this.SelectedObject, CKO.CKO_PUBLIC_KEY)}")"
-                     class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
+            class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
                 <span class="icon-Rename icon-1x"></span> Generate PKCS10
             </NavLink>
             <br />
             <NavLink href="@($"Slots/{this.SlotId}/Pkcs/GenerateSelfSignedCert/{this.GetObjectId(this.SelectedObject, CKO.CKO_PRIVATE_KEY)}/{this.GetObjectId(this.SelectedObject, CKO.CKO_PUBLIC_KEY)}")"
-                     class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
+            class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
                 <span class="icon-plus icon-1x"></span> Generate certificate
             </NavLink>
             <br />
         }
 
         <NavLink href="@($"Slots/{this.SlotId}/Pkcs/ImportCert/{this.GetObjectId(this.SelectedObject, CKO.CKO_PRIVATE_KEY)}")"
-                 class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
+        class="btn btn-outline-primary btn-sm mb-1 btn-w-action-menu">
             <span class="icon-cloud-upload icon-1x"></span> Import certificate
         </NavLink>
         <br />
@@ -78,6 +80,7 @@
     {
         return obj.Objects.Any(t => t.CkaClass == objType) && obj.Objects.Any(t => t.CkaClass == nextType);
     }
+
 
     private Guid GetObjectId(PkcsObjectInfoDto obj, CKO objType)
     {

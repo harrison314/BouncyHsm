@@ -26,6 +26,12 @@ public class PkcsObjectInfo
         set;
     }
 
+    public bool CanSign
+    {
+        get;
+        set;
+    }
+
     public string? Subject
     {
         get;

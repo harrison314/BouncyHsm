@@ -4463,6 +4463,9 @@ namespace BouncyHsm.Client
         [System.Text.Json.Serialization.JsonPropertyName("AlwaysAuthenticate")]
         public bool AlwaysAuthenticate { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("CanSign")]
+        public bool CanSign { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("Subject")]
         public string? Subject { get; set; } = default!;
 

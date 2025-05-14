@@ -123,6 +123,7 @@ public class PkcsFacade : IPkcsFacade
             type = CKO.CKO_PRIVATE_KEY,
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
+            canSign = t is not MontgomeryPrivateKeyObject, //Fix curent state
             description = t.Accept(descriptionVisitor),
             subject = null as string
         })
@@ -132,6 +133,7 @@ public class PkcsFacade : IPkcsFacade
                 type = CKO.CKO_PUBLIC_KEY,
                 id = t.Id,
                 alwaysAuthenticate = false,
+                canSign = false,
                 description = t.Accept(descriptionVisitor),
                 subject = null as string
             }))
@@ -141,6 +143,7 @@ public class PkcsFacade : IPkcsFacade
                 type = CKO.CKO_CERTIFICATE,
                 id = t.Id,
                 alwaysAuthenticate = false,
+                canSign = false,
                 description = t.Accept(descriptionVisitor),
                 subject = this.TryParseCertSubject(t)
             }))
@@ -151,6 +154,7 @@ public class PkcsFacade : IPkcsFacade
                 CkaId = t.Key.CkaId,
                 Objects = t.Select(q => new PkcsSpecificObject(q.type, q.id, q.description)).OrderByDescending(o => (uint)o.CkaClass).ToArray(),
                 AlwaysAuthenticate = t.Any(q => q.alwaysAuthenticate),
+                CanSign = t.Any(q => q.canSign),
                 Subject = t.Select(q => q.subject).FirstOrDefault(q => q != null)
             })
             .ToList();
