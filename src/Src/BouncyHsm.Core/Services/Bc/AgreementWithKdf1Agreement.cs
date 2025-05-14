@@ -25,7 +25,7 @@ internal class AgreementWithKdf1Agreement : IBasicAgreement
     private readonly IDigest kdfDigest;
     private readonly byte[]? sharedData;
 
-    public AgreementWithKdf1Agreement(IBasicAgreement agreement,int keySize, IDigest kdfDigest, byte[]? sharedData)
+    public AgreementWithKdf1Agreement(IBasicAgreement agreement, int keySize, IDigest kdfDigest, byte[]? sharedData)
     {
         System.Diagnostics.Debug.Assert(this.kdfDigest is not NullDigest);
         this.agreement = agreement;

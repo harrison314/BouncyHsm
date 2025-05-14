@@ -36,14 +36,14 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
 
         System.Diagnostics.Debug.Assert(this.template != null);
 
-        if (baseKey is not EcdsaPrivateKeyObject)
+        if (baseKey is not EcdsaPrivateKeyObject && baseKey is not MontgomeryPrivateKeyObject)
         {
-            this.logger.LogError("Base key handle is invalid  is {baseKey}. Excepted EcdsaPrivateKeyObject.", baseKey);
+            this.logger.LogError("Base key handle is invalid  is {baseKey}. Excepted EcdsaPrivateKeyObject or MontgomeryPrivateKeyObject.", baseKey);
             throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
-              $"Base key handle is invalid, is not EcdsaPrivateKeyObject.");
+              $"Base key handle is invalid, is not EcdsaPrivateKeyObject or MontgomeryPrivateKeyObject.");
         }
 
-        EcdsaPrivateKeyObject sBaseKey = (EcdsaPrivateKeyObject)baseKey;
+        PrivateKeyObject sBaseKey = (PrivateKeyObject)baseKey;
 
         SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(this.template);
         generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
@@ -59,7 +59,14 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
             generalSecretKeyObject.SetValue(kvp.Key, kvp.Value, false);
         }
 
-        byte[] secret = this.DeriveSecret(generalSecretKeyObject, sBaseKey, this.template);
+        byte[] secret = sBaseKey switch
+        {
+            EcdsaPrivateKeyObject ecdsaPrivateKey => this.DeriveSecret(generalSecretKeyObject, ecdsaPrivateKey, this.template),
+            MontgomeryPrivateKeyObject mongomeryPrivateKey => this.DeriveSecretFroMongomeryKey(generalSecretKeyObject, mongomeryPrivateKey, this.template),
+            _ => throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
+                $"Base key handle is invalid, is not EcdsaPrivateKeyObject or MontgomeryPrivateKeyObject.")
+        };
+
         this.logger.LogInformation("Derived secret with length {secretLen}.", secret.Length);
 
         generalSecretKeyObject.SetSecret(secret);
@@ -100,6 +107,46 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         return agreementIntValue.ToByteArrayUnsigned();
     }
 
+    private byte[] DeriveSecretFroMongomeryKey(SecretKeyObject generalSecretKeyObject, MontgomeryPrivateKeyObject sBaseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        this.logger.LogTrace("Entering to DeriveSecretFroMongomeryKey");
+
+        uint minKeySize = template.GetAttributeUint(CKA.CKA_VALUE_LEN, generalSecretKeyObject.GetMinimalSecretLen());
+        AsymmetricKeyParameter privateKey = sBaseKey.GetPrivateKey();
+        if (privateKey is X25519PrivateKeyParameters x25519PrivateKey)
+        {
+            IRawAgreement basicAgreement = this.CreateAgreement(new X25519Agreement(),
+                this.ecdh1Params.Kdf,
+                this.ecdh1Params.SharedData);
+            basicAgreement.Init(x25519PrivateKey);
+
+            X25519PublicKeyParameters publicKey = new X25519PublicKeyParameters(this.ecdh1Params.PublicKeyData);
+            byte[] derivedKey = new byte[minKeySize];
+            basicAgreement.CalculateAgreement(publicKey, derivedKey.AsSpan());
+            this.logger.LogTrace("Calculated agreement as byte array.");
+
+            return derivedKey;
+        }
+
+        if (privateKey is X448PrivateKeyParameters x448PrivateKey)
+        {
+            IRawAgreement basicAgreement = this.CreateAgreement(new X448Agreement(),
+                this.ecdh1Params.Kdf,
+                this.ecdh1Params.SharedData);
+            basicAgreement.Init(x448PrivateKey);
+
+            X448PublicKeyParameters publicKey = new X448PublicKeyParameters(this.ecdh1Params.PublicKeyData);
+            byte[] derivedKey = new byte[minKeySize];
+            basicAgreement.CalculateAgreement(publicKey, derivedKey.AsSpan());
+            this.logger.LogTrace("Calculated agreement as byte array.");
+
+            return derivedKey;
+        }
+
+        this.logger.LogError("Base key handle is invalid is {baseKey}. Excepted X25519PrivateKeyParameters or X448PrivateKeyParameters.", privateKey);
+        throw new InvalidDataException("Base key handle is invalid. Excepted X25519PrivateKeyParameters or X448PrivateKeyParameters.");
+    }
+
     private ECPublicKeyParameters GetPublicKeyFromData(EcdsaPrivateKeyObject baseKey, byte[] publicKeyData)
     {
         this.logger.LogTrace("Entering to GetPublicKeyFromData.");
@@ -121,6 +168,14 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
 
     protected virtual IBasicAgreement CreateAgreement(CKD kdfFunction, int minKeySize, byte[]? sharedData)
     {
+        return this.CreateAgreement(new ECDHBasicAgreement(),
+            kdfFunction,
+            minKeySize,
+            sharedData);
+    }
+
+    protected virtual IBasicAgreement CreateAgreement(IBasicAgreement basicAgreement, CKD kdfFunction, int minKeySize, byte[]? sharedData)
+    {
         this.logger.LogTrace("Entering to CreateAgreement with KDF {Kdf}, minKeySize {minKeySize}, contains sharedData {containsSharedData}.",
             kdfFunction,
             minKeySize,
@@ -128,20 +183,47 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
 
         return kdfFunction switch
         {
-            CKD.CKD_NULL => new ECDHBasicAgreement(),
-            CKD.CKD_SHA1_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha1Digest(), sharedData),
-            CKD.CKD_SHA224_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha224Digest(), sharedData),
-            CKD.CKD_SHA256_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha256Digest(), sharedData),
-            CKD.CKD_SHA384_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(),minKeySize, new Sha384Digest(), sharedData),
-            CKD.CKD_SHA512_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha512Digest(), sharedData),
-            CKD.CKD_SHA3_224_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(224), sharedData),
-            CKD.CKD_SHA3_256_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(256), sharedData),
-            CKD.CKD_SHA3_384_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(384), sharedData),
-            CKD.CKD_SHA3_512_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Sha3Digest(512), sharedData),
-            CKD.CKD_BLAKE2B_160_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(160), sharedData),
-            CKD.CKD_BLAKE2B_256_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(256), sharedData),
-            CKD.CKD_BLAKE2B_384_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(384), sharedData),
-            CKD.CKD_BLAKE2B_512_KDF => new AgreementWithKdf1Agreement(new ECDHBasicAgreement(), minKeySize, new Blake2bDigest(512), sharedData),
+            CKD.CKD_NULL => basicAgreement,
+            CKD.CKD_SHA1_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha1Digest(), sharedData),
+            CKD.CKD_SHA224_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha224Digest(), sharedData),
+            CKD.CKD_SHA256_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha256Digest(), sharedData),
+            CKD.CKD_SHA384_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha384Digest(), sharedData),
+            CKD.CKD_SHA512_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha512Digest(), sharedData),
+            CKD.CKD_SHA3_224_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha3Digest(224), sharedData),
+            CKD.CKD_SHA3_256_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha3Digest(256), sharedData),
+            CKD.CKD_SHA3_384_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha3Digest(384), sharedData),
+            CKD.CKD_SHA3_512_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Sha3Digest(512), sharedData),
+            CKD.CKD_BLAKE2B_160_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Blake2bDigest(160), sharedData),
+            CKD.CKD_BLAKE2B_256_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Blake2bDigest(256), sharedData),
+            CKD.CKD_BLAKE2B_384_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Blake2bDigest(384), sharedData),
+            CKD.CKD_BLAKE2B_512_KDF => new AgreementWithKdf1Agreement(basicAgreement, minKeySize, new Blake2bDigest(512), sharedData),
+
+            _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"kdf {kdfFunction} from CK_ECDH1_DERIVE_PARAMS is not supported or invalid.")
+        };
+    }
+
+    protected virtual IRawAgreement CreateAgreement(IRawAgreement basicAgreement, CKD kdfFunction, byte[]? sharedData)
+    {
+        this.logger.LogTrace("Entering to CreateAgreement with KDF {Kdf}, contains sharedData {containsSharedData}.",
+            kdfFunction,
+            sharedData != null);
+
+        return kdfFunction switch
+        {
+            CKD.CKD_NULL => new SafeRawAgreement(basicAgreement),
+            CKD.CKD_SHA1_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha1Digest(), sharedData),
+            CKD.CKD_SHA224_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha224Digest(), sharedData),
+            CKD.CKD_SHA256_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha256Digest(), sharedData),
+            CKD.CKD_SHA384_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha384Digest(), sharedData),
+            CKD.CKD_SHA512_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha512Digest(), sharedData),
+            CKD.CKD_SHA3_224_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha3Digest(224), sharedData),
+            CKD.CKD_SHA3_256_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha3Digest(256), sharedData),
+            CKD.CKD_SHA3_384_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha3Digest(384), sharedData),
+            CKD.CKD_SHA3_512_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Sha3Digest(512), sharedData),
+            CKD.CKD_BLAKE2B_160_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Blake2bDigest(160), sharedData),
+            CKD.CKD_BLAKE2B_256_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Blake2bDigest(256), sharedData),
+            CKD.CKD_BLAKE2B_384_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Blake2bDigest(384), sharedData),
+            CKD.CKD_BLAKE2B_512_KDF => new RawAgreementWithKdf1Agreement(basicAgreement, new Blake2bDigest(512), sharedData),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"kdf {kdfFunction} from CK_ECDH1_DERIVE_PARAMS is not supported or invalid.")
         };
@@ -199,3 +281,4 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         }
     }
 }
+
