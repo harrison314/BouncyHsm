@@ -96,6 +96,35 @@ Enables mechanisms based on (C#) regular expression.
 }
 ```
 
+#### Enable by PKCS#11 spec version
+The operation enable mechanism by PKCS#11 specification version.
+
+```json
+{
+    "Operation": "EnableByVersion",
+    "Pkcs11SpecVersion": "V2_40" //Required, alloved values has: V2_40, V3_0
+}
+```
+
+#### Remove by PKCS#11 spec version
+The operation remove mechanism by PKCS#11 specification version.
+
+```json
+{
+    "Operation": "RemoveByVersion",
+    "Pkcs11SpecVersion": "V2_40" //Required, alloved values has: V2_40, V3_0
+}
+```
+
+#### FilterFips
+The operation remove all non-FIPS mechanisms.
+
+```json
+{
+    "Operation": "FilterFips"
+}
+```
+
 #### FilterFips
 The operation remove all non-FIPS mechanisms.
 
