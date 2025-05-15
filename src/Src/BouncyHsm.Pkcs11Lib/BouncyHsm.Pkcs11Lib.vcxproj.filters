@@ -57,6 +57,9 @@
     <ClInclude Include="cryptoki\pkcs11t_v3_1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bouncy-pkcs11-utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bouncy-pkcs11.c">
@@ -84,6 +87,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="platformHelper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bouncy-pkcs11-utils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

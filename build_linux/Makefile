@@ -23,11 +23,11 @@ build32: ARCH_FLAGS = -m32
 build32: LIBNAME=BouncyHsm.Pkcs11Lib-x86.so
 build32: build cleao
 
-build: globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs11.o platformHelper.o
+build: globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs11-utils.o bouncy-pkcs11.o platformHelper.o
 	$(CC) $(ARCH_FLAGS) -shared -o $(LIBNAME) \
 	-Wl,-soname,$(LIBNAME) \
 	-Wl,--version-script,bouncyhsm.pkcs11.version \
-	globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs11.o platformHelper.o \
+	globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs11-utils.o bouncy-pkcs11.o platformHelper.o \
 	-lc -ldl -lresolv
 	strip --strip-all $(LIBNAME)
 
@@ -51,6 +51,9 @@ rpc.o: $(SRC_DIR)/rpc/rpc.c $(HEADERFILES)
 
 tcpTransport.o: $(SRC_DIR)/rpc/tcpTransport.c $(HEADERFILES)
 	$(CC) $(CFLAGS) -fPIC -c $(SRC_DIR)/rpc/tcpTransport.c
+
+bouncy-pkcs11-utils.o: $(SRC_DIR)/bouncy-pkcs11-utils.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -fPIC -c $(SRC_DIR)/bouncy-pkcs11-utils.c
 
 bouncy-pkcs11.o: $(SRC_DIR)/bouncy-pkcs11.c $(HEADERFILES)
 	$(CC) $(CFLAGS) -Wno-unused-parameter -fPIC -c $(SRC_DIR)/bouncy-pkcs11.c

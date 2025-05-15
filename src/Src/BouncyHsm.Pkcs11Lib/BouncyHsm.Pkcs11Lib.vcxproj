@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bouncy-pkcs11-utils.h" />
     <ClInclude Include="cryptoki\pkcs11.h" />
     <ClInclude Include="cryptoki\pkcs11f.h" />
     <ClInclude Include="cryptoki\pkcs11t.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="utils\cmp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bouncy-pkcs11-utils.c" />
     <ClCompile Include="dllMain.c" />
     <ClCompile Include="bouncy-pkcs11.c" />
     <ClCompile Include="globalContext.c" />
