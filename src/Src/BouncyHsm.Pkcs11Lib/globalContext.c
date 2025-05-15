@@ -199,7 +199,6 @@ bool envVariableDup(const char* name, char** variableValuePtr)
 #endif
 }
 
-
 // premennu prostredia ako connection string NAME=VALUE; NAME2=VALUE2;
 // rozparsovat ako treba
 // "Server=127.0.0.1; Port=8765; LogTarget=ErrorCosnole; LogLevel=Error; Tag=45695;"
@@ -284,7 +283,6 @@ bool parseConnectionStringOrDefault(const char* connectionString, const char* na
 	return true;
 }
 
-
 void configureLogging(const char* configurationString)
 {
 	char targetBuffer[64];
@@ -307,7 +305,6 @@ void configureLogging(const char* configurationString)
 		log_message(LOG_LEVEL_ERROR, "Error during initialized logger. Check LogTarget and LogLevel setting.");
 	}
 }
-
 
 GlobalContext_t globalContext;
 

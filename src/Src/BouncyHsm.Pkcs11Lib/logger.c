@@ -185,8 +185,6 @@ bool logger_init(const char* level, const char* target)
 	return true;
 }
 
-
-
 #ifdef _MSC_VER
 int vasprintf(char** strp, const char* fmt, va_list ap) {
 	// _vscprintf tells you how big the buffer needs to be

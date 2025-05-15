@@ -198,7 +198,6 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
             return NMRPC_FATAL_ERROR;
         }
 
-
         if (connect(ctx->s, ctx->addr->ai_addr, (int)ctx->addr->ai_addrlen) < 0)
         {
             char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
@@ -387,7 +386,6 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
             log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Could not create socket. IP: %s Error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, strerror(errno));
             return NMRPC_FATAL_ERROR;
         }
-
 
         if (connect(ctx->s, ctx->addr->ai_addr, (int)ctx->addr->ai_addrlen) < 0)
         {
