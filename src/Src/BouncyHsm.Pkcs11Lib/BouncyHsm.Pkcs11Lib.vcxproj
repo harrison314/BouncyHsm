@@ -153,7 +153,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="rpc\rpc.h" />
     <ClInclude Include="rpc\tcpTransport.h" />
-    <ClInclude Include="timer.h" />
     <ClInclude Include="utils\cmp.h" />
   </ItemGroup>
   <ItemGroup>
@@ -165,7 +164,6 @@
     <ClCompile Include="platformHelper.c" />
     <ClCompile Include="rpc\rpc.c" />
     <ClCompile Include="rpc\tcpTransport.c" />
-    <ClCompile Include="timer.c" />
     <ClCompile Include="utils\cmp.c" />
   </ItemGroup>
   <ItemGroup>
