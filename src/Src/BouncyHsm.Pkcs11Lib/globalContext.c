@@ -125,7 +125,12 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 	}
 	size_t readChars = fread(buffer, sizeof(char), maxSize - 1, procFile);
 	buffer[readChars] = 0;
-	fclose(procFile);
+	int rv = fclose(procFile);
+    if (rv != 0)
+    {
+        log_message(LOG_LEVEL_ERROR, "Can not close /proc/self/comm.");
+        return false;
+    }
 
 	return (readChars > 0);
 }
