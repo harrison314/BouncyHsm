@@ -104,7 +104,7 @@ internal class Pkcs1DigestInfoCheckerAsDigest : IDigest
             }
             else
             {
-                byte[] digest = digestInfo.GetDigest();
+                byte[] digest = digestInfo.Digest.GetOctets();
                 int exceptedDigestSize = digestAlgorithm.GetDigestSize();
 
                 if (digest.Length != exceptedDigestSize)

@@ -689,7 +689,6 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    int result = NMRPC_OK;
     value->MechanismType = (uint32_t)pMechanism->mechanism;
     value->MechanismParamMp = NULL;
 
