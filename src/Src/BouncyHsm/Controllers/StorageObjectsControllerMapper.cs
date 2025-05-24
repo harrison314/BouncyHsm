@@ -22,4 +22,9 @@ internal static partial class StorageObjectsControllerMapper
     }
 
     public static partial ObjectContentDto ToDto(ObjectContent objectContent);
+
+
+    public static partial HighLevelAttributeValueDto ToDto(HighLevelAttributeValue attributeValue);
+
+    public static partial HighLevelAttributeValue FromDto(HighLevelAttributeValueDto dto);
 }

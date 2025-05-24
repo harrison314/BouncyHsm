@@ -64,4 +64,33 @@ public class StorageObjectsController : Controller
 
         return result.MapOk(StorageObjectsControllerMapper.ToDto).ToActionResult();
     }
+
+    [HttpGet("{slotId}/{objectId}/Attribute/{attributeName}", Name = nameof(GetAttribute))]
+    [ProducesResponseType(typeof(HighLevelAttributeValueDto), 200)]
+    public async Task<IActionResult> GetAttribute(uint slotId, Guid objectId, string attributeName)
+    {
+        this.logger.LogTrace("Entering to GetAttribute with slotId {slotId}, objectId {objectId}, attributeName {attributeName}.",
+            slotId,
+            objectId,
+            attributeName);
+
+        DomainResult<HighLevelAttributeValue> result = await this.storageObjectsFacade.GetObjectAttribute(slotId, objectId, attributeName, this.HttpContext.RequestAborted);
+
+        return result.MapOk(StorageObjectsControllerMapper.ToDto).ToActionResult();
+    }
+
+    [HttpPost("{slotId}/{objectId}/Attribute/{attributeName}", Name = nameof(SetAttribute))]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task<IActionResult> SetAttribute(uint slotId, Guid objectId, string attributeName, [FromBody] HighLevelAttributeValueDto model)
+    {
+        this.logger.LogTrace("Entering to SetAttribute with slotId {slotId}, objectId {objectId}, attributeName {attributeName}.",
+            slotId,
+            objectId,
+            attributeName);
+
+        HighLevelAttributeValue attributeValue = StorageObjectsControllerMapper.FromDto(model);
+        await this.storageObjectsFacade.SetObjectAttribute(slotId, objectId, attributeName, attributeValue, this.HttpContext.RequestAborted);
+
+        return this.Ok();
+    }
 }

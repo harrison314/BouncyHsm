@@ -106,6 +106,97 @@ public class StorageObjectsFacade : IStorageObjectsFacade
         return storageObject.Accept(new ObjectContentVisitor());
     }
 
+    public async ValueTask<DomainResult<HighLevelAttributeValue>> GetObjectAttribute(uint slotId, Guid id, string attributeName, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GetObjectAttribute with slotId {slotId}, id {id}, attributeName {attributeName}.", slotId, id, attributeName);
+
+        StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
+        if (storageObject == null)
+        {
+            this.logger.LogError("Storage object with id {id} not found.", id);
+            return new DomainResult<HighLevelAttributeValue>.NotFound();
+        }
+
+        if (!Enum.TryParse<CKA>(attributeName, out CKA attributeType))
+        {
+            this.logger.LogError("Attribute {attributeName} is not a valid CKA.", attributeName);
+            return new DomainResult<HighLevelAttributeValue>.InvalidInput($"Attribute {attributeName} is not a valid CKA.");
+        }
+
+        StorageObjectMemento memento = storageObject.ToMemento();
+        if (!memento.Values.TryGetValue(attributeType, out IAttributeValue? value))
+        {
+            this.logger.LogError("Storage object with id {id} does not contain attribute {attributeName}.", id, attributeName);
+            return new DomainResult<HighLevelAttributeValue>.NotFound();
+        }
+
+        return new DomainResult<HighLevelAttributeValue>.Ok(new HighLevelAttributeValue(value));
+    }
+
+    public async ValueTask<VoidDomainResult> SetObjectAttribute(uint slotId, Guid id, string attributeName, HighLevelAttributeValue value, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to SetObjectAttribute with slotId {slotId}, id {id}, attributeName {attributeName}.", slotId, id, attributeName);
+        StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
+        if (storageObject == null)
+        {
+            this.logger.LogError("Storage object with id {id} not found.", id);
+            return new VoidDomainResult.NotFound();
+        }
+
+        if (!Enum.TryParse<CKA>(attributeName, out CKA attributeType))
+        {
+            this.logger.LogError("Attribute {attributeName} is not a valid CKA.", attributeName);
+            return new VoidDomainResult.InvalidInput($"Attribute {attributeName} is not a valid CKA.");
+        }
+
+        if (attributeType is CKA.CKA_CLASS or CKA.CKA_TOKEN or CKA.CKA_KEY_TYPE)
+        {
+            this.logger.LogError("Attribute {attributeName} cannot be set.", attributeName);
+            return new VoidDomainResult.InvalidInput($"Attribute {attributeName} cannot be set.");
+        }
+
+        StorageObjectMemento memento = storageObject.ToMemento();
+        if (!memento.Values.TryGetValue(attributeType, out IAttributeValue? oldValue))
+        {
+            this.logger.LogError("Storage object with id {id} does not contain attribute {attributeName}.", id, attributeName);
+            return new VoidDomainResult.NotFound();
+        }
+
+        try
+        {
+            IAttributeValue newValue = value.ToAttributeValue();
+            if (newValue.TypeTag != oldValue.TypeTag)
+            {
+                this.logger.LogError("Attribute {attributeName} has incompatible type: expected {expectedType}, got {actualType}.", attributeName, oldValue.TypeTag, newValue.TypeTag);
+                return new VoidDomainResult.InvalidInput($"Attribute {attributeName} has incompatible type: expected {oldValue.TypeTag}, got {newValue.TypeTag}.");
+            }
+
+            memento.Values[attributeType] = newValue;
+        }
+        catch (InvalidDataException ex)
+        {
+            this.logger.LogError(ex, "Failed to set attribute {attributeName} for storage object with id {id}.", attributeName, id);
+            return new VoidDomainResult.InvalidInput($"Failed to set attribute {attributeName}: {ex.Message}");
+        }
+
+        StorageObject newStorageObject = StorageObjectFactory.CreateFromMemento(memento);
+
+        try
+        {
+            newStorageObject.Validate();
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Failed to create new storage object from memento for id {id}.", id);
+            return new VoidDomainResult.InvalidInput($"Failed to create new storage object: {ex.Message}");
+        }
+
+        await this.persistentRepository.UpdateObject(slotId, newStorageObject, cancellationToken);
+        this.logger.LogInformation("Storage object with id {id} updated successfully.", id);
+
+        return new VoidDomainResult.Ok();
+    }
+
     private StorageObjectInfo BuildInfo(StorageObject storageObject, string description)
     {
         string? ckaIdHex = storageObject.GetValue(CKA.CKA_ID)
