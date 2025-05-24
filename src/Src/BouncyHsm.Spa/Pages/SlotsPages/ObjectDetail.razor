@@ -34,6 +34,7 @@ else
                 <th>Type</th>
                 <th>Size</th>
                 <th>Value</th>
+                <th>Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -49,6 +50,14 @@ else
                         <div>
                             <BouncyHsm.Spa.Shared.Common.HexStringView Hex="@attr.ValueHex" Delimiter=" " BytesOnLine="20" />
                         </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-outline-secondary btn-sm mt-0"
+                                title="Edit"
+                                disabled="@(!this.CanShowEdit(attr))"
+                                @onclick="() => this.EditAttribute(attr.AttributeType)">
+                            <span class="icon-Edit icon-1x"></span>
+                        </button>
                     </td>
                 </tr>
             }
@@ -83,5 +92,22 @@ else
         this.objectDetail = null;
         await Task.Yield();
         this.objectDetail = await this.bouncyHsmClient.GetStorageObjectAsync(this.Id, this.ObjectId);
+    }
+
+    private bool CanShowEdit(BouncyHsm.Client.StorageObjectAttributeDto soa)
+    {
+        return soa.AttributeType switch
+        {
+            "CKA_CLASS" => false,
+            "CKA_TOKEN" => false,
+            "CKA_KEY_TYPE" => false,
+            _ => true
+        };
+    }
+
+    private Task EditAttribute(string attributeType)
+    {
+        //TODO: Implement the logic to edit the attribute.
+        throw new NotImplementedException("Editing attributes is not implemented yet.");
     }
 }
