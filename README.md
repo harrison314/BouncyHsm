@@ -22,6 +22,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 * Slot and crypto object management using web interface and REST API.
   * Create/remove slots.
   * Plug and unplug devices (tokens).
+  * Edit object attributes.
   * Import P12/PFX files.
   * Import crypto objects in PEM format.
   * Generate CSR, generate self-signed certificate, import certificate from file.
