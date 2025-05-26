@@ -1,0 +1,47 @@
+﻿@using BouncyHsm.Client
+<h5 class="mt-2">Original value</h5>
+<code>@this.AttributeValue.ValueAsDateTime</code>
+
+<h5 class="mt-2">New value</h5>
+<input type="text" class="form-control" @bind="this.value" />
+
+<div class="justify-content-end pt-4">
+    <button type="button" class="btn btn-primary @(this.IsValidDateTime(this.value) ? "" : "disabled")"
+            @onclick="@this.UpdateValue">
+        <span class="icon-Edit icon-1x"></span> Update
+    </button>
+</div>
+
+@code {
+    private string value = string.Empty;
+
+    [Parameter, EditorRequired]
+    public HighLevelAttributeValueDto AttributeValue
+    {
+        get;
+        set;
+    } = default!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<HighLevelAttributeValueDto> ValueUpdated
+    {
+        get;
+        set;
+    } = default!;
+
+    private async Task UpdateValue()
+    {
+        await this.ValueUpdated.InvokeAsync(
+          new HighLevelAttributeValueDto
+          {
+              TypeTag = this.AttributeValue.TypeTag,
+              ValueAsDateTime = this.value.Trim()
+          });
+    }
+
+    private bool IsValidDateTime(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            || System.Text.RegularExpressions.Regex.IsMatch(value.Trim(), @"^\d\d.\d\d.\d\d\d\d$");
+    }
+}

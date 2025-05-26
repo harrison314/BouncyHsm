@@ -1,5 +1,6 @@
 ﻿@page "/Slots/Detail/{Id:int}/object/{ObjectId:guid}"
 @using BouncyHsm.Client
+@using BouncyHsm.Spa.Shared.ForSlotPages
 @inject IBouncyHsmClient bouncyHsmClient
 
 <PageTitle>Storage object detail</PageTitle>
@@ -63,10 +64,24 @@ else
             }
         </tbody>
     </table>
+
+    <BSOffCanvas @ref="offCanvasForEdit" Placement="@BlazorStrap.Placement.Right">
+        <Header>
+            @if (this.attrEditContext != null)
+            {
+                <h4 class="text-break"><span class="icon-Edit icon-1x"></span>Edit @this.attrEditContext.AttributeName</h4>
+            }
+        </Header>
+        <Content>
+            <AttrEdit Context="@this.attrEditContext" AttributeUpdated="@this.OnAttributeUpdate" />
+        </Content>
+    </BSOffCanvas>
 }
 
 @code {
     private StorageObjectDetailDto? objectDetail = null;
+    private BSOffCanvas? offCanvasForEdit = null;
+    private AttrEditContext? attrEditContext = null;
 
     [Parameter]
     public int Id
@@ -105,9 +120,21 @@ else
         };
     }
 
-    private Task EditAttribute(string attributeType)
+    private async Task EditAttribute(string attributeType)
     {
-        //TODO: Implement the logic to edit the attribute.
-        throw new NotImplementedException("Editing attributes is not implemented yet.");
+        System.Diagnostics.Debug.Assert(this.offCanvasForEdit != null);
+
+        this.attrEditContext = new AttrEditContext(this.Id, this.ObjectId, attributeType);
+        await this.offCanvasForEdit.ShowAsync();
+    }
+
+    private async Task OnAttributeUpdate(string attributeType)
+    {
+        System.Diagnostics.Debug.Assert(this.offCanvasForEdit != null);
+
+        this.attrEditContext = null;
+        await this.offCanvasForEdit.HideAsync();
+
+        await this.Reload();
     }
 }

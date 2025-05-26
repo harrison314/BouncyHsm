@@ -1,0 +1,39 @@
+﻿@using BouncyHsm.Client
+<h5 class="mt-2">Original value</h5>
+<pre style="max-height:25%;">@this.AttributeValue.ValueAsString</pre>
+
+<h5 class="mt-2">New value</h5>
+<textarea class="form-control" @bind="this.value" rows="3"></textarea>
+
+<div class="justify-content-end pt-4">
+    <button type="button" class="btn btn-primary" @onclick="@this.UpdateValue"><span class="icon-Edit icon-1x"></span> Update</button>
+</div>
+
+@code {
+    private string value = string.Empty;
+
+    [Parameter, EditorRequired]
+    public HighLevelAttributeValueDto AttributeValue
+    {
+        get;
+        set;
+    } = default!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<HighLevelAttributeValueDto> ValueUpdated
+    {
+        get;
+        set;
+    } = default!;
+
+
+    private async Task UpdateValue()
+    {
+        await this.ValueUpdated.InvokeAsync(
+          new HighLevelAttributeValueDto
+          {
+              TypeTag = this.AttributeValue.TypeTag,
+              ValueAsString = this.value
+          });
+    }
+}

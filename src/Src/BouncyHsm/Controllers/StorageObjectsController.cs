@@ -89,8 +89,8 @@ public class StorageObjectsController : Controller
             attributeName);
 
         HighLevelAttributeValue attributeValue = StorageObjectsControllerMapper.FromDto(model);
-        await this.storageObjectsFacade.SetObjectAttribute(slotId, objectId, attributeName, attributeValue, this.HttpContext.RequestAborted);
+        VoidDomainResult domainResult = await this.storageObjectsFacade.SetObjectAttribute(slotId, objectId, attributeName, attributeValue, this.HttpContext.RequestAborted);
 
-        return this.Ok();
+        return domainResult.ToActionResult();
     }
 }

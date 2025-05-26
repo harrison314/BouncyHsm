@@ -1,0 +1,102 @@
+﻿@using BouncyHsm.Client
+@using BouncyHsm.Spa.Utils
+@inject IBouncyHsmClient bouncyHsmClient
+@inject ILogger<AttrEdit> logger
+
+@if (this.attributeValue == null)
+{
+    <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+}
+else
+{
+    <p>Be careful when editing the value, you may cause objects to become inconsistent with other objects.</p>
+
+    @if (this.attributeValue.TypeTag == AttrTypeTag2.String)
+    {
+        <AttrStringEdit AttributeValue="@this.attributeValue" ValueUpdated="this.OnValueUpdated" />
+    }
+    else if (this.attributeValue.TypeTag == AttrTypeTag2.ByteArray)
+    {
+        <AttrByteArrayEdit AttributeValue="@this.attributeValue" ValueUpdated="this.OnValueUpdated" />
+    }
+    else if (this.attributeValue.TypeTag == AttrTypeTag2.CkBool)
+    {
+        <AttrBoolEdit AttributeValue="@this.attributeValue" ValueUpdated="this.OnValueUpdated" />
+    }
+    else if (this.attributeValue.TypeTag == AttrTypeTag2.DateTime)
+    {
+        <AttrCkDateEdit AttributeValue="@this.attributeValue" ValueUpdated="this.OnValueUpdated" />
+    }
+    else if (this.attributeValue.TypeTag == AttrTypeTag2.CkUint)
+    {
+        <AttrCkUintEdit AttributeValue="@this.attributeValue" ValueUpdated="this.OnValueUpdated" />
+    }
+    else if (this.attributeValue.TypeTag == AttrTypeTag2.CkAttributeArray)
+    {
+        <div class="alert alert-danger">
+            Attribute array is nit supported.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            Unknown type tag: @this.attributeValue.TypeTag
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(this.errorMessage))
+    {
+        <div class="mt-2">
+            <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public EventCallback<string> AttributeUpdated { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public AttrEditContext Context { get; set; } = default!;
+
+    private AttrEditContext? lastContext = null;
+    private HighLevelAttributeValueDto? attributeValue = null;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (this.Context != null && this.Context != this.lastContext)
+        {
+            this.lastContext = this.Context;
+            this.attributeValue = await this.bouncyHsmClient.GetAttributeAsync(this.Context.SlotId,
+                this.Context.ObjectId,
+                this.Context.AttributeName);
+        }
+    }
+
+    private async Task OnValueUpdated(HighLevelAttributeValueDto value)
+    {
+        try
+        {
+            this.errorMessage = string.Empty;
+            await Task.Yield();
+
+            await this.bouncyHsmClient.SetAttributeAsync(this.Context.SlotId,
+                this.Context.ObjectId,
+                this.Context.AttributeName,
+                value);
+
+            await this.AttributeUpdated.InvokeAsync(this.Context.AttributeName);
+        }
+        catch (ApiBouncyHsmException<ProblemDetails> ex)
+        {
+            this.logger.LogError(ex, "Error updating attribute value.");
+            this.errorMessage = ex.Result.Detail ?? "Unexpected error.";
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error updating attribute value.");
+            this.errorMessage = "Unexpected error.";
+        }
+    }
+}
