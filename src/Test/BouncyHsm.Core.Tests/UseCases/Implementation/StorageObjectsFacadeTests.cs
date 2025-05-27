@@ -1,5 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Core.UseCases.Implementation;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -130,6 +131,72 @@ public class StorageObjectsFacadeTests
 
         Assert.That.IsNotNullOrEmpty(result.FileName);
         Assert.IsNotNull(result.Content);
+
+        repository.VerifyAll();
+    }
+
+    [DataTestMethod]
+    [DataRow(CKA.CKA_VALUE)]
+    [DataRow(CKA.CKA_LABEL)]
+    [DataRow(CKA.CKA_APPLICATION)]
+    [DataRow(CKA.CKA_DESTROYABLE)]
+    public async Task GetObjectAttribute_Call_Success(CKA attrType)
+    {
+        Guid objectId = Guid.NewGuid();
+        StorageObject deletedObject = new DataObject()
+        {
+            Id = objectId,
+            CkaLabel = "label",
+            CkaValue = new byte[32],
+            CkaApplication = "app1",
+            CkaDestroyable = true,
+        };
+
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, objectId, It.IsAny<CancellationToken>()))
+           .ReturnsAsync(deletedObject)
+           .Verifiable();
+
+        StorageObjectsFacade storageObjectFacade = new StorageObjectsFacade(repository.Object, new NullLogger<StorageObjectsFacade>());
+        DomainResult<HighLevelAttributeValue> domainResult = await storageObjectFacade.GetObjectAttribute(12U, objectId, attrType.ToString(), default);
+        HighLevelAttributeValue result = domainResult.AssertOkValue();
+
+        Assert.IsNotNull(result);
+
+        repository.VerifyAll();
+    }
+
+    [TestMethod]
+    public async Task SetObjectAttribute_Call_Success()
+    {
+        Guid objectId = Guid.NewGuid();
+        StorageObject deletedObject = new DataObject()
+        {
+            Id = objectId,
+            CkaLabel = "label",
+            CkaValue = new byte[32],
+            CkaModifiable = false
+        };
+
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, objectId, It.IsAny<CancellationToken>()))
+           .ReturnsAsync(deletedObject)
+           .Verifiable();
+
+        repository.Setup(t => t.UpdateObject(12U, It.IsNotNull<StorageObject>(), It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask)
+            .Verifiable();
+
+        StorageObjectsFacade storageObjectFacade = new StorageObjectsFacade(repository.Object, new NullLogger<StorageObjectsFacade>());
+
+        HighLevelAttributeValue value = new HighLevelAttributeValue()
+        {
+            TypeTag = AttrTypeTag.CkBool,
+            ValueAsBool = true
+        };
+
+        VoidDomainResult domainResult = await storageObjectFacade.SetObjectAttribute(12U, objectId, CKA.CKA_MODIFIABLE.ToString(), value, default);
+        domainResult.AssertOk();
 
         repository.VerifyAll();
     }

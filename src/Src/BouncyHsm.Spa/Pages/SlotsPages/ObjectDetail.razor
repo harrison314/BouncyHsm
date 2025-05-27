@@ -1,5 +1,6 @@
 ﻿@page "/Slots/Detail/{Id:int}/object/{ObjectId:guid}"
 @using BouncyHsm.Client
+@using BouncyHsm.Spa.Shared.ForSlotPages
 @inject IBouncyHsmClient bouncyHsmClient
 
 <PageTitle>Storage object detail</PageTitle>
@@ -34,6 +35,7 @@ else
                 <th>Type</th>
                 <th>Size</th>
                 <th>Value</th>
+                <th>Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -50,14 +52,36 @@ else
                             <BouncyHsm.Spa.Shared.Common.HexStringView Hex="@attr.ValueHex" Delimiter=" " BytesOnLine="20" />
                         </div>
                     </td>
+                    <td>
+                        <button class="btn btn-outline-secondary btn-sm mt-0"
+                                title="Edit"
+                                disabled="@(!this.CanShowEdit(attr))"
+                                @onclick="() => this.EditAttribute(attr.AttributeType)">
+                            <span class="icon-Edit icon-1x"></span>
+                        </button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <BSOffCanvas @ref="offCanvasForEdit" Placement="@BlazorStrap.Placement.Right">
+        <Header>
+            @if (this.attrEditContext != null)
+            {
+                <h4 class="text-break"><span class="icon-Edit icon-1x"></span>Edit @this.attrEditContext.AttributeName</h4>
+            }
+        </Header>
+        <Content>
+            <AttrEdit Context="@this.attrEditContext" AttributeUpdated="@this.OnAttributeUpdate" />
+        </Content>
+    </BSOffCanvas>
 }
 
 @code {
     private StorageObjectDetailDto? objectDetail = null;
+    private BSOffCanvas? offCanvasForEdit = null;
+    private AttrEditContext? attrEditContext = null;
 
     [Parameter]
     public int Id
@@ -83,5 +107,34 @@ else
         this.objectDetail = null;
         await Task.Yield();
         this.objectDetail = await this.bouncyHsmClient.GetStorageObjectAsync(this.Id, this.ObjectId);
+    }
+
+    private bool CanShowEdit(BouncyHsm.Client.StorageObjectAttributeDto soa)
+    {
+        return soa.AttributeType switch
+        {
+            "CKA_CLASS" => false,
+            "CKA_TOKEN" => false,
+            "CKA_KEY_TYPE" => false,
+            _ => true
+        };
+    }
+
+    private async Task EditAttribute(string attributeType)
+    {
+        System.Diagnostics.Debug.Assert(this.offCanvasForEdit != null);
+
+        this.attrEditContext = new AttrEditContext(this.Id, this.ObjectId, attributeType);
+        await this.offCanvasForEdit.ShowAsync();
+    }
+
+    private async Task OnAttributeUpdate(string attributeType)
+    {
+        System.Diagnostics.Debug.Assert(this.offCanvasForEdit != null);
+
+        this.attrEditContext = null;
+        await this.offCanvasForEdit.HideAsync();
+
+        await this.Reload();
     }
 }

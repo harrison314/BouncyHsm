@@ -1,0 +1,52 @@
+﻿@using BouncyHsm.Client
+
+<h5 class="mt-2">Original value</h5>
+<code>@this.AttributeValue.ValueAsBool</code>
+
+<h5 class="mt-2">New value</h5>
+<select class="form-select" @bind="@this.value">
+    <option value="@TrueValue">True</option>
+    <option value="@FalseValue">False</option>
+</select>
+
+<div class="justify-content-end pt-4">
+    <button type="button" class="btn btn-primary" @onclick="@this.UpdateValue">
+        <span class="icon-Edit icon-1x"></span> Update
+    </button>
+</div>
+
+@code {
+    private const string TrueValue = "True";
+    private const string FalseValue = "False";
+
+    private string value = FalseValue;
+
+    [Parameter, EditorRequired]
+    public HighLevelAttributeValueDto AttributeValue
+    {
+        get;
+        set;
+    } = default!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<HighLevelAttributeValueDto> ValueUpdated
+    {
+        get;
+        set;
+    } = default!;
+
+    protected override void OnParametersSet()
+    {
+        this.value = (this.AttributeValue.ValueAsBool ?? false) ? TrueValue : FalseValue;
+    }
+
+    private async Task UpdateValue()
+    {
+        await this.ValueUpdated.InvokeAsync(
+            new HighLevelAttributeValueDto
+            {
+                TypeTag = this.AttributeValue.TypeTag,
+                ValueAsBool = (this.value == TrueValue)
+            });
+    }
+}

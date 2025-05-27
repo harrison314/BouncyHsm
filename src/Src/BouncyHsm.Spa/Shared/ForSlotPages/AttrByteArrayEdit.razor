@@ -1,0 +1,95 @@
+﻿@using BouncyHsm.Client
+@using System.Text
+<h5 class="mt-2">Original value</h5>
+<content class="text-container">
+    <BouncyHsm.Spa.Shared.Common.HexStringView Hex="@this.GetHexString()" Delimiter=" " BytesOnLine="8" />
+</content>
+
+<h5 class="mt-2">New value</h5>
+<textarea class="form-control" @bind="this.value" rows="3"></textarea>
+<small>Use Base64 encoding of HEX numbers.</small>
+
+<div class="justify-content-end pt-4">
+    <button type="button"
+            class="btn btn-primary @(this.IsValidByteArray(this.value, out _))"
+            @onclick="@this.UpdateValue">
+        <span class="icon-Edit icon-1x"></span> Update
+    </button>
+</div>
+
+
+@code {
+    private string value = string.Empty;
+
+    [Parameter, EditorRequired]
+    public HighLevelAttributeValueDto AttributeValue
+    {
+        get;
+        set;
+    } = default!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<HighLevelAttributeValueDto> ValueUpdated
+    {
+        get;
+        set;
+    } = default!;
+
+    private async Task UpdateValue()
+    {
+        if (this.IsValidByteArray(this.value, out byte[] bytes))
+        {
+            await this.ValueUpdated.InvokeAsync(
+              new HighLevelAttributeValueDto
+              {
+                  TypeTag = this.AttributeValue.TypeTag,
+                  ValueAsByteArray = bytes
+              });
+        }
+    }
+
+    private string GetHexString()
+    {
+        byte[] bytes = this.AttributeValue.ValueAsByteArray ?? Array.Empty<byte>();
+        if (bytes.Length > 40)
+        {
+            return Convert.ToHexString(bytes, 0, 66) + "......";
+        }
+        else
+        {
+            return Convert.ToHexString(bytes);
+        }
+    }
+
+    private bool IsValidByteArray(string value, out byte[] bytes)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            bytes = Array.Empty<byte>();
+            return true;
+        }
+
+        string trimmedValue = System.Text.RegularExpressions.Regex.Replace(value, @"\s+", string.Empty);
+
+        try
+        {
+            bytes = Convert.FromHexString(trimmedValue);
+            return true;
+        }
+        catch
+        {
+            //NOP
+        }
+
+        try
+        {
+            bytes = Convert.FromBase64String(value.Trim());
+            return true;
+        }
+        catch
+        {
+            bytes = Array.Empty<byte>();
+            return false;
+        }
+    }
+}

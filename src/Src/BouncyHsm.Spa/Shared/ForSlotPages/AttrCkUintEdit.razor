@@ -1,0 +1,82 @@
+﻿@using BouncyHsm.Client
+<h5 class="mt-2">Original value</h5>
+@if (this.AttributeValue?.ValueAsUint != null)
+{
+    <section>
+        Dec: <code>@this.AttributeValue.ValueAsUint</code><br />
+        Hex: <code>@this.AttributeValue.ValueAsUint.Value.ToString("X02")</code>
+    </section>
+}
+
+<h5 class="mt-2">New value</h5>
+<input type="text" class="form-control" @bind="this.value" pattern="(0x)?[0-9]+" />
+
+<div class="justify-content-end pt-4">
+    <button type="button"
+            class="btn btn-primary @(this.TryParseNumber(this.value, out _) ? "" : "disabled")"
+            @onclick="@this.UpdateValue">
+        <span class="icon-Edit icon-1x"></span> Update
+    </button>
+</div>
+
+
+@code {
+    private string value = string.Empty;
+
+    [Parameter, EditorRequired]
+    public HighLevelAttributeValueDto AttributeValue
+    {
+        get;
+        set;
+    } = default!;
+
+    [Parameter, EditorRequired]
+    public EventCallback<HighLevelAttributeValueDto> ValueUpdated
+    {
+        get;
+        set;
+    } = default!;
+
+    protected override void OnParametersSet()
+    {
+        this.value = (this.AttributeValue.ValueAsUint ?? 0).ToString();
+    }
+
+    private async Task UpdateValue()
+    {
+        if (this.TryParseNumber(this.value, out int parsedValue))
+        {
+            await this.ValueUpdated.InvokeAsync(
+            new HighLevelAttributeValueDto
+            {
+                TypeTag = this.AttributeValue.TypeTag,
+                ValueAsUint = parsedValue
+            });
+        }
+    }
+
+    private bool TryParseNumber(string value, out int result)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            result = default;
+            return false;
+        }
+
+        string trimmedValue = System.Text.RegularExpressions.Regex.Replace(value, @"\s+", string.Empty);
+        if (trimmedValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return int.TryParse(trimmedValue[2..],
+                System.Globalization.NumberStyles.HexNumber,
+                null,
+                out result);
+        }
+        else
+        {
+            return int.TryParse(trimmedValue,
+                System.Globalization.NumberStyles.None,
+                null,
+                out result);
+        }
+    }
+}
