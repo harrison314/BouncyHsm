@@ -27,20 +27,34 @@ internal abstract class DecryptState : ISessionState
 
     public byte[] Update(byte[] partData)
     {
-        byte[]? plainText = this.UpdateInternal(partData);
-        this.IsUpdated = true;
+        try
+        {
+            byte[]? plainText = this.UpdateInternal(partData);
+            this.IsUpdated = true;
 
-        return plainText ?? Array.Empty<byte>();
+            return plainText ?? Array.Empty<byte>();
+        }
+        catch (Exception ex)
+        {
+            throw this.HandleError(ex);
+        }
     }
 
     protected abstract byte[]? UpdateInternal(byte[] partData);
 
     public byte[] DoFinal(byte[] partData)
     {
-        byte[]? cipherText = this.DoFinalInternal(partData);
-        this.IsUpdated = false;
+        try
+        {
+            byte[]? cipherText = this.DoFinalInternal(partData);
+            this.IsUpdated = false;
 
-        return cipherText ?? Array.Empty<byte>();
+            return cipherText ?? Array.Empty<byte>();
+        }
+        catch (Exception ex)
+        {
+            throw this.HandleError(ex);
+        }
     }
 
     protected abstract byte[]? DoFinalInternal(byte[] partData);
@@ -52,8 +66,25 @@ internal abstract class DecryptState : ISessionState
             throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Error: Decrypt empty data.");
         }
 
-        return this.DoFinalInternal() ?? Array.Empty<byte>();
+        try
+        {
+            return this.DoFinalInternal() ?? Array.Empty<byte>();
+        }
+        catch (Exception ex)
+        {
+            throw this.HandleError(ex);
+        }
     }
 
     protected abstract byte[]? DoFinalInternal();
+
+    private RpcPkcs11Exception HandleError(Exception ex)
+    {
+        if (ex is RpcPkcs11Exception pkcs11Ex)
+        {
+            return pkcs11Ex;
+        }
+
+        throw new NotImplementedException();
+    }
 }
