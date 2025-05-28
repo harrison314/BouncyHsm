@@ -90,6 +90,11 @@ internal abstract class EncryptState : ISessionState
             return pkcs11Ex;
         }
 
-        throw new NotImplementedException();
+        if (ex is Org.BouncyCastle.Crypto.DataLengthException)
+        {
+            return new RpcPkcs11Exception(CKR.CKR_DATA_LEN_RANGE, "Error: Data length range exceeded.", ex);
+        }
+
+        return new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Error: Decrypt operation failed.", ex);
     }
 }
