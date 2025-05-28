@@ -239,7 +239,7 @@ public class T25_Decrypt
         Assert.AreEqual(Convert.ToHexString(plainText), Convert.ToHexString(decrypted));
     }
 
-    public IObjectHandle GenerateAesKey(ISession session, int size)
+    private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
         byte[] ckId = session.GenerateRandom(32);
