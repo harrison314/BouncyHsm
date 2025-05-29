@@ -27,7 +27,7 @@ using Nuke.Common.CI.GitHubActions;
     InvokedTargets = new[] { nameof(BuildAll) })]
 public partial class Build : NukeBuild
 {
-    private static string ThisVersion = "1.4.0";
+    private static string ThisVersion = "1.5.0";
     public static int Main() => Execute<Build>(x => x.BuildAll);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
