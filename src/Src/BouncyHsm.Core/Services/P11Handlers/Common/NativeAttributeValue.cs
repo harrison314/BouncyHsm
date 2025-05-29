@@ -21,6 +21,7 @@ internal class NativeAttributeValue : IAttributeValue
     public const int AttrValueFromNativeTypeCkDate = 0x08;
 
 
+    public const int AttrValueToNativeTypeVoid = 0x00;
     public const int AttrValueToNativeTypeByteArray = 0x01;
     public const int AttrValueToNativeTypeBool = 0x02;
     public const int AttrValueToNativeTypeCkUint = 0x04;

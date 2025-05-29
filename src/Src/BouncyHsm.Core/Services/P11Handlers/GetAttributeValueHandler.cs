@@ -65,6 +65,7 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
             }
             else
             {
+                outValue.ValueType = NativeAttributeValue.AttrValueToNativeTypeVoid;
                 this.logger.LogWarning("Return attribute {attributeType} with error {errorType} on position {position}.",
                     attributeType,
                     attributeValueResult,
