@@ -18,6 +18,7 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value);
 #define AttrValueFromNative_TypeHint_CkUlong 0x04
 #define AttrValueFromNative_TypeHint_CkDate 0x08
 
+#define AttrValueToNative_TypeHint_Void 0x00
 #define AttrValueToNative_TypeHint_Binary 0x01
 #define AttrValueToNative_TypeHint_Bool 0x02
 #define AttrValueToNative_TypeHint_CkUlong 0x04

@@ -1172,54 +1172,58 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                     log_message(LOG_LEVEL_ERROR, "Invalid ValueType %i on line %i in function %s.", (int)outAttrPtr->ValueType, __LINE__, __FUNCTION__);
                     return CKR_DEVICE_ERROR;
                 }
+
+                if (pTemplate[i].pValue != NULL)
+                {
+                    if (newValueLen < pTemplate[i].ulValueLen)
+                    {
+                        rvMethod = CKR_BUFFER_TOO_SMALL;
+                        pTemplate[i].ulValueLen = newValueLen;
+                        continue;
+                    }
+
+                    if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Binary)
+                    {
+                        memcpy(pTemplate[i].pValue, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
+                    }
+                    else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
+                    {
+                        *((CK_BBOOL*)pTemplate[i].pValue) = (CK_BBOOL)(outAttrPtr->ValueBool ? CK_TRUE : CK_FALSE);
+                    }
+                    else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkUlong)
+                    {
+                        *((CK_ULONG*)pTemplate[i].pValue) = (CK_ULONG)outAttrPtr->ValueUint;
+                    }
+                    else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkDate)
+                    {
+                        if (outAttrPtr->ValueCkDate != NULL)
+                        {
+                            CK_DATE* date = (CK_DATE*)pTemplate[i].pValue;
+
+                            date->day[0] = (CK_CHAR)outAttrPtr->ValueCkDate[0];
+                            date->day[1] = (CK_CHAR)outAttrPtr->ValueCkDate[1];
+                            date->month[0] = (CK_CHAR)outAttrPtr->ValueCkDate[3];
+                            date->month[1] = (CK_CHAR)outAttrPtr->ValueCkDate[4];
+                            date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
+                            date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
+                            date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
+                            date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[9];
+                        }
+                    }
+                    else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Void)
+                    {
+                        log_message(LOG_LEVEL_TRACE, "Void ValueType, skip processing, on line %i in function %s.", __LINE__, __FUNCTION__);
+                    }
+                    else
+                    {
+                        log_message(LOG_LEVEL_ERROR, "Invalid ValueType %i on line %i in function %s.", (int)outAttrPtr->ValueType, __LINE__, __FUNCTION__);
+                        return CKR_DEVICE_ERROR;
+                    }
+                }
             }
             else
             {
                 newValueLen = ConvertCkSpecialUint(outAttrPtr->ValueLen);
-            }
-
-            if (pTemplate[i].pValue != NULL)
-            {
-                if (newValueLen < pTemplate[i].ulValueLen)
-                {
-                    rvMethod = CKR_BUFFER_TOO_SMALL;
-                    pTemplate[i].ulValueLen = newValueLen;
-                    continue;
-                }
-
-                if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Binary)
-                {
-                    memcpy(pTemplate[i].pValue, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
-                }
-                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
-                {
-                    *((CK_BBOOL*)pTemplate[i].pValue) = (CK_BBOOL)(outAttrPtr->ValueBool ? CK_TRUE : CK_FALSE);
-                }
-                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkUlong)
-                {
-                    *((CK_ULONG*)pTemplate[i].pValue) = (CK_ULONG)outAttrPtr->ValueUint;
-                }
-                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkDate)
-                {
-                    if (outAttrPtr->ValueCkDate != NULL)
-                    {
-                        CK_DATE* date = (CK_DATE*)pTemplate[i].pValue;
-
-                        date->day[0] = (CK_CHAR)outAttrPtr->ValueCkDate[0];
-                        date->day[1] = (CK_CHAR)outAttrPtr->ValueCkDate[1];
-                        date->month[0] = (CK_CHAR)outAttrPtr->ValueCkDate[3];
-                        date->month[1] = (CK_CHAR)outAttrPtr->ValueCkDate[4];
-                        date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
-                        date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
-                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
-                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[9];
-                    }
-                }
-                else
-                {
-                    log_message(LOG_LEVEL_ERROR, "Invalid ValueType %i on line %i in function %s.", (int)outAttrPtr->ValueType, __LINE__, __FUNCTION__);
-                    return CKR_DEVICE_ERROR;
-                }
             }
 
             pTemplate[i].ulValueLen = newValueLen;
