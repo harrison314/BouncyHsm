@@ -3,7 +3,6 @@ using BouncyHsm.Core.Services.P11Handlers.Common;
 
 namespace BouncyHsm.Core.Services.Profiles;
 
-//TODO: Check spec 3.1
 public sealed class FilterFipsProfileOperation : ProfileOperation
 {
     public FilterFipsProfileOperation()
@@ -116,26 +115,6 @@ public sealed class FilterFipsProfileOperation : ProfileOperation
             CKM.CKM_SHA_1_HMAC_GENERAL,
             CKM.CKM_SHA1_RSA_PKCS,
             CKM.CKM_SHA1_RSA_PKCS_PSS,
-            //CKM.CKM_SHA3_224,
-            //CKM.CKM_SHA3_224_HMAC,
-            //CKM.CKM_SHA3_224_HMAC_GENERAL,
-            //CKM.CKM_SHA3_224_RSA_PKCS,
-            //CKM.CKM_SHA3_224_RSA_PKCS_PSS,
-            //CKM.CKM_SHA3_256,
-            //CKM.CKM_SHA3_256_HMAC,
-            //CKM.CKM_SHA3_256_HMAC_GENERAL,
-            //CKM.CKM_SHA3_256_RSA_PKCS,
-            //CKM.CKM_SHA3_256_RSA_PKCS_PSS,
-            //CKM.CKM_SHA3_384,
-            //CKM.CKM_SHA3_384_HMAC,
-            //CKM.CKM_SHA3_384_HMAC_GENERAL,
-            //CKM.CKM_SHA3_384_RSA_PKCS,
-            //CKM.CKM_SHA3_384_RSA_PKCS_PSS,
-            //CKM.CKM_SHA3_512,
-            //CKM.CKM_SHA3_512_HMAC,
-            //CKM.CKM_SHA3_512_HMAC_GENERAL,
-            //CKM.CKM_SHA3_512_RSA_PKCS,
-            //CKM.CKM_SHA3_512_RSA_PKCS_PSS,
             CKM.CKM_SHA224,
             CKM.CKM_SHA224_HMAC,
             CKM.CKM_SHA224_HMAC_GENERAL,
@@ -169,6 +148,89 @@ public sealed class FilterFipsProfileOperation : ProfileOperation
             CKM.CKM_X9_42_DH_DERIVE,
             CKM.CKM_X9_42_DH_KEY_PAIR_GEN,
             CKM.CKM_X9_42_DH_PARAMETER_GEN,
+
+         // From PKCS#11 version 3.0
+
+           // CKM.CKM_SHA_1_KEY_GEN,
+            CKM.CKM_SHA224_KEY_GEN,
+            CKM.CKM_SHA256_KEY_GEN,
+            CKM.CKM_SHA384_KEY_GEN,
+            CKM.CKM_SHA512_KEY_GEN,
+            CKM.CKM_SHA512_224_KEY_GEN,
+            CKM.CKM_SHA512_256_KEY_GEN,
+            CKM.CKM_SHA512_T_KEY_GEN,
+
+            CKM.CKM_SHA3_256,
+            CKM.CKM_SHA3_256_HMAC,
+            CKM.CKM_SHA3_256_HMAC_GENERAL,
+            CKM.CKM_SHA3_256_KEY_GEN,
+            CKM.CKM_SHA3_224,
+            CKM.CKM_SHA3_224_HMAC,
+            CKM.CKM_SHA3_224_HMAC_GENERAL,
+            CKM.CKM_SHA3_224_KEY_GEN,
+            CKM.CKM_SHA3_384,
+            CKM.CKM_SHA3_384_HMAC,
+            CKM.CKM_SHA3_384_HMAC_GENERAL,
+            CKM.CKM_SHA3_384_KEY_GEN,
+            CKM.CKM_SHA3_512,
+            CKM.CKM_SHA3_512_HMAC,
+            CKM.CKM_SHA3_512_HMAC_GENERAL,
+            CKM.CKM_SHA3_512_KEY_GEN,
+
+            CKM.CKM_SHA3_256_KEY_DERIVATION,
+            CKM.CKM_SHA3_224_KEY_DERIVATION,
+            CKM.CKM_SHA3_384_KEY_DERIVATION,
+            CKM.CKM_SHA3_512_KEY_DERIVATION,
+
+            CKM.CKM_SHA3_256_RSA_PKCS,
+            CKM.CKM_SHA3_384_RSA_PKCS,
+            CKM.CKM_SHA3_512_RSA_PKCS,
+            CKM.CKM_SHA3_256_RSA_PKCS_PSS,
+            CKM.CKM_SHA3_384_RSA_PKCS_PSS,
+            CKM.CKM_SHA3_512_RSA_PKCS_PSS,
+            CKM.CKM_SHA3_224_RSA_PKCS,
+            CKM.CKM_SHA3_224_RSA_PKCS_PSS,
+
+            CKM.CKM_ECDSA_SHA3_224,
+            CKM.CKM_ECDSA_SHA3_256,
+            CKM.CKM_ECDSA_SHA3_384,
+            CKM.CKM_ECDSA_SHA3_512,
+
+            //CKM.CKM_BLAKE2B_160,
+            //CKM.CKM_BLAKE2B_160_HMAC,
+            //CKM.CKM_BLAKE2B_160_HMAC_GENERAL,
+            //CKM.CKM_BLAKE2B_160_KEY_DERIVE,
+            //CKM.CKM_BLAKE2B_160_KEY_GEN,
+            //CKM.CKM_BLAKE2B_256,
+            //CKM.CKM_BLAKE2B_256_HMAC,
+            //CKM.CKM_BLAKE2B_256_HMAC_GENERAL,
+            //CKM.CKM_BLAKE2B_256_KEY_DERIVE,
+            //CKM.CKM_BLAKE2B_256_KEY_GEN,
+            //CKM.CKM_BLAKE2B_384,
+            //CKM.CKM_BLAKE2B_384_HMAC,
+            //CKM.CKM_BLAKE2B_384_HMAC_GENERAL,
+            //CKM.CKM_BLAKE2B_384_KEY_DERIVE,
+            //CKM.CKM_BLAKE2B_384_KEY_GEN,
+            //CKM.CKM_BLAKE2B_512,
+            //CKM.CKM_BLAKE2B_512_HMAC,
+            //CKM.CKM_BLAKE2B_512_HMAC_GENERAL,
+            //CKM.CKM_BLAKE2B_512_KEY_DERIVE,
+            //CKM.CKM_BLAKE2B_512_KEY_GEN,
+
+            //CKM.CKM_POLY1305_KEY_GEN,
+            //CKM.CKM_POLY1305,
+
+            //CKM.CKM_CHACHA20_KEY_GEN,
+            //CKM.CKM_CHACHA20,
+            //CKM.CKM_CHACHA20_POLY1305,
+
+            //CKM.CKM_SALSA20_KEY_GEN,
+            //CKM.CKM_SALSA20,
+            //CKM.CKM_SALSA20_POLY1305,
+
+            CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN,
+            CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN,
+            CKM.CKM_EDDSA,
         };
 
         return fips;
