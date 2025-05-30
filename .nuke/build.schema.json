@@ -1,32 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "properties": {
-    "Configuration": {
-      "type": "string",
-      "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
-      "enum": [
-        "Debug",
-        "Release"
-      ]
-    },
-    "NetRuntime": {
-      "type": "string",
-      "description": "Net runtime for compilation for specific target",
-      "enum": [
-        "linux_arm",
-        "linux_arm64",
-        "linux_musl_x64",
-        "linux_x64",
-        "None",
-        "win_arm64",
-        "win_x64",
-        "win_x86",
-        "win10_arm64",
-        "win10_x64",
-        "win10_x86"
-      ]
-    }
-  },
   "definitions": {
     "Host": {
       "type": "string",
@@ -129,5 +102,38 @@
       }
     }
   },
-  "$ref": "#/definitions/NukeBuild"
+  "allOf": [
+    {
+      "properties": {
+        "Configuration": {
+          "type": "string",
+          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
+          "enum": [
+            "Debug",
+            "Release"
+          ]
+        },
+        "NetRuntime": {
+          "type": "string",
+          "description": "Net runtime for compilation for specific target",
+          "enum": [
+            "linux_arm",
+            "linux_arm64",
+            "linux_musl_x64",
+            "linux_x64",
+            "None",
+            "win_arm64",
+            "win_x64",
+            "win_x86",
+            "win10_arm64",
+            "win10_x64",
+            "win10_x86"
+          ]
+        }
+      }
+    },
+    {
+      "$ref": "#/definitions/NukeBuild"
+    }
+  ]
 }
