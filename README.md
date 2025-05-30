@@ -39,6 +39,8 @@ _Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40 with some 
 * Mongomery curves (X25519, X448).
 * Supports secrets (HMAC, derive,...)
 * Supports AES keys.
+* Supports Salsa20 keys.
+* Supports ChaCha20 keys (also ChaCha20Poly1305 algorithm).
 * [Supports mechanisms](/Doc/SuportedAlgorithms.md)
 * Supports [custom profiles for mechanisms](/Doc/Profiles.md) (To limit mechanisms to simulate a specific type of HSM or card).
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
