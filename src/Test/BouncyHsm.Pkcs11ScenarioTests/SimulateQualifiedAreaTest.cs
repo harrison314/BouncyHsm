@@ -88,7 +88,7 @@ public sealed class SimulateQualifiedAreaTest
 
 
     [TestMethod]
-    public void TestMethod1()
+    public void SmokeTest()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,

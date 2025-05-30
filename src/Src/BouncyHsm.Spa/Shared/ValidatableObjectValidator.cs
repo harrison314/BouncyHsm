@@ -18,13 +18,13 @@ public sealed class ValidatableObjectValidator : ComponentBase, IDisposable
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        EditContext previousEditContext = EditContext;
+        EditContext previousEditContext = this.EditContext;
 
         await base.SetParametersAsync(parameters);
 
-        if (EditContext != previousEditContext)
+        if (this.EditContext != previousEditContext)
         {
-            EditContextChanged();
+            this.EditContextChanged();
         }
     }
 
@@ -37,8 +37,8 @@ public sealed class ValidatableObjectValidator : ComponentBase, IDisposable
 
     private void EditContextChanged()
     {
-        this.validationMessageStore = new ValidationMessageStore(EditContext);
-        HookUpEditContextEvents();
+        this.validationMessageStore = new ValidationMessageStore(this.EditContext);
+        this.HookUpEditContextEvents();
     }
     private void HookUpEditContextEvents()
     {

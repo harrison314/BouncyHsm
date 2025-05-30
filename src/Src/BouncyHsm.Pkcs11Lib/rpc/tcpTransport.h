@@ -31,7 +31,6 @@ typedef struct _sockContext {
     int isInitialized;
 } SockContext_t;
 
-//TODO: return result
 int SockContext_init(SockContext_t* ctx, const char* host, int port);
 
 #define nmrpc_global_context_tcp_init(ctxPtr, socket_dataPtr) nmrpc_global_context_init((ctxPtr),(socket_dataPtr), &sock_writerequest, &sock_readresponse, &readclose, NULL)

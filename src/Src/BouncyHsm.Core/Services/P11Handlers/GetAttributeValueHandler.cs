@@ -66,10 +66,21 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
             else
             {
                 outValue.ValueType = NativeAttributeValue.AttrValueToNativeTypeVoid;
-                this.logger.LogWarning("Return attribute {attributeType} with error {errorType} on position {position}.",
-                    attributeType,
-                    attributeValueResult,
-                    i);
+                if (Enum.IsDefined<CKA>(attributeType))
+                {
+                    this.logger.LogWarning("Return attribute {attributeType} with error {errorType} on position {position}.",
+                        attributeType,
+                        attributeValueResult,
+                        i);
+                }
+                else
+                {
+                    this.logger.LogWarning("Return attribute {attributeType} ({attributeTypeHex}) with error {errorType} on position {position}.",
+                        attributeType,
+                        string.Concat("0x", ((uint)attributeType).ToString("X8")),
+                        attributeValueResult,
+                        i);
+                }
             }
 
             values[i] = outValue;

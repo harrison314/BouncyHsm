@@ -48,7 +48,7 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
             this.CkaValueLen = (uint)this.CkaValue.Length;
         }
 
-        this.CkaCheckValue = DigestUtils.ComputeCheckValue(this.CkaValue); //TODO: check with specification
+        this.CkaCheckValue = DigestUtils.ComputeCheckValue(this.CkaValue);
     }
 
     public override void Validate()
@@ -61,8 +61,6 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
                $"Attribute {CKA.CKA_KEY_TYPE} is not generic seecrit key type.");
         }
 
-        // TODO: Check if is need use min length
-        //if (this.CkaValueLen < this.GetMinKeySize(this.CkaKeyType))
         if (this.CkaValueLen < 1)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
