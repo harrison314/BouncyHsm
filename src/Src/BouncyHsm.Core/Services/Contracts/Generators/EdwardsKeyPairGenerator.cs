@@ -45,8 +45,8 @@ internal class EdwardsKeyPairGenerator : IKeyPairGenerator
 
         (AsymmetricKeyParameter publicKey, AsymmetricKeyParameter privateKey) = this.GenerateInternal(secureRandom, ecParams);
 
-        EdwardsPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate);
-        EdwardsPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate);
+        EdwardsPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate, ecParams);
+        EdwardsPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate, ecParams);
 
         return (pubKeyObject, privKeyObject);
     }
@@ -87,7 +87,7 @@ internal class EdwardsKeyPairGenerator : IKeyPairGenerator
         return (keyPair.Public, keyPair.Private);
     }
 
-    private EdwardsPrivateKeyObject CreatePrivateKey(AsymmetricKeyParameter privateKey, IReadOnlyDictionary<CKA, IAttributeValue> privateKeyTemplate)
+    private EdwardsPrivateKeyObject CreatePrivateKey(AsymmetricKeyParameter privateKey, IReadOnlyDictionary<CKA, IAttributeValue> privateKeyTemplate, byte[] ecParams)
     {
         this.logger.LogTrace("Entering to CreatePrivateKey.");
 
@@ -104,11 +104,14 @@ internal class EdwardsKeyPairGenerator : IKeyPairGenerator
         }
 
         privateKeyObject.SetPrivateKey(privateKey);
+        // Overide the CKA_EC_PARAMS with the one from the template,
+        // SetPrivateKey() set CKA_EC_PARAMS with compiuted value
+        privateKeyObject.CkaEcParams = ecParams;
 
         return privateKeyObject;
     }
 
-    private EdwardsPublicKeyObject CreatePublicKey(AsymmetricKeyParameter publicKey, IReadOnlyDictionary<CKA, IAttributeValue> publicKeyTemplate)
+    private EdwardsPublicKeyObject CreatePublicKey(AsymmetricKeyParameter publicKey, IReadOnlyDictionary<CKA, IAttributeValue> publicKeyTemplate, byte[] ecParams)
     {
         this.logger.LogTrace("Entering to CreatePublicKey.");
 
@@ -127,7 +130,7 @@ internal class EdwardsKeyPairGenerator : IKeyPairGenerator
         edPublicKeyObject.SetPublicKey(publicKey);
         // Overide the CKA_EC_PARAMS with the one from the template,
         // SetPublicKey() set CKA_EC_PARAMS with compiuted value
-        edPublicKeyObject.CkaEcParams = publicKeyTemplate.GetRequiredAttributeBytes(CKA.CKA_EC_PARAMS);
+        edPublicKeyObject.CkaEcParams = ecParams;
 
         return edPublicKeyObject;
     }

@@ -43,8 +43,8 @@ internal class MontgomeryKeyPairGenerator : IKeyPairGenerator
 
         (AsymmetricKeyParameter publicKey, AsymmetricKeyParameter privateKey) = this.GenerateInternal(secureRandom, ecParams);
 
-        MontgomeryPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate);
-        MontgomeryPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate);
+        MontgomeryPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate, ecParams);
+        MontgomeryPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate, ecParams);
 
         return (pubKeyObject, privKeyObject);
     }
@@ -85,7 +85,7 @@ internal class MontgomeryKeyPairGenerator : IKeyPairGenerator
         return (keyPair.Public, keyPair.Private);
     }
 
-    private MontgomeryPrivateKeyObject CreatePrivateKey(AsymmetricKeyParameter privateKey, IReadOnlyDictionary<CKA, IAttributeValue> privateKeyTemplate)
+    private MontgomeryPrivateKeyObject CreatePrivateKey(AsymmetricKeyParameter privateKey, IReadOnlyDictionary<CKA, IAttributeValue> privateKeyTemplate, byte[] ecParams)
     {
         this.logger.LogTrace("Entering to CreatePrivateKey.");
 
@@ -103,10 +103,14 @@ internal class MontgomeryKeyPairGenerator : IKeyPairGenerator
 
         privateKeyObject.SetPrivateKey(privateKey);
 
+        // Overide the CKA_EC_PARAMS with the one from the template,
+        // SetPrivateKey() set CKA_EC_PARAMS with compiuted value
+        privateKeyObject.CkaEcParams = ecParams;
+
         return privateKeyObject;
     }
 
-    private MontgomeryPublicKeyObject CreatePublicKey(AsymmetricKeyParameter publicKey, IReadOnlyDictionary<CKA, IAttributeValue> publicKeyTemplate)
+    private MontgomeryPublicKeyObject CreatePublicKey(AsymmetricKeyParameter publicKey, IReadOnlyDictionary<CKA, IAttributeValue> publicKeyTemplate, byte[] ecParams)
     {
         this.logger.LogTrace("Entering to CreatePublicKey.");
 
@@ -125,7 +129,7 @@ internal class MontgomeryKeyPairGenerator : IKeyPairGenerator
         edPublicKeyObject.SetPublicKey(publicKey);
         // Overide the CKA_EC_PARAMS with the one from the template,
         // SetPublicKey() set CKA_EC_PARAMS with compiuted value
-        edPublicKeyObject.CkaEcParams = publicKeyTemplate.GetRequiredAttributeBytes(CKA.CKA_EC_PARAMS);
+        edPublicKeyObject.CkaEcParams = ecParams;
 
         return edPublicKeyObject;
     }

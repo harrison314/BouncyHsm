@@ -47,8 +47,8 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
 
         (ECPublicKeyParameters publicKey, ECPrivateKeyParameters privateKey) = this.GenerateInternal(secureRandom, ecParams);
 
-        EcdsaPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate);
-        EcdsaPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate);
+        EcdsaPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate, ecParams);
+        EcdsaPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate, ecParams);
 
         return (pubKeyObject, privKeyObject);
     }
@@ -77,7 +77,7 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
         return ((ECPublicKeyParameters)keyPair.Public, (ECPrivateKeyParameters)keyPair.Private);
     }
 
-    private EcdsaPrivateKeyObject CreatePrivateKey(ECPrivateKeyParameters privateKey, IReadOnlyDictionary<CKA, IAttributeValue> privateKeyTemplate)
+    private EcdsaPrivateKeyObject CreatePrivateKey(ECPrivateKeyParameters privateKey, IReadOnlyDictionary<CKA, IAttributeValue> privateKeyTemplate, byte[] ecParams)
     {
         this.logger.LogTrace("Entering to CreatePrivateKey.");
 
@@ -94,11 +94,14 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
         }
 
         privateKeyObject.SetPrivateKey(privateKey);
+        // Overide the CKA_EC_PARAMS with the one from the template,
+        // SetPrivateKey() set CKA_EC_PARAMS with compiuted value
+        privateKeyObject.CkaEcParams = ecParams;
 
         return privateKeyObject;
     }
 
-    private EcdsaPublicKeyObject CreatePublicKey(ECPublicKeyParameters publicKey, IReadOnlyDictionary<CKA, IAttributeValue> publicKeyTemplate)
+    private EcdsaPublicKeyObject CreatePublicKey(ECPublicKeyParameters publicKey, IReadOnlyDictionary<CKA, IAttributeValue> publicKeyTemplate, byte[] ecParams)
     {
         this.logger.LogTrace("Entering to CreatePublicKey.");
 
@@ -117,7 +120,7 @@ internal class EcdsaKeyPairGenerator : IKeyPairGenerator
         ecdsaPublicKeyObject.SetPublicKey(publicKey);
         // Overide the CKA_EC_PARAMS with the one from the template,
         // SetPublicKey() set CKA_EC_PARAMS with compiuted value
-        ecdsaPublicKeyObject.CkaEcParams = publicKeyTemplate.GetRequiredAttributeBytes(CKA.CKA_EC_PARAMS);
+        ecdsaPublicKeyObject.CkaEcParams = ecParams;
 
         return ecdsaPublicKeyObject;
     }
