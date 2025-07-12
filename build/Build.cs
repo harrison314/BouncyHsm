@@ -157,10 +157,10 @@ public partial class Build : NukeBuild
                 Log.Warning("Native lib {0} not found.", linuxNativeLibx64);
             }
 
-            AbsolutePath linuxNativeLibx32 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x32.so";
+            AbsolutePath linuxNativeLibx32 = RootDirectory / "build_linux" / "BouncyHsm.Pkcs11Lib-x86.so";
             if (linuxNativeLibx32.Exists("file"))
             {
-                linuxNativeLibx32.Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x64" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
+                linuxNativeLibx32.Copy(ArtifactsTmpDirectory / "BouncyHsm" / "native" / "Linux-x86" / "BouncyHsm.Pkcs11Lib.so", ExistsPolicy.FileOverwrite);
 
                 CreateZip(linuxNativeLibx32,
                "Linux X86",
@@ -183,7 +183,7 @@ public partial class Build : NukeBuild
             }
             else
             {
-                Log.Warning("Native lib {0} not found.", linuxNativeLibx64);
+                Log.Warning("Native lib {0} not found.", rhelNativeLibx64);
             }
 
             (ArtifactsTmpDirectory / "BouncyHsm").ZipTo(ArtifactsDirectory / "BouncyHsm.zip",
