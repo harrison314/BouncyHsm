@@ -186,6 +186,8 @@ public partial class Build : NukeBuild
                 Log.Warning("Native lib {0} not found.", rhelNativeLibx64);
             }
 
+            (ArtifactsTmpDirectory / "BouncyHsm" / "data" / "keep.txt").TouchFile();
+
             (ArtifactsTmpDirectory / "BouncyHsm").ZipTo(ArtifactsDirectory / "BouncyHsm.zip",
                 t => t.Extension != ".pdb" && t.Name != "libman.json" && t.Name != ".gitkeep" && t.Name != "appsettings.Development.json");
 
