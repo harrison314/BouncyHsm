@@ -156,6 +156,10 @@ typedef struct _VerifyRecoverInitEnvelope VerifyRecoverInitEnvelope;
 typedef struct _VerifyRecoverRequest VerifyRecoverRequest;
 typedef struct _VerifyRecoverData VerifyRecoverData;
 typedef struct _VerifyRecoverEnvelope VerifyRecoverEnvelope;
+typedef struct _InitTokenRequest InitTokenRequest;
+typedef struct _InitTokenEnvelope InitTokenEnvelope;
+typedef struct _InitPinRequest InitPinRequest;
+typedef struct _InitPinEnvelope InitPinEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1772,6 +1776,47 @@ int VerifyRecoverEnvelope_Serialize(cmp_ctx_t* ctx, VerifyRecoverEnvelope* value
 int VerifyRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, VerifyRecoverEnvelope* value);
 int VerifyRecoverEnvelope_Release(VerifyRecoverEnvelope* value);
 
+typedef struct _InitTokenRequest
+{
+    AppIdentification AppId;
+    uint32_t SlotId;
+    Binary* Pin;
+    char* Label;
+} InitTokenRequest;
+
+int InitTokenRequest_Serialize(cmp_ctx_t* ctx, InitTokenRequest* value);
+int InitTokenRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, InitTokenRequest* value);
+int InitTokenRequest_Release(InitTokenRequest* value);
+
+typedef struct _InitTokenEnvelope
+{
+    uint32_t Rv;
+} InitTokenEnvelope;
+
+int InitTokenEnvelope_Serialize(cmp_ctx_t* ctx, InitTokenEnvelope* value);
+int InitTokenEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, InitTokenEnvelope* value);
+int InitTokenEnvelope_Release(InitTokenEnvelope* value);
+
+typedef struct _InitPinRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    Binary* Pin;
+} InitPinRequest;
+
+int InitPinRequest_Serialize(cmp_ctx_t* ctx, InitPinRequest* value);
+int InitPinRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, InitPinRequest* value);
+int InitPinRequest_Release(InitPinRequest* value);
+
+typedef struct _InitPinEnvelope
+{
+    uint32_t Rv;
+} InitPinEnvelope;
+
+int InitPinEnvelope_Serialize(cmp_ctx_t* ctx, InitPinEnvelope* value);
+int InitPinEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, InitPinEnvelope* value);
+int InitPinEnvelope_Release(InitPinEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -1963,6 +2008,8 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
 int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* request, GetTokenInfoEnvelope* response);
 int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListRequest* request, GetMechanismListEnvelope* response);
 int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoRequest* request, GetMechanismInfoEnvelope* response);
+int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request, InitTokenEnvelope* response);
+int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, InitPinEnvelope* response);
 int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPinEnvelope* response);
 int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* request, OpenSessionEnvelope* response);
 int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* request, CloseSessionEnvelope* response);

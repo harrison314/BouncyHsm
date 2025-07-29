@@ -574,7 +574,51 @@ CK_DEFINE_FUNCTION(CK_RV, C_InitToken)(CK_SLOT_ID slotID, CK_UTF8CHAR_PTR pPin, 
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    if (NULL == pLabel)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    InitTokenRequest request;
+    InitTokenEnvelope envelope;
+    Binary pinBinary;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SlotId = (uint32_t)slotID;
+    if (NULL != pPin)
+    {
+        pinBinary.data = (uint8_t*)pPin;
+        pinBinary.size = (size_t)ulPinLen;
+        request.Pin = &pinBinary;
+    }
+    else
+    {
+        request.Pin = NULL;
+    }
+
+    char labelBuffer[36];
+    CopyPaddedStrToStr(labelBuffer, 32, pLabel);
+    request.Label = labelBuffer;
+
+    int rv = nmrpc_call_InitToken(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    InitTokenEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 
@@ -582,7 +626,42 @@ CK_DEFINE_FUNCTION(CK_RV, C_InitPIN)(CK_SESSION_HANDLE hSession, CK_UTF8CHAR_PTR
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    InitPinRequest request;
+    InitPinEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+    Binary pinBinary;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    if (NULL == pPin)
+    {
+        request.Pin = NULL;
+    }
+    else
+    {
+        pinBinary.data = (uint8_t*)pPin;
+        pinBinary.size = (size_t)ulPinLen;
+        request.Pin = &pinBinary;
+    }
+
+    int rv = nmrpc_call_InitPIN(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    InitPinEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

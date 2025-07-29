@@ -35,6 +35,8 @@ public static partial class RequestProcessor
         "GetTokenInfo" => ProcessRequestBody<GetTokenInfoRequest, GetTokenInfoEnvelope>(serviceProvider, "GetTokenInfo", requestBody, static ckRv => new GetTokenInfoEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "GetMechanismList" => ProcessRequestBody<GetMechanismListRequest, GetMechanismListEnvelope>(serviceProvider, "GetMechanismList", requestBody, static ckRv => new GetMechanismListEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "GetMechanismInfo" => ProcessRequestBody<GetMechanismInfoRequest, GetMechanismInfoEnvelope>(serviceProvider, "GetMechanismInfo", requestBody, static ckRv => new GetMechanismInfoEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "InitToken" => ProcessRequestBody<InitTokenRequest, InitTokenEnvelope>(serviceProvider, "InitToken", requestBody, static ckRv => new InitTokenEnvelope(){ Rv = ckRv }, logger, cancellationToken),
+        "InitPIN" => ProcessRequestBody<InitPinRequest, InitPinEnvelope>(serviceProvider, "InitPIN", requestBody, static ckRv => new InitPinEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "SetPin" => ProcessRequestBody<SetPinRequest, SetPinEnvelope>(serviceProvider, "SetPin", requestBody, static ckRv => new SetPinEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "OpenSession" => ProcessRequestBody<OpenSessionRequest, OpenSessionEnvelope>(serviceProvider, "OpenSession", requestBody, static ckRv => new OpenSessionEnvelope(){ Rv = ckRv }, logger, cancellationToken),
         "CloseSession" => ProcessRequestBody<CloseSessionRequest, CloseSessionEnvelope>(serviceProvider, "CloseSession", requestBody, static ckRv => new CloseSessionEnvelope(){ Rv = ckRv }, logger, cancellationToken),
