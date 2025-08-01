@@ -33,6 +33,15 @@ public partial class InitPINHandler : IRpcRequestHandler<InitPinRequest, InitPin
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
+        if (!p11Session.IsRwSession)
+        {
+            this.logger.LogError("Session {SessionId} is not a read-write session.", request.SessionId);
+            return new InitPinEnvelope()
+            {
+                Rv = (uint)CKR.CKR_USER_NOT_LOGGED_IN
+            };
+        }
+
         SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(p11Session.SlotId, true, cancellationToken);
 
         byte[] pin = await this.GetPin(request, slot, cancellationToken);
