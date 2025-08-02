@@ -27,6 +27,8 @@ public class SignalrProtectedAuthPathProvider : IProtectedAuthPathProvider
         {
             ProtectedAuthPathWindowType.SetPin => $"Set PIN for: {slot.Token.Label}",
             ProtectedAuthPathWindowType.Login => $"Login to: {slot.Token.Label}",
+            ProtectedAuthPathWindowType.InitPin => $"Initialize PIN for: {slot.Token.Label}",
+            ProtectedAuthPathWindowType.InitToken => $"SO login for InitToken for: {slot.Token.Label}",
             _ => throw new InvalidProgramException($"Enum value {windowType} is not supported.")
         };
 

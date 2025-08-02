@@ -63,7 +63,7 @@ public partial class InitPINHandler : IRpcRequestHandler<InitPinRequest, InitPin
         {
             if (slot.Token.SimulateProtectedAuthPath)
             {
-                utf8Pin = await this.protectedAuthPathProvider.TryLoginProtected(ProtectedAuthPathWindowType.Login, //TODO: seprate login type
+                utf8Pin = await this.protectedAuthPathProvider.TryLoginProtected(ProtectedAuthPathWindowType.InitPin,
                     CKU.CKU_USER,
                     slot,
                     cancellationToken);
