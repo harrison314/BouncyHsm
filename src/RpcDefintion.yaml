@@ -38,6 +38,14 @@ Rpc:
     Summary: Call for C_GetMechanismInfo
     Request: GetMechanismInfoRequest
     Response: GetMechanismInfoEnvelope
+  InitToken:
+    Summary: Call for C_InitToken
+    Request: InitTokenRequest
+    Response: InitTokenEnvelope
+  InitPIN:
+    Summary: Call for C_InitPIN
+    Request: InitPinRequest
+    Response: InitPinEnvelope
   SetPin:
     Summary: Call for C_SetPIN
     Request: SetPinRequest
@@ -1214,6 +1222,31 @@ Messages:
     Fields:
       Rv: uint32
       Data: VerifyRecoverData?
+
+  InitTokenRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SlotId: uint32
+      Pin: binary?
+      Label: string
+
+  InitTokenEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  InitPinRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Pin: binary?
+
+  InitPinEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:

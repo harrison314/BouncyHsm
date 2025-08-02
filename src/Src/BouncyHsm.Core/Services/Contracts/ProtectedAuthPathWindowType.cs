@@ -3,5 +3,7 @@
 public enum ProtectedAuthPathWindowType
 {
     Login,
-    SetPin
+    SetPin,
+    InitPin,
+    InitToken
 }

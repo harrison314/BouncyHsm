@@ -4,10 +4,8 @@
 #include "bouncy-pkcs11.h"
 
 
-
-
-
 void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const char* src);
+void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8CHAR* src);
 
 CK_ULONG ConvertCkSpecialUint(CkSpecialUint value);
 

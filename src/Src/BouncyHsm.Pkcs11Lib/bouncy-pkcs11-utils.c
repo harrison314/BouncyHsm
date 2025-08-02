@@ -22,6 +22,25 @@ void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const ch
     memcpy((void*)destination, src, copySize);
 }
 
+void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8CHAR* src)
+{
+    LOG_ENTERING_TO_FUNCTION();
+    if (src == NULL)
+    {
+        destination[0] = '\0';
+        return;
+    }
+
+    int i = 0;
+    while (i < destinationSize - 1 && src[i] != '\0')
+    {
+        destination[i] = (char)src[i];
+        i++;
+    }
+
+    destination[i] = '\0';
+}
+
 CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 {
     LOG_ENTERING_TO_FUNCTION();

@@ -14,7 +14,9 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
     private readonly IProtectedAuthPathProvider protectedAuthPathProvider;
     private readonly ILogger<LoginHandler> logger;
 
-    public LoginHandler(IP11HwServices hwServices, IProtectedAuthPathProvider protectedAuthPathProvider, ILogger<LoginHandler> logger)
+    public LoginHandler(IP11HwServices hwServices,
+        IProtectedAuthPathProvider protectedAuthPathProvider,
+        ILogger<LoginHandler> logger)
     {
         this.hwServices = hwServices;
         this.protectedAuthPathProvider = protectedAuthPathProvider;
