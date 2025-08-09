@@ -22,7 +22,7 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
         this.logger = logger;
     }
 
-    public ValueTask<WaitForSlotEventEnvelope> Handle(WaitForSlotEventRequest request, CancellationToken cancellationToken)
+    public Task<WaitForSlotEventEnvelope> Handle(WaitForSlotEventRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle.");
 
@@ -31,7 +31,7 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
         if (request.Flags != (uint)CKF.CKF_DONT_BLOCK)
         {
             this.logger.LogError("WaitForSlotEvent accept flag only CKF_DONT_BLOCK actual value is {flags}. Returns CKR_ARGUMENTS_BAD.", request.Flags);
-            return new ValueTask<WaitForSlotEventEnvelope>(new WaitForSlotEventEnvelope()
+            return Task.FromResult(new WaitForSlotEventEnvelope()
             {
                 Rv = (uint)CKR.CKR_ARGUMENTS_BAD
             });
@@ -40,7 +40,7 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
         if (!request.IsSlotPtrSet)
         {
             this.logger.LogError("In WaitForSlotEvent is pSlot NULL. Returns CKR_ARGUMENTS_BAD.");
-            return new ValueTask<WaitForSlotEventEnvelope>(new WaitForSlotEventEnvelope()
+            return Task.FromResult(new WaitForSlotEventEnvelope()
             {
                 Rv = (uint)CKR.CKR_ARGUMENTS_BAD
             });
@@ -49,7 +49,7 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
         if (request.IsReservedPtrSet)
         {
             this.logger.LogError("In WaitForSlotEvent is not pReseved NULL. Returns CKR_ARGUMENTS_BAD.");
-            return new ValueTask<WaitForSlotEventEnvelope>(new WaitForSlotEventEnvelope()
+            return Task.FromResult(new WaitForSlotEventEnvelope()
             {
                 Rv = (uint)CKR.CKR_ARGUMENTS_BAD
             });
@@ -58,7 +58,7 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
         uint? changedSlotId = memorySession.GetLastSlotEvent();
         if (changedSlotId.HasValue)
         {
-            return new ValueTask<WaitForSlotEventEnvelope>(new WaitForSlotEventEnvelope()
+            return Task.FromResult(new WaitForSlotEventEnvelope()
             {
                 Rv = (uint)CKR.CKR_OK,
                 Data = new WaitForSlotEventData()
@@ -69,7 +69,7 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
         }
         else
         {
-            return new ValueTask<WaitForSlotEventEnvelope>(new WaitForSlotEventEnvelope()
+            return Task.FromResult(new WaitForSlotEventEnvelope()
             {
                 Rv = (uint)CKR.CKR_NO_EVENT
             });

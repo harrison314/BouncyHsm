@@ -17,7 +17,7 @@ public partial class GetSessionInfoHandler : IRpcRequestHandler<GetSessionInfoRe
         this.logger = logger;
     }
 
-    public async ValueTask<GetSessionInfoEnvelope> Handle(GetSessionInfoRequest request, CancellationToken cancellationToken)
+    public async Task<GetSessionInfoEnvelope> Handle(GetSessionInfoRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with SessionId {SessionId}.", request.SessionId);
 

@@ -26,7 +26,7 @@ public partial class SetPinHandler : IRpcRequestHandler<SetPinRequest, SetPinEnv
         this.logger = logger;
     }
 
-    public async ValueTask<SetPinEnvelope> Handle(SetPinRequest request, CancellationToken cancellationToken)
+    public async Task<SetPinEnvelope> Handle(SetPinRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to  Handle with sessionId {SessionId}, old pin length {oldPinLength}, old pin is set {oldPinIsSet}, new pin length {newPinLength}, new pin is set {newPinIsSet}.",
             request.SessionId,

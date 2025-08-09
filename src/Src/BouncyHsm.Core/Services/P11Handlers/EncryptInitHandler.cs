@@ -21,7 +21,7 @@ public partial class EncryptInitHandler : IRpcRequestHandler<EncryptInitRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<EncryptInitEnvelope> Handle(EncryptInitRequest request, CancellationToken cancellationToken)
+    public async Task<EncryptInitEnvelope> Handle(EncryptInitRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId} mechanism {mechanism}.",
             request.SessionId,

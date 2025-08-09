@@ -18,7 +18,7 @@ public partial class DecryptFinalHandler : IRpcRequestHandler<DecryptFinalReques
         this.logger = logger;
     }
 
-    public async ValueTask<DecryptFinalEnvelope> Handle(DecryptFinalRequest request, CancellationToken cancellationToken)
+    public async Task<DecryptFinalEnvelope> Handle(DecryptFinalRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

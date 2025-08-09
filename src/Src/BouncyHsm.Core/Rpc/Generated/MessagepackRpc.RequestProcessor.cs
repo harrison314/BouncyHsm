@@ -22,7 +22,7 @@ public static partial class RequestProcessor
 {
 
    [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
-   private static ValueTask<IMemoryOwner<byte>> ProcessRequestInternal(IServiceProvider serviceProvider, HeaderStructure header, ReadOnlyMemory<byte> requestBody, ILogger logger, CancellationToken cancellationToken)
+   private static Task<IMemoryOwner<byte>> ProcessRequestInternal(IServiceProvider serviceProvider, HeaderStructure header, ReadOnlyMemory<byte> requestBody, ILogger logger, CancellationToken cancellationToken)
    {
       return header.Operation switch
       {

@@ -18,7 +18,7 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<DigestFinalEnvelope> Handle(DigestFinalRequest request, CancellationToken cancellationToken)
+    public async Task<DigestFinalEnvelope> Handle(DigestFinalRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.",
            request.SessionId);

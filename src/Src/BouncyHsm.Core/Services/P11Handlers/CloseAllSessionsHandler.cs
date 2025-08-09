@@ -17,7 +17,7 @@ public partial class CloseAllSessionsHandler : IRpcRequestHandler<CloseAllSessio
         this.logger = logger;
     }
 
-    public async ValueTask<CloseAllSessionsEnvelope> Handle(CloseAllSessionsRequest request, CancellationToken cancellationToken)
+    public async Task<CloseAllSessionsEnvelope> Handle(CloseAllSessionsRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with SlotId {SlotId}.", request.SlotId);
 

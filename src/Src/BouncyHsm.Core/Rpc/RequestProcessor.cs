@@ -19,9 +19,8 @@ public static partial class RequestProcessor
 
     }
 
-    public static async ValueTask<ResponseValue> Process(IServiceProvider scopeProvider, ReadOnlyMemory<byte> requestHeader, ReadOnlyMemory<byte> requestBody, CancellationToken cancellationToken)
+    public static async Task<ResponseValue> Process(IServiceProvider scopeProvider, ReadOnlyMemory<byte> requestHeader, ReadOnlyMemory<byte> requestBody, CancellationToken cancellationToken)
     {
-
         ILogger<RequestProcessorLogger>? logger = (ILogger<RequestProcessorLogger>?)scopeProvider.GetService(typeof(ILogger<RequestProcessorLogger>));
         System.Diagnostics.Debug.Assert(logger != null);
 
@@ -64,7 +63,7 @@ public static partial class RequestProcessor
         return context;
     }
 
-    private static async ValueTask<IMemoryOwner<byte>> ProcessRequestBody<TRequest, TResponse>(IServiceProvider scopeProvider, string operation, ReadOnlyMemory<byte> requestBody, Func<uint, TResponse> nonOkResponseFactory, ILogger logger, CancellationToken cancellationToken)
+    private static async Task<IMemoryOwner<byte>> ProcessRequestBody<TRequest, TResponse>(IServiceProvider scopeProvider, string operation, ReadOnlyMemory<byte> requestBody, Func<uint, TResponse> nonOkResponseFactory, ILogger logger, CancellationToken cancellationToken)
     {
         TRequest request = MessagePackSerializer.Deserialize<TRequest>(requestBody, MessagepackBouncyHsmResolver.GetOptions());
 
@@ -96,12 +95,12 @@ public static partial class RequestProcessor
                 }
                 else
                 {
-                    Func<TRequest, ValueTask<TResponse>> next = r => handler.Handle(r, cancellationToken);
+                    Func<TRequest, Task<TResponse>> next = r => handler.Handle(r, cancellationToken);
                     PipelineContext pipelineContext = new PipelineContext(operation, null, handler.GetType(), cancellationToken);
 
                     for (int i = pipelineArray.Length - 1; i >= 0; i--)
                     {
-                        Func<TRequest, ValueTask<TResponse>> nextLocal = next;
+                        Func<TRequest, Task<TResponse>> nextLocal = next;
                         next = (r) => pipelineArray[i].Process(pipelineContext, r, nextLocal);
                     }
 

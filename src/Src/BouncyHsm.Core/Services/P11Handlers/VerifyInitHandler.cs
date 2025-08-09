@@ -22,7 +22,7 @@ public partial class VerifyInitHandler : IRpcRequestHandler<VerifyInitRequest, V
         this.logger = logger;
     }
 
-    public async ValueTask<VerifyInitEnvelope> Handle(VerifyInitRequest request, CancellationToken cancellationToken)
+    public async Task<VerifyInitEnvelope> Handle(VerifyInitRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId} mechanism {mechanism}.",
            request.SessionId,

@@ -21,7 +21,7 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<GenerateKeyEnvelope> Handle(GenerateKeyRequest request, CancellationToken cancellationToken)
+    public async Task<GenerateKeyEnvelope> Handle(GenerateKeyRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

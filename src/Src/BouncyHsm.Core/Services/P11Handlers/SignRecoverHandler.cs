@@ -21,7 +21,7 @@ public partial class SignRecoverHandler : IRpcRequestHandler<SignRecoverRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<SignRecoverEnvelope> Handle(SignRecoverRequest request, CancellationToken cancellationToken)
+    public async Task<SignRecoverEnvelope> Handle(SignRecoverRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

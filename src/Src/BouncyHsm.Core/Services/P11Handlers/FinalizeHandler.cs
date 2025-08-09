@@ -17,7 +17,7 @@ public partial class FinalizeHandler : IRpcRequestHandler<FinalizeRequest, Final
         this.logger = logger;
     }
 
-    public ValueTask<FinalizeEnvelope> Handle(FinalizeRequest request, CancellationToken cancellationToken)
+    public Task<FinalizeEnvelope> Handle(FinalizeRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with req IsPtrSet {IsPtrSet}.",
             request.IsPtrSet);
@@ -30,7 +30,7 @@ public partial class FinalizeHandler : IRpcRequestHandler<FinalizeRequest, Final
             request.AppId.Pid,
             request.AppId.AppNonce);
 
-        return new ValueTask<FinalizeEnvelope>(new FinalizeEnvelope()
+        return Task.FromResult(new FinalizeEnvelope()
         {
             Rv = (uint)CKR.CKR_OK
         });

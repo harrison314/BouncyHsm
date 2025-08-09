@@ -24,7 +24,7 @@ public partial interface IRpcResponse
 
 public interface IRpcRequestHandler<TRequest, TResponse>
 {
-    ValueTask<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
+    Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
 }
 
 public struct PipelineContext
@@ -60,6 +60,6 @@ public struct PipelineContext
 
 public interface IRpcPipeline<TRequest, TResponse>
 {
-    ValueTask<TResponse> Process(PipelineContext context, TRequest request, Func<TRequest, ValueTask<TResponse>> next);
+    Task<TResponse> Process(PipelineContext context, TRequest request, Func<TRequest, Task<TResponse>> next);
 }
 

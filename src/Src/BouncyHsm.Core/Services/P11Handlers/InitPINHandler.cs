@@ -23,7 +23,7 @@ public partial class InitPINHandler : IRpcRequestHandler<InitPinRequest, InitPin
         this.logger = logger;
     }
 
-    public async ValueTask<InitPinEnvelope> Handle(InitPinRequest request, CancellationToken cancellationToken)
+    public async Task<InitPinEnvelope> Handle(InitPinRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to  Handle with sessionId {SessionId}, pin length {pinLength} pin is set {pinIsSet}.",
            request.SessionId,

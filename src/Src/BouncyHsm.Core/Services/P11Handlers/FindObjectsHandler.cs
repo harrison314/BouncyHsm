@@ -18,7 +18,7 @@ public partial class FindObjectsHandler : IRpcRequestHandler<FindObjectsRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<FindObjectsEnvelope> Handle(FindObjectsRequest request, CancellationToken cancellationToken)
+    public async Task<FindObjectsEnvelope> Handle(FindObjectsRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

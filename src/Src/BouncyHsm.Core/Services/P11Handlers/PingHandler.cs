@@ -17,7 +17,7 @@ public partial class PingHandler : IRpcRequestHandler<PingRequest, PingEnvelope>
         this.logger = logger;
     }
 
-    public ValueTask<PingEnvelope> Handle(PingRequest request, CancellationToken cancellationToken)
+    public Task<PingEnvelope> Handle(PingRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle.");
 
@@ -27,7 +27,7 @@ public partial class PingHandler : IRpcRequestHandler<PingRequest, PingEnvelope>
 
         this.logger.LogDebug("Update TTL for memory session.");
 
-        return new ValueTask<PingEnvelope>(new PingEnvelope()
+        return Task.FromResult(new PingEnvelope()
         {
             Rv = (uint)CKR.CKR_OK
         });

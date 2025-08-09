@@ -17,7 +17,7 @@ public partial class LogoutHandler : IRpcRequestHandler<LogoutRequest, LogoutEnv
         this.logger = logger;
     }
 
-    public async ValueTask<LogoutEnvelope> Handle(LogoutRequest request, CancellationToken cancellationToken)
+    public async Task<LogoutEnvelope> Handle(LogoutRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to handle with SessionId {SessionId}.", request.SessionId);
 

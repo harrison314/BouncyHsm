@@ -26,7 +26,7 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         this.logger = logger;
     }
 
-    public async ValueTask<SignInitEnvelope> Handle(SignInitRequest request, CancellationToken cancellationToken)
+    public async Task<SignInitEnvelope> Handle(SignInitRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId} mechanism {mechanism}.",
             request.SessionId,

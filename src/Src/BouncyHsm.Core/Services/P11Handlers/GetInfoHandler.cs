@@ -14,11 +14,11 @@ public partial class GetInfoHandler : IRpcRequestHandler<GetInfoRequest, GetInfo
         this.logger = logger;
     }
 
-    public async ValueTask<GetInfoEnvelope> Handle(GetInfoRequest request, CancellationToken cancellationToken)
+    public async Task<GetInfoEnvelope> Handle(GetInfoRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle.");
 
-        await Task.Delay(0);
+        await Task.Yield();
 
         return new GetInfoEnvelope()
         {

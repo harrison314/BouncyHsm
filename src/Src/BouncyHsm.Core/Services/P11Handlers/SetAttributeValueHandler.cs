@@ -18,7 +18,7 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
         this.logger = logger;
     }
 
-    public async ValueTask<SetAttributeValueEnvelope> Handle(SetAttributeValueRequest request, CancellationToken cancellationToken)
+    public async Task<SetAttributeValueEnvelope> Handle(SetAttributeValueRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId} objectHandle {ObjectHandle}.",
             request.SessionId,

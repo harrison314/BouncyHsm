@@ -18,7 +18,7 @@ public partial class GetTokenInfoHandler : IRpcRequestHandler<GetTokenInfoReques
         this.logger = logger;
     }
 
-    public async ValueTask<GetTokenInfoEnvelope> Handle(GetTokenInfoRequest request, CancellationToken cancellationToken)
+    public async Task<GetTokenInfoEnvelope> Handle(GetTokenInfoRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with req SlotId {SlotId}.",
             request.SlotId);

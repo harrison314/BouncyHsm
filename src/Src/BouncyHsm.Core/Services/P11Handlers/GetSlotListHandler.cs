@@ -16,7 +16,7 @@ public partial class GetSlotListHandler : IRpcRequestHandler<GetSlotListRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<GetSlotListEnvelope> Handle(GetSlotListRequest request, CancellationToken cancellationToken)
+    public async Task<GetSlotListEnvelope> Handle(GetSlotListRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with req IsTokenPresent {IsTokenPresent}, PullCount {PullCount}, IsSlotListPointerPresent {IsSlotListPointerPresent}.",
             request.IsTokenPresent, request.PullCount, request.IsSlotListPointerPresent);

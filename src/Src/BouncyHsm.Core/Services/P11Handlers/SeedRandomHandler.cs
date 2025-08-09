@@ -17,7 +17,7 @@ public partial class SeedRandomHandler : IRpcRequestHandler<SeedRandomRequest, S
         this.logger = logger;
     }
 
-    public async ValueTask<SeedRandomEnvelope> Handle(SeedRandomRequest request, CancellationToken cancellationToken)
+    public async Task<SeedRandomEnvelope> Handle(SeedRandomRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

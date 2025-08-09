@@ -22,7 +22,7 @@ public partial class SignHandler : IRpcRequestHandler<SignRequest, SignEnvelope>
         this.logger = logger;
     }
 
-    public async ValueTask<SignEnvelope> Handle(SignRequest request, CancellationToken cancellationToken)
+    public async Task<SignEnvelope> Handle(SignRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

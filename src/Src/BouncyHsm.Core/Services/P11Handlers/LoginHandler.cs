@@ -23,7 +23,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
         this.logger = logger;
     }
 
-    public async ValueTask<LoginEnvelope> Handle(LoginRequest request, CancellationToken cancellationToken)
+    public async Task<LoginEnvelope> Handle(LoginRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to  Handle with sessionId {SessionId}, type {UserType}, pin length {pinLength} pin is set {pinIsSet}.",
             request.SessionId,

@@ -18,7 +18,7 @@ public partial class CopyObjectHandler : IRpcRequestHandler<CopyObjectRequest, C
         this.logger = logger;
     }
 
-    public async ValueTask<CopyObjectEnvelope> Handle(CopyObjectRequest request, CancellationToken cancellationToken)
+    public async Task<CopyObjectEnvelope> Handle(CopyObjectRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId} objectHandle {ObjectHandle}.",
            request.SessionId,

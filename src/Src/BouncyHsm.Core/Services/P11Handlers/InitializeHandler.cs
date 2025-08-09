@@ -18,7 +18,7 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
         this.logger = logger;
     }
 
-    public ValueTask<InitializeEnvelope> Handle(InitializeRequest request, CancellationToken cancellationToken)
+    public Task<InitializeEnvelope> Handle(InitializeRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with req IsMutexFnSet {IsMutexFnSet}, LibraryCantCreateOsThreads {LibraryCantCreateOsThreads}, OsLockingOk {OsLockingOk}.",
             request.IsMutexFnSet,
@@ -49,7 +49,7 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
             Rv = (uint)CKR.CKR_OK
         };
 
-        return new ValueTask<InitializeEnvelope>(envelope);
+        return Task.FromResult(envelope);
     }
 
     private void CheckLibralyVersion(string libVersion)

@@ -19,7 +19,7 @@ public partial class DigestKeyHandler : IRpcRequestHandler<DigestKeyRequest, Dig
         this.logger = logger;
     }
 
-    public async ValueTask<DigestKeyEnvelope> Handle(DigestKeyRequest request, CancellationToken cancellationToken)
+    public async Task<DigestKeyEnvelope> Handle(DigestKeyRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

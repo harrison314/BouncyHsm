@@ -18,7 +18,7 @@ public partial class DecryptHandler : IRpcRequestHandler<DecryptRequest, Decrypt
         this.logger = logger;
     }
 
-    public async ValueTask<DecryptEnvelope> Handle(DecryptRequest request, CancellationToken cancellationToken)
+    public async Task<DecryptEnvelope> Handle(DecryptRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

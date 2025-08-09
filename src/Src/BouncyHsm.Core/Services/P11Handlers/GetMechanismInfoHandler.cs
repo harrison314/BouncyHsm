@@ -17,7 +17,7 @@ public partial class GetMechanismInfoHandler : IRpcRequestHandler<GetMechanismIn
         this.logger = logger;
     }
 
-    public async ValueTask<GetMechanismInfoEnvelope> Handle(GetMechanismInfoRequest request, CancellationToken cancellationToken)
+    public async Task<GetMechanismInfoEnvelope> Handle(GetMechanismInfoRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with req SlotId {SlotId} and mechanism type {MechanismType}.",
            request.SlotId,

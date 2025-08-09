@@ -18,7 +18,7 @@ public partial class GenerateRandomHandler : IRpcRequestHandler<GenerateRandomRe
         this.logger = logger;
     }
 
-    public async ValueTask<GenerateRandomEnvelope> Handle(GenerateRandomRequest request, CancellationToken cancellationToken)
+    public async Task<GenerateRandomEnvelope> Handle(GenerateRandomRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

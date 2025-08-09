@@ -178,7 +178,7 @@ internal class CCharpMpGenerator : IRpcGenerator
 
             public interface IRpcRequestHandler<TRequest, TResponse>
             {
-                ValueTask<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
+                Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
             }
 
             public struct PipelineContext
@@ -214,7 +214,7 @@ internal class CCharpMpGenerator : IRpcGenerator
 
             public interface IRpcPipeline<TRequest, TResponse>
             {
-                ValueTask<TResponse> Process(PipelineContext context, TRequest request, Func<TRequest, ValueTask<TResponse>> next);
+                Task<TResponse> Process(PipelineContext context, TRequest request, Func<TRequest, Task<TResponse>> next);
             }
 
             """);
@@ -296,7 +296,7 @@ internal class CCharpMpGenerator : IRpcGenerator
             {
 
                [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.0.0")]
-               private static ValueTask<IMemoryOwner<byte>> ProcessRequestInternal(IServiceProvider serviceProvider, HeaderStructure header, ReadOnlyMemory<byte> requestBody, ILogger logger, CancellationToken cancellationToken)
+               private static Task<IMemoryOwner<byte>> ProcessRequestInternal(IServiceProvider serviceProvider, HeaderStructure header, ReadOnlyMemory<byte> requestBody, ILogger logger, CancellationToken cancellationToken)
                {
                   return header.Operation switch
                   {

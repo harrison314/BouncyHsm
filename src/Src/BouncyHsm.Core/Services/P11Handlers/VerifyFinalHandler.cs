@@ -18,7 +18,7 @@ public partial class VerifyFinalHandler : IRpcRequestHandler<VerifyFinalRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<VerifyFinalEnvelope> Handle(VerifyFinalRequest request, CancellationToken cancellationToken)
+    public async Task<VerifyFinalEnvelope> Handle(VerifyFinalRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

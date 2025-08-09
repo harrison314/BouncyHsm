@@ -18,7 +18,7 @@ public partial class OpenSessionHandler : IRpcRequestHandler<OpenSessionRequest,
         this.logger = logger;
     }
 
-    public async ValueTask<OpenSessionEnvelope> Handle(OpenSessionRequest request, CancellationToken cancellationToken)
+    public async Task<OpenSessionEnvelope> Handle(OpenSessionRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Trace with SlotId {SlotId}, Flags {Flags}, IsPtrApplicationSet {IsPtrApplicationSet}, IsNotifySet {IsNotifySet}.",
             request.SlotId,

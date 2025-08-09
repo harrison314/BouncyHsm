@@ -18,7 +18,7 @@ public partial class EncryptFinalHandler : IRpcRequestHandler<EncryptFinalReques
         this.logger = logger;
     }
 
-    public async ValueTask<EncryptFinalEnvelope> Handle(EncryptFinalRequest request, CancellationToken cancellationToken)
+    public async Task<EncryptFinalEnvelope> Handle(EncryptFinalRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

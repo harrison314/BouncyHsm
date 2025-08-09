@@ -21,7 +21,7 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
         this.logger = logger;
     }
 
-    public async ValueTask<SignFinalEnvelope> Handle(SignFinalRequest request, CancellationToken cancellationToken)
+    public async Task<SignFinalEnvelope> Handle(SignFinalRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

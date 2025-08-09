@@ -25,7 +25,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         this.logger = logger;
     }
 
-    public async ValueTask<DeriveKeyEnvelope> Handle(DeriveKeyRequest request, CancellationToken cancellationToken)
+    public async Task<DeriveKeyEnvelope> Handle(DeriveKeyRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

@@ -26,7 +26,7 @@ public partial class InitTokenHandler : IRpcRequestHandler<InitTokenRequest, Ini
         this.logger = logger;
     }
 
-    public async ValueTask<InitTokenEnvelope> Handle(InitTokenRequest request, CancellationToken cancellationToken)
+    public async Task<InitTokenEnvelope> Handle(InitTokenRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to  Handle with SlotId {SlotId}, pin length {pinLength} pin is set {pinIsSet}.",
             request.SlotId,

@@ -23,7 +23,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         this.logger = logger;
     }
 
-    public async ValueTask<WrapKeyEnvelope> Handle(WrapKeyRequest request, CancellationToken cancellationToken)
+    public async Task<WrapKeyEnvelope> Handle(WrapKeyRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId} mechanism {mechanism}.",
             request.SessionId,

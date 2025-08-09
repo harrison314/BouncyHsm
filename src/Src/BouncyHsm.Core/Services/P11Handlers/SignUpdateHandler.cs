@@ -18,7 +18,7 @@ public partial class SignUpdateHandler : IRpcRequestHandler<SignUpdateRequest, S
         this.logger = logger;
     }
 
-    public async ValueTask<SignUpdateEnvelope> Handle(SignUpdateRequest request, CancellationToken cancellationToken)
+    public async Task<SignUpdateEnvelope> Handle(SignUpdateRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

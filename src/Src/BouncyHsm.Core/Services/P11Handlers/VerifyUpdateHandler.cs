@@ -18,7 +18,7 @@ public partial class VerifyUpdateHandler : IRpcRequestHandler<VerifyUpdateReques
         this.logger = logger;
     }
 
-    public async ValueTask<VerifyUpdateEnvelope> Handle(VerifyUpdateRequest request, CancellationToken cancellationToken)
+    public async Task<VerifyUpdateEnvelope> Handle(VerifyUpdateRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

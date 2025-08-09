@@ -18,7 +18,7 @@ public partial class CreateObjectHandler : IRpcRequestHandler<CreateObjectReques
         this.logger = logger;
     }
 
-    public async ValueTask<CreateObjectEnvelope> Handle(CreateObjectRequest request, CancellationToken cancellationToken)
+    public async Task<CreateObjectEnvelope> Handle(CreateObjectRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 

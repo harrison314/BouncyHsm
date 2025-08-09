@@ -23,7 +23,7 @@ public partial class DigestInitHandler : IRpcRequestHandler<DigestInitRequest, D
         this.logger = logger;
     }
 
-    public async ValueTask<DigestInitEnvelope> Handle(DigestInitRequest request, CancellationToken cancellationToken)
+    public async Task<DigestInitEnvelope> Handle(DigestInitRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}, {digestType}.",
             request.SessionId,
