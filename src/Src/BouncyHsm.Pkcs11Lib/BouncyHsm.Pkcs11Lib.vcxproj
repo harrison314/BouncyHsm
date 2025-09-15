@@ -146,7 +146,6 @@
     <ClInclude Include="cryptoki\pkcs11f.h" />
     <ClInclude Include="cryptoki\pkcs11t.h" />
     <ClInclude Include="bouncy-pkcs11.h" />
-    <ClInclude Include="cryptoki\pkcs11t_v3_1.h" />
     <ClInclude Include="globalContext.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="platformHelper.h" />

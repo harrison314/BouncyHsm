@@ -35,7 +35,7 @@ void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 #endif
 }
 
-CK_FUNCTION_LIST empty_pkcs11_functions =
+CK_FUNCTION_LIST bouncyHsm_pkcs11_2_40_functions =
 {
     {2, 40},
     &C_Initialize,
@@ -106,6 +106,120 @@ CK_FUNCTION_LIST empty_pkcs11_functions =
     &C_GetFunctionStatus,
     &C_CancelFunction,
     &C_WaitForSlotEvent
+};
+
+
+CK_INTERFACE bouncyHsm_pkcs11_2_40_interface =
+{
+    (CK_CHAR*)"PKCS 11",
+    &bouncyHsm_pkcs11_2_40_functions,
+    0
+};
+
+
+CK_FUNCTION_LIST_3_0  bouncyHsm_pkcs11_3_1_functions =
+{
+    {0x03, 0x01},
+    &C_Initialize,
+    &C_Finalize,
+    &C_GetInfo,
+    &C_GetFunctionList,
+    &C_GetSlotList,
+    &C_GetSlotInfo,
+    &C_GetTokenInfo,
+    &C_GetMechanismList,
+    &C_GetMechanismInfo,
+    &C_InitToken,
+    &C_InitPIN,
+    &C_SetPIN,
+    &C_OpenSession,
+    &C_CloseSession,
+    &C_CloseAllSessions,
+    &C_GetSessionInfo,
+    &C_GetOperationState,
+    &C_SetOperationState,
+    &C_Login,
+    &C_Logout,
+    &C_CreateObject,
+    &C_CopyObject,
+    &C_DestroyObject,
+    &C_GetObjectSize,
+    &C_GetAttributeValue,
+    &C_SetAttributeValue,
+    &C_FindObjectsInit,
+    &C_FindObjects,
+    &C_FindObjectsFinal,
+    &C_EncryptInit,
+    &C_Encrypt,
+    &C_EncryptUpdate,
+    &C_EncryptFinal,
+    &C_DecryptInit,
+    &C_Decrypt,
+    &C_DecryptUpdate,
+    &C_DecryptFinal,
+    &C_DigestInit,
+    &C_Digest,
+    &C_DigestUpdate,
+    &C_DigestKey,
+    &C_DigestFinal,
+    &C_SignInit,
+    &C_Sign,
+    &C_SignUpdate,
+    &C_SignFinal,
+    &C_SignRecoverInit,
+    &C_SignRecover,
+    &C_VerifyInit,
+    &C_Verify,
+    &C_VerifyUpdate,
+    &C_VerifyFinal,
+    &C_VerifyRecoverInit,
+    &C_VerifyRecover,
+    &C_DigestEncryptUpdate,
+    &C_DecryptDigestUpdate,
+    &C_SignEncryptUpdate,
+    &C_DecryptVerifyUpdate,
+    &C_GenerateKey,
+    &C_GenerateKeyPair,
+    &C_WrapKey,
+    &C_UnwrapKey,
+    &C_DeriveKey,
+    &C_SeedRandom,
+    &C_GenerateRandom,
+    &C_GetFunctionStatus,
+    &C_CancelFunction,
+    &C_WaitForSlotEvent,
+    &C_GetInterfaceList,
+    &C_GetInterface,
+    &C_LoginUser,
+    &C_SessionCancel,
+    &C_MessageEncryptInit,
+    &C_EncryptMessage,
+    &C_EncryptMessageBegin,
+    &C_EncryptMessageNext,
+    &C_MessageEncryptFinal,
+    &C_MessageDecryptInit,
+    &C_DecryptMessage,
+    &C_DecryptMessageBegin,
+    &C_DecryptMessageNext,
+    &C_MessageDecryptFinal,
+    &C_MessageSignInit,
+    &C_SignMessage,
+    &C_SignMessageBegin,
+    &C_SignMessageNext,
+    &C_MessageSignFinal,
+    &C_MessageVerifyInit,
+    &C_VerifyMessage,
+    &C_VerifyMessageBegin,
+    &C_VerifyMessageNext,
+    &C_MessageVerifyFinal
+};
+
+
+CK_INTERFACE bouncyHsm_pkcs11_3_1_interface =
+{
+    (CK_CHAR*)"PKCS 11",
+    &bouncyHsm_pkcs11_3_1_functions,
+    0
 };
 
 #define P11SocketInit(tcpPtr) SockContext_init((tcpPtr), globalContext.server, globalContext.port)
@@ -298,7 +412,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetFunctionList)(CK_FUNCTION_LIST_PTR_PTR ppFunction
         return CKR_ARGUMENTS_BAD;
     }
 
-    *ppFunctionList = &empty_pkcs11_functions;
+    *ppFunctionList = &bouncyHsm_pkcs11_2_40_functions;
 
     return CKR_OK;
 }
@@ -3210,4 +3324,261 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
     WaitForSlotEventEnvelope_Release(&envelope);
 
     return (CK_RV)envelope.Rv;
+}
+
+CK_DEFINE_FUNCTION(CK_RV, C_GetInterfaceList)(CK_INTERFACE_PTR pInterfacesList, CK_ULONG_PTR pulCount)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    if (pulCount == NULL)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (pInterfacesList == NULL)
+    {
+        *pulCount = 2;
+    }
+    else
+    {
+        if (*pulCount < 2)
+        {
+            return CKR_BUFFER_TOO_SMALL;
+        }
+
+        pInterfacesList[0].pInterfaceName = bouncyHsm_pkcs11_2_40_interface.pInterfaceName;
+        pInterfacesList[0].pFunctionList = bouncyHsm_pkcs11_2_40_interface.pFunctionList;
+        pInterfacesList[0].flags = bouncyHsm_pkcs11_2_40_interface.flags;
+
+        pInterfacesList[1].pInterfaceName = bouncyHsm_pkcs11_3_1_interface.pInterfaceName;
+        pInterfacesList[1].pFunctionList = bouncyHsm_pkcs11_3_1_interface.pFunctionList;
+        pInterfacesList[1].flags = bouncyHsm_pkcs11_3_1_interface.flags;
+    }
+
+    return CKR_OK;
+}
+
+CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VERSION_PTR pVersion, CK_INTERFACE_PTR_PTR ppInterface, CK_FLAGS flags)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    if (ppInterface == NULL)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (flags != 0)
+    {
+        *ppInterface = NULL;
+        return CKR_OK;
+    }
+
+    if (pInterfaceName != NULL)
+    {
+        const char* requested_interface_name = (const char*)pInterfaceName;
+        const char* supported_interface_name = "PKCS 11";
+
+        if (strlen(requested_interface_name) != strlen(supported_interface_name) || 0 != strcmp(requested_interface_name, supported_interface_name))
+        {
+            *ppInterface = NULL;
+            return CKR_OK;
+        }
+    }
+
+    if (pVersion != NULL)
+    {
+        if (pVersion->major == bouncyHsm_pkcs11_2_40_functions.version.major && pVersion->minor == bouncyHsm_pkcs11_2_40_functions.version.minor)
+        {
+            *ppInterface = &bouncyHsm_pkcs11_2_40_interface;
+            return CKR_OK;
+        }
+        else if (pVersion->major == bouncyHsm_pkcs11_3_1_functions.version.major && pVersion->minor == bouncyHsm_pkcs11_3_1_functions.version.minor)
+        {
+            *ppInterface = &bouncyHsm_pkcs11_3_1_interface;
+            return CKR_OK;
+        }
+        else
+        {
+            *ppInterface = NULL;
+            return CKR_OK;
+        }
+    }
+
+    *ppInterface = &bouncyHsm_pkcs11_3_1_interface;
+    return CKR_OK;
+}
+
+CK_DEFINE_FUNCTION(CK_RV, C_LoginUser)(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_UTF8CHAR_PTR pPin, CK_ULONG ulPinLen, CK_UTF8CHAR_PTR pUsername, CK_ULONG ulUsernameLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_SessionCancel)(CK_SESSION_HANDLE hSession, CK_FLAGS flags)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageEncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_EncryptMessage)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pAssociatedData, CK_ULONG ulAssociatedDataLen, CK_BYTE_PTR pPlaintext, CK_ULONG ulPlaintextLen, CK_BYTE_PTR pCiphertext, CK_ULONG_PTR pulCiphertextLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_EncryptMessageBegin)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pAssociatedData, CK_ULONG ulAssociatedDataLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_EncryptMessageNext)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pPlaintextPart, CK_ULONG ulPlaintextPartLen, CK_BYTE_PTR pCiphertextPart, CK_ULONG_PTR pulCiphertextPartLen, CK_FLAGS flags)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageEncryptFinal)(CK_SESSION_HANDLE hSession)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageDecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_DecryptMessage)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pAssociatedData, CK_ULONG ulAssociatedDataLen, CK_BYTE_PTR pCiphertext, CK_ULONG ulCiphertextLen, CK_BYTE_PTR pPlaintext, CK_ULONG_PTR pulPlaintextLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_DecryptMessageBegin)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pAssociatedData, CK_ULONG ulAssociatedDataLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_DecryptMessageNext)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pCiphertextPart, CK_ULONG ulCiphertextPartLen, CK_BYTE_PTR pPlaintextPart, CK_ULONG_PTR pulPlaintextPartLen, CK_FLAGS flags)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageDecryptFinal)(CK_SESSION_HANDLE hSession)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageSignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_SignMessage)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_SignMessageBegin)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_SignMessageNext)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageSignFinal)(CK_SESSION_HANDLE hSession)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageVerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_VerifyMessage)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_VerifyMessageBegin)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_VerifyMessageNext)(CK_SESSION_HANDLE hSession, CK_VOID_PTR pParameter, CK_ULONG ulParameterLen, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
+}
+
+
+CK_DEFINE_FUNCTION(CK_RV, C_MessageVerifyFinal)(CK_SESSION_HANDLE hSession)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    return CKR_FUNCTION_NOT_SUPPORTED;
 }
