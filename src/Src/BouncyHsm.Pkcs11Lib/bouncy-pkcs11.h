@@ -48,6 +48,5 @@
 #endif
 
 #include <cryptoki/pkcs11.h>
-#include "cryptoki/pkcs11t_v3_1.h"
 
 #endif // #ifdef _WIN32
