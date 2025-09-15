@@ -3420,6 +3420,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SessionCancel)(CK_SESSION_HANDLE hSession, CK_FLAGS 
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    //TODO: implement
     return CKR_FUNCTION_NOT_SUPPORTED;
 }
 
