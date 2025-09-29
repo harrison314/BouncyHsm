@@ -51,9 +51,6 @@
     <ClInclude Include="platformHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cryptoki\pkcs11t_v3_1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="bouncy-pkcs11-utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -18,7 +18,7 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 (Screenshots from version 1.1.0)
 
 ## Features
-_Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40 with some mechanism from version 3.0.
+_Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40 and version 3.1.
 
 * Multiple application and users access using PKCS#11 interface.
 * Slot and crypto object management using web interface and REST API.
@@ -74,7 +74,7 @@ See more rules in [CONTRIBUTING](/.github/CONTRIBUTING.md).
 
 ### Other links
 * [PKCS #11 Cryptographic Token Interface Base Specification Version 2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf)
-* [PKCS #11 Cryptographic Token Interface Base Specification Version 3.0](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v3.0/pkcs11-curr-v3.0.pdf)
+* [PKCS #11 Cryptographic Token Interface Base Specification Version 3.1](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf)
 * [Software Ideas Modeler](https://www.softwareideas.net/) - tool in which the diagrams in the documentation were drawn
 * [NSwag studio](https://github.com/RicoSuter/NSwag/wiki/NSwagStudio) - tool for generate OpenApi client
 * [Ako som robil BouncyHsm](https://harrison314.github.io/BouncyHsm.html) - My blog post about BouncyHsm development, technological decisions and reasons for development - in Slovak language
