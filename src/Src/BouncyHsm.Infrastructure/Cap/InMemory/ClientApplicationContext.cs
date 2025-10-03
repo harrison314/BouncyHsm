@@ -27,7 +27,7 @@ public class ClientApplicationContext : IClientApplicationContext
 
         return this.apps.AddOrUpdate(key,
             new MemorySession(sessionData, this.timeAccessor.UtcNow),
-            (_, _) => throw new BouncyHsmStorageException($"Application with key {key} already registred."));
+            (_, _) => throw new RpcPkcs11Exception(Core.Services.Contracts.P11.CKR.CKR_CRYPTOKI_ALREADY_INITIALIZED, $"Application with key {key} already registred."));
     }
 
     public void ReleaseMemorySession(string key)
