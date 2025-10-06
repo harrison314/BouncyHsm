@@ -55,7 +55,7 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
 
     public DomainResult<ObjectContent> Visit(EcdsaPublicKeyObject ecdsaPublicKeyObject)
     {
-        return this.CreatePemResult("rsa_public_key.pem", SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(ecdsaPublicKeyObject.GetPublicKey()));
+        return this.CreatePemResult("ec_public_key.pem", SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(ecdsaPublicKeyObject.GetPublicKey()));
     }
 
     public DomainResult<ObjectContent> Visit(EcdsaPrivateKeyObject ecdsaPrivateKeyObject)
