@@ -46,7 +46,7 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
         Org.BouncyCastle.Asn1.X9.X9ECParameters ecParams = EcdsaUtils.ParseEcParams(this.CkaEcParams);
 
         return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ecParams, this.CkaEcPoint),
-            new ECDomainParameters(ecParams));
+            EcdsaUtils.ParseECDomainParameters(this.CkaEcParams));
     }
 
     public override void SetPublicKey(AsymmetricKeyParameter publicKey)
@@ -84,25 +84,6 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
                 $"CKA_EC_POINT is not valid in EcdsaPublicKeyObject with id {this.Id}.");
         }
-    }
-
-    public override SubjectPublicKeyInfo GetSubjectPublicKeyInfo()
-    {
-        if (this.CkaPublicKeyInfo.Length > 0)
-        {
-            return SubjectPublicKeyInfo.GetInstance(this.CkaPublicKeyInfo);
-        }
-
-        if (Asn1Object.FromByteArray(this.CkaEcParams) is DerObjectIdentifier namedCurveOid)
-        {
-            AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, namedCurveOid);
-           return new SubjectPublicKeyInfo(algId,
-                Org.BouncyCastle.Asn1.Asn1OctetString.GetInstance(
-                    Org.BouncyCastle.Asn1.Asn1Object.FromByteArray(this.CkaEcPoint)
-                ));
-        }
-
-        return SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(this.GetPublicKey());
     }
 
     public override void Accept(ICryptoApiObjectVisitor visitor)

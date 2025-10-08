@@ -47,6 +47,16 @@ internal static class EcdsaUtils
             implicitCa => throw new System.Diagnostics.UnreachableException());
     }
 
+    public static ECDomainParameters ParseECDomainParameters(byte[] ecParams)
+    {
+        EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
+        CheckIsSupported(internalParams);
+
+        return internalParams.Match<ECDomainParameters>(ecParams => new ECDomainParameters(ecParams.Parameters),
+            namedCurve => new ECNamedDomainParameters(namedCurve.Oid, ECNamedCurveTable.GetByOid(namedCurve.Oid)),
+            implicitCa => throw new System.Diagnostics.UnreachableException());
+    }
+
     public static string ParseEcParamsAsName(byte[] ecParams)
     {
         EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
