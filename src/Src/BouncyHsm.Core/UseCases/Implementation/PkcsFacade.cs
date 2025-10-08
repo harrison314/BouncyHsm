@@ -281,7 +281,7 @@ public class PkcsFacade : IPkcsFacade
         generator.SetIssuerDN(subject);
         generator.SetSubjectDN(subject);
         generator.SetSerialNumber(Org.BouncyCastle.Math.BigInteger.One);
-        generator.SetPublicKey(pubKo.GetPublicKey());
+        generator.SetSubjectPublicKeyInfo(pubKo.GetSubjectPublicKeyInfo());
         generator.SetNotBefore(utcNow);
         generator.SetNotAfter(utcNow.Add(request.Validity));
         generator.AddExtension(X509Extensions.KeyUsage, false, this.CreateKeyUsage(privKo));
