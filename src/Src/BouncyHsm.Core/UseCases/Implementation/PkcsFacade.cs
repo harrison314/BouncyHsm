@@ -213,7 +213,7 @@ public class PkcsFacade : IPkcsFacade
 
         Pkcs10CertificationRequest certificationRequest = new Pkcs10CertificationRequest(algorithm,
             subject,
-            pubKo.GetPublicKey(),
+            pubKo.GetSubjectPublicKeyInfo(),
             null,
             privKo.GetPrivateKey());
 
