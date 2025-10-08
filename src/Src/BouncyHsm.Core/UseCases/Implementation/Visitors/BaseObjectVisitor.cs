@@ -59,42 +59,42 @@ internal abstract class BaseObjectVisitor<T> : ICryptoApiObjectVisitor<T>
         return this.ProcessStorageObject(generalSecretKeyObject);
     }
 
-    public T Visit(AesKeyObject aesKeyObject)
+    public virtual T Visit(AesKeyObject aesKeyObject)
     {
         return this.ProcessStorageObject(aesKeyObject);
     }
 
-    public T Visit(Poly1305KeyObject poly1305KeyObject)
+    public virtual T Visit(Poly1305KeyObject poly1305KeyObject)
     {
         return this.ProcessStorageObject(poly1305KeyObject);
     }
 
-    public T Visit(ChaCha20KeyObject chaCha20KeyObject)
+    public virtual T Visit(ChaCha20KeyObject chaCha20KeyObject)
     {
         return this.ProcessStorageObject(chaCha20KeyObject);
     }
 
-    public T Visit(Salsa20KeyObject salsa20KeyObject)
+    public virtual T Visit(Salsa20KeyObject salsa20KeyObject)
     {
         return this.ProcessStorageObject(salsa20KeyObject);
     }
 
-    public T Visit(EdwardsPrivateKeyObject edwardsPrivateKey)
+    public virtual T Visit(EdwardsPrivateKeyObject edwardsPrivateKey)
     {
         return this.ProcessStorageObject(edwardsPrivateKey);
     }
 
-    public T Visit(EdwardsPublicKeyObject edwardsPublicKey)
+    public virtual T Visit(EdwardsPublicKeyObject edwardsPublicKey)
     {
         return this.ProcessStorageObject(edwardsPublicKey);
     }
 
-    public T Visit(MontgomeryPrivateKeyObject montgomeryPrivateKey)
+    public virtual T Visit(MontgomeryPrivateKeyObject montgomeryPrivateKey)
     {
         return this.ProcessStorageObject(montgomeryPrivateKey);
     }
 
-    public T Visit(MontgomeryPublicKeyObject montgomeryPublicKey)
+    public virtual T Visit(MontgomeryPublicKeyObject montgomeryPublicKey)
     {
         return this.ProcessStorageObject(montgomeryPublicKey);
     }
