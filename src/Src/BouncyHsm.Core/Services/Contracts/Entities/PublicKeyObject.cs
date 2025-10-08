@@ -1,4 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.X509;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
@@ -87,6 +89,17 @@ public abstract class PublicKeyObject : KeyObject
     public abstract Org.BouncyCastle.Crypto.AsymmetricKeyParameter GetPublicKey();
 
     public abstract void SetPublicKey(Org.BouncyCastle.Crypto.AsymmetricKeyParameter publicKey);
+
+    public virtual SubjectPublicKeyInfo GetSubjectPublicKeyInfo()
+    {
+        if (this.CkaPublicKeyInfo.Length > 0)
+        {
+            return SubjectPublicKeyInfo.GetInstance(this.CkaPublicKeyInfo);
+
+        }
+
+        return SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(this.GetPublicKey());
+    }
 
     public override void ReComputeAttributes()
     {
