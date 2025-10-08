@@ -96,7 +96,10 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
         if (Asn1Object.FromByteArray(this.CkaEcParams) is DerObjectIdentifier namedCurveOid)
         {
             AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, namedCurveOid);
-            return new SubjectPublicKeyInfo(algId, this.CkaEcPoint);
+           return new SubjectPublicKeyInfo(algId,
+                Org.BouncyCastle.Asn1.Asn1OctetString.GetInstance(
+                    Org.BouncyCastle.Asn1.Asn1Object.FromByteArray(this.CkaEcPoint)
+                ));
         }
 
         return SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(this.GetPublicKey());
