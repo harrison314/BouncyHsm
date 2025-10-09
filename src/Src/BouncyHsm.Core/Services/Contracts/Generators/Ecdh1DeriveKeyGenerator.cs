@@ -152,10 +152,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         this.logger.LogTrace("Entering to GetPublicKeyFromData.");
         try
         {
-            Org.BouncyCastle.Asn1.X9.X9ECParameters ecParams = EcdsaUtils.ParseEcParams(baseKey.CkaEcParams);
-
-            return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ecParams, publicKeyData),
-                new ECDomainParameters(ecParams));
+            return EcdsaUtils.ParsePublicKey(baseKey.CkaEcParams, publicKeyData);
         }
         catch (Exception ex)
         {
