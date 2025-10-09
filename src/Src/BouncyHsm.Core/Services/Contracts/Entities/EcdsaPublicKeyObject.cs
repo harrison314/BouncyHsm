@@ -43,10 +43,7 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
 
     public override AsymmetricKeyParameter GetPublicKey()
     {
-        Org.BouncyCastle.Asn1.X9.X9ECParameters ecParams = EcdsaUtils.ParseEcParams(this.CkaEcParams);
-
-        return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ecParams, this.CkaEcPoint),
-            EcdsaUtils.ParseECDomainParameters(this.CkaEcParams));
+        return EcdsaUtils.ParsePublicKey(this.CkaEcParams, this.CkaEcPoint);
     }
 
     public override void SetPublicKey(AsymmetricKeyParameter publicKey)

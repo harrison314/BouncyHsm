@@ -20,6 +20,7 @@ namespace BouncyHsm.Core.Services.Contracts.Entities;
 internal static class EcdsaUtils
 {
     private static HashSet<DerObjectIdentifier>? enabledCurves = null;
+
     public static byte[] EncodeP11EcPoint(Org.BouncyCastle.Math.EC.ECPoint q)
     {
         System.Diagnostics.Debug.Assert(q != null);
@@ -47,14 +48,22 @@ internal static class EcdsaUtils
             implicitCa => throw new System.Diagnostics.UnreachableException());
     }
 
-    public static ECDomainParameters ParseECDomainParameters(byte[] ecParams)
+    public static ECPublicKeyParameters ParsePublicKey(byte[] ecParams, byte[] ecPoint)
     {
         EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
         CheckIsSupported(internalParams);
 
-        return internalParams.Match<ECDomainParameters>(ecParams => new ECDomainParameters(ecParams.Parameters),
-            namedCurve => new ECNamedDomainParameters(namedCurve.Oid, ECNamedCurveTable.GetByOid(namedCurve.Oid)),
-            implicitCa => throw new System.Diagnostics.UnreachableException());
+        return internalParams.Match(ecParamsObj =>
+        {
+            return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ecParamsObj.Parameters, ecPoint),
+                new ECDomainParameters(ecParamsObj.Parameters));
+        },
+        namedCurve =>
+        {
+            return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ECNamedCurveTable.GetByOid(namedCurve.Oid), ecPoint),
+               new ECNamedDomainParameters(namedCurve.Oid, ECNamedCurveTable.GetByOid(namedCurve.Oid)));
+        },
+        implicitCa => throw new System.Diagnostics.UnreachableException());
     }
 
     public static string ParseEcParamsAsName(byte[] ecParams)
