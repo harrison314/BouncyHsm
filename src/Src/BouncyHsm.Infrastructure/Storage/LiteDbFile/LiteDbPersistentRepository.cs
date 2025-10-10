@@ -67,6 +67,9 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         SlotMapper mapper = new SlotMapper();
         SlotModel slotModel = mapper.MapSlot(slot);
 
+        slotModel.Token.MonotonicCounter = 0L;
+        slotModel.Token.MonotonicCounterHasReset = false;
+
         int insertedId = slotSequence.Insert(new SlotSequence());
         this.logger.LogDebug("Create new slotId using slot sequence {insertedId}.", insertedId);
 
