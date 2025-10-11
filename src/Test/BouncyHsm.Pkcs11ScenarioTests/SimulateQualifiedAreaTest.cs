@@ -353,7 +353,7 @@ public sealed class SimulateQualifiedAreaTest
         Random.Shared.NextBytes(dataToSign);
 
         using IMechanism signatureMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_ECDSA);
-        Pkcs11Exception exception = Assert.ThrowsException<Pkcs11Exception>(() => session.Sign(signatureMechanism, privateKey, dataToSign));
+        Pkcs11Exception exception = Assert.Throws<Pkcs11Exception>(() => session.Sign(signatureMechanism, privateKey, dataToSign));
 
         Assert.AreEqual(CKR.CKR_USER_NOT_LOGGED_IN, exception.RV);
     }
@@ -418,7 +418,7 @@ public sealed class SimulateQualifiedAreaTest
         Random.Shared.NextBytes(dataToSign);
 
         using IMechanism signatureMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_ECDSA);
-        Pkcs11Exception exception = Assert.ThrowsException<Pkcs11Exception>(() => session.Sign(signatureMechanism, privateKey, Encoding.UTF8.GetBytes("_No_PIN_!!@"), dataToSign));
+        Pkcs11Exception exception = Assert.Throws<Pkcs11Exception>(() => session.Sign(signatureMechanism, privateKey, Encoding.UTF8.GetBytes("_No_PIN_!!@"), dataToSign));
 
         Assert.AreEqual(CKR.CKR_PIN_INCORRECT, exception.RV);
     }

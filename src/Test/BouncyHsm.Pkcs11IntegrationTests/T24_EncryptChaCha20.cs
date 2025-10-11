@@ -14,7 +14,7 @@ public class T24_EncryptChaCha20
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 64, 256)]
     [DataRow(0, 96, 256)]
     //[DataRow(0, 192, 256)]
@@ -47,10 +47,10 @@ public class T24_EncryptChaCha20
         byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
         Assert.IsNotNull(cipherText);
-        Assert.AreEqual(plainText.Length, cipherText.Length, "Mismatch length.");
+        Assert.HasCount(plainText.Length, cipherText, "Mismatch length.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 64, 256, 32)]
     [DataRow(0, 96, 256, 16)]
     //[DataRow(0, 192, 256, 122)]
@@ -87,10 +87,10 @@ public class T24_EncryptChaCha20
 
         byte[] cipherText = cipherTextMs.ToArray();
         Assert.IsNotNull(cipherText);
-        Assert.AreEqual(plainText.Length, cipherText.Length, "Mismatch length.");
+        Assert.HasCount(plainText.Length, cipherText, "Mismatch length.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 64, 256)]
     [DataRow(0, 96, 256)]
     //[DataRow(0, 192, 256)]
@@ -120,10 +120,10 @@ public class T24_EncryptChaCha20
         byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
         Assert.IsNotNull(cipherText);
-        Assert.AreEqual(plainText.Length, cipherText.Length, "Mismatch length.");
+        Assert.HasCount(plainText.Length, cipherText, "Mismatch length.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(96, 256, 0)]
     [DataRow(96, 256, 59)]
     [DataRow(96, 217, 0)]

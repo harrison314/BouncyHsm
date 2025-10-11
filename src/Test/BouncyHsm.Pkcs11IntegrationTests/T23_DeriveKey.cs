@@ -13,7 +13,7 @@ public class T23_DeriveKey
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_MD2_KEY_DERIVATION)]
     [DataRow(CKM.CKM_MD5_KEY_DERIVATION)]
     [DataRow(CKM.CKM_SHA1_KEY_DERIVATION)]
@@ -61,7 +61,7 @@ public class T23_DeriveKey
         session.DestroyObject(derivedHandle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_CONCATENATE_BASE_AND_DATA, "0102030405060708", "AABBCCDDEE", "0102030405060708AABBCCDDEE")]
     [DataRow(CKM.CKM_CONCATENATE_DATA_AND_BASE, "0102030405060708", "AABBCCDDEE", "AABBCCDDEE0102030405060708")]
     [DataRow(CKM.CKM_XOR_BASE_AND_DATA, "0102030405060708", "AABBCCDDEE", "ABB9CFD9EBACBCC4")]
@@ -110,7 +110,7 @@ public class T23_DeriveKey
     }
 
     // Toto preverit s jarom https://www.cryptsoft.com/pkcs11doc/v210/group__SEC__12__37__1__CONCATENATION__OF__A__BASE__KEY__AND__ANOTHER__KEY.html
-    //[DataTestMethod]
+    //[TestMethod]
     //[DataRow(CKM.CKM_CONCATENATE_BASE_AND_KEY, "0102030405060708", "AABBCCDDEE", "0102030405060708AABBCCDDEE")]
     //public void Derive_ConcatKeys_Success(CKM mechanismType, string baseHex, string dataHex, string resultHex)
     //{
@@ -162,7 +162,7 @@ public class T23_DeriveKey
     //    Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
     //}
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("1202030405060708", 8U, "12")]
     [DataRow("1202030405060708", 32U, "12020304")]
     [DataRow("120203A405060708", 35U, "120203A400")]
@@ -211,7 +211,7 @@ public class T23_DeriveKey
         Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM_V3_0.CKM_SHA3_224_KEY_DERIVATION)]
     [DataRow(CKM_V3_0.CKM_SHA3_256_KEY_DERIVATION)]
     [DataRow(CKM_V3_0.CKM_SHA3_384_KEY_DERIVATION)]
@@ -254,7 +254,7 @@ public class T23_DeriveKey
         session.DestroyObject(derivedHandle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM_V3_0.CKM_BLAKE2B_160_KEY_DERIVE)]
     [DataRow(CKM_V3_0.CKM_BLAKE2B_256_KEY_DERIVE)]
     [DataRow(CKM_V3_0.CKM_BLAKE2B_384_KEY_DERIVE)]

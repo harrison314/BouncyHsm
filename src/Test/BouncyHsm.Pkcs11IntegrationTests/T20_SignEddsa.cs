@@ -50,7 +50,7 @@ public class T20_SignEddsa
         Assert.IsNotNull(signature);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("id-Ed25519", false, "-")]
     [DataRow("id-Ed25519", false, "")]
     [DataRow("id-Ed25519", true, "-")]

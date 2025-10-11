@@ -64,7 +64,7 @@ public class T24_Encrypt
         session.Encrypt(mechanism, key, plainTextMs, ciperTextMs, 32);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_AES_CBC)]
     [DataRow(CKM.CKM_AES_CBC_PAD)]
     [DataRow(CKM.CKM_AES_CFB1)]
@@ -187,7 +187,7 @@ public class T24_Encrypt
         Assert.IsNotNull(cipherText);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1)]
     [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256)]
     [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512)]

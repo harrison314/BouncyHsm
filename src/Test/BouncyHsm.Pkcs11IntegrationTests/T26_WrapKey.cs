@@ -14,7 +14,7 @@ public class T26_WrapKey
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_AES_CBC_PAD)]
     public void Wrap_AesWithIv_Success(CKM mechanismType)
     {
@@ -155,7 +155,7 @@ public class T26_WrapKey
         Assert.IsNotNull(wrappedKey);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_AES_CBC, 16)]
     [DataRow(CKM.CKM_AES_ECB, 0)]
     [DataRow(CKM.CKM_AES_OFB, 16)]
@@ -213,7 +213,7 @@ public class T26_WrapKey
         Assert.IsNotNull(wrappedKey);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_AES_CBC, 16)]
     [DataRow(CKM.CKM_AES_ECB, 0)]
     [DataRow(CKM.CKM_AES_OFB, 16)]
@@ -273,7 +273,7 @@ public class T26_WrapKey
         Assert.IsNotNull(wrappedKey);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1)]
     [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256)]
     [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512)]

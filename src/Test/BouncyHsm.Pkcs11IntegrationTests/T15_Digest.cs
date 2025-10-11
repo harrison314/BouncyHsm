@@ -8,7 +8,7 @@ namespace BouncyHsm.Pkcs11IntegrationTests;
 [TestClass]
 public class T15_Digest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_MD2)]
     [DataRow(CKM.CKM_MD5)]
     [DataRow(CKM.CKM_SHA_1)]
@@ -71,7 +71,7 @@ public class T15_Digest
         Assert.IsNotNull(digest);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_MD2)]
     [DataRow(CKM.CKM_MD5)]
     [DataRow(CKM.CKM_SHA_1)]

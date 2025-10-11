@@ -117,7 +117,7 @@ public class T17_GenerateKeyPair
             out IObjectHandle privateKey);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("06082A8648CE3D030107", DisplayName = "NIST P-256")]
     [DataRow("06052B81040023", DisplayName = "NIST P-521")]
     public void GenerateKeyPair_EC_Success(string ecParamsHex)
@@ -230,7 +230,7 @@ public class T17_GenerateKeyPair
             out IObjectHandle privateKey);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("06032B6570", DisplayName = "OID Ed25519")]
     [DataRow("130A69642D45643235353139", DisplayName = "Name Ed25519")]
     [DataRow("06032B6571", DisplayName = "OID Ed448")]
@@ -289,7 +289,7 @@ public class T17_GenerateKeyPair
             out IObjectHandle privateKey);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("06032B656E", DisplayName = "OID X25519")]
     [DataRow("130969642D583235353139", DisplayName = "Name X25519")]
     [DataRow("06032B656F", DisplayName = "OID X448")]

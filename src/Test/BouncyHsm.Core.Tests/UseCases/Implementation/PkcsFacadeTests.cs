@@ -12,7 +12,7 @@ namespace BouncyHsm.Core.Tests.UseCases.Implementation;
 [TestClass]
 public class PkcsFacadeTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PrivateKeyImportMode.Local, true, 0)]
     [DataRow(PrivateKeyImportMode.Local, false, 0)]
     [DataRow(PrivateKeyImportMode.Imported, false, 0)]

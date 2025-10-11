@@ -7,7 +7,7 @@ namespace BouncyHsm.Pkcs11IntegrationTests;
 [TestClass]
 public class T02_GetSlotList
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SlotsType.WithTokenPresent)]
     [DataRow(SlotsType.WithOrWithoutTokenPresent)]
     public void GetSlotList_Call_Success(SlotsType slotsType)

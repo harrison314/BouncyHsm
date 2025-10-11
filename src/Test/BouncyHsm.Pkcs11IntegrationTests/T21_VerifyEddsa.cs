@@ -62,7 +62,7 @@ public class T21_VerifyEddsa
         Assert.IsFalse(isValud, "Bad signature is valid.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("id-Ed25519", false, "-")]
     [DataRow("id-Ed25519", false, "")]
     [DataRow("id-Ed25519", true, "-")]

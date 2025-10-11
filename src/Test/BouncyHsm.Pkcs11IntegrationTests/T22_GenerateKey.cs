@@ -12,7 +12,7 @@ public class T22_GenerateKey
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, 5)]
     [DataRow(CKK.CKK_GENERIC_SECRET, 512)]
     [DataRow(CKK.CKK_SHA256_HMAC, 32)]
@@ -59,7 +59,7 @@ public class T22_GenerateKey
         session.DestroyObject(handle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(16)]
     [DataRow(24)]
     [DataRow(32)]
@@ -101,7 +101,7 @@ public class T22_GenerateKey
         session.DestroyObject(handle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM_V3_0.CKM_SHA_1_KEY_GEN, 20)]
     [DataRow(CKM_V3_0.CKM_SHA224_KEY_GEN, 25)]
     [DataRow(CKM_V3_0.CKM_SHA256_KEY_GEN, 32)]
@@ -109,7 +109,6 @@ public class T22_GenerateKey
     [DataRow(CKM_V3_0.CKM_SHA512_KEY_GEN, 64)]
     [DataRow(CKM_V3_0.CKM_SHA512_224_KEY_GEN, 32)]
     [DataRow(CKM_V3_0.CKM_SHA512_256_KEY_GEN, 32)]
-    [DataRow(CKM_V3_0.CKM_SHA512_224_KEY_GEN, 32)]
     [DataRow(CKM_V3_0.CKM_SHA512_T_KEY_GEN, 32)]
     [DataRow(CKM_V3_0.CKM_SHA3_224_KEY_GEN, 28)]
     [DataRow(CKM_V3_0.CKM_SHA3_256_KEY_GEN, 32)]

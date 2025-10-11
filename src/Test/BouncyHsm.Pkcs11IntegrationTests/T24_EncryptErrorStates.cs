@@ -14,7 +14,7 @@ public class T24_EncryptErrorStates
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1, 214)]
     [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256, 190)]
     [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512, 126)]
@@ -44,7 +44,7 @@ public class T24_EncryptErrorStates
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_OAEP, mechanismParams);
 
-        Pkcs11Exception e = Assert.ThrowsException<Pkcs11Exception>(() =>
+        Pkcs11Exception e = Assert.Throws<Pkcs11Exception>(() =>
         {
             session.Encrypt(mechanism, publicKey, plainText);
         });

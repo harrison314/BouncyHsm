@@ -140,6 +140,6 @@ public class T16_FindObjects
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_HW_FEATURE)
         });
 
-        Assert.AreEqual(1, handles.Count);
+        Assert.HasCount(1, handles);
     }
 }

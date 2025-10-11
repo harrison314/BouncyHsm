@@ -8,7 +8,7 @@ namespace BouncyHsm.Core.Tests.Services.Contracts.Generators;
 [TestClass]
 public class GenericSecretKeyGeneratorTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, 12)]
     [DataRow(CKK.CKK_GENERIC_SECRET, 256)]
     [DataRow(CKK.CKK_MD5_HMAC, 20)]
@@ -44,6 +44,6 @@ public class GenericSecretKeyGeneratorTests
         key.ReComputeAttributes();
         key.Validate();
 
-        Assert.AreEqual(size, key.GetSecret().Length);
+        Assert.HasCount(size, key.GetSecret());
     }
 }

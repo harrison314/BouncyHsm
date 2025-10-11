@@ -16,7 +16,7 @@ public class T20_SignRsa
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_RSA_PKCS, true)]
     [DataRow(CKM.CKM_SHA1_RSA_PKCS, false)]
     [DataRow(CKM.CKM_SHA224_RSA_PKCS, false)]

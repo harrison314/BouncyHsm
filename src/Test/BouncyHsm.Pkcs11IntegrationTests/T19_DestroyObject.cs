@@ -90,7 +90,7 @@ public class T19_DestroyObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_HW_FEATURE)
         }).First();
 
-        Pkcs11Exception exception = Assert.ThrowsException<Pkcs11Exception>(() => session.DestroyObject(handle));
+        Pkcs11Exception exception = Assert.Throws<Pkcs11Exception>(() => session.DestroyObject(handle));
         Assert.AreEqual(CKR.CKR_OBJECT_HANDLE_INVALID, exception.RV);
     }
 }
