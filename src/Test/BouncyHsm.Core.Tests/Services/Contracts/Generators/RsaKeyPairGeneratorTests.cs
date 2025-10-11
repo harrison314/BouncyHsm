@@ -10,7 +10,7 @@ namespace BouncyHsm.Core.Tests.Services.Contracts.Generators;
 [TestClass]
 public class RsaKeyPairGeneratorTests
 {
-    [DataTestMethod]
+    [TestMethod]
     //[DataRow(1024)]
     [DataRow(2048)]
     [DataRow(3072)]

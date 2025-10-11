@@ -66,7 +66,7 @@ public class T11_Login
 
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
 
-        Pkcs11Exception ex = Assert.ThrowsException<Pkcs11Exception>(() => session.Login(CKU.CKU_USER, "*"));
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.Login(CKU.CKU_USER, "*"));
         Assert.AreEqual(CKR.CKR_PIN_INCORRECT, ex.RV);
     }
 }

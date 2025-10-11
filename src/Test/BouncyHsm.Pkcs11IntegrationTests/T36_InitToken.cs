@@ -45,7 +45,7 @@ public class T36_InitToken
 
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
 
-        Pkcs11Exception ex = Assert.ThrowsException<Pkcs11Exception>(() => session.InitPin(AssemblyTestConstants.UserPin));
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.InitPin(AssemblyTestConstants.UserPin));
         Assert.AreEqual(CKR.CKR_USER_NOT_LOGGED_IN, ex.RV);
     }
 }

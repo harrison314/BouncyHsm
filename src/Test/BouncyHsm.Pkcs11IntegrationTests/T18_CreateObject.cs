@@ -271,7 +271,7 @@ TnCoPhVFsVeDjQwg");
         _ = session.CreateObject(objectAttributes);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, 5)]
     [DataRow(CKK.CKK_GENERIC_SECRET, 512)]
     [DataRow(CKK.CKK_SHA256_HMAC, 32)]
@@ -320,7 +320,7 @@ TnCoPhVFsVeDjQwg");
         _ = session.CreateObject(objectAttributes);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(16)]
     [DataRow(24)]
     [DataRow(32)]

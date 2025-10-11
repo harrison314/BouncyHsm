@@ -14,7 +14,7 @@ public class T24_EncryptSalsa20
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0UL, 64, 256)]
     [DataRow(0UL, 192, 256)]
     public void Encrypt_Salsa20_Success(ulong counter, int nonceBits, int plainTextLen)
@@ -43,10 +43,10 @@ public class T24_EncryptSalsa20
         byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
         Assert.IsNotNull(cipherText);
-        Assert.AreEqual(plainText.Length, cipherText.Length, "Mismatch length.");
+        Assert.HasCount(plainText.Length, cipherText, "Mismatch length.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0UL, 64, 256, 32)]
     [DataRow(0UL, 192, 256, 16)]
     public void Encrypt_Salsa20AsStream_Success(ulong counter, int nonceBits, int plainTextLen, int streamBufferLen)
@@ -79,10 +79,10 @@ public class T24_EncryptSalsa20
 
         byte[] cipherText = cipherTextMs.ToArray();
         Assert.IsNotNull(cipherText);
-        Assert.AreEqual(plainText.Length, cipherText.Length, "Mismatch length.");
+        Assert.HasCount(plainText.Length, cipherText, "Mismatch length.");
     }
 
-    //[DataTestMethod]
+    //[TestMethod]
     //[DataRow(96, 256, 0)]
     //[DataRow(96, 256, 59)]
     //[DataRow(96, 217, 0)]

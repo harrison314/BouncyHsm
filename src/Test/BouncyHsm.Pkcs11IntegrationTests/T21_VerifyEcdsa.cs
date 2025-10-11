@@ -13,7 +13,7 @@ public class T21_VerifyEcdsa
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_ECDSA)]
     [DataRow(CKM.CKM_ECDSA_SHA1)]
     [DataRow(CKM.CKM_ECDSA_SHA224)]

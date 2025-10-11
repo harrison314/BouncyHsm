@@ -47,7 +47,7 @@ public class T20_SignEcdsa
         Assert.IsTrue(verfied, "Signature inconsistent.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_ECDSA_SHA1)]
     [DataRow(CKM.CKM_ECDSA_SHA224)]
     [DataRow(CKM.CKM_ECDSA_SHA256)]

@@ -116,7 +116,7 @@ public class T29_CopyObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Foo Bar")),
         };
 
-        Assert.ThrowsException<Pkcs11Exception>(() => _ = session.CopyObject(dataObject, template));
+        Assert.Throws<Pkcs11Exception>(() => _ = session.CopyObject(dataObject, template));
     }
 
     [TestMethod]

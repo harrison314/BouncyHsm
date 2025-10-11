@@ -37,7 +37,7 @@ public class T35_InitToken
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        Pkcs11Exception ex = Assert.ThrowsException<Pkcs11Exception>(() => slot.InitToken("Bad pin", "TestLabel1"));
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => slot.InitToken("Bad pin", "TestLabel1"));
         Assert.AreEqual(CKR.CKR_PIN_INCORRECT, ex.RV);
     }
 }

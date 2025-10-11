@@ -117,7 +117,7 @@ public class T28_SetAttributeValue
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Foo Bar")),
         };
 
-        Assert.ThrowsException<Pkcs11Exception>(() => session.SetAttributeValue(dataObject, template));
+        Assert.Throws<Pkcs11Exception>(() => session.SetAttributeValue(dataObject, template));
     }
 
     [TestMethod]

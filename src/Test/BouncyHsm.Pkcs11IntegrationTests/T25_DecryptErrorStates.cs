@@ -14,7 +14,7 @@ public class T25_DecryptErrorStates
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1)]
     [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256)]
     [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512)]
@@ -48,7 +48,7 @@ public class T25_DecryptErrorStates
         byte[] modifiedCipherText = new byte[cipherText.Length + 1];
         cipherText.CopyTo(modifiedCipherText, 0);
 
-        Pkcs11Exception e = Assert.ThrowsException<Pkcs11Exception>(() =>
+        Pkcs11Exception e = Assert.Throws<Pkcs11Exception>(() =>
         {
             session.Decrypt(mechanism, privateKey, modifiedCipherText);
         });
@@ -56,7 +56,7 @@ public class T25_DecryptErrorStates
         Assert.AreEqual(CKR.CKR_ENCRYPTED_DATA_LEN_RANGE, e.RV);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1)]
     [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256)]
     [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512)]
@@ -95,7 +95,7 @@ public class T25_DecryptErrorStates
             cipherText[^1] = (byte)'a';
         }
 
-        Pkcs11Exception e = Assert.ThrowsException<Pkcs11Exception>(() =>
+        Pkcs11Exception e = Assert.Throws<Pkcs11Exception>(() =>
         {
             session.Decrypt(mechanism, privateKey, cipherText);
         });
@@ -103,7 +103,7 @@ public class T25_DecryptErrorStates
         Assert.AreEqual(CKR.CKR_ENCRYPTED_DATA_INVALID, e.RV);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1)]
     [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256)]
     [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512)]
@@ -141,7 +141,7 @@ public class T25_DecryptErrorStates
            new byte[] { 1, 2, 3, 4, 5 });
         using IMechanism invalidMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_OAEP, invalidMechanismParams);
 
-        Pkcs11Exception e = Assert.ThrowsException<Pkcs11Exception>(() =>
+        Pkcs11Exception e = Assert.Throws<Pkcs11Exception>(() =>
         {
             session.Decrypt(invalidMechanism, privateKey, cipherText);
         });
@@ -186,7 +186,7 @@ public class T25_DecryptErrorStates
             cipherText[^1] = (byte)'a';
         }
 
-        Pkcs11Exception e = Assert.ThrowsException<Pkcs11Exception>(() =>
+        Pkcs11Exception e = Assert.Throws<Pkcs11Exception>(() =>
         {
             session.Decrypt(mechanism, key, cipherText);
         });
@@ -230,7 +230,7 @@ public class T25_DecryptErrorStates
 
         using IMechanism invalidMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_GCM, invalidGcmParams);
 
-        Pkcs11Exception e = Assert.ThrowsException<Pkcs11Exception>(() =>
+        Pkcs11Exception e = Assert.Throws<Pkcs11Exception>(() =>
         {
             session.Decrypt(invalidMechanism, key, cipherText);
         });

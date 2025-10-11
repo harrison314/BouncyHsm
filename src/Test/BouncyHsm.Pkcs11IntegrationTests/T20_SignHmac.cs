@@ -13,7 +13,7 @@ public class T20_SignHmac
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC, 32)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA_1_HMAC, 32)]
     [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 32)]
@@ -53,7 +53,7 @@ public class T20_SignHmac
         session.DestroyObject(handle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_224_HMAC, 28)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 32)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 14)]
@@ -92,7 +92,7 @@ public class T20_SignHmac
         session.DestroyObject(handle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_160_HMAC, 28)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 14)]
