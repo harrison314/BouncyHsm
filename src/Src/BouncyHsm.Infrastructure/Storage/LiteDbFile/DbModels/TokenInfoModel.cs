@@ -58,6 +58,18 @@ public class TokenInfoModel
         set;
     }
 
+    public long MonotonicCounter
+    {
+        get;
+        set;
+    }
+
+    public bool MonotonicCounterHasReset
+    {
+        get;
+        set;
+    }
+
     public TokenInfoModel()
     {
         this.Label = string.Empty;
