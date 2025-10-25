@@ -48,7 +48,7 @@ internal static class ExtensionFactory
             throw new InvalidOperationException("Cannot get _libraryHandle field info");
         }
 
-        object? libHandle = libHandleFieldInfo.GetValue(library);
+        object? libHandle = libHandleFieldInfo.GetValue(pkcs11);
         if (libHandle == null)
         {
             throw new InvalidOperationException("Cannot get _libraryHandle value");

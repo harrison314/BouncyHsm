@@ -160,6 +160,8 @@ typedef struct _InitTokenRequest InitTokenRequest;
 typedef struct _InitTokenEnvelope InitTokenEnvelope;
 typedef struct _InitPinRequest InitPinRequest;
 typedef struct _InitPinEnvelope InitPinEnvelope;
+typedef struct _SessionCancelRequest SessionCancelRequest;
+typedef struct _SessionCancelEnvelope SessionCancelEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -1817,6 +1819,26 @@ int InitPinEnvelope_Serialize(cmp_ctx_t* ctx, InitPinEnvelope* value);
 int InitPinEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, InitPinEnvelope* value);
 int InitPinEnvelope_Release(InitPinEnvelope* value);
 
+typedef struct _SessionCancelRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    uint32_t CkfFlags;
+} SessionCancelRequest;
+
+int SessionCancelRequest_Serialize(cmp_ctx_t* ctx, SessionCancelRequest* value);
+int SessionCancelRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SessionCancelRequest* value);
+int SessionCancelRequest_Release(SessionCancelRequest* value);
+
+typedef struct _SessionCancelEnvelope
+{
+    uint32_t Rv;
+} SessionCancelEnvelope;
+
+int SessionCancelEnvelope_Serialize(cmp_ctx_t* ctx, SessionCancelEnvelope* value);
+int SessionCancelEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SessionCancelEnvelope* value);
+int SessionCancelEnvelope_Release(SessionCancelEnvelope* value);
+
 typedef struct _CkP_MacGeneralParams
 {
     uint32_t Value;
@@ -2059,5 +2081,6 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
 int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* request, SignRecoverEnvelope* response);
 int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitRequest* request, VerifyRecoverInitEnvelope* response);
 int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* request, VerifyRecoverEnvelope* response);
+int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* request, SessionCancelEnvelope* response);
 
 #endif // NMRPC_rpc

@@ -3420,8 +3420,33 @@ CK_DEFINE_FUNCTION(CK_RV, C_SessionCancel)(CK_SESSION_HANDLE hSession, CK_FLAGS 
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    //TODO: implement
-    return CKR_FUNCTION_NOT_SUPPORTED;
+    SessionCancelRequest request;
+    SessionCancelEnvelope envelope;
+
+    nmrpc_global_context_t ctx;
+    SockContext_t tcp;
+
+    if (P11SocketInit(&tcp) != NMRPC_OK)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+
+    nmrpc_global_context_tcp_init(&ctx, &tcp);
+    InitCallContext(&ctx, &request.AppId);
+
+    request.SessionId = (uint32_t)hSession;
+    request.CkfFlags = (uint32_t)flags;
+
+    int rv = nmrpc_call_SessionCancel(&ctx, &request, &envelope);
+    if (rv != NMRPC_OK)
+    {
+        LOG_FAILED_CALL_RPC();
+        return CKR_DEVICE_ERROR;
+    }
+
+    SessionCancelEnvelope_Release(&envelope);
+
+    return (CK_RV)envelope.Rv;
 }
 
 

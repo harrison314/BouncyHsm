@@ -252,6 +252,11 @@ Rpc:
     Summary: Call for C_VerifyRecover
     Request: VerifyRecoverRequest
     Response: VerifyRecoverEnvelope
+  
+  SessionCancel:
+    Summary: Call for C_SessionCancel (PKCS11 version 3.1)
+    Request: SessionCancelRequest
+    Response: SessionCancelEnvelope
 
 Messages:
   AppIdentification:
@@ -1244,6 +1249,18 @@ Messages:
       Pin: binary?
 
   InitPinEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  SessionCancelRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      CkfFlags: uint32
+
+  SessionCancelEnvelope:
     Summary:
     Fields:
       Rv: uint32
