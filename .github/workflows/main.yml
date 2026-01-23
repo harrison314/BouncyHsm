@@ -93,3 +93,21 @@ jobs:
           path: |
             artifacts/*.zip
             artifacts/*.nupkg
+
+  Build-Docker:
+    name: Build-Docker
+    runs-on: ubuntu-latest 
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Unzip artifacts
+      run: unzip artifacts/BouncyHsm.zip -d artifacts/BouncyHsm
+    - name: Build Docker image
+      run: | 
+        docker build -t bouncyhsm:latest -f Build/DockerImage/Dockerfile . 
+        docker save bouncyhsm:latest -o bouncyhsm.tar
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4 
+      with:
+        name: docker-image
+        path: bouncyhsm.tar
