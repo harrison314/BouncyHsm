@@ -105,11 +105,9 @@ void BuildBouncyHsmPkcs11Lib(PlatformTarget platform)
         }
     };
 
-    //// Fix problem with local VCTargetsPath
-    //if (!BuildSystem.GitHubActions.IsRunningOnGitHubActions)
-    //{
-    //    settings.EnvironmentVariables.Add("VCTargetsPath", @"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180");
-    //}
+    //TODO: Fix leather
+    // Fix problem with Cake and visual studio 2026
+    settings.ToolPath = @"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe";
 
     MSBuild($"{SourceDirectory}BouncyHsm.Pkcs11Lib/BouncyHsm.Pkcs11Lib.vcxproj", settings);
 }
@@ -247,6 +245,7 @@ Task(BuildTarget.BuildAll)
             Warning("Native lib {0} not found.", rhelNativeLibx64);
         }
 
+        System.IO.Directory.CreateDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/data"));
         System.IO.File.WriteAllText(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/data/keep.txt"), string.Empty);
 
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/*.pdb"));
