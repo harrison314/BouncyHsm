@@ -148,6 +148,7 @@ Task(BuildTarget.BuildBouncyHsmClient)
         string linuxNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64.so");
         if (FileExists(linuxNativeLibx64))
         {
+            CleanDirectory(JoinPaths(ArtifactsTmpDirectory, "native", "Linux-x64"));
             CopyFile(linuxNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "native", "Linux-x64", "BouncyHsm.Pkcs11Lib.so"));
         }
@@ -155,6 +156,7 @@ Task(BuildTarget.BuildBouncyHsmClient)
         string rhelNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64-rhel.so");
         if (FileExists(rhelNativeLibx64))
         {
+            CleanDirectory(JoinPaths(ArtifactsTmpDirectory, "native", "Rhel-x64"));
             CopyFile(rhelNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "native", "Rhel-x64", "BouncyHsm.Pkcs11Lib.so"));
         }
@@ -199,6 +201,7 @@ Task(BuildTarget.BuildAll)
         string linuxNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64.so");
         if (FileExists(linuxNativeLibx64))
         {
+            CleanDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x64"));
             CopyFile(linuxNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x64", "BouncyHsm.Pkcs11Lib.so"));
 
@@ -215,8 +218,10 @@ Task(BuildTarget.BuildAll)
         string linuxNativeLibx32 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x86.so");
         if (FileExists(linuxNativeLibx32))
         {
+            System.IO.Directory.CreateDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x86"));
             CopyFile(linuxNativeLibx32,
                 JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x86", "BouncyHsm.Pkcs11Lib.so"));
+
 
             CreateZip(linuxNativeLibx32,
                        "Linux X64",
@@ -232,6 +237,7 @@ Task(BuildTarget.BuildAll)
         string rhelNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64-rhel.so");
         if (FileExists(rhelNativeLibx64))
         {
+            System.IO.Directory.CreateDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Rhel-x64"));
             CopyFile(rhelNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Rhel-x64", "BouncyHsm.Pkcs11Lib.so"));
 
