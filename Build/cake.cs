@@ -259,6 +259,9 @@ Task(BuildTarget.BuildAll)
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/.gitkeep"));
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/appsettings.Development.json"));
 
+        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"));
+        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli"));
+
         Zip(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"), JoinPaths(ArtifactsDirectory, "BouncyHsm.zip"));
 
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli/**/*.pdb"));
@@ -293,6 +296,10 @@ void CreateZip(string dllFile, string platform, string version, string destinati
     readmeStream.Flush();
 }
 
+void CopyLicenses(string outFolder)
+{
+    CopyFile("./LICENSE", JoinPaths(outFolder, "License.txt"));
+}
 
 string JoinPaths(params string[] parts)
 {
