@@ -62,7 +62,8 @@ jobs:
 
   Build-Bouncy-Hsm:
     name: Build-Bouncy-Hsm
-    runs-on: windows-latest
+    #runs-on: windows-latest TODO: use this after 4.5.2026
+    runs-on: windows-2025-vs2026
     needs:
       - Build-linux-libs
       - Build-rhel-libs
