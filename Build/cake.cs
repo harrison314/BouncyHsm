@@ -98,6 +98,7 @@ void BuildBouncyHsmPkcs11Lib(PlatformTarget platform)
         Verbosity = Verbosity.Diagnostic,
         Configuration = configuration,
         PlatformTarget = platform,
+        ToolVersion = MSBuildSettings.VS2026, //TODO: Exprimental
         Targets =
         {
             "clean",
