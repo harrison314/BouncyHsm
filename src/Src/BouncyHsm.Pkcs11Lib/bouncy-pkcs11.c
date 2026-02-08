@@ -3496,6 +3496,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VER
 
         if (strlen(requested_interface_name) != strlen(supported_interface_name) || 0 != strcmp(requested_interface_name, supported_interface_name))
         {
+            log_message(LOG_LEVEL_INFO, "Unsupported PKCS#11 interface: %s in %s", requested_interface_name, __FUNCTION__);
+
             *ppInterface = NULL;
             return CKR_OK;
         }
@@ -3520,6 +3522,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VER
         }
         else
         {
+            log_message(LOG_LEVEL_INFO, "Unsupported PKCS#11 version requested: %d.%d in %s.", pVersion->major, pVersion->minor, __FUNCTION__);
+           
             *ppInterface = NULL;
             return CKR_OK;
         }
