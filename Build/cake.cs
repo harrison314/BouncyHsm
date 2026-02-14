@@ -299,6 +299,12 @@ void CreateZip(string dllFile, string platform, string version, string destinati
 void CopyLicenses(string outFolder)
 {
     CopyFile("./LICENSE", JoinPaths(outFolder, "License.txt"));
+    System.IO.File.WriteAllText(JoinPaths(outFolder, "version.txt"), 
+        $"""
+        Version: {ThisVersion}
+        GIT: {gitBranch} - {gitCommit}
+
+        """);
 }
 
 string JoinPaths(params string[] parts)
