@@ -8,15 +8,15 @@ The Docker image is also distributed as a tar file, which can be imported using:
 The Docker image for the server can be created using the following Dockerfile:
 
 ```dockerfile
-FROM alpine:3.20.3
+FROM alpine:3.23
 
-ENV APP_VERSION=1.6.1
+ENV APP_VERSION=2.0.0
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .
 RUN apk --update add unzip && rm -rf /var/cache/apk/* && unzip BouncyHsm.zip && rm BouncyHsm.zip
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /App
 
 COPY --from=0 /unzip /App
@@ -31,7 +31,7 @@ CMD ["dotnet", "BouncyHsm.dll"]
 ```
 
 Additional configuration is possible using environment variables with the `BouncyHsm_` prefix.
-The way to override the default configuration is described on the [.NET framework pages](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-8.0#non-prefixed-environment-variables).
+The way to override the default configuration is described on the [.NET framework pages](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-10.0#non-prefixed-environment-variables).
 
 Some useful environmental variables:
 - `BouncyHsm_Serilog__MinimumLevel__Default=Debug` - set default log level (possible values are: `Verbose`, `Debug`, `Information`, `Warning`, `Error`, `Fatal`),
@@ -84,9 +84,9 @@ _TestContainer_ uses the PKCS#11 library  _BouncyHsm.Pkcs11Lib.so_, which is obt
 For example - download from release:
 
 ```dockerfile
-FROM alpine:3.20.3
+FROM alpine:3.23
 
-ENV APP_VERSION=1.6.1
+ENV APP_VERSION=2.0.0
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .

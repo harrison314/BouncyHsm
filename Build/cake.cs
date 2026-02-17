@@ -106,11 +106,9 @@ void BuildBouncyHsmPkcs11Lib(PlatformTarget platform)
         }
     };
 
-    //// Fix problem with local VCTargetsPath
-    //if (!BuildSystem.GitHubActions.IsRunningOnGitHubActions)
-    //{
-    //    settings.EnvironmentVariables.Add("VCTargetsPath", @"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180");
-    //}
+    //TODO: Fix leather
+    // Fix problem with Cake and visual studio 2026
+    settings.ToolPath = @"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe";
 
     MSBuild($"{SourceDirectory}BouncyHsm.Pkcs11Lib/BouncyHsm.Pkcs11Lib.vcxproj", settings);
 }
@@ -151,6 +149,7 @@ Task(BuildTarget.BuildBouncyHsmClient)
         string linuxNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64.so");
         if (FileExists(linuxNativeLibx64))
         {
+            CleanDirectory(JoinPaths(ArtifactsTmpDirectory, "native", "Linux-x64"));
             CopyFile(linuxNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "native", "Linux-x64", "BouncyHsm.Pkcs11Lib.so"));
         }
@@ -158,6 +157,7 @@ Task(BuildTarget.BuildBouncyHsmClient)
         string rhelNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64-rhel.so");
         if (FileExists(rhelNativeLibx64))
         {
+            CleanDirectory(JoinPaths(ArtifactsTmpDirectory, "native", "Rhel-x64"));
             CopyFile(rhelNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "native", "Rhel-x64", "BouncyHsm.Pkcs11Lib.so"));
         }
@@ -202,6 +202,7 @@ Task(BuildTarget.BuildAll)
         string linuxNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64.so");
         if (FileExists(linuxNativeLibx64))
         {
+            CleanDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x64"));
             CopyFile(linuxNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x64", "BouncyHsm.Pkcs11Lib.so"));
 
@@ -218,8 +219,10 @@ Task(BuildTarget.BuildAll)
         string linuxNativeLibx32 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x86.so");
         if (FileExists(linuxNativeLibx32))
         {
+            System.IO.Directory.CreateDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x86"));
             CopyFile(linuxNativeLibx32,
                 JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Linux-x86", "BouncyHsm.Pkcs11Lib.so"));
+
 
             CreateZip(linuxNativeLibx32,
                        "Linux X64",
@@ -235,6 +238,7 @@ Task(BuildTarget.BuildAll)
         string rhelNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64-rhel.so");
         if (FileExists(rhelNativeLibx64))
         {
+            System.IO.Directory.CreateDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Rhel-x64"));
             CopyFile(rhelNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "native", "Rhel-x64", "BouncyHsm.Pkcs11Lib.so"));
 
@@ -248,12 +252,16 @@ Task(BuildTarget.BuildAll)
             Warning("Native lib {0} not found.", rhelNativeLibx64);
         }
 
+        System.IO.Directory.CreateDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/data"));
         System.IO.File.WriteAllText(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/data/keep.txt"), string.Empty);
 
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/*.pdb"));
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/libman.json"));
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/.gitkeep"));
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/appsettings.Development.json"));
+
+        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"));
+        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli"));
 
         Zip(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"), JoinPaths(ArtifactsDirectory, "BouncyHsm.zip"));
 
@@ -289,6 +297,16 @@ void CreateZip(string dllFile, string platform, string version, string destinati
     readmeStream.Flush();
 }
 
+void CopyLicenses(string outFolder)
+{
+    CopyFile("./LICENSE", JoinPaths(outFolder, "License.txt"));
+    System.IO.File.WriteAllText(JoinPaths(outFolder, "version.txt"), 
+        $"""
+        Version: {ThisVersion}
+        GIT: {gitBranch} - {gitCommit}
+
+        """);
+}
 
 string JoinPaths(params string[] parts)
 {
