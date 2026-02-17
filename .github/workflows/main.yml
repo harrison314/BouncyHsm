@@ -103,6 +103,11 @@ jobs:
     steps: 
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Get latest tag 
+      id: varver 
+      run: | 
+        TAG=$(git describe --tags --abbrev=0)
+        echo "tag=$TAG" >> $GITHUB_OUTPUT
     - uses: actions/download-artifact@v4
       with:
         name: Bouncy-Hsm-Artifacts
@@ -111,7 +116,7 @@ jobs:
       run: unzip artifacts/BouncyHsm.zip -d artifacts/BouncyHsm
     - name: Build Docker image
       run: | 
-        docker build -t bouncyhsm:latest -f Build/DockerImage/Dockerfile . 
+        docker build -t bouncyhsm:latest -t bouncyhsm:${{ steps.varver.outputs.tag }} -f Build/DockerImage/Dockerfile . 
         docker save bouncyhsm:latest -o bouncyhsm.tar
     - name: Upload artifact
       uses: actions/upload-artifact@v4 
