@@ -98,7 +98,7 @@ void BuildBouncyHsmPkcs11Lib(PlatformTarget platform)
         Verbosity = Verbosity.Diagnostic,
         Configuration = configuration,
         PlatformTarget = platform,
-        ToolVersion = MSBuildSettings.VS2026, //TODO: Exprimental
+        ToolVersion = MSBuildToolVersion.VS2026, //TODO: Exprimental
         Targets =
         {
             "clean",
@@ -108,7 +108,7 @@ void BuildBouncyHsmPkcs11Lib(PlatformTarget platform)
 
     //TODO: Fix leather
     // Fix problem with Cake and visual studio 2026
-    settings.ToolPath = @"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe";
+   // settings.ToolPath = @"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe";
 
     MSBuild($"{SourceDirectory}BouncyHsm.Pkcs11Lib/BouncyHsm.Pkcs11Lib.vcxproj", settings);
 }
