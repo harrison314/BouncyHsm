@@ -2,7 +2,7 @@
 _Bouncy Hsm_ does not publish a Docker image, but it is ready to use with Docker, both the server and the PKCS#11 library.
 
 ## TODO add documentation
-The Docker image is also distributed as a tar file, which can be imported using: `docker load -i bouncyhsm.tar`.
+The Docker image is also distributed as a tar file, which can be imported using: `docker load -i bouncyhsm.tar` and `docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
 
 ## Dockerize server
 The Docker image for the server can be created using the following Dockerfile:
@@ -99,3 +99,4 @@ COPY --from=0 /unzip/native/Linux-x64 /App/NativeLibLocation
 
 CMD ["example_application", "-p11libPath", "/App/NativeLibLocation/BouncyHsm.Pkcs11Lib.so"]
 ```
+
