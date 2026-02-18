@@ -1,11 +1,11 @@
 # Docker support
-_Bouncy Hsm_ does not publish a Docker image, but it is ready to use with Docker, both the server and the PKCS#11 library.
+_Bouncy Hsm_ Bouncy Hsm publishes a docker image as a tar file.
 
-## TODO add documentation
-The Docker image is also distributed as a tar file, which can be imported using: `docker load -i bouncyhsm.tar` and `docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
+To use the docker image, you need to download and import it from the file `docker load -i bouncyhsm.tar`,
+and then use it, for example, via `docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
 
 ## Dockerize server
-The Docker image for the server can be created using the following Dockerfile:
+If you want to create your own Docker image, you can do so using the following Dockerfile:
 
 ```dockerfile
 FROM alpine:3.23
@@ -50,7 +50,6 @@ For example, for a server on the *bouncy_hsm_server* domain, the `BOUNCY_HSM_CFG
 to add logging to the console, use: `Server=bouncy_hsm_server; Port=8765; LogTarget=Console; LogLevel=TRACE;`.
 
 The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in the Bouncy Hsm web interface under _Configure PKCS#11 lib_.
-
 
 ## Docker compose example
 In folder [/Examples/DockerComposeExample](/Examples/DockerComposeExample) there is a demonstration of using Docker compose.
@@ -99,4 +98,5 @@ COPY --from=0 /unzip/native/Linux-x64 /App/NativeLibLocation
 
 CMD ["example_application", "-p11libPath", "/App/NativeLibLocation/BouncyHsm.Pkcs11Lib.so"]
 ```
+
 
