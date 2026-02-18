@@ -30,8 +30,7 @@ Task(BuildTarget.RebuildDocumentation)
                     {"GitCommit", new List<string>() { gitCommit } }
                 }
                 },
-               // WorkingDirectory = $"src/Tools/BouncyHsm.DocGenerator",
-               DiagnosticOutput = true
+                DiagnosticOutput = true
             });
     });
 
@@ -98,17 +97,13 @@ void BuildBouncyHsmPkcs11Lib(PlatformTarget platform)
         Verbosity = Verbosity.Diagnostic,
         Configuration = configuration,
         PlatformTarget = platform,
-        ToolVersion = MSBuildToolVersion.VS2026, //TODO: Exprimental
+        ToolVersion = MSBuildToolVersion.VS2026,
         Targets =
         {
             "clean",
             "build"
         }
     };
-
-    //TODO: Fix leather
-    // Fix problem with Cake and visual studio 2026
-   // settings.ToolPath = @"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe";
 
     MSBuild($"{SourceDirectory}BouncyHsm.Pkcs11Lib/BouncyHsm.Pkcs11Lib.vcxproj", settings);
 }
@@ -161,7 +156,6 @@ Task(BuildTarget.BuildBouncyHsmClient)
             CopyFile(rhelNativeLibx64,
                 JoinPaths(ArtifactsTmpDirectory, "native", "Rhel-x64", "BouncyHsm.Pkcs11Lib.so"));
         }
-
 
         DotNetPackSettings settings = new DotNetPackSettings()
         {
@@ -271,7 +265,6 @@ Task(BuildTarget.BuildAll)
         Zip(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli"), JoinPaths(ArtifactsDirectory, "BouncyHsm.Cli.zip"));
     });
 
-
 void CreateZip(string dllFile, string platform, string version, string destination)
 {
     Debug("Creating ZIP file from dll {0}", dllFile);
@@ -300,7 +293,7 @@ void CreateZip(string dllFile, string platform, string version, string destinati
 void CopyLicenses(string outFolder)
 {
     CopyFile("./LICENSE", JoinPaths(outFolder, "License.txt"));
-    System.IO.File.WriteAllText(JoinPaths(outFolder, "version.txt"), 
+    System.IO.File.WriteAllText(JoinPaths(outFolder, "version.txt"),
         $"""
         Version: {ThisVersion}
         GIT: {gitBranch} - {gitCommit}
