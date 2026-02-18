@@ -4,7 +4,7 @@ _Bouncy Hsm_ Bouncy Hsm publishes a docker image as a tar file.
 To use the docker image, you need to download from [releases](https://github.com/harrison314/BouncyHsm/releases) and import it from the file `docker load -i bouncyhsm.tar`,
 and then use it, for example, via `docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
 
-## Dockerize server
+## Creating your own Docker container
 If you want to create your own Docker image, you can do so using the following Dockerfile:
 
 ```dockerfile
@@ -98,6 +98,7 @@ COPY --from=0 /unzip/native/Linux-x64 /App/NativeLibLocation
 
 CMD ["example_application", "-p11libPath", "/App/NativeLibLocation/BouncyHsm.Pkcs11Lib.so"]
 ```
+
 
 
 
