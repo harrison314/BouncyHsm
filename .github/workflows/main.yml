@@ -103,6 +103,10 @@ jobs:
     steps: 
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Pull tags
+      run: |
+        git fetch --prune
+        git pull --tags
     - name: Get latest tag 
       id: varver 
       run: | 
