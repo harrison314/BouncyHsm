@@ -103,13 +103,10 @@ jobs:
     steps: 
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Pull tags
-      run: |
-        git fetch --prune
-        git pull --tags
     - name: Get latest tag 
       id: varver 
-      run: | 
+      run: |
+        git fetch --prune --unshallow
         TAG=$(git describe --tags --abbrev=0)
         echo "tag=$TAG" >> $GITHUB_OUTPUT
     - uses: actions/download-artifact@v4
