@@ -1,8 +1,15 @@
 # Docker support
-_Bouncy Hsm_ does not publish a Docker image, but it is ready to use with Docker, both the server and the PKCS#11 library.
+_Bouncy Hsm_ Bouncy Hsm publishes a docker image as a tar file.
 
-## Dockerize server
-The Docker image for the server can be created using the following Dockerfile:
+To use the docker image, you need to download from [releases](https://github.com/harrison314/BouncyHsm/releases) and import it from the file `docker load -i bouncyhsm.tar`,
+and then use it, for example, via `docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
+
+## Advanced
+This section is for creating your own containers and advanced configuration in Docker containers.
+Also a demonstration for Docker Compose.
+
+### Creating your own Docker container
+If you want to create your own Docker image, you can do so using the following Dockerfile:
 
 ```dockerfile
 FROM alpine:3.23
@@ -39,7 +46,7 @@ For more complicated behavior modifications or logging modifications,
 I recommend copying your own `appsetings.json` configuration file into the image and removing the `ENV ASPNETCORE_ENVIRONMENT=Docker` line from the Dockerfile.
 
 
-## Dockerize clients with PKCS#11 library
+### Dockerize clients with PKCS#11 library
 When dockerizing applications that use the native PKCS#11 library (_BouncyHsm.Pkcs11Lib.dll_, _BouncyHsm.Pkcs11Lib.so_),
 the `BOUNCY_HSM_CFG_STRING` environment variable is set in the container, which the library uses to find a TCP endpoint to connect to.
 
@@ -48,8 +55,7 @@ to add logging to the console, use: `Server=bouncy_hsm_server; Port=8765; LogTar
 
 The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in the Bouncy Hsm web interface under _Configure PKCS#11 lib_.
 
-
-## Docker compose example
+### Docker compose example
 In folder [/Examples/DockerComposeExample](/Examples/DockerComposeExample) there is a demonstration of using Docker compose.
 In the first container is _Bouncy Hsm_ server, whose dockerfile is described above.
 In the second, an application that lists the supported mechanisms via the PKCS#11 library.
