@@ -379,10 +379,13 @@ public class PkcsFacade : IPkcsFacade
         }
 
         AttributeValueResult idResult = storageObject.GetValue(CKA.CKA_ID);
-        if (!idResult.IsOK(out IAttributeValue? ckaId))
+        (bool attributeIsOk, IAttributeValue? ckaId) = await idResult.GetOkOrComputed();
+        if (!attributeIsOk)
         {
             return new VoidDomainResult.InvalidInput("Object is not PKCS object (does not contains CKA_ID).");
         }
+
+        System.Diagnostics.Debug.Assert(ckaId != null);
 
         Dictionary<CKA, IAttributeValue> searchTemplate = new Dictionary<CKA, IAttributeValue>()
         {
@@ -558,9 +561,9 @@ public class PkcsFacade : IPkcsFacade
     private string GetEdwardsSignatureOid(PrivateKeyObject privateKeyObject)
     {
         System.Diagnostics.Debug.Assert(privateKeyObject.CkaKeyType == CKK.CKK_EC_EDWARDS, "Key type is not Edwards.");
-        
+
         IAttributeValue value = privateKeyObject.GetValue(CKA.CKA_EC_PARAMS).UnwrapOk().Value;
-        
+
         // Works beacose OID for key is same as oid for singature
         DerObjectIdentifier curveOid = EdEcUtils.GetOidFromParams(value.AsByteArray());
         return curveOid.Id;

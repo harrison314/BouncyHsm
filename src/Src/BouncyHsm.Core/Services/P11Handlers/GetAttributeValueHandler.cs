@@ -52,11 +52,15 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
             AttributeValueResult attributeValueResult = pkcs11Object.GetValue(attributeType);
             GetAttributeOutValue outValue = new GetAttributeOutValue();
 
-            outValue.ValueLen = this.GuessValueLength(attributeValueResult);
             this.UpdateCkr(ref rv, attributeValueResult);
 
-            if (attributeValueResult.IsOK(out IAttributeValue? attributeValue))
+            (bool attributeIsOk, IAttributeValue? attributeValue) = await attributeValueResult.GetOkOrComputed();
+            outValue.ValueLen = this.GuessValueLength(attributeIsOk, attributeValue);
+
+            if (attributeIsOk)
             {
+                System.Diagnostics.Debug.Assert(attributeValue != null);
+
                 this.SetOutValue(ref outValue, attributeValue);
                 this.logger.LogDebug("Return attribute {attributeType} with value type {valueType} on position {position}.",
                     attributeType,
@@ -97,11 +101,17 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
         };
     }
 
-    private CkSpecialUint GuessValueLength(AttributeValueResult attributeValueResult)
+    private CkSpecialUint GuessValueLength(bool attributeIsOk, IAttributeValue? attributeValue)
     {
-        return attributeValueResult.Match<CkSpecialUint>(value => CkSpecialUint.Create(value.Value.GuessSize()),
-            sensitiveOrUnextractable => CkSpecialUint.CreateUnavailableInformation(),
-            invalidAttribute => CkSpecialUint.CreateUnavailableInformation());
+        if (attributeIsOk)
+        {
+            System.Diagnostics.Debug.Assert(attributeValue != null);
+            return CkSpecialUint.Create(attributeValue.GuessSize());
+        }
+        else
+        {
+            return CkSpecialUint.CreateUnavailableInformation();
+        }
     }
 
     private void UpdateCkr(ref CKR ckr, AttributeValueResult attributeValueResult)
@@ -109,6 +119,7 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
         if (ckr == CKR.CKR_OK)
         {
             ckr = attributeValueResult.Match<CKR>(ok => CKR.CKR_OK,
+                computed => CKR.CKR_OK,
                 sensitiveOrUnextractable => CKR.CKR_ATTRIBUTE_SENSITIVE,
                 invalidAttribute => CKR.CKR_ATTRIBUTE_TYPE_INVALID);
         }
@@ -145,6 +156,7 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
 
             default:
                 throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.");
-        };
+        }
+        ;
     }
 }
