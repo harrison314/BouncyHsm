@@ -2,11 +2,9 @@ using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Infrastructure;
 using BouncyHsm.Infrastructure.Application;
 using BouncyHsm.Services.Configuration;
-using Microsoft.Extensions.Configuration;
+using BouncyHsm.Spa;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Serilog;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 
 namespace BouncyHsm;
 
@@ -62,9 +60,13 @@ public class Program
             cfg.Title = "Bouncy Hsm REST API";
             cfg.Description = "Management API for Bouncy Hsm.";
             cfg.UseRouteNameAsOperationId = true;
+            cfg.Version = "2.0.0";
         });
 
         builder.Host.UseWindowsService();
+        builder.Services.AddAntiforgery();
+        builder.Services.AddRazorComponents()
+                .AddInteractiveWebAssemblyComponents();
 
         builder.Services.AddP11Handlers();
         builder.Services.AddHostedService<Infrastructure.HostedServices.TcpHostedService>();
@@ -87,6 +89,7 @@ public class Program
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IStatsFacade, BouncyHsm.Core.UseCases.Implementation.StatsFacade>();
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IKeysGenerationFacade, BouncyHsm.Core.UseCases.Implementation.KeysGenerationFacade>();
         builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IApplicationConnectionsFacade, BouncyHsm.Core.UseCases.Implementation.ApplicationConnectionsFacade>();
+        builder.Services.AddScoped<BouncyHsm.Core.UseCases.Contracts.IMigrationFacade, BouncyHsm.Core.UseCases.Implementation.MigrationFacade>();
 
         builder.Services.AddSingleton<BouncyHsm.Infrastructure.PapServices.IPapLoginMemoryContext, BouncyHsm.Infrastructure.PapServices.PapLoginMemoryContext>();
         builder.Services.AddTransient<IProtectedAuthPathProvider, BouncyHsm.Infrastructure.PapServices.SignalrProtectedAuthPathProvider>();
@@ -118,17 +121,28 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 
-        app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
+        app.MapStaticAssets();
+
         app.UseRouting();
+
+        app.UseAuthorization();
+        app.UseAntiforgery();
+       
 
         app.UseAuthorization();
 
         app.MapHub<BouncyHsm.Infrastructure.LogPropagation.LogHub>("/loghub");
         app.MapHub<BouncyHsm.Infrastructure.PapServices.PapHub>("/paphub");
+
         app.MapControllers();
-        app.MapFallbackToFile("index.html");
+
+        app.MapRazorComponents<App>()
+               .AddInteractiveWebAssemblyRenderMode()
+        .AddAdditionalAssemblies(typeof(Spa._Imports).Assembly);
+        
 
         app.Run();
     }

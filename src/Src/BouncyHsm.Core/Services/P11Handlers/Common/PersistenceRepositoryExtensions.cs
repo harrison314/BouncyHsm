@@ -19,7 +19,7 @@ internal static class PersistenceRepositoryExtensions
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_SLOT_ID_INVALID, $"Slot with id {slotId} not found.");
         }
 
-        if (requireToken && slot.IsRemovableDevice && slot.IsUnplugged)
+        if (requireToken && slot.IsRemovableDevice && !slot.IsPlugged)
         {
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_TOKEN_NOT_PRESENT, $"Slot with id {slotId} has no token plugged.");
         }

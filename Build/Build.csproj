@@ -1,0 +1,14 @@
+<Project Sdk="Cake.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RunWorkingDirectory>$(MSBuildProjectDirectory)/..</RunWorkingDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cake.Git" Version="5.0.1" />
+
+    <!-- Preview versions and nuget config will be removed after version 6.1.0 is released -->
+    <PackageReference Include="Cake.Common" Version="6.1.0-alpha0063" />
+    <PackageReference Include="Cake.Core" Version="6.1.0-alpha0063" />
+  </ItemGroup>
+</Project>

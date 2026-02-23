@@ -80,6 +80,48 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
         return this.GetSimetricKeyTimeSpan((uint)montgomeryPrivateKey.CkaValue.Length);
     }
 
+    public override TimeSpan Visit(MlDsaPrivateKeyObject mlDsaPrivateKeyObject)
+    {
+        int keySize = mlDsaPrivateKeyObject.CkaValue.Length;
+
+        double x = keySize;
+
+        double result = 0.0;
+        result += ((115.0 * x * x) / 16384.0) * this.GetMultiplicator(2);
+        result += ((-577.0 * x) / 256.0) * this.GetMultiplicator(1);
+        result += 24.0 * this.GetMultiplicator(0);
+
+        return TimeSpan.FromMilliseconds(result);
+    }
+
+    public override TimeSpan Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject)
+    {
+        int keySize = slhDsaPrivateKeyObject.CkaValue.Length;
+
+        double x = keySize;
+
+        double result = 0.0;
+        result += ((115.0 * x * x) / 16384.0) * this.GetMultiplicator(2);
+        result += ((-577.0 * x) / 256.0) * this.GetMultiplicator(1);
+        result += 24.0 * this.GetMultiplicator(0);
+
+        return TimeSpan.FromMilliseconds(result);
+    }
+
+    public override TimeSpan Visit(MlKemPrivateKeyObject mlKemPrivateKeyObject)
+    {
+        int keySize = mlKemPrivateKeyObject.CkaValue.Length;
+
+        double x = keySize;
+
+        double result = 0.0;
+        result += ((115.0 * x * x) / 16384.0) * this.GetMultiplicator(2);
+        result += ((-577.0 * x) / 256.0) * this.GetMultiplicator(1);
+        result += 24.0 * this.GetMultiplicator(0);
+
+        return TimeSpan.FromMilliseconds(result);
+    }
+
     private double GetMultiplicator(int pi)
     {
         if (pi < this.polynomialMultiplication.Length)

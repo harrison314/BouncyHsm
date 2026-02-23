@@ -10,7 +10,7 @@ public static class InfrastructureExtensions
     public static void RegisterCommonServices(this IServiceCollection serviceDescriptors)
     {
         serviceDescriptors.AddTransient<IProtectedAuthPathProvider, NullProtectedAuthPathProvider>();
-        serviceDescriptors.AddSingleton<ITimeAccessor, BouncyHsm.Infrastructure.Common.TimeAccessor>();
+        serviceDescriptors.AddSingleton(System.TimeProvider.System);
         serviceDescriptors.AddTransient<IP11HwServices, BouncyHsm.Infrastructure.Common.P11HwServices>();
     }
 

@@ -6,7 +6,7 @@ namespace BouncyHsm.Pkcs11IntegrationTests;
 [TestClass]
 public class T07_OpenSession
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SessionType.ReadOnly)]
     [DataRow(SessionType.ReadWrite)]
     public void OpenSession_Call_Success(SessionType sessionType)

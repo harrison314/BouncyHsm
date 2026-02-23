@@ -88,7 +88,7 @@ internal class GeneratePoly1305KeyCommand : AsyncCommand<GeneratePoly1305KeyComm
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -109,7 +109,7 @@ internal class GeneratePoly1305KeyCommand : AsyncCommand<GeneratePoly1305KeyComm
                        ForWrap = settings.ForWrap,
                        Sensitive = settings.Sensitive,
                    }
-               });
+               }, cancellationToken);
            });
 
         AnsiConsole.MarkupLine("POLY1305 key has created.");

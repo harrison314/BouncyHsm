@@ -224,6 +224,16 @@ internal static class CryptoObjectValueChecker
         }
     }
 
+    public static void CheckEnumIsDefined<TEnum>(CKA attributeType, TEnum value)
+        where TEnum : struct, Enum
+    {
+        if (!Enum.IsDefined<TEnum>(value))
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                $"Attribute {attributeType} has invalid enum value {value}.");
+        }
+    }
+
     private static string EscapeBytes(byte[] bytes)
     {
         return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);

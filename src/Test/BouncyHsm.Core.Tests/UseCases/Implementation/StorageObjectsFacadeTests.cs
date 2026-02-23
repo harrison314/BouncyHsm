@@ -135,7 +135,7 @@ public class StorageObjectsFacadeTests
         repository.VerifyAll();
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKA.CKA_VALUE)]
     [DataRow(CKA.CKA_LABEL)]
     [DataRow(CKA.CKA_APPLICATION)]

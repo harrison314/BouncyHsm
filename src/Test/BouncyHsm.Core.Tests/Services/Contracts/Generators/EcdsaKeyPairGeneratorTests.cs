@@ -78,7 +78,7 @@ public class EcdsaKeyPairGeneratorTests
     private IEnumerable<(byte[] ecParams, string curveName)> EnumerateNames()
     {
         HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
-        foreach (SupportedNameCurve curve in hsmInfoFacade.GetCurves())
+        foreach (SupportedNameCurve curve in hsmInfoFacade.GetSupportedKeys().EcCurves)
         {
             DerObjectIdentifier curveOid = new DerObjectIdentifier(curve.Oid);
             yield return (curveOid.GetEncoded(), curve.Name);

@@ -1,4 +1,5 @@
 ﻿@page "/Slots"
+@rendermode InteractiveWebAssembly
 @using BouncyHsm.Client
 @inject IBouncyHsmClient bouncyHsmClient
 
@@ -55,13 +56,13 @@ else
                                 {
                                     <tr>
                                         <td>Token state:</td>
-                                        @if(slot.IsUnplugged)
+                                        @if(slot.IsPlugged)
                                         {
-                                            <td class="text-danger">Unplugged</td>
+                                            <td>Plugged</td>
                                         }
                                         else
                                         {
-                                            <td>Plugged</td>
+                                            <td class="text-danger">Unplugged</td>
                                         }
                                     </tr>
                                 }
@@ -103,16 +104,16 @@ else
                         @if (slot.IsRemovableDevice)
                         {
                             <br />
-                            @if (slot.IsUnplugged)
+                            @if (slot.IsPlugged)
                             {
-                                <button class="btn btn-primary mb-1 btn-w-action" @onclick="@(_ => this.SetPluggedState(slot, true))">
-                                    <span class="icon-Connected icon-1x"></span> Plug
+                                <button class="btn btn-danger mb-1 btn-w-action" @onclick="@(_ => this.SetPluggedState(slot, false))">
+                                    <span class="icon-Disconnected icon-1x"></span> Unplug
                                 </button>
                             }
                             else
                             {
-                                <button class="btn btn-danger mb-1 btn-w-action" @onclick="@(_ => this.SetPluggedState(slot, false))">
-                                    <span class="icon-Disconnected icon-1x"></span> Unplug
+                                <button class="btn btn-primary mb-1 btn-w-action" @onclick="@(_ => this.SetPluggedState(slot, true))">
+                                    <span class="icon-Connected icon-1x"></span> Plug
                                 </button>
                             }
                         }

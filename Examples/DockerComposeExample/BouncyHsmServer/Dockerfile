@@ -1,12 +1,12 @@
-FROM alpine:3.20.3
+FROM alpine:3.23
 
-ENV APP_VERSION=1.6.0
+ENV APP_VERSION=2.0.0
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .
 RUN apk --update add unzip && rm -rf /var/cache/apk/* && unzip BouncyHsm.zip && rm BouncyHsm.zip
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /App
 
 COPY --from=0 /unzip /App

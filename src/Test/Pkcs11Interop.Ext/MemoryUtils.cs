@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Net.Pkcs11Interop.HighLevelAPI;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -13,6 +14,15 @@ namespace Pkcs11Interop.Ext;
 internal static unsafe class MemoryUtils
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IntPtr MemAlloc(uint length)
+    {
+        void* ptr = NativeMemory.Alloc((nuint)length);
+        System.Diagnostics.Debug.Assert(ptr != null, "Memory allocation failed");
+
+        return (IntPtr)ptr;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IntPtr MemDup(byte[] data)
     {
         System.Diagnostics.Debug.Assert(data != null);
@@ -22,6 +32,16 @@ internal static unsafe class MemoryUtils
 
         Unsafe.CopyBlock(ref Unsafe.AsRef<byte>(ptr), ref data[0], (uint)data.Length);
         return (IntPtr)ptr;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static byte[] MemDupFromPtr(IntPtr ptr, uint length)
+    {
+        System.Diagnostics.Debug.Assert(ptr != IntPtr.Zero);
+        byte[] data = new byte[length];
+        Unsafe.CopyBlock(ref data[0], ref Unsafe.AsRef<byte>(ptr.ToPointer()), (uint)length);
+
+        return data;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

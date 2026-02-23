@@ -1,5 +1,7 @@
-﻿using Net.Pkcs11Interop.HighLevelAPI;
-using Net.Pkcs11Interop.Common;
+﻿using Net.Pkcs11Interop.Common;
+using Net.Pkcs11Interop.HighLevelAPI;
+using Pkcs11Interop.Ext;
+using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
 using PkcsExtensions;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
@@ -13,7 +15,7 @@ public class T23_DeriveKey
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_MD2_KEY_DERIVATION)]
     [DataRow(CKM.CKM_MD5_KEY_DERIVATION)]
     [DataRow(CKM.CKM_SHA1_KEY_DERIVATION)]
@@ -23,6 +25,8 @@ public class T23_DeriveKey
     [DataRow(CKM.CKM_SHA512_KEY_DERIVATION)]
     [DataRow(CKM.CKM_SHA512_224_KEY_DERIVATION)]
     [DataRow(CKM.CKM_SHA512_256_KEY_DERIVATION)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_128_KEY_DERIVATION)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_256_KEY_DERIVATION)]
     public void Derive_Digest_Success(CKM mechanismType)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -61,7 +65,7 @@ public class T23_DeriveKey
         session.DestroyObject(derivedHandle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_CONCATENATE_BASE_AND_DATA, "0102030405060708", "AABBCCDDEE", "0102030405060708AABBCCDDEE")]
     [DataRow(CKM.CKM_CONCATENATE_DATA_AND_BASE, "0102030405060708", "AABBCCDDEE", "AABBCCDDEE0102030405060708")]
     [DataRow(CKM.CKM_XOR_BASE_AND_DATA, "0102030405060708", "AABBCCDDEE", "ABB9CFD9EBACBCC4")]
@@ -110,7 +114,7 @@ public class T23_DeriveKey
     }
 
     // Toto preverit s jarom https://www.cryptsoft.com/pkcs11doc/v210/group__SEC__12__37__1__CONCATENATION__OF__A__BASE__KEY__AND__ANOTHER__KEY.html
-    //[DataTestMethod]
+    //[TestMethod]
     //[DataRow(CKM.CKM_CONCATENATE_BASE_AND_KEY, "0102030405060708", "AABBCCDDEE", "0102030405060708AABBCCDDEE")]
     //public void Derive_ConcatKeys_Success(CKM mechanismType, string baseHex, string dataHex, string resultHex)
     //{
@@ -162,7 +166,7 @@ public class T23_DeriveKey
     //    Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
     //}
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("1202030405060708", 8U, "12")]
     [DataRow("1202030405060708", 32U, "12020304")]
     [DataRow("120203A405060708", 35U, "120203A400")]
@@ -211,7 +215,7 @@ public class T23_DeriveKey
         Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM_V3_0.CKM_SHA3_224_KEY_DERIVATION)]
     [DataRow(CKM_V3_0.CKM_SHA3_256_KEY_DERIVATION)]
     [DataRow(CKM_V3_0.CKM_SHA3_384_KEY_DERIVATION)]
@@ -254,7 +258,7 @@ public class T23_DeriveKey
         session.DestroyObject(derivedHandle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM_V3_0.CKM_BLAKE2B_160_KEY_DERIVE)]
     [DataRow(CKM_V3_0.CKM_BLAKE2B_256_KEY_DERIVE)]
     [DataRow(CKM_V3_0.CKM_BLAKE2B_384_KEY_DERIVE)]
@@ -291,6 +295,67 @@ public class T23_DeriveKey
         };
 
         using IMechanism mechanism = factories.MechanismFactory.Create(mechanismType);
+        IObjectHandle derivedHandle = session.DeriveKey(mechanism, handle, newKeyAttributes);
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
+    [TestMethod]
+    [DataRow(true, true, CKM.CKM_SHA256, 0x00000001u, 32)]
+    [DataRow(false, true, CKM.CKM_SHA256, 0x00000001u, 32)]
+    [DataRow(true, false, CKM.CKM_SHA256, 0x00000001u, 32)]
+    [DataRow(true, false, CKM.CKM_SHA512, 0x00000001u, 64)]
+    [DataRow(true, true, CKM.CKM_SHA256, 0x00000002u, 32)]
+    [DataRow(true, true, CKM.CKM_SHA256, 0x00000004u, 32)]
+    [DataRow(true, true, CKM_V3_0.CKM_SHA3_256, 0x00000002u, 32)]
+    [DataRow(true, true, CKM_V3_0.CKM_SHA3_512, 0x00000002u, 32)]
+    public void Derive_Hkdf_Success(bool extract, bool expand, CKM digestMechanism, uint satlType, int saltSize)
+    {
+        byte[] salt = new byte[saltSize];
+        byte[] info = new byte[32];
+
+        Random.Shared.NextBytes(salt);
+        Random.Shared.NextBytes(info);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
+        IObjectHandle saltKey = this.CreateSecret(session, new byte[] { 1, 4, 5, 9, 7, 5, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 47, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true)
+        };
+
+        using ICkHkdfParams hkdfParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateCkHkdfParams(extract,
+            expand,
+            digestMechanism,
+            satlType,
+            saltKey,
+            salt,
+            info);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_HKDF_DERIVE, hkdfParams);
         IObjectHandle derivedHandle = session.DeriveKey(mechanism, handle, newKeyAttributes);
 
         session.DestroyObject(handle);

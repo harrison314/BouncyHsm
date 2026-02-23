@@ -29,6 +29,7 @@ public class ApplicationConnectionsFacade: IApplicationConnectionsFacade
                 t.Data.ComputerName,
                 t.Data.ApplicationName,
                 Convert.ToUInt32(t.Data.Pid),
+                t.Data.CmdLine,
                 t.StartAt,
                 t.LastActivity))
             .ToList();

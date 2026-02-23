@@ -75,8 +75,8 @@ public class T30_GetAttributeValue
         List<IObjectAttribute> attributes = session.GetAttributeValue(key, getTemplate);
 
         Assert.AreEqual(CKK.CKK_SHA256_HMAC, (CKK) attributes[0].GetValueAsUlong());
-        Assert.AreEqual(true, attributes[1].GetValueAsBool());
-        Assert.AreEqual(false, attributes[2].GetValueAsBool());
+        Assert.IsTrue(attributes[1].GetValueAsBool());
+        Assert.IsFalse(attributes[2].GetValueAsBool());
         Assert.AreEqual(label, attributes[3].GetValueAsString());
         Assert.AreEqual((ulong)secret.Length, attributes[4].GetValueAsUlong());
         Assert.IsTrue(secret.SequenceEqual(attributes[5].GetValueAsByteArray()));
@@ -189,7 +189,7 @@ public class T30_GetAttributeValue
 
         List<IObjectAttribute> attributes = session.GetAttributeValue(key, getTemplate);
 
-        Assert.AreEqual(getTemplate.Count, attributes.Count);
+        Assert.HasCount(getTemplate.Count, attributes);
     }
 
     //[TestMethod]

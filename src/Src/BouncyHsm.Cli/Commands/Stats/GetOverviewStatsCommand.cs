@@ -17,7 +17,7 @@ internal class GetOverviewStatsCommand : AsyncCommand<GetOverviewStatsCommand.Se
 
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
         OverviewStatsDto stats = default!;
@@ -25,7 +25,7 @@ internal class GetOverviewStatsCommand : AsyncCommand<GetOverviewStatsCommand.Se
         await AnsiConsole.Status()
             .StartAsync("Loading...", async ctx =>
             {
-                stats = await client.GetOverviewStatsAsync();
+                stats = await client.GetOverviewStatsAsync(cancellationToken);
             });
 
         Grid grid = new Grid();

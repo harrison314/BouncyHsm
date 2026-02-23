@@ -1,4 +1,5 @@
-﻿@if(!string.IsNullOrEmpty(this.Text))
+﻿@rendermode InteractiveWebAssembly
+@if(!string.IsNullOrEmpty(this.Text))
 {
     @foreach (string line in this.Text.Split(new string[] { "\r\n", "\n", "\r" }, StringSplitOptions.None))
     {

@@ -19,7 +19,7 @@ public class T25_DecryptChaCha20
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 64, 256)]
     [DataRow(0, 96, 256)]
     //[DataRow(0, 192, 256)]
@@ -58,7 +58,7 @@ public class T25_DecryptChaCha20
         Assert.IsTrue(newPlainText.SequenceEqual(plainText), $"Decryption error. Excepted: {Convert.ToHexString(plainText)}, actual: {Convert.ToHexString(newPlainText)}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 64, 256)]
     [DataRow(0, 96, 256)]
     //[DataRow(0, 192, 256)]
@@ -97,7 +97,7 @@ public class T25_DecryptChaCha20
         Assert.IsTrue(newPlainText.SequenceEqual(plainText), $"Decryption error. Excepted: {Convert.ToHexString(plainText)}, actual: {Convert.ToHexString(newPlainText)}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 64, 256, 32)]
     [DataRow(0, 96, 256, 16)]
     //[DataRow(0, 192, 256, 122)]
@@ -135,7 +135,7 @@ public class T25_DecryptChaCha20
         Assert.IsTrue(newPlainText.SequenceEqual(plainText), $"Decryption error. Excepted: {Convert.ToHexString(plainText)}, actual: {Convert.ToHexString(newPlainText)}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, 64, 256, 32)]
     [DataRow(0, 96, 256, 16)]
     //[DataRow(0, 192, 256, 122)]
@@ -179,7 +179,7 @@ public class T25_DecryptChaCha20
         Assert.IsTrue(newPlainText.SequenceEqual(plainText), $"Decryption error. Excepted: {Convert.ToHexString(plainText)}, actual: {Convert.ToHexString(newPlainText)}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(96, 256, 0)]
     [DataRow(96, 256, 59)]
     [DataRow(96, 217, 0)]

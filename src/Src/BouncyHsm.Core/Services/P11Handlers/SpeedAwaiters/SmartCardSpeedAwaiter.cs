@@ -5,8 +5,8 @@ namespace BouncyHsm.Core.Services.P11Handlers.SpeedAwaiters;
 
 internal class SmartCardSpeedAwaiter : BaseSpeedAwaiter
 {
-    public SmartCardSpeedAwaiter(ITimeAccessor timeAccessor, ILogger<SmartCardSpeedAwaiter> logger)
-        : base(timeAccessor, logger)
+    public SmartCardSpeedAwaiter(TimeProvider timeProvider, ILogger<SmartCardSpeedAwaiter> logger)
+        : base(timeProvider, logger)
     {
     }
 

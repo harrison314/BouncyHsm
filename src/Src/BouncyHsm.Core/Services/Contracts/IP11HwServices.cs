@@ -4,7 +4,7 @@ namespace BouncyHsm.Core.Services.Contracts;
 
 public interface IP11HwServices
 {
-    ITimeAccessor Time
+    TimeProvider Time
     {
         get;
     }

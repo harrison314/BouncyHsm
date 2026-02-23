@@ -4,12 +4,12 @@ This document describes the deployment for the supported platforms.
 _Bouncy Hsm_ can also be used by just running it under the current user (non-privileged user).
 
 ## Prerequisites
-- [Net 8.0 Runtime and ASP.NET Core Runtime 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [Net 10.0 Runtime and ASP.NET Core Runtime 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
 ## Deploy as Windows service
 _Bouncy Hsm_ can be deployed as a Windows service. All the following commands are executed using _PowerShell_ and privileged user.
 
-For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-8.0&tabs=netcore-cli>.
+For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-10.0&tabs=netcore-cli>.
 
 We will install the application in the directory `D:\BouncyHsm` (for example).
 
@@ -26,7 +26,7 @@ Configure `appsettings.json`:
 - set `LiteDbPersistentRepositorySetup::DbFilePath` to `D:/BouncyHsm/Data/BouncyHsm.db`
 - set file logging in `Serilog::WriteTo::Args::path` to `D:/BouncyHsm/Logs/BouncyHsm.log.txt` (for configure logs see <https://github.com/serilog/serilog-settings-configuration>)
 - set web interface endpoint in `Kestrel::Endpoints::Http::Url`
-- set basePath for deploy URL if need in `AppBasePath` - Set base path for WebUi and REST API, it must be changed here in the configuration and in `wwwroot/index.html` in the tag `<base href="/" />` for example `"AppBasePath": "/foo"`, `<base href="/foo/" />`
+- set basePath for deploy URL if need in `AppBasePath`
 
 ### Create service account
 
@@ -193,4 +193,4 @@ Or view console logs:
 sudo journalctl -fu bouncyhsm
 ```
 
-For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-8.0>.
+For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-10.0>.

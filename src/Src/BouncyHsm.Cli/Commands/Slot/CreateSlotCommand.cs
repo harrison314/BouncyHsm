@@ -121,7 +121,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -182,7 +182,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
                       SignaturePin = signaturePin,
                       SimulateProtectedAuthPath = settings.SimulateProtectedAuthPath
                   }
-              });
+              }, cancellationToken);
           });
 
         AnsiConsole.MarkupLine("Created new slot with id [green]{0}[/] and token serial [green]{1}[/].",

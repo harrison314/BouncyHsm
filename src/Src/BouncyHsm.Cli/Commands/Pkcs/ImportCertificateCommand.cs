@@ -34,7 +34,7 @@ internal class ImportCertificateCommand : AsyncCommand<ImportCertificateCommand.
         } = default!;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -52,7 +52,7 @@ internal class ImportCertificateCommand : AsyncCommand<ImportCertificateCommand.
                {
                    PrivateKeyId = settings.PrivateKeyId,
                    Certificate = certContent
-               });
+               }, cancellationToken);
            });
 
         AnsiConsole.MarkupLine("Certificate has imported successfully.");

@@ -50,7 +50,19 @@ public class ParsedMechanismFlags
         set;
     }
 
-    public bool IsVersion3_0
+    public bool EncapsulateAndDecapsulate
+    {
+        get;
+        set;
+    }
+
+    public bool IsVersion3_1
+    {
+        get;
+        set;
+    }
+
+    public bool IsVersion3_2
     {
         get;
         set;

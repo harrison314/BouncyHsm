@@ -1,4 +1,6 @@
-﻿using Pkcs11Interop.Ext.HighLevelAPI.Factories;
+﻿using Net.Pkcs11Interop.Common;
+using Net.Pkcs11Interop.HighLevelAPI;
+using Pkcs11Interop.Ext.HighLevelAPI.Factories;
 using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
 
 namespace Pkcs11Interop.Ext.HighLevelAPI80.MechanismParams;
@@ -28,5 +30,26 @@ internal class MechanismParamsV3Factory : IMechanismParamsV3Factory
     public ICkEddsaParams CreateCkEddsaParams(bool phFlag, byte[]? contextData)
     {
         return new CkEddsaParams(phFlag, contextData);
+    }
+
+    public ICkSignAdditionalContextParams CreateSignAdditionalContextParams(ulong hedgeVariant, byte[]? context)
+    {
+        return new CkSignAdditionalContextParams(hedgeVariant, context);
+    }
+
+    public ICkHashSignAdditionalContextParams CreateCkHashSignAdditionalContextParams(ulong hedgeVariant, byte[]? context, CKM hash)
+    {
+        return new CkHashSignAdditionalContextParams((ulong)hedgeVariant, context, (ulong)hash);
+    }
+
+    public ICkHkdfParams CreateCkHkdfParams(bool extract,
+       bool expand,
+       CKM hashMechanism,
+       uint saltType,
+       IObjectHandle? saltKey,
+       byte[]? salt,
+       byte[]? info)
+    {
+        return new CkHkdfParams(extract, expand, hashMechanism, saltType, saltKey, salt, info);
     }
 }

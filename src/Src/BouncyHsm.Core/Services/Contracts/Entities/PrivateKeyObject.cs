@@ -45,6 +45,12 @@ public abstract class PrivateKeyObject : KeyObject
         set => this.values[CKA.CKA_UNWRAP] = AttributeValue.Create(value);
     }
 
+    public bool CkaDecapsulate
+    {
+        get => this.values[CKA.CKA_DECAPSULATE].AsBool();
+        set => this.values[CKA.CKA_DECAPSULATE] = AttributeValue.Create(value);
+    }
+
     public bool CkaExtractable
     {
         get => this.values[CKA.CKA_EXTRACTABLE].AsBool();
@@ -82,6 +88,12 @@ public abstract class PrivateKeyObject : KeyObject
         set => this.values[CKA.CKA_ALWAYS_AUTHENTICATE] = AttributeValue.Create(value);
     }
 
+    public byte[] CkaPublicCrc64Value
+    {
+        get => this.values[CKA.CKA_PUBLIC_CRC64_VALUE].AsByteArray();
+        set => this.values[CKA.CKA_PUBLIC_CRC64_VALUE] = AttributeValue.Create(value);
+    }
+
     protected PrivateKeyObject(CKK keyType, CKM genMechanism)
       : base(keyType, genMechanism)
     {
@@ -91,11 +103,13 @@ public abstract class PrivateKeyObject : KeyObject
         this.CkaSign = false;
         this.CkaSignRecover = false;
         this.CkaUnwrap = false;
+        this.CkaDecapsulate = false;
         this.CkaExtractable = false;
-        this.CkaAlwaysSensitive = false;
-        this.CkaNewerExtractable = false;
+        this.CkaAlwaysSensitive = true;
+        this.CkaNewerExtractable = true;
         this.CkaWrapWithTrusted = false;
         this.CkaAlwaysAuthenticate = false;
+        this.CkaPublicCrc64Value = Array.Empty<byte>();
     }
 
     internal PrivateKeyObject(StorageObjectMemento memento)
@@ -118,6 +132,22 @@ public abstract class PrivateKeyObject : KeyObject
     public override void ReComputeAttributes()
     {
         this.CkaAlwaysSensitive = this.CkaAlwaysSensitive && this.CkaSensitive;
-        this.CkaNewerExtractable = this.CkaNewerExtractable && this.CkaExtractable;
+        this.CkaNewerExtractable = this.CkaNewerExtractable && !this.CkaExtractable;
+
+        if (this.values.TryGetValue(CKA.CKA_VALUE, out IAttributeValue? attributeValue))
+        {
+            if (attributeValue.TypeTag == AttrTypeTag.ByteArray)
+            {
+                byte[] value = attributeValue.AsByteArray();
+                if (value.Length == 0)
+                {
+                    this.CkaPublicCrc64Value = Array.Empty<byte>();
+                }
+                else
+                {
+                    this.CkaPublicCrc64Value = System.IO.Hashing.Crc64.Hash(value);
+                }
+            }
+        }
     }
 }

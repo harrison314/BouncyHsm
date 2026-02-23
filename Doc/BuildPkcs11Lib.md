@@ -64,3 +64,23 @@ make
 ```
 
 The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
+
+## Example compilation for Raspberry Pi OS
+Install prerequisites:
+
+```
+sudo apt-get install make gcc git -y
+```
+
+Clone repository:
+```
+git clone https://github.com/harrison314/BouncyHsm.git
+```
+
+Build:
+```
+cd BouncyHsm
+# git checkout <last tag>
+cd build_linux
+make CC=gcc ARCH_FLAGS=""
+```

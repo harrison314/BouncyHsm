@@ -73,6 +73,15 @@ internal class GenerateRsaKeyPairCommand : AsyncCommand<GenerateRsaKeyPairComman
             set;
         }
 
+        [CommandOption("--forencapsulation")]
+        [Description("Set CKA_ENCAPSULATE/CKA_DECAPSULATE to true.")]
+        [DefaultValue(false)]
+        public bool ForEncapsulation
+        {
+            get;
+            set;
+        }
+
         [CommandOption("--forsign")]
         [Description("Set CKA_SIGN/CKA_VERIFY to true.")]
         [DefaultValue(false)]
@@ -101,7 +110,7 @@ internal class GenerateRsaKeyPairCommand : AsyncCommand<GenerateRsaKeyPairComman
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -119,11 +128,12 @@ internal class GenerateRsaKeyPairCommand : AsyncCommand<GenerateRsaKeyPairComman
                        Exportable = settings.Exportable,
                        ForDerivation = settings.ForDerivation,
                        ForEncryption = settings.ForEncryption,
+                       ForEncapsulation = settings.ForEncapsulation,
                        ForSigning = settings.ForSigning,
                        ForWrap = settings.ForWrap,
                        Sensitive = settings.Sensitive,
                    }
-               });
+               }, cancellationToken);
            });
 
         AnsiConsole.MarkupLine("Key pair has created.");

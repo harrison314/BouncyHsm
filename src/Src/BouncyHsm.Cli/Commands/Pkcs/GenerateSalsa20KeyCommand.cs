@@ -88,7 +88,7 @@ internal class GenerateSalsa20KeyCommand : AsyncCommand<GenerateSalsa20KeyComman
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -109,7 +109,7 @@ internal class GenerateSalsa20KeyCommand : AsyncCommand<GenerateSalsa20KeyComman
                        ForWrap = settings.ForWrap,
                        Sensitive = settings.Sensitive,
                    }
-               });
+               }, cancellationToken);
            });
 
         AnsiConsole.MarkupLine("Salsa20 key has created.");

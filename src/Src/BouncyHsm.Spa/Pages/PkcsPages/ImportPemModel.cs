@@ -59,6 +59,13 @@ public class ImportPemModel
     }
 
     [Required]
+    public bool ForEncapsulation
+    {
+        get;
+        set;
+    }
+
+    [Required]
     public bool ForDerivation
     {
         get;

@@ -21,6 +21,13 @@ public class ImportPemHintsDto
     }
 
     [Required]
+    public bool ForEncapsulation
+    {
+        get;
+        set;
+    }
+
+    [Required]
     public bool ForDerivation
     {
         get;

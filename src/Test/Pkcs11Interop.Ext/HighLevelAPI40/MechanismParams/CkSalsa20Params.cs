@@ -1,4 +1,5 @@
 ﻿using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
+using System.Numerics;
 
 namespace Pkcs11Interop.Ext.HighLevelAPI40.MechanismParams;
 

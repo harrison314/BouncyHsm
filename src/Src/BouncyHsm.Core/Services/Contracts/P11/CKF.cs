@@ -4,6 +4,10 @@
  * Written for the Pkcs11Interop project by: Jaroslav IMRICH <jimrich@jimrich.sk>
  */
 
+using System.Runtime.Intrinsics.X86;
+using System.Threading.Channels;
+using static System.Formats.Asn1.AsnWriter;
+
 namespace BouncyHsm.Core.Services.Contracts.P11;
 
 /// <summary>
@@ -280,4 +284,10 @@ public static class CKF
     /// True if the OTP returned shall be in a form suitable for human consumption
     /// </summary>
     public const uint CKF_USER_FRIENDLY_OTP = 0x00000020;
+
+    /// <summary>
+    /// This flag can be passed in as a parameter to C_SessionCancel to cancel an active object search
+    /// operation.Any other use of this flag is outside the scope of this standard.
+    /// </summary>
+    public const uint CKF_FIND_OBJECTS = 0x00000040;
 }

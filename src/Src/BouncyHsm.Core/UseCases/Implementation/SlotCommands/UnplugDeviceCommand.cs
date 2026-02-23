@@ -19,14 +19,14 @@ internal class UnplugDeviceCommand : IPersistentRepositorySlotCommand
     {
         System.Diagnostics.Debug.Assert(slotEntity.IsRemovableDevice);
 
-        if (slotEntity.IsUnplugged)
+        if (slotEntity.IsPlugged)
         {
-            return false;
+            slotEntity.IsPlugged = false;
+            return true;
         }
         else
         {
-            slotEntity.IsUnplugged = true;
-            return true;
+            return false;
         }
     }
 }

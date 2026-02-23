@@ -1,4 +1,5 @@
-﻿@using BouncyHsm.Client;
+﻿@rendermode InteractiveWebAssembly
+@using BouncyHsm.Client
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
 @inject ILogger<GenerateRsaKeys> logger
@@ -65,6 +66,11 @@ else
             <ValidationMessage For="() => this.model.ForEncryption" />
         </div>
         <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-encapusltaion" @bind-Value="this.model.ForEncapsulation" />
+            <label class="form-check-label" for="i-encapusltaion">For encapsulation and decapsulation</label>
+            <ValidationMessage For="() => this.model.ForEncapsulation" />
+        </div>
+        <div class="mb-1 form-check">
             <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.ForWrap" />
             <label class="form-check-label" for="i-wrap">For wrap and unwrap</label>
             <ValidationMessage For="() => this.model.ForWrap" />
@@ -114,7 +120,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         this.editContext = new EditContext(this.model);
-        this.curveNames = (await this.bouncyHsmClient.GetSupportedEcCurvesAsync())
+        this.curveNames = (await this.bouncyHsmClient.GetSupportedKeysAsync())
+        .EcCurves
         .Select(t => t.Name)
         .ToList();
     }
@@ -164,6 +171,7 @@ else
             this.ForEncryption = false;
             this.ForSigning = true;
             this.ForDerivation = true;
+            this.ForEncapsulation = false;
         }
 
         internal GenerateEcKeyPairRequestDto ToDto()

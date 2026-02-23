@@ -6,7 +6,7 @@ namespace BouncyHsm.Pkcs11IntegrationTests;
 [TestClass]
 public class T00_Initialize
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(AppType.SingleThreaded)]
     [DataRow(AppType.MultiThreaded)]
     public async Task InitializeAndFinalize_Call_Success(AppType apptype)

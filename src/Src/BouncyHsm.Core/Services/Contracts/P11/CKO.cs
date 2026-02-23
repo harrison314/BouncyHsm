@@ -56,6 +56,15 @@ public enum CKO : uint
     /// </summary>
     CKO_OTP_KEY = 0x00000008,
 
+    // Spec 3.2
+
+    CKO_PROFILE = 0x00000009U,
+
+
+    CKO_VALIDATION = 0x0000000aU,
+
+    CKO_TRUST = 0x0000000bU,
+
     /// <summary>
     /// Reserved for token vendors.
     /// </summary>

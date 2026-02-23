@@ -37,6 +37,22 @@ public interface ICryptoApiObjectVisitor
     void Visit(MontgomeryPrivateKeyObject montgomeryPrivateKeyObject);
 
     void Visit(MontgomeryPublicKeyObject montgomeryPublicKeyObject);
+
+    void Visit(TrustObject trustObject);
+
+    void Visit(MlDsaPublicKeyObject mlDsaPublicKeyObject);
+
+    void Visit(MlDsaPrivateKeyObject mlDsaPrivateKeyObject);
+
+    void Visit(SlhDsaPublicKeyObject slhDsaPublicKeyObject);
+
+    void Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject);
+    
+    void Visit(MlKemPublicKeyObject mlKemPublicKeyObject);
+    
+    void Visit(MlKemPrivateKeyObject mlKemPrivateKeyObject);
+
+    void Visit(CamelliaKeyObject camelliaKeyObject);
 }
 
 public interface ICryptoApiObjectVisitor<out T>
@@ -76,4 +92,20 @@ public interface ICryptoApiObjectVisitor<out T>
     T Visit(MontgomeryPrivateKeyObject montgomeryPrivateKeyObject);
 
     T Visit(MontgomeryPublicKeyObject montgomeryPublicKeyObject);
+
+    T Visit(TrustObject trustObject);
+
+    T Visit(MlDsaPublicKeyObject mlDsaPublicKeyObject);
+
+    T Visit(MlDsaPrivateKeyObject mlDsaPrivateKeyObject);
+
+    T Visit(SlhDsaPublicKeyObject slhDsaPublicKeyObject);
+
+    T Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject);
+    
+    T Visit(MlKemPublicKeyObject mlKemPublicKeyObject);
+    
+    T Visit(MlKemPrivateKeyObject mlKemPrivateKeyObject);
+
+    T Visit(CamelliaKeyObject camelliaKeyObject);
 }

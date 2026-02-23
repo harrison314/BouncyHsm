@@ -32,4 +32,12 @@ internal static partial class KeyGenerationControllerMapper
     public static partial GenerateSalsa20KeyRequest MapFromDto(GenerateSalsa20KeyRequestDto dto);
 
     public static partial GenerateMontgomeryKeyPairRequest MapFromDto(GenerateMontgomeryKeyPairRequestDto model);
+
+    public static partial GenerateMLDsaKeyPairRequest MapFromDto(GenerateMLDsaKeyPairRequestDto model);
+
+    public static partial GenerateSlhDsaKeyPairRequest MapFromDto(GenerateSlhDsaKeyPairRequestDto model);
+
+    public static partial GenerateMLKemKeyPairRequest MapFromDto(GenerateMlKemKeyPairRequestDto model);
+
+    public static partial GenerateCamelliaKeyRequest MapFromDto(GenerateCamelliaKeyRequestDto model);
 }

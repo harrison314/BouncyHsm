@@ -29,18 +29,20 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
             request.AppId.AppName,
             request.AppId.Pid,
             request.ClientInfo.PointerSize,
-            request.ClientInfo.CkUlongSize);
+            request.ClientInfo.CkUlongSize,
+            request.ClientInfo.CmdLine);
         string key = DataTransform.GetApplicationKey(request.AppId);
         this.clientApplicationContext.RegisterMemorySession(key, sessionData);
 
-        this.logger.LogInformation("Initialized client with nonce: {nonce} machine: {machine} pid: {pid}, CK_ULONG size {ckUlongSize}b, pointer size {pointerSize}b, platform: {Platform}, client version {clientVersion}.",
+        this.logger.LogInformation("Initialized client with nonce: {nonce} machine: {machine} pid: {pid}, CK_ULONG size {ckUlongSize}b, pointer size {pointerSize}b, platform: {Platform}, client version {clientVersion}, process CMD: {processCmdLine}.",
             request.AppId.AppNonce,
             request.ClientInfo.CompiuterName,
             request.AppId.Pid,
             request.ClientInfo.CkUlongSize * 8,
             request.ClientInfo.PointerSize * 8,
             request.ClientInfo.Platform,
-            request.ClientInfo.LibVersion);
+            request.ClientInfo.LibVersion,
+            string.Join(" ", request.ClientInfo.CmdLine.Select(t => $"\"{t}\"")));
 
         this.CheckLibralyVersion(request.ClientInfo.LibVersion);
 

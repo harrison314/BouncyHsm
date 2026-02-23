@@ -60,6 +60,10 @@ internal class BufferedCipherWrapperFactory
 
             CKM.CKM_SALSA20 => this.CreateSalsa20(mechanism),
 
+            CKM.CKM_CAMELLIA_ECB => this.CreateCamelliaWithoutIv(CipherUtilities.GetCipher("CAMELLIA/ECB/NOPADDING"), mechanism),
+            CKM.CKM_CAMELLIA_CBC => this.CreateCamellia(CipherUtilities.GetCipher("CAMELLIA/CBC/NOPADDING"), true, mechanism),
+            CKM.CKM_CAMELLIA_CBC_PAD => this.CreateCamellia(CipherUtilities.GetCipher("CAMELLIA/CBC/PKCS7PADDING"), false, mechanism),
+
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
@@ -153,6 +157,38 @@ internal class BufferedCipherWrapperFactory
                 ccmParams.Aad,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<AesAeadBufferedCipherWrapper>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private CamelliaBufferedCipherWrapper CreateCamelliaWithoutIv(IBufferedCipher bufferedCipher, MechanismValue mechanism)
+    {
+        return new CamelliaBufferedCipherWrapper(bufferedCipher,
+            null,
+            true,
+            (CKM)mechanism.MechanismType,
+            this.loggerFactory.CreateLogger<CamelliaBufferedCipherWrapper>());
+    }
+
+    private CamelliaBufferedCipherWrapper CreateCamellia(IBufferedCipher bufferedCipher, bool padZeroForWrap, MechanismValue mechanism)
+    {
+        try
+        {
+            CkP_RawDataParams rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RawDataParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            this.logger.LogDebug("Extract IV with len {ivLen} for mechanism {mechanism}.",
+                rawDataParams.Value.Length,
+                (CKM)mechanism.MechanismType);
+
+            return new CamelliaBufferedCipherWrapper(bufferedCipher,
+                rawDataParams.Value,
+                padZeroForWrap,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<CamelliaBufferedCipherWrapper>());
         }
         catch (Exception ex)
         {

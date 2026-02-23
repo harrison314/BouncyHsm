@@ -14,14 +14,15 @@ internal class PlugDeviceCommand : IPersistentRepositorySlotCommand
     {
         System.Diagnostics.Debug.Assert(slotEntity.IsRemovableDevice);
 
-        if (slotEntity.IsUnplugged)
+        if (slotEntity.IsPlugged)
         {
-            slotEntity.IsUnplugged = false;
-            return true;
+            return false;
+            
         }
         else
         {
-            return false;
+            slotEntity.IsPlugged = true;
+            return true;
         }
     }
 }

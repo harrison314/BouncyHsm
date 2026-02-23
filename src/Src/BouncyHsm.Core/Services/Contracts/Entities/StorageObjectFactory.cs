@@ -31,6 +31,14 @@ public static class StorageObjectFactory
         EdPrivateKeyObject,
         MontgomeryPublicKeyObject,
         MontgomeryPrivateKeyObject,
+        TrustObject,
+        MlDsaPrivateKeyObject,
+        MlDsaPublicKeyObject,
+        SlhDsaPrivateKeyObject,
+        SlhDsaPublicKeyObject,
+        MlKemPrivateKeyObject,
+        MlKemPublicKeyObject,
+        CamelliaKeyObject,
     }
 
     internal interface IStorageObjectInternalFactory
@@ -66,6 +74,14 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.EdPublicKeyObject => new EdwardsPublicKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN),
                 StorageObjectInternalType.MontgomeryPrivateKeyObject => new MontgomeryPrivateKeyObject(CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN),
                 StorageObjectInternalType.MontgomeryPublicKeyObject => new MontgomeryPublicKeyObject(CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN),
+                StorageObjectInternalType.TrustObject => new TrustObject(),
+                StorageObjectInternalType.MlDsaPrivateKeyObject => new MlDsaPrivateKeyObject(),
+                StorageObjectInternalType.MlDsaPublicKeyObject => new MlDsaPublicKeyObject(),
+                StorageObjectInternalType.SlhDsaPrivateKeyObject => new SlhDsaPrivateKeyObject(),
+                StorageObjectInternalType.SlhDsaPublicKeyObject => new SlhDsaPublicKeyObject(),
+                StorageObjectInternalType.MlKemPublicKeyObject => new MlKemPublicKeyObject(),
+                StorageObjectInternalType.MlKemPrivateKeyObject => new MlKemPrivateKeyObject(),
+                StorageObjectInternalType.CamelliaKeyObject => new CamelliaKeyObject(),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -101,6 +117,14 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.EdPublicKeyObject => new EdwardsPublicKeyObject(this.memento),
                 StorageObjectInternalType.MontgomeryPrivateKeyObject => new MontgomeryPrivateKeyObject(this.memento),
                 StorageObjectInternalType.MontgomeryPublicKeyObject => new MontgomeryPublicKeyObject(this.memento),
+                StorageObjectInternalType.TrustObject => new TrustObject(this.memento),
+                StorageObjectInternalType.MlDsaPrivateKeyObject => new MlDsaPrivateKeyObject(this.memento),
+                StorageObjectInternalType.MlDsaPublicKeyObject => new MlDsaPublicKeyObject(this.memento),
+                StorageObjectInternalType.SlhDsaPrivateKeyObject => new SlhDsaPrivateKeyObject(this.memento),
+                StorageObjectInternalType.SlhDsaPublicKeyObject => new SlhDsaPublicKeyObject(this.memento),
+                StorageObjectInternalType.MlKemPublicKeyObject => new MlKemPublicKeyObject(this.memento),
+                StorageObjectInternalType.MlKemPrivateKeyObject => new MlKemPrivateKeyObject(this.memento),
+                StorageObjectInternalType.CamelliaKeyObject => new CamelliaKeyObject(this.memento),
                 _ => throw new InvalidProgramException($"Enum value {storageObjectType} is not supported.")
             };
         }
@@ -181,6 +205,21 @@ public static class StorageObjectFactory
             {
                 return factory.Create(StorageObjectInternalType.MontgomeryPrivateKeyObject);
             }
+
+            if (keyType == CKK.CKK_ML_DSA)
+            {
+                return factory.Create(StorageObjectInternalType.MlDsaPrivateKeyObject);
+            }
+
+            if (keyType == CKK.CKK_SLH_DSA)
+            {
+                return factory.Create(StorageObjectInternalType.SlhDsaPrivateKeyObject);
+            }
+
+            if (keyType == CKK.CKK_ML_KEM)
+            {
+                return factory.Create(StorageObjectInternalType.MlKemPrivateKeyObject);
+            }
         }
 
         if (classType == CKO.CKO_PUBLIC_KEY)
@@ -206,6 +245,21 @@ public static class StorageObjectFactory
             {
                 return factory.Create(StorageObjectInternalType.MontgomeryPublicKeyObject);
             }
+
+            if (keyType == CKK.CKK_ML_DSA)
+            {
+                return factory.Create(StorageObjectInternalType.MlDsaPublicKeyObject);
+            }
+
+            if (keyType == CKK.CKK_SLH_DSA)
+            {
+                return factory.Create(StorageObjectInternalType.SlhDsaPublicKeyObject);
+            }
+
+            if (keyType == CKK.CKK_ML_KEM)
+            {
+                return factory.Create(StorageObjectInternalType.MlKemPublicKeyObject);
+            }
         }
 
         if (classType == CKO.CKO_CERTIFICATE)
@@ -224,6 +278,11 @@ public static class StorageObjectFactory
         if (classType == CKO.CKO_SECRET_KEY)
         {
             return CreateSecretCore(template, factory);
+        }
+
+        if (classType == CKO.CKO_TRUST)
+        {
+            return factory.Create(StorageObjectInternalType.TrustObject);
         }
 
         //TODO: Implement other object types.
@@ -266,11 +325,13 @@ public static class StorageObjectFactory
             CKK.CKK_BLAKE2B_256_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
             CKK.CKK_BLAKE2B_384_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
             CKK.CKK_BLAKE2B_512_HMAC => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
+            CKK.CKK_HKDF => factory.Create(StorageObjectInternalType.GenericSecretKeyObject),
 
             CKK.CKK_AES => factory.Create(StorageObjectInternalType.AesKeyObject),
             CKK.CKK_POLY1305 => factory.Create(StorageObjectInternalType.Poly1305KeyObject),
             CKK.CKK_CHACHA20 => factory.Create(StorageObjectInternalType.ChaCha20KeyObject),
             CKK.CKK_SALSA20 => factory.Create(StorageObjectInternalType.Salsa20KeyObject),
+            CKK.CKK_CAMELLIA => factory.Create(StorageObjectInternalType.CamelliaKeyObject),
             _ => throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"Value {keyType} for CKO_SECRET_KEY is not defined.")
         };
 

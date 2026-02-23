@@ -198,7 +198,7 @@ public class T23_DeriveKeyEcdsa
         Assert.AreEqual(Convert.ToHexString(exceptedDerivedKey), Convert.ToHexString(derivedValue));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKD.CKD_SHA1_KDF, "16382A2748CE3A030107AAFF00A410")]
     [DataRow(CKD.CKD_SHA1_KDF, "")]
     [DataRow(CKD.CKD_SHA224_KDF, "02ab5394bc64060eca70550642af3a1a")]
@@ -266,7 +266,7 @@ public class T23_DeriveKeyEcdsa
         _ = this.GetValue(session, derivedKey);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKD.CKD_SHA1_KDF, "16382A2748CE3A030107AAFF00A410")]
     [DataRow(CKD.CKD_SHA1_KDF, "")]
     [DataRow(CKD.CKD_SHA224_KDF, "02ab5394bc64060eca70550642af3a1a")]
@@ -513,8 +513,8 @@ public class T23_DeriveKeyEcdsa
     private byte[] ExtractEcPoint(ECDsa dotnetEcDsa)
     {
         ECParameters externEcParams = dotnetEcDsa.ExportParameters(false);
-        Assert.IsTrue(externEcParams.Q.X != null);
-        Assert.IsTrue(externEcParams.Q.Y != null);
+        Assert.IsNotNull(externEcParams.Q.X);
+        Assert.IsNotNull(externEcParams.Q.Y);
 
         byte[] exParamsOctets = new byte[1 + externEcParams.Q.X.Length * 2];
         exParamsOctets[0] = 0x04;

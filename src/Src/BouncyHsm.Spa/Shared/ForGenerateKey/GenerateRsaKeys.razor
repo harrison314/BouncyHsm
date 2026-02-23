@@ -1,4 +1,5 @@
-﻿@using BouncyHsm.Client;
+﻿@rendermode InteractiveWebAssembly
+@using BouncyHsm.Client
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
 @inject ILogger<GenerateRsaKeys> logger
@@ -64,6 +65,11 @@ else
             <InputCheckbox class="form-check-input" id="i-encryption" @bind-Value="this.model.ForEncryption" />
             <label class="form-check-label" for="i-encryption">For encryption and decryption</label>
             <ValidationMessage For="() => this.model.ForEncryption" />
+        </div>
+        <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-encapusltaion" @bind-Value="this.model.ForEncapsulation" />
+            <label class="form-check-label" for="i-encapusltaion">For encapsulation and decapsulation</label>
+            <ValidationMessage For="() => this.model.ForEncapsulation" />
         </div>
         <div class="mb-1 form-check">
             <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.ForWrap" />
@@ -154,6 +160,7 @@ else
             this.ForEncryption = false;
             this.ForSigning = true;
             this.ForDerivation = false;
+            this.ForEncapsulation = false;
         }
 
         internal GenerateRsaKeyPairRequestDto ToDto()

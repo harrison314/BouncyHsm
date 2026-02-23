@@ -34,7 +34,7 @@ internal class SetPinCommand : AsyncCommand<SetPinCommand.Settings>
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -57,7 +57,7 @@ internal class SetPinCommand : AsyncCommand<SetPinCommand.Settings>
                        {
                            UserType = settings.UserType,
                            NewPin = newPin
-                       });
+                       }, cancellationToken);
                });
 
         AnsiConsole.MarkupLine("Set new PIN for token in slot with id [green]{0}[/] for user type [green]{1}[/].",

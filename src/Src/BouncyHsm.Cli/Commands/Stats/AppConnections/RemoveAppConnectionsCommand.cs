@@ -25,7 +25,7 @@ internal class RemoveAppConnectionsCommand : AsyncCommand<RemoveAppConnectionsCo
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -40,7 +40,7 @@ internal class RemoveAppConnectionsCommand : AsyncCommand<RemoveAppConnectionsCo
         await AnsiConsole.Status()
                .StartAsync("Removing...", async ctx =>
                {
-                   await client.RemoveApplicationConnectionAsync(settings.AppSessionId);
+                   await client.RemoveApplicationConnectionAsync(settings.AppSessionId, cancellationToken);
                });
 
         AnsiConsole.MarkupLine("Application connection with id [green]{0}[/] has removed.", settings.AppSessionId);

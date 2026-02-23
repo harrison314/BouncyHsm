@@ -32,13 +32,20 @@ public class MemorySessionData
         private set;
     }
 
-    public MemorySessionData(string compiuterName, string applicationName, ulong pid, uint ptrSize, uint ckUlongSize)
+    public string[] CmdLine
+    {
+        get;
+        private set;
+    }
+
+    public MemorySessionData(string compiuterName, string applicationName, ulong pid, uint ptrSize, uint ckUlongSize, string[] cmdLine)
     {
         this.ComputerName = compiuterName;
         this.ApplicationName = applicationName;
         this.Pid = pid;
         this.PtrSize = ptrSize;
         this.CkUlongSize = ckUlongSize;
+        this.CmdLine = cmdLine;
     }
 
     public override string ToString()

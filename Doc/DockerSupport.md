@@ -1,19 +1,26 @@
 # Docker support
-_Bouncy Hsm_ does not publish a Docker image, but it is ready to use with Docker, both the server and the PKCS#11 library.
+_Bouncy Hsm_ Bouncy Hsm publishes a docker image as a tar file.
 
-## Dockerize server
-The Docker image for the server can be created using the following Dockerfile:
+To use the docker image, you need to download from [releases](https://github.com/harrison314/BouncyHsm/releases) and import it from the file `docker load -i bouncyhsm.tar`,
+and then use it, for example, via `docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
+
+## Advanced
+This section is for creating your own containers and advanced configuration in Docker containers.
+Also a demonstration for Docker Compose.
+
+### Creating your own Docker container
+If you want to create your own Docker image, you can do so using the following Dockerfile:
 
 ```dockerfile
-FROM alpine:3.20.3
+FROM alpine:3.23
 
-ENV APP_VERSION=1.6.0
+ENV APP_VERSION=2.0.0
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .
 RUN apk --update add unzip && rm -rf /var/cache/apk/* && unzip BouncyHsm.zip && rm BouncyHsm.zip
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /App
 
 COPY --from=0 /unzip /App
@@ -28,7 +35,7 @@ CMD ["dotnet", "BouncyHsm.dll"]
 ```
 
 Additional configuration is possible using environment variables with the `BouncyHsm_` prefix.
-The way to override the default configuration is described on the [.NET framework pages](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-8.0#non-prefixed-environment-variables).
+The way to override the default configuration is described on the [.NET framework pages](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-10.0#non-prefixed-environment-variables).
 
 Some useful environmental variables:
 - `BouncyHsm_Serilog__MinimumLevel__Default=Debug` - set default log level (possible values are: `Verbose`, `Debug`, `Information`, `Warning`, `Error`, `Fatal`),
@@ -39,7 +46,7 @@ For more complicated behavior modifications or logging modifications,
 I recommend copying your own `appsetings.json` configuration file into the image and removing the `ENV ASPNETCORE_ENVIRONMENT=Docker` line from the Dockerfile.
 
 
-## Dockerize clients with PKCS#11 library
+### Dockerize clients with PKCS#11 library
 When dockerizing applications that use the native PKCS#11 library (_BouncyHsm.Pkcs11Lib.dll_, _BouncyHsm.Pkcs11Lib.so_),
 the `BOUNCY_HSM_CFG_STRING` environment variable is set in the container, which the library uses to find a TCP endpoint to connect to.
 
@@ -48,8 +55,7 @@ to add logging to the console, use: `Server=bouncy_hsm_server; Port=8765; LogTar
 
 The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in the Bouncy Hsm web interface under _Configure PKCS#11 lib_.
 
-
-## Docker compose example
+### Docker compose example
 In folder [/Examples/DockerComposeExample](/Examples/DockerComposeExample) there is a demonstration of using Docker compose.
 In the first container is _Bouncy Hsm_ server, whose dockerfile is described above.
 In the second, an application that lists the supported mechanisms via the PKCS#11 library.
@@ -81,9 +87,9 @@ _TestContainer_ uses the PKCS#11 library  _BouncyHsm.Pkcs11Lib.so_, which is obt
 For example - download from release:
 
 ```dockerfile
-FROM alpine:3.20.3
+FROM alpine:3.23
 
-ENV APP_VERSION=1.6.0
+ENV APP_VERSION=2.0.0
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .

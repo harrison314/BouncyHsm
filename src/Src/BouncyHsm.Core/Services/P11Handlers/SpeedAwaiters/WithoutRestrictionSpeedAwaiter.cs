@@ -15,17 +15,17 @@ internal class WithoutRestrictionSpeedAwaiter : ISpeedAwaiter
 
     }
 
-    public ValueTask AwaitDestroy(StorageObject storageObject, DateTime utcStartTime, CancellationToken cancellationToken)
+    public ValueTask AwaitDestroy(StorageObject storageObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken)
     {
         return new ValueTask();
     }
 
-    public ValueTask AwaitKeyGeneration(KeyObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken)
+    public ValueTask AwaitKeyGeneration(KeyObject keyObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken)
     {
         return new ValueTask();
     }
 
-    public ValueTask AwaitSignature(KeyObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken)
+    public ValueTask AwaitSignature(KeyObject keyObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken)
     {
         return new ValueTask();
     }

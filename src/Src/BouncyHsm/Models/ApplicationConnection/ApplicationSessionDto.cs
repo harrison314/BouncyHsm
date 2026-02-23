@@ -27,13 +27,19 @@ public class ApplicationSessionDto
         set;
     }
 
-    public DateTime StartAt
+    public string[] CmdArguments
     {
         get;
         set;
     }
 
-    public DateTime LastInteraction 
+    public DateTimeOffset StartAt
+    {
+        get;
+        set;
+    }
+
+    public DateTimeOffset LastInteraction 
     { 
         get; 
         set;
@@ -43,5 +49,6 @@ public class ApplicationSessionDto
     {
         this.ApplicationName = string.Empty;
         this.ComputerName = string.Empty;
+        this.CmdArguments = Array.Empty<string>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/SupportedAlgorithms"
+@rendermode InteractiveWebAssembly
 @using BouncyHsm.Client
 @using BouncyHsm.Spa.Shared.ForSupportedAlgorithms
 @inject IBouncyHsmClient bouncyHsmClient
@@ -23,15 +24,17 @@ else
             <h4 class="alert-heading">Profile: @this.profileName</h4>
             <p>
                 The list of supported mechanisms and named eliptic curves was modified using the configuration in the <strong>@this.profileName</strong> profile.<br />
-                If you want to use <a href="https://github.com/harrison314/BouncyHsm/blob/main/Doc/SuportedAlgorithms.md" target="_blank">all mechanisms and named eliptic curves</a> provided by BouncyHsm, disable the profile in the configuration.
+                If you want to use <a href="https://github.com/harrison314/BouncyHsm/blob/main/Doc/SupportedAlgorithms.md" target="_blank">all mechanisms and named eliptic curves</a> provided by BouncyHsm, disable the profile in the configuration.
             </p>
         </div>
     }
 
     <p>
-        Supported mechanisms are by default for PKCS#11 specification <a href="https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf" target="_blank">version 2.40</a>,
-        and native APIs are also used for it.
-        <em>Bouncy&nbsp;Hsm</em> allows the use of some mechanisms from PKCS#11 specification <a href="https://docs.oasis-open.org/pkcs11/pkcs11-curr/v3.0/pkcs11-curr-v3.0.pdf" target="_blank">version 3.0</a>
+        <em>Bouncy&nbsp;Hsm</em> provides PKCS#11 interfaces for versions <a href="https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf" target="_blank">2.40</a>,
+        <a href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf" target="_blank">3.1</a>, 
+        and&nbsp;<a href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.pdf" target="_blank">3.2</a>, these versions are backward compatible.
+        The specification in which the mechanism was added is indicated for each mechanism.<br />
+        The mechanism can also be used in older versions of the native API.
     </p>
 
     <table class="table table-responsive-md table-striped table-bordered">
@@ -48,6 +51,7 @@ else
                 <th>Generate key pair</th>
                 <th>Generate key</th>
                 <th>Wrap, Unwrap</th>
+                <th>Encapsulate, Decapsulate</th>
             </tr>
         </thead>
         <tbody>
@@ -65,6 +69,7 @@ else
                     <td class="text-center" title="Generate key pair">@ShowFlag(mi.Flags.GenerateKeyPair)</td>
                     <td class="text-center" title="Generate key">@ShowFlag(mi.Flags.Generate)</td>
                     <td class="text-center" title="Wrap, Unwrap">@ShowFlag(mi.Flags.Wrap, mi.Flags.Unwrap)</td>
+                    <td class="text-center" title="Encapsulate, Decapsulate">@ShowFlag(mi.Flags.Encapsulate, mi.Flags.Decapsulate)</td>
                 </tr>
             }
         </tbody>
@@ -157,6 +162,78 @@ else
                     </tbody>
                 </table>
             }
+
+            <h2>ML-DSA</h2>
+            @if (this.mlDsa == null)
+            {
+                <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+            }
+            else
+            {
+                <table class="table table-responsive-md table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (string name in this.mlDsa)
+                        {
+                            <tr>
+                                <td>@name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <h2>SLH-DSA</h2>
+            @if (this.slhDsa == null)
+            {
+                <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+            }
+            else
+            {
+                <table class="table table-responsive-md table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (string name in this.slhDsa)
+                        {
+                            <tr>
+                                <td>@name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <h2>ML-KEM</h2>
+            @if (this.mlKem == null)
+            {
+                <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+            }
+            else
+            {
+                <table class="table table-responsive-md table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (string name in this.mlKem)
+                        {
+                            <tr>
+                                <td>@name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
         }
     }
 }
@@ -167,6 +244,9 @@ else
     private IList<CurveInfoDto>? curves = null;
     private IList<CurveInfoDto>? edwardsCurves = null;
     private IList<CurveInfoDto>? montgomeryCurves = null;
+    private IList<string>? mlDsa = null;
+    private IList<string>? slhDsa = null;
+    private IList<string>? mlKem = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -176,13 +256,13 @@ else
         this.profileName = profileInfo.ProfileName;
 
         await Task.Yield();
-        this.curves = await this.bouncyHsmClient.GetSupportedEcCurvesAsync();
-
-        await Task.Yield();
-        this.edwardsCurves = await this.bouncyHsmClient.GetSupportedEdwardsCurvesAsync();
-
-        await Task.Yield();
-        this.montgomeryCurves = await this.bouncyHsmClient.GetSupportedMontgomeryCurvesAsync();
+        SupportedKeysDto keys = await this.bouncyHsmClient.GetSupportedKeysAsync();
+        this.curves = keys.EcCurves.ToList();
+        this.edwardsCurves = keys.EdwardsCurves.ToList();
+        this.montgomeryCurves = keys.MontgomeryCurves.ToList();
+        this.mlDsa = keys.MlDsaKeys.ToList();
+        this.slhDsa = keys.SlhDsaKeys.ToList();
+        this.mlKem = keys.MlKemKeys.ToList();
     }
 
     private string ShowFlag(bool enabled)

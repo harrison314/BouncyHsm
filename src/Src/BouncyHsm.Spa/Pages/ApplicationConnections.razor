@@ -1,4 +1,5 @@
 ﻿@page "/ApplicationConnections"
+@rendermode InteractiveWebAssembly
 @using BouncyHsm.Client
 @inject IBouncyHsmClient bouncyHsmClient
 
@@ -32,7 +33,7 @@ else
 
                     <div class="col-1 d-flex align-items-center">
                         <div class="align-self-center">
-                            <span class="icon-tree  icon-4x"></span>
+                            <span class="icon-tree icon-4x"></span>
                         </div>
                     </div>
 
@@ -81,6 +82,12 @@ else
                         </table>
                     </div>
                     <div class="col-2">
+                        <button type="button"
+                                class="btn btn-outline-primary mb-1 btn-w-action"
+                                @onclick="() => this.ShowOffCanvas(appSession)">
+                            <span class="icon-enlarge2 icon-1x"></span> Connection details
+                        </button>
+                        <br />
                         <DangerOperationBtn IconClass="icon-cross icon-1x"
                                             Text="Remove connection"
                                             AdditionalClass="btn-w-action"
@@ -91,10 +98,31 @@ else
             </div>
         </div>
     }
+
+    <BSOffCanvas @ref="offCanvas" Placement="@BlazorStrap.Placement.Right">
+        <Header>
+            <h4 class="text-break"><span class="icon-tree icon-1x"></span> @(this.selectedSession?.ApplicationName)</h4>
+        </Header>
+        <Content>
+            @if (this.selectedSession != null)
+            {
+                <h7>Name</h7>
+                <pre class="text-break mt-2">@(this.selectedSession.ApplicationName)</pre>
+
+                <h7>PID</h7>
+                <pre class="text-break mt-2">@(this.selectedSession.Pid)</pre>
+
+                <h7>Process arguments</h7>
+                <pre class="text-break mt-2">@this.FormatCmdArgs(this.selectedSession.CmdArguments)</pre>
+            }
+        </Content>
+    </BSOffCanvas>
 }
 
 @code {
     private IList<ApplicationSessionDto>? appSessions = null;
+    private BSOffCanvas? offCanvas = null;
+    private ApplicationSessionDto? selectedSession = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,5 +140,29 @@ else
     {
         await this.bouncyHsmClient.RemoveApplicationConnectionAsync(sessionId);
         await this.ReloadConnections();
+    }
+
+    private async Task ShowOffCanvas(ApplicationSessionDto session)
+    {
+        System.Diagnostics.Debug.Assert(this.offCanvas != null);
+
+        this.selectedSession = session;
+        await this.offCanvas.ShowAsync();
+    }
+
+    private string FormatCmdArgs(IEnumerable<string> args)
+    {
+        return string.Join(" \\\n",
+         args.Select(t =>
+         {
+             if (t.Where(q => char.IsWhiteSpace(q)).Any())
+             {
+                 return $"\"{t}\"";
+             }
+             else
+             {
+                 return t;
+             }
+         }));
     }
 }

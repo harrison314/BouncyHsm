@@ -6,14 +6,30 @@
         <NavMenu />
     </div>
 
-    <main>
+    <main class="mb-4">
         <div class="top-row px-4">
             <a href="swagger/index.html" target="_blank">Swagger UI</a>
         </div>
 
         <BSToaster Position="BlazorStrap.Position.Fixed" />
         <article class="content px-4">
-            @Body
+            <ErrorBoundary>
+                <ChildContent>
+                    @Body
+                </ChildContent>
+                <ErrorContent Context="exception">
+                    <div class="text-danger">
+                        @if (exception is BouncyHsm.Client.ApiBouncyHsmException<BouncyHsm.Client.ProblemDetails> apiException)
+                        {
+                            @apiException.Result.Detail
+                        }
+                        else
+                        {
+                            @exception.Message
+                        }
+                    </div>
+                </ErrorContent>
+            </ErrorBoundary>
         </article>
     </main>
     <SectionOutlet SectionName="botton-area" />

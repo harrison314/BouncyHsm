@@ -26,7 +26,7 @@ public partial class SignHandler : IRpcRequestHandler<SignRequest, SignEnvelope>
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
-        DateTime utcStartTime = this.hwServices.Time.UtcNow;
+        DateTimeOffset utcStartTime = this.hwServices.Time.GetUtcNow();
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);

@@ -1,4 +1,5 @@
-﻿using BouncyHsm.Cli.Commands.Objects;
+﻿using BouncyHsm.Cli.Commands.Migration;
+using BouncyHsm.Cli.Commands.Objects;
 using BouncyHsm.Cli.Commands.Pkcs;
 using BouncyHsm.Cli.Commands.Slot;
 using BouncyHsm.Cli.Commands.Stats;
@@ -47,7 +48,11 @@ public static class Program
                     generate.AddCommand<GenerateEcKeyPairCommand>("ec").WithDescription("Generate EC key pair.");
                     generate.AddCommand<GenerateEdwardsKeyPairCommand>("edwards").WithDescription("Generate Edwards EC key pair.");
                     generate.AddCommand<GenerateMongomeryKeyPairCommand>("mongomery").WithDescription("Generate Mongomery EC key pair.");
+                    generate.AddCommand<GenerateMlDsaKeyPairCommand>("mldsa").WithDescription("Generate ML-DSA key pair.");
+                    generate.AddCommand<GenerateSlhDsaKeyPairCommand>("slhdsa").WithDescription("Generate SLH-DSA key pair.");
+                    generate.AddCommand<GenerateMlKemKeyPairCommand>("mlkem").WithDescription("Generate ML-KEM key pair.");
                     generate.AddCommand<GenerateAesKeyCommand>("aes").WithDescription("Generate AES key.");
+                    generate.AddCommand<GenerateCamelliaKeyCommand>("camellia").WithDescription("Generate CAMELLIA key.");
                     generate.AddCommand<GeneratePoly1305KeyCommand>("poly1305").WithDescription("Generate POLY1305 key.");
                     generate.AddCommand<GenerateChaCha20KeyCommand>("chacha20").WithDescription("Generate ChaCha20 key.");
                     generate.AddCommand<GenerateSalsa20KeyCommand>("salsa20").WithDescription("Generate Salsa20 key.");
@@ -72,6 +77,13 @@ public static class Program
                 stats.AddCommand<GetOverviewStatsCommand>("overview").WithDescription("Get overview stats.");
 
                 stats.SetDescription("Display of statistical data.");
+            });
+
+            config.AddBranch("migration", stats =>
+            {
+                stats.AddCommand<MigrateObjectsCommand>("migrate").WithDescription("Migrate crypto objects in database to new specification.");
+
+                stats.SetDescription("Migrate crypto objects in database to new specification.");
             });
         });
 

@@ -49,10 +49,7 @@ public class GenerateKeyVisitorTests
         TimeSpan diff = excepted / 10;
         if (value < (excepted - diff) || value > (excepted + diff))
         {
-            Assert.Fail("Value is out of range from {0} to {1}. Actual: {2}",
-                excepted - diff,
-                excepted + diff,
-                value);
+            Assert.Fail($"Value is out of range from {excepted - diff} to {excepted + diff}. Actual: {value}");
         }
     }
 }

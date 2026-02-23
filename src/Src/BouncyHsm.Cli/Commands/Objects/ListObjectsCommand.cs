@@ -33,7 +33,7 @@ internal class ListObjectsCommand : AsyncCommand<ListObjectsCommand.Settings>
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
         StorageObjectsListDto objects = default!;
@@ -41,7 +41,7 @@ internal class ListObjectsCommand : AsyncCommand<ListObjectsCommand.Settings>
         await AnsiConsole.Status()
             .StartAsync("Loading...", async ctx =>
             {
-                objects = await client.GetStorageObjectsAsync(settings.SlotId, null, null);
+                objects = await client.GetStorageObjectsAsync(settings.SlotId, null, null, cancellationToken);
             });
 
         Table table = new Table();

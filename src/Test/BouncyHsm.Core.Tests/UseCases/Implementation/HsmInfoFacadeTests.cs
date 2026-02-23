@@ -1,4 +1,5 @@
-﻿using BouncyHsm.Core.UseCases.Implementation;
+﻿using BouncyHsm.Core.UseCases.Contracts;
+using BouncyHsm.Core.UseCases.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ public class HsmInfoFacadeTests
         Assert.IsNotNull(versions.Version);
         Assert.IsNotNull(versions.BouncyCastleVersion);
         Assert.IsNotNull(versions.Commit);
-        Assert.IsNotNull(versions.P11Version);
+        Assert.IsNotNull(versions.P11Versions);
     }
 
     [TestMethod]
@@ -34,29 +35,25 @@ public class HsmInfoFacadeTests
     }
 
     [TestMethod]
-    public void GetCurves_Call_Success()
+    public void GetSupportedKeys_Call_Success()
     {
         HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
-        IEnumerable<BouncyHsm.Core.Services.Contracts.Entities.SupportedNameCurve> curves = hsmInfoFacade.GetCurves();
+        SupportedKeys keys = hsmInfoFacade.GetSupportedKeys();
 
-        Assert.IsNotNull(curves.ToList());
+        Assert.IsNotNull(keys.EcCurves.ToList());
+        Assert.IsNotNull(keys.EdwardsCurves.ToList());
+        Assert.IsNotNull(keys.MlDsaKeys.ToList());
+        Assert.IsNotNull(keys.MlKemKeys.ToList());
+        Assert.IsNotNull(keys.MontgomeryCurves.ToList());
+        Assert.IsNotNull(keys.RsaKeys.ToList());
     }
 
     [TestMethod]
-    public void GetEdwardsCurves_Call_Success()
+    public void GetFunctionsState_Call_Success()
     {
         HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
-        IEnumerable<BouncyHsm.Core.Services.Contracts.Entities.SupportedNameCurve> curves = hsmInfoFacade.GetEdwardsCurves();
+        IReadOnlyList<FunctionImplState> funstions = hsmInfoFacade.GetFunctionsState();
 
-        Assert.IsNotNull(curves.ToList());
-    }
-
-    [TestMethod]
-    public void GetMontgomeryCurves_Call_Success()
-    {
-        HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
-        IEnumerable<BouncyHsm.Core.Services.Contracts.Entities.SupportedNameCurve> curves = hsmInfoFacade.GetMontgomeryCurves();
-
-        Assert.IsNotNull(curves.ToList());
+        Assert.IsNotNull(funstions);
     }
 }

@@ -43,7 +43,7 @@ public class SlotFacadeTests
         default);
 
         CreateSlotResult value = result.AssertOkValue();
-        Assert.AreEqual(value.SlotId, 12U);
+        Assert.AreEqual(12U, value.SlotId);
         Assert.AreNotEqual(Guid.Empty, value.Id);
         Assert.IsNotNull(value.TokenSerialNumber);
 
@@ -84,7 +84,7 @@ public class SlotFacadeTests
         DomainResult<IReadOnlyList<SlotEntity>> result = await slotFacade.GetAllSlots(default);
 
         IReadOnlyList<SlotEntity> value = result.AssertOkValue();
-        Assert.AreEqual(value[0].SlotId, 12U);
+        Assert.AreEqual(12U, value[0].SlotId);
         Assert.IsNotNull(value[0].Token);
         Assert.IsNotNull(value[0].Token.SerialNumber);
         Assert.IsNotNull(value[0].Token.Label);
@@ -121,7 +121,7 @@ public class SlotFacadeTests
         DomainResult<SlotEntity> result = await slotFacade.GetSlotById(12, default);
 
         SlotEntity value = result.AssertOkValue();
-        Assert.AreEqual(value.SlotId, 12U);
+        Assert.AreEqual(12U, value.SlotId);
         Assert.IsNotNull(value.Token);
         Assert.IsNotNull(value.Token.SerialNumber);
         Assert.IsNotNull(value.Token.Label);

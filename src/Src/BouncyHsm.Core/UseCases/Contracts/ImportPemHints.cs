@@ -14,6 +14,12 @@ public class ImportPemHints
         set;
     }
 
+    public bool ForEncapsulation
+    {
+        get;
+        set;
+    }
+
     public bool ForDerivation
     {
         get;

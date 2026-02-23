@@ -89,4 +89,11 @@ public static class CKM_V3_0
     public const CKM CKM_EC_EDWARDS_KEY_PAIR_GEN = (CKM)0x00001055;
     public const CKM CKM_EC_MONTGOMERY_KEY_PAIR_GEN = (CKM)0x00001056;
     public const CKM CKM_EDDSA = (CKM)0x00001057;
+
+    public const CKM CKM_SHAKE_128_KEY_DERIVATION = (CKM)0x0000039b;
+    public const CKM CKM_SHAKE_256_KEY_DERIVATION = (CKM)0x0000039c;
+
+    public const CKM CKM_HKDF_DERIVE = (CKM)0x0000402a;
+    public const CKM CKM_HKDF_DATA = (CKM)0x0000402b;
+    public const CKM CKM_HKDF_KEY_GEN = (CKM)0x0000402c;
 }

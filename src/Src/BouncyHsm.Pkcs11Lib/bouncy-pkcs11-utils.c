@@ -31,7 +31,7 @@ void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8
         return;
     }
 
-    int i = 0;
+    size_t i = 0;
     while (i < destinationSize - 1 && src[i] != '\0')
     {
         destination[i] = (char)src[i];
@@ -164,7 +164,7 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
     CK_ULONG i;
     for (i = 0; i < ulCount; i++)
     {
-        void* datePtr = ptr[i].ValueCkDate;
+        void* datePtr = (void*)ptr[i].ValueCkDate;
         if (datePtr != NULL)
         {
             free(datePtr);
@@ -257,8 +257,6 @@ static int CreateAesCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    LOG_ENTERING_TO_FUNCTION();
-
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_AES_CBC_ENCRYPT_DATA_PARAMS))
     {
@@ -267,13 +265,40 @@ static int CreateAesCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR
     }
 
     CK_AES_CBC_ENCRYPT_DATA_PARAMS_PTR cedp = (CK_AES_CBC_ENCRYPT_DATA_PARAMS_PTR)pMechanism->pParameter;
-    Ckp_CkAesCbcEnryptDataParams cbcData;
+    Ckp_CkAesCbcEnryptDataParams cbcData = { 0 };
     cbcData.Iv.data = (uint8_t*)cedp->iv;
     cbcData.Iv.size = sizeof(cedp->iv);
     cbcData.Data.data = (uint8_t*)cedp->pData;
     cbcData.Data.size = (size_t)cedp->length;
 
     result = nmrpc_writeAsBinary(&cbcData, (SerializeFnPtr_t)Ckp_CkAesCbcEnryptDataParams_Serialize, &value->MechanismParamMp);
+    if (result != NMRPC_OK)
+    {
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+    }
+
+    return result;
+}
+
+static int CreateCamelliaCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    int result = NMRPC_FATAL_ERROR;
+    if (pMechanism->ulParameterLen != sizeof(CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS))
+    {
+        log_message(LOG_LEVEL_ERROR, "Excepted CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS in mechanism.");
+        return NMRPC_FATAL_ERROR;
+    }
+
+    CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS_PTR cedp = (CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS_PTR)pMechanism->pParameter;
+    Ckp_CkCamelliaCbcEncryptDataParams cbcData = { 0 };
+    cbcData.Iv.data = (uint8_t*)cedp->iv;
+    cbcData.Iv.size = sizeof(cedp->iv);
+    cbcData.Data.data = (uint8_t*)cedp->pData;
+    cbcData.Data.size = (size_t)cedp->length;
+
+    result = nmrpc_writeAsBinary(&cbcData, (SerializeFnPtr_t)Ckp_CkCamelliaCbcEncryptDataParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
         log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
@@ -346,11 +371,11 @@ static int CreateEcdh1DeriveParams(MechanismValue* value, CK_MECHANISM_PTR pMech
 
     Ckp_CkEcdh1DeriveParams deriveParams;
     Binary sharedData;
+    Binary publicData;
 
     deriveParams.Kdf = (uint32_t)deriveParamsPtr->kdf;
     deriveParams.SharedData = NULL;
-    deriveParams.PublicData.data = (uint8_t*)deriveParamsPtr->pPublicData;
-    deriveParams.PublicData.size = (size_t)deriveParamsPtr->ulPublicDataLen;
+    deriveParams.PublicData = NULL;
 
     if (deriveParamsPtr->pSharedData != NULL)
     {
@@ -358,6 +383,14 @@ static int CreateEcdh1DeriveParams(MechanismValue* value, CK_MECHANISM_PTR pMech
         sharedData.size = (size_t)deriveParamsPtr->ulSharedDataLen;
 
         deriveParams.SharedData = &sharedData;
+    }
+
+    if (deriveParamsPtr->pPublicData != NULL)
+    {
+        publicData.data = (uint8_t*)deriveParamsPtr->pPublicData;
+        publicData.size = (size_t)deriveParamsPtr->ulPublicDataLen;
+
+        deriveParams.PublicData = &publicData;
     }
 
     result = nmrpc_writeAsBinary(&deriveParams, (SerializeFnPtr_t)Ckp_CkEcdh1DeriveParams_Serialize, &value->MechanismParamMp);
@@ -704,6 +737,122 @@ static int CreateEddsaParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     return result;
 }
 
+static int CreateSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    int result = NMRPC_FATAL_ERROR;
+
+    if (pMechanism->ulParameterLen != sizeof(CK_SIGN_ADDITIONAL_CONTEXT))
+    {
+        log_message(LOG_LEVEL_ERROR, "Excepted CK_SIGN_ADDITIONAL_CONTEXT in mechanism.");
+        return NMRPC_FATAL_ERROR;
+    }
+
+    CK_SIGN_ADDITIONAL_CONTEXT* signAdditionalContext = (CK_SIGN_ADDITIONAL_CONTEXT*)pMechanism->pParameter;
+    Ckp_CkSignAdditionalContext signAdditionalContextParameters = { 0 };
+    Binary context;
+
+    signAdditionalContextParameters.HedgeVariant = (uint32_t)signAdditionalContext->hedgeVariant;
+    signAdditionalContextParameters.Context = NULL;
+    if (signAdditionalContext->pContext != NULL)
+    {
+        context.data = (uint8_t*)signAdditionalContext->pContext;
+        context.size = (size_t)signAdditionalContext->ulContextLen;
+        signAdditionalContextParameters.Context = &context;
+    }
+
+    result = nmrpc_writeAsBinary(&signAdditionalContextParameters, (SerializeFnPtr_t)Ckp_CkSignAdditionalContext_Serialize, &value->MechanismParamMp);
+    if (result != NMRPC_OK)
+    {
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+    }
+
+    return result;
+}
+
+static int CreateHashSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    int result = NMRPC_FATAL_ERROR;
+
+    if (pMechanism->ulParameterLen != sizeof(CK_HASH_SIGN_ADDITIONAL_CONTEXT))
+    {
+        log_message(LOG_LEVEL_ERROR, "Excepted CK_SIGN_ADDITIONAL_CONTEXT in mechanism.");
+        return NMRPC_FATAL_ERROR;
+    }
+
+    CK_HASH_SIGN_ADDITIONAL_CONTEXT* hashSignAdditionalContext = (CK_HASH_SIGN_ADDITIONAL_CONTEXT*)pMechanism->pParameter;
+    Ckp_CkHashSignAdditionalContext hashSignAdditionalContextParameters = { 0 };
+    Binary context;
+
+    hashSignAdditionalContextParameters.HedgeVariant = (uint32_t)hashSignAdditionalContext->hedgeVariant;
+    hashSignAdditionalContextParameters.Context = NULL;
+    if (hashSignAdditionalContext->pContext != NULL)
+    {
+        context.data = (uint8_t*)hashSignAdditionalContext->pContext;
+        context.size = (size_t)hashSignAdditionalContext->ulContextLen;
+        hashSignAdditionalContextParameters.Context = &context;
+    }
+
+    hashSignAdditionalContextParameters.Hash = (uint32_t)hashSignAdditionalContext->hash;
+
+    result = nmrpc_writeAsBinary(&hashSignAdditionalContextParameters, (SerializeFnPtr_t)Ckp_CkHashSignAdditionalContext_Serialize, &value->MechanismParamMp);
+    if (result != NMRPC_OK)
+    {
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+    }
+
+    return result;
+}
+
+static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    int result = NMRPC_FATAL_ERROR;
+
+    if (pMechanism->ulParameterLen != sizeof(CK_HKDF_PARAMS))
+    {
+        log_message(LOG_LEVEL_ERROR, "Excepted CK_HKDF_PARAMS in mechanism.");
+        return NMRPC_FATAL_ERROR;
+    }
+
+    CK_HKDF_PARAMS* hkdfparams = (CK_HKDF_PARAMS*)pMechanism->pParameter;
+    Ckp_CkHkdfParams ckHkdfParams = { 0 };
+    Binary salt = { 0 };
+    Binary info = { 0 };
+
+    ckHkdfParams.Extract = (bool)hkdfparams->bExtract;
+    ckHkdfParams.Expand = (bool)hkdfparams->bExpand;
+    ckHkdfParams.HashMechanism = (uint32_t)hkdfparams->prfHashMechanism;
+    ckHkdfParams.SaltType = (uint32_t)hkdfparams->ulSaltType;
+    ckHkdfParams.SaltKey = (uint32_t)hkdfparams->hSaltKey;
+    
+    if (hkdfparams->pSalt != NULL)
+    {
+        salt.data = (uint8_t*)hkdfparams->pSalt;
+        salt.size = (size_t)hkdfparams->ulSaltLen;
+        ckHkdfParams.Salt = &salt;
+    }
+
+    if (hkdfparams->pInfo != NULL)
+    {
+        info.data = (uint8_t*)hkdfparams->pInfo;
+        info.size = (size_t)hkdfparams->ulInfoLen;
+        ckHkdfParams.Info = &info;
+    }
+   
+    result = nmrpc_writeAsBinary(&ckHkdfParams, (SerializeFnPtr_t)Ckp_CkHkdfParams_Serialize, &value->MechanismParamMp);
+    if (result != NMRPC_OK)
+    {
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+    }
+
+    return result;
+}
+
 int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
     LOG_ENTERING_TO_FUNCTION();
@@ -738,6 +887,8 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_BLAKE2B_256_HMAC_GENERAL:
     case CKM_BLAKE2B_384_HMAC_GENERAL:
     case CKM_BLAKE2B_512_HMAC_GENERAL:
+    case CKM_AES_CMAC_GENERAL:
+    case CKM_CAMELLIA_MAC_GENERAL:
         return CreateMacGeneralParams(value, pMechanism);
         break;
 
@@ -758,11 +909,16 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_CONCATENATE_BASE_AND_DATA:
     case CKM_XOR_BASE_AND_DATA:
     case CKM_AES_ECB_ENCRYPT_DATA:
+    case CKM_CAMELLIA_ECB_ENCRYPT_DATA:
         return CreateKeyDerivationStringData(value, pMechanism);
         break;
 
     case CKM_AES_CBC_ENCRYPT_DATA:
         return CreateAesCbcEncryptDataparams(value, pMechanism);
+        break;
+
+    case CKM_CAMELLIA_CBC_ENCRYPT_DATA:
+        return CreateCamelliaCbcEncryptDataparams(value, pMechanism);
         break;
 
     case CKM_CONCATENATE_BASE_AND_KEY:
@@ -787,6 +943,8 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_AES_OFB:
     case CKM_AES_CTR:
     case CKM_AES_CTS:
+    case CKM_CAMELLIA_CBC:
+    case CKM_CAMELLIA_CBC_PAD:
         return CreateRawParams(value, pMechanism);
         break;
 
@@ -816,6 +974,40 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
     case CKM_EDDSA:
         return CreateEddsaParams(value, pMechanism);
+        break;
+
+    case CKM_ML_DSA:
+    case CKM_HASH_ML_DSA_SHA224:
+    case CKM_HASH_ML_DSA_SHA256:
+    case CKM_HASH_ML_DSA_SHA384:
+    case CKM_HASH_ML_DSA_SHA512:
+    case CKM_HASH_ML_DSA_SHA3_224:
+    case CKM_HASH_ML_DSA_SHA3_256:
+    case CKM_HASH_ML_DSA_SHA3_384:
+    case CKM_HASH_ML_DSA_SHA3_512:
+    case CKM_HASH_ML_DSA_SHAKE128:
+    case CKM_HASH_ML_DSA_SHAKE256:
+    case CKM_SLH_DSA:
+    case CKM_HASH_SLH_DSA_SHA224:
+    case CKM_HASH_SLH_DSA_SHA256:
+    case CKM_HASH_SLH_DSA_SHA384:
+    case CKM_HASH_SLH_DSA_SHA512:
+    case CKM_HASH_SLH_DSA_SHA3_224:
+    case CKM_HASH_SLH_DSA_SHA3_256:
+    case CKM_HASH_SLH_DSA_SHA3_384:
+    case CKM_HASH_SLH_DSA_SHA3_512:
+    case CKM_HASH_SLH_DSA_SHAKE128:
+    case CKM_HASH_SLH_DSA_SHAKE256:
+        return CreateSignAdditionalContextParams(value, pMechanism);
+        break;
+
+    case CKM_HASH_ML_DSA:
+    case CKM_HASH_SLH_DSA:
+        return CreateHashSignAdditionalContextParams(value, pMechanism);
+        break;
+
+    case CKM_HKDF_DERIVE:
+        return CreateHkdfParams(value, pMechanism);
         break;
 
     default:

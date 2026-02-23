@@ -50,7 +50,7 @@ The operation removes a specific mechanism.
 #### Add
 The operation adds a mechanism with all its parameters.
 
-`Flags` can have values: CKF_ENCRYPT, CKF_DECRYPT, CKF_DIGEST, CKF_SIGN, CKF_VERIFY, CKF_GENERATE, CKF_GENERATE_KEY_PAIR,CKF_WRAP,CKF_UNWRAP, CKF_DERIVE.
+`Flags` can have values: CKF_ENCRYPT, CKF_DECRYPT, CKF_DIGEST, CKF_SIGN, CKF_VERIFY, CKF_GENERATE, CKF_GENERATE_KEY_PAIR,CKF_WRAP,CKF_UNWRAP, CKF_DERIVE, CKF_ENCAPSULATE, CKF_DECAPSULATE.
 
 ```json
 {
@@ -65,7 +65,7 @@ The operation adds a mechanism with all its parameters.
 #### Update
 Updates the available mechanism. This method is suitable, for example, for adjusting the allowed key sizes.
 
-`Flags` can have values: CKF_ENCRYPT, CKF_DECRYPT, CKF_DIGEST, CKF_SIGN, CKF_VERIFY, CKF_GENERATE, CKF_GENERATE_KEY_PAIR,CKF_WRAP,CKF_UNWRAP, CKF_DERIVE.
+`Flags` can have values: CKF_ENCRYPT, CKF_DECRYPT, CKF_DIGEST, CKF_SIGN, CKF_VERIFY, CKF_GENERATE, CKF_GENERATE_KEY_PAIR,CKF_WRAP,CKF_UNWRAP, CKF_DERIVE, CKF_ENCAPSULATE, CKF_DECAPSULATE.
 
 ```json
 {
@@ -102,7 +102,7 @@ The operation enable mechanism by PKCS#11 specification version.
 ```json
 {
     "Operation": "EnableByVersion",
-    "Pkcs11SpecVersion": "V2_40" //Required, alloved values has: V2_40, V3_0
+    "Pkcs11SpecVersion": "V2_40" //Required, allowed values has: V2_40, V3_1, V3_2
 }
 ```
 
@@ -112,16 +112,7 @@ The operation remove mechanism by PKCS#11 specification version.
 ```json
 {
     "Operation": "RemoveByVersion",
-    "Pkcs11SpecVersion": "V2_40" //Required, alloved values has: V2_40, V3_0
-}
-```
-
-#### FilterFips
-The operation remove all non-FIPS mechanisms.
-
-```json
-{
-    "Operation": "FilterFips"
+    "Pkcs11SpecVersion": "V2_40" //Required, allowed values has: V2_40, V3_1, V3_2
 }
 ```
 

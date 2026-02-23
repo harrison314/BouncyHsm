@@ -16,7 +16,7 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
 
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
         IList<SlotDto> slots = default!;
@@ -24,7 +24,7 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
         await AnsiConsole.Status()
             .StartAsync("Loading...", async ctx =>
             {
-                slots = await client.GetAllSlotsAsync();
+                slots = await client.GetAllSlotsAsync(cancellationToken);
             });
 
         Table table = new Table();
@@ -58,6 +58,6 @@ internal class ListSlotsCommand : AsyncCommand<ListSlotsCommand.Settings>
             return "[grey]alwais[/]";
         }
 
-        return slot.IsUnplugged ? "[red]no[/]" : "[green]yes[/]";
+        return slot.IsPlugged ? "[green]yes[/]" : "[red]no[/]";
     }
 }

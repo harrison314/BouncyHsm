@@ -25,7 +25,7 @@
 ```
 or using BouncyHsm.Cli:
 ```
-dotnet BouncyHsm.Cli.dll slot create -e http://localhost:5000/ -d "TestDevice1" -l "TestToken1" -u 123456 -q 12345678
+dotnet BouncyHsm.Cli.dll slot create -d "TestDevice1" -l "TestToken1" -u 123456 -q 12345678 -e http://localhost:5291/ 
 ```
 
 3. Run tests using:

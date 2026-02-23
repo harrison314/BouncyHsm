@@ -25,7 +25,6 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
         this.CreateBody(definition);
     }
 
-
     public void WriteToFolder(string path)
     {
         File.WriteAllText(Path.Combine(path, $"{this.Name}.h"), this.header.ToString());

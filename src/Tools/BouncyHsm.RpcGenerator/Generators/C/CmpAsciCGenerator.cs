@@ -46,7 +46,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             #define NMRPC_LOG_ERR_TEXT(msg) log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) %s", __FUNCTION__, __LINE__, msg)
             #define NMRPC_LOG_FAILED_CLOSE_SOCKET() log_message(LOG_LEVEL_INFO, "Closing socket failed in function %s (line %i)",__FUNCTION__, __LINE__)
 
-            static int cmph_read_nullable_str(cmp_ctx_t* ctx, char** ptr)
+            static int cmph_read_nullable_str(cmp_ctx_t* ctx, const char** ptr)
             {
               cmp_object_t obj;
               if (!cmp_read_object(ctx, &obj))
@@ -647,10 +647,17 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
         {
             if (type.BaseDefinition == CDeclaredType.StringName)
             {
-
-                body.AppendLine($"  result = cmp_write_str(ctx, value->array[i], (uint32_t)strlen(value->array[i]));");
-                body.AppendLine("   if (!result) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
+                body.AppendLine("    const char* strValue = value->array[i];");
+                body.AppendLine("    if (strValue != NULL)");
+                body.AppendLine("    {");
+                body.AppendLine("      result = cmp_write_str(ctx, strValue, (uint32_t)strlen(strValue));");
+                body.AppendLine("      if (!result) return NMRPC_FATAL_ERROR;");
+                body.AppendLine("    }");
+                body.AppendLine("    else");
+                body.AppendLine("    {");
+                body.AppendLine("      result = cmp_write_nil(ctx);");
+                body.AppendLine("      if (!result) return NMRPC_FATAL_ERROR;");
+                body.AppendLine("    }");
             }
 
             if (type.BaseDefinition == CDeclaredType.BinaryName)

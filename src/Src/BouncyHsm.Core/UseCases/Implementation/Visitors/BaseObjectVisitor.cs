@@ -59,44 +59,84 @@ internal abstract class BaseObjectVisitor<T> : ICryptoApiObjectVisitor<T>
         return this.ProcessStorageObject(generalSecretKeyObject);
     }
 
-    public T Visit(AesKeyObject aesKeyObject)
+    public virtual T Visit(AesKeyObject aesKeyObject)
     {
         return this.ProcessStorageObject(aesKeyObject);
     }
 
-    public T Visit(Poly1305KeyObject poly1305KeyObject)
+    public virtual T Visit(Poly1305KeyObject poly1305KeyObject)
     {
         return this.ProcessStorageObject(poly1305KeyObject);
     }
 
-    public T Visit(ChaCha20KeyObject chaCha20KeyObject)
+    public virtual T Visit(ChaCha20KeyObject chaCha20KeyObject)
     {
         return this.ProcessStorageObject(chaCha20KeyObject);
     }
 
-    public T Visit(Salsa20KeyObject salsa20KeyObject)
+    public virtual T Visit(Salsa20KeyObject salsa20KeyObject)
     {
         return this.ProcessStorageObject(salsa20KeyObject);
     }
 
-    public T Visit(EdwardsPrivateKeyObject edwardsPrivateKey)
+    public virtual T Visit(EdwardsPrivateKeyObject edwardsPrivateKey)
     {
         return this.ProcessStorageObject(edwardsPrivateKey);
     }
 
-    public T Visit(EdwardsPublicKeyObject edwardsPublicKey)
+    public virtual T Visit(EdwardsPublicKeyObject edwardsPublicKey)
     {
         return this.ProcessStorageObject(edwardsPublicKey);
     }
 
-    public T Visit(MontgomeryPrivateKeyObject montgomeryPrivateKey)
+    public virtual T Visit(MontgomeryPrivateKeyObject montgomeryPrivateKey)
     {
         return this.ProcessStorageObject(montgomeryPrivateKey);
     }
 
-    public T Visit(MontgomeryPublicKeyObject montgomeryPublicKey)
+    public virtual T Visit(MontgomeryPublicKeyObject montgomeryPublicKey)
     {
         return this.ProcessStorageObject(montgomeryPublicKey);
+    }
+
+    public virtual T Visit(TrustObject trustObject)
+    {
+        return this.ProcessStorageObject(trustObject);
+    }
+
+    public virtual T Visit(MlDsaPublicKeyObject mlDsaPublicKeyObject)
+    {
+        return this.ProcessStorageObject(mlDsaPublicKeyObject);
+    }
+
+    public virtual T Visit(MlDsaPrivateKeyObject mlDsaPrivateKeyObject)
+    {
+        return this.ProcessStorageObject(mlDsaPrivateKeyObject);
+    }
+
+    public virtual T Visit(SlhDsaPublicKeyObject slhDsaPublicKeyObject)
+    {
+        return this.ProcessStorageObject(slhDsaPublicKeyObject);
+    }
+
+    public virtual T Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject)
+    {
+        return this.ProcessStorageObject(slhDsaPrivateKeyObject);
+    }
+
+    public virtual T Visit(MlKemPublicKeyObject mlKemPublicKeyObject)
+    {
+        return this.ProcessStorageObject(mlKemPublicKeyObject);
+    }
+
+    public virtual T Visit(MlKemPrivateKeyObject mlKemPrivateKeyObject)
+    {
+        return this.ProcessStorageObject(mlKemPrivateKeyObject);
+    }
+
+    public virtual T Visit(CamelliaKeyObject camelliaKeyObject)
+    {
+        return this.ProcessStorageObject(camelliaKeyObject);
     }
 
     protected virtual T ProcessStorageObject(ICryptoApiObject storageObject)

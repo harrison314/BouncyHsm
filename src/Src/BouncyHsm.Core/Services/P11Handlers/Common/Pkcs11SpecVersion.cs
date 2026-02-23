@@ -8,7 +8,12 @@ public enum Pkcs11SpecVersion
     V2_40,
 
     /// <summary>
-    /// PKCS#11 v3.0 https://docs.oasis-open.org/pkcs11/pkcs11-curr/v3.0/pkcs11-curr-v3.0.pdf
+    /// PKCS#11 v3.1 https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf
     /// </summary>
-    V3_0
+    V3_1,
+
+    /// <summary>
+    /// PKCS#11 v3.2 https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.pdf
+    /// </summary>
+    V3_2
 }

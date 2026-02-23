@@ -231,6 +231,40 @@ public sealed class FilterFipsProfileOperation : ProfileOperation
             CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN,
             CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN,
             CKM.CKM_EDDSA,
+
+             // Form pkcs11 version 3.2
+
+            CKM.CKM_ML_DSA_KEY_PAIR_GEN,
+            CKM.CKM_ML_DSA,
+            CKM.CKM_HASH_ML_DSA,
+            CKM.CKM_HASH_ML_DSA_SHA224,
+            CKM.CKM_HASH_ML_DSA_SHA256,
+            CKM.CKM_HASH_ML_DSA_SHA384,
+            CKM.CKM_HASH_ML_DSA_SHA512,
+            CKM.CKM_HASH_ML_DSA_SHA3_224,
+            CKM.CKM_HASH_ML_DSA_SHA3_256,
+            CKM.CKM_HASH_ML_DSA_SHA3_384,
+            CKM.CKM_HASH_ML_DSA_SHA3_512,
+            CKM.CKM_HASH_ML_DSA_SHAKE128,
+            CKM.CKM_HASH_ML_DSA_SHAKE256,
+
+
+            CKM.CKM_SLH_DSA_KEY_PAIR_GEN,
+            CKM.CKM_SLH_DSA,
+            CKM.CKM_HASH_SLH_DSA,
+            CKM.CKM_HASH_SLH_DSA_SHA224,
+            CKM.CKM_HASH_SLH_DSA_SHA256,
+            CKM.CKM_HASH_SLH_DSA_SHA384,
+            CKM.CKM_HASH_SLH_DSA_SHA512,
+            CKM.CKM_HASH_SLH_DSA_SHA3_224,
+            CKM.CKM_HASH_SLH_DSA_SHA3_256,
+            CKM.CKM_HASH_SLH_DSA_SHA3_384,
+            CKM.CKM_HASH_SLH_DSA_SHA3_512,
+            CKM.CKM_HASH_SLH_DSA_SHAKE128,
+            CKM.CKM_HASH_SLH_DSA_SHAKE256,
+
+            CKM.CKM_ML_KEM_KEY_PAIR_GEN,
+            CKM.CKM_ML_KEM,
         };
 
         return fips;

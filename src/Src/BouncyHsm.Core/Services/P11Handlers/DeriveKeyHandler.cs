@@ -6,6 +6,8 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using MessagePack;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Asn1.Ocsp;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Security;
 using System.Threading;
@@ -55,7 +57,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, "Object can not enable drive.");
         }
 
-        IDeriveKeyGenerator generator = await this.CreateDeriveKeyGenerator(request.Mechanism, memorySession, p11Session);
+        IDeriveKeyGenerator generator = await this.CreateDeriveKeyGenerator(request.Mechanism, memorySession, p11Session, cancellationToken);
         generator.Init(keyTemplate);
         SecretKeyObject keyObject = generator.Generate(baseKeyObject);
 
@@ -86,7 +88,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         };
     }
 
-    private async ValueTask<IDeriveKeyGenerator> CreateDeriveKeyGenerator(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session)
+    private async ValueTask<IDeriveKeyGenerator> CreateDeriveKeyGenerator(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to CreateDeriveKeyGenerator with mechanism type {mechanismType}", (CKM)mechanism.MechanismType);
 
@@ -112,6 +114,8 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             CKM.CKM_BLAKE2B_256_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
             CKM.CKM_BLAKE2B_384_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(384), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
             CKM.CKM_BLAKE2B_512_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(512), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHAKE_128_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(128), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHAKE_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
 
             CKM.CKM_CONCATENATE_BASE_AND_DATA => new ConcatBaseAndDataDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatBaseAndDataDeriveKeyGenerator>()),
             CKM.CKM_CONCATENATE_DATA_AND_BASE => new ConcatDataAndBaseDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatDataAndBaseDeriveKeyGenerator>()),
@@ -124,6 +128,11 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
             CKM.CKM_AES_ECB_ENCRYPT_DATA => new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>()),
             CKM.CKM_AES_CBC_ENCRYPT_DATA => this.CreateAesCbcEncryptionGenerator(mechanism),
+
+            CKM.CKM_HKDF_DERIVE => await this.CreateHkdfGenerator(mechanism, memorySession, p11Session, cancellationToken),
+
+            CKM.CKM_CAMELLIA_ECB_ENCRYPT_DATA => new CamelliaDeriveKeyGenerator(CipherUtilities.GetCipher("CAMELLIA/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<CamelliaDeriveKeyGenerator>()),
+            CKM.CKM_CAMELLIA_CBC_ENCRYPT_DATA => this.CreateCamelliaCbcEncryptionGenerator(mechanism),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for derive key.")
         };
@@ -152,6 +161,13 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         try
         {
             Ckp_CkEcdh1DeriveParams deriveParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkEcdh1DeriveParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            if (deriveParams.PublicData == null)
+            {
+                this.logger.LogError("pPublicData in CK_ECDH1_DERIVE_PARAMS is null for mechanism {mechanism}.", (CKM)mechanism.MechanismType);
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, "pPublicData in CK_ECDH1_DERIVE_PARAMS is null.");
+            }
+
             Ecdh1DeriveParams ecDeriveParams = new Ecdh1DeriveParams((CKD)deriveParams.Kdf,
                 deriveParams.PublicData,
                 deriveParams.SharedData);
@@ -235,6 +251,83 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         catch (Exception ex)
         {
             this.logger.LogError(ex, "Error during decode CkP_CkObjectHandle.");
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private async Task<HkdfDeriveKeyGenerator> CreateHkdfGenerator(MechanismValue mechanism,
+        IMemorySession memorySession,
+        IP11Session p11Session,
+        CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to CreateHkdfGenerator.");
+
+        try
+        {
+            Ckp_CkHkdfParams hkdfParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkHkdfParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            SecretKeyObject? keyObject = null;
+            if (hkdfParams.SaltType == HkdfDeriveKeyGenerator.CKF_HKDF_SALT_KEY)
+            {
+                keyObject = await this.hwServices.FindObjectByHandle<SecretKeyObject>(memorySession,
+                            p11Session,
+                            hkdfParams.SaltKey,
+                            cancellationToken);
+            }
+
+            IDigest? digest = DigestUtils.TryGetDigest((CKM)hkdfParams.HashMechanism);
+            if (digest == null)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
+                   $"Invalid value of prfHashMechanism in CK_HKDF_PARAMS - is not digest or is not supported. Value {(CKM)hkdfParams.HashMechanism}.");
+            }
+
+            return new HkdfDeriveKeyGenerator(hkdfParams,
+                keyObject,
+                digest,
+                this.loggerFactory.CreateLogger<HkdfDeriveKeyGenerator>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error during decode Ckp_CkHkdfParams.");
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private CamelliaDeriveKeyGenerator CreateCamelliaCbcEncryptionGenerator(MechanismValue mechanism)
+    {
+        this.logger.LogTrace("Entering to CreateCamelliaCbcEncryptionGenerator.");
+
+        try
+        {
+            Ckp_CkCamelliaCbcEncryptDataParams cbcEncryptData = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkCamelliaCbcEncryptDataParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            if (cbcEncryptData.Iv == null || cbcEncryptData.Iv.Length != 16)
+            {
+                this.logger.LogError("Invalid IV in CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS. Must by present with length 16B. Actual length: {IvLength}.",
+                    cbcEncryptData.Iv?.Length ?? 0);
+
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
+                    $"Invalid IV in CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS. Must by present with length 16B.");
+            }
+
+            if (cbcEncryptData.Data.Length % 16 != 0)
+            {
+                this.logger.LogError("Invalid Data in CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS. Must by present with length must be a multiple of 16B. Actual length: {IvLength}.",
+                    cbcEncryptData.Data.Length);
+
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
+                    $"Invalid Data in CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS. Must by present with length must be a multiple of 16B.");
+            }
+
+            return new CamelliaDeriveKeyGenerator(CipherUtilities.GetCipher("CAMELLIA/CBC/NOPADDING"),
+                cbcEncryptData.Data,
+                cbcEncryptData.Iv,
+                this.loggerFactory.CreateLogger<CamelliaDeriveKeyGenerator>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error during decode Ckp_CkCamelliaCbcEncryptDataParams.");
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
         }
     }

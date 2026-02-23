@@ -50,7 +50,7 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
         } = default!;
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, GenerateCsrCommand.Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, GenerateCsrCommand.Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -75,9 +75,10 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
                    {
                        DirName = subjectName
                    }
-               });
+               },
+               cancellationToken);
 
-               await File.WriteAllBytesAsync(settings.OutputPath, result.Content);
+               await File.WriteAllBytesAsync(settings.OutputPath, result.Content,cancellationToken);
            });
 
         AnsiConsole.MarkupLine("CSR request stored.");

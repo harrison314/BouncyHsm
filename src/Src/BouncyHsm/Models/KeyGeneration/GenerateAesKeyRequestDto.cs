@@ -1,26 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BouncyHsm.Models.KeyGeneration
+namespace BouncyHsm.Models.KeyGeneration;
+
+public class GenerateAesKeyRequestDto
 {
-    public class GenerateAesKeyRequestDto
+    [Required]
+    public int Size
     {
-        [Required]
-        public int Size
-        {
-            get;
-            set;
-        }
+        get;
+        set;
+    }
 
-        [Required]
-        public GenerateKeyAttributesDto KeyAttributes
-        {
-            get;
-            set;
-        }
+    [Required]
+    public GenerateKeyAttributesDto KeyAttributes
+    {
+        get;
+        set;
+    }
 
-        public GenerateAesKeyRequestDto()
-        {
-            this.KeyAttributes = default!;
-        }
+    public GenerateAesKeyRequestDto()
+    {
+        this.KeyAttributes = default!;
     }
 }

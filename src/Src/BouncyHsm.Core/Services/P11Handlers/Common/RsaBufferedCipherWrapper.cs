@@ -113,4 +113,9 @@ internal class RsaBufferedCipherWrapper : ICipherWrapper
             throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, $"Mechanism {this.mechanismType} required private RSA key.");
         }
     }
+
+    public override string ToString()
+    {
+        return $"RsaBufferedCipherWrapper with {this.bufferedCipher.AlgorithmName}";
+    }
 }

@@ -54,6 +54,13 @@ internal abstract class BaseGenerateModel
     }
 
     [Required]
+    public bool ForEncapsulation
+    {
+        get;
+        set;
+    }
+
+    [Required]
     public bool ForDerivation
     {
         get;
@@ -84,10 +91,10 @@ internal abstract class BaseGenerateModel
             Exportable = this.Exportable,
             ForDerivation = this.ForDerivation,
             ForEncryption = this.ForEncryption,
+            ForEncapsulation = this.ForEncapsulation,
             ForSigning = this.ForSigning,
             ForWrap = this.ForWrap,
             Sensitive = this.Sensitive
         };
     }
-
 }

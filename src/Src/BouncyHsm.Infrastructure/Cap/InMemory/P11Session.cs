@@ -91,7 +91,7 @@ public class P11Session : IP11Session
     {
         if (storageObject.Id == Guid.Empty)
         {
-            storageObject.Id = Guid.NewGuid();
+            storageObject.Id = Guid.CreateVersion7();
         }
 
         this.objects.Add(storageObject.ToMemento());

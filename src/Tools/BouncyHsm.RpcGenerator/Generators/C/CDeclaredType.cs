@@ -50,7 +50,7 @@ internal class CDeclaredType : DeclaredType
         return this.BaseDefinition switch
         {
             DeclaredType.BinaryName => "Binary",
-            DeclaredType.StringName => "char*",
+            DeclaredType.StringName => "const char*",
             DeclaredType.Int64Name => "int64_t",
             DeclaredType.BoolName => "bool",
             DeclaredType.DoubleName => "double",

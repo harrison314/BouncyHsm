@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto.Parameters;
 using System.Security.Cryptography.X509Certificates;
+using Pkcs11Interop.Ext.Common;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 
@@ -44,6 +45,37 @@ public class T18_CreateObject
         };
 
         _ = session.CreateObject(objectAttributes);
+    }
+
+    [TestMethod]
+    public void CreateObject_DataObjectCheckUniqId_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
+        };
+
+        IObjectHandle handle = session.CreateObject(objectAttributes);
+
+        List<IObjectAttribute> attributes = session.GetAttributeValue(handle, new List<CKA>() { CKA_V3_0.CKA_UNIQUE_ID });
+
+        StringAssert.StartsWith(attributes[0].GetValueAsString(), "obj");
     }
 
     [TestMethod]
@@ -271,7 +303,7 @@ TnCoPhVFsVeDjQwg");
         _ = session.CreateObject(objectAttributes);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, 5)]
     [DataRow(CKK.CKK_GENERIC_SECRET, 512)]
     [DataRow(CKK.CKK_SHA256_HMAC, 32)]
@@ -320,7 +352,7 @@ TnCoPhVFsVeDjQwg");
         _ = session.CreateObject(objectAttributes);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(16)]
     [DataRow(24)]
     [DataRow(32)]
@@ -706,5 +738,92 @@ TnCoPhVFsVeDjQwg");
         IObjectHandle handle = session.CreateObject(publicKeyAttributes);
 
         session.DestroyObject(handle);
+    }
+
+    [TestMethod]
+    public void CreateObject_TrustObject_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"TrustObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO_V3_2.CKO_TRUST),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ISSUER, new Org.BouncyCastle.Asn1.X509.X509Name("CN=TestIssuer,C=SK").ToAsn1Object().GetEncoded()),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SERIAL_NUMBER, new Org.BouncyCastle.Asn1.DerInteger(12).ToAsn1Object().GetEncoded()),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_HASH_OF_CERTIFICATE, new byte[32]),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_MECHANISM_TYPE, (uint)CKM.CKM_SHA256),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_SERVER_AUTH, CKT_V3_2.CKT_NOT_TRUSTED),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_CLIENT_AUTH, CKT_V3_2.CKT_NOT_TRUSTED),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_CODE_SIGNING, CKT_V3_2.CKT_TRUSTED),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_EMAIL_PROTECTION, CKT_V3_2.CKT_NOT_TRUSTED),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_IPSEC_IKE, CKT_V3_2.CKT_NOT_TRUSTED),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_TIME_STAMPING, CKT_V3_2.CKT_TRUST_UNKNOWN),
+            factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_OCSP_SIGNING, CKT_V3_2.CKT_TRUST_UNKNOWN),
+        };
+
+        IObjectHandle handle = session.CreateObject(objectAttributes);
+    }
+
+    [TestMethod]
+    [DataRow(16)]
+    [DataRow(24)]
+    [DataRow(32)]
+    public void CreateObject_Camellia_Success(int size)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"Camellia-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        byte[] secret = new byte[size];
+        Random.Shared.NextBytes(secret);
+
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_CAMELLIA),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_COPYABLE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, secret),
+        };
+
+        _ = session.CreateObject(objectAttributes);
     }
 }

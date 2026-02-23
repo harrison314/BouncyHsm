@@ -79,7 +79,7 @@ public partial class GetTokenInfoHandler : IRpcRequestHandler<GetTokenInfoReques
                 FreePrivateMemory = unknown,
                 HardwareVersion = currentVersion,
                 FirmwareVersion = currentVersion,
-                UtcTime = string.Format("{0:yyyyMMddHHmmss}00", this.hwServices.Time.UtcNow)
+                UtcTime = string.Format("{0:yyyyMMddHHmmss}00", this.hwServices.Time.GetUtcNow())
             }
         };
     }

@@ -1,6 +1,7 @@
-﻿@using BouncyHsm.Client
+﻿@rendermode InteractiveWebAssembly
+@using BouncyHsm.Client
 
-<span class="@GetIconClass()"></span>
+<span class="@GetIconClass()" title="@GetTitle()"></span>
 
 @code {
 
@@ -32,6 +33,8 @@
             CKO.CKO_PUBLIC_KEY => "icon-unlocked",
             CKO.CKO_SECRET_KEY => "icon-Privacy",
             CKO.CKO_VENDOR_DEFINED => "icon-Integrated-Circuit",
+            CKO.CKO_TRUST => "icon-Security-Checked",
+            CKO.CKO_VALIDATION => "icon-Check-File",
             _ => throw new InvalidProgramException($"Enum value {this.Cko} is not supported.")
         };
 
@@ -41,5 +44,25 @@
         }
 
         return iconClass;
+    }
+
+    private string GetTitle()
+    {
+        return this.Cko switch
+        {
+            CKO.CKO_CERTIFICATE => "Certificate",
+            CKO.CKO_DATA => "Data",
+            CKO.CKO_DOMAIN_PARAMETERS => "Domain parameters",
+            CKO.CKO_HW_FEATURE => "HW feature",
+            CKO.CKO_MECHANISM => "Mechanism",
+            CKO.CKO_OTP_KEY => "OTP key",
+            CKO.CKO_PRIVATE_KEY => "Private key",
+            CKO.CKO_PUBLIC_KEY => "Public key",
+            CKO.CKO_SECRET_KEY => "Secret",
+            CKO.CKO_VENDOR_DEFINED => "Vendor defined",
+            CKO.CKO_TRUST => "Trust",
+            CKO.CKO_VALIDATION => "Validation",
+            _ => throw new InvalidProgramException($"Enum value {this.Cko} is not supported.")
+        };
     }
 }

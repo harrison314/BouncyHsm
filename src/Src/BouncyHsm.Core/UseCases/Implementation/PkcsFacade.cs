@@ -20,13 +20,13 @@ namespace BouncyHsm.Core.UseCases.Implementation;
 public class PkcsFacade : IPkcsFacade
 {
     private readonly IPersistentRepository persistentRepository;
-    private readonly ITimeAccessor timeAccessor;
+    private readonly TimeProvider timeProvider;
     private readonly ILogger<PkcsFacade> logger;
 
-    public PkcsFacade(IPersistentRepository persistentRepository, ITimeAccessor timeAccessor, ILogger<PkcsFacade> logger)
+    public PkcsFacade(IPersistentRepository persistentRepository, TimeProvider timeProvider, ILogger<PkcsFacade> logger)
     {
         this.persistentRepository = persistentRepository;
-        this.timeAccessor = timeAccessor;
+        this.timeProvider = timeProvider;
         this.logger = logger;
     }
 
@@ -123,7 +123,7 @@ public class PkcsFacade : IPkcsFacade
             type = CKO.CKO_PRIVATE_KEY,
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
-            canSign = t is not MontgomeryPrivateKeyObject, //Fix curent state
+            canSign = t is not MontgomeryPrivateKeyObject && t is not MlKemPrivateKeyObject, //Fix curent state
             description = t.Accept(descriptionVisitor),
             subject = null as string
         })
@@ -208,12 +208,14 @@ public class PkcsFacade : IPkcsFacade
             CKK.CKK_RSA => "SHA224WITHRSA",
             CKK.CKK_ECDSA => "SHA256WITHECDSA",
             CKK.CKK_EC_EDWARDS => this.GetEdwardsSignatureOid(privKo),
+            CKK.CKK_ML_DSA => this.GetMlDsaSignatureName(privKo),
+            CKK.CKK_SLH_DSA => this.GetSlhDsaSignatureName(privKo),
             _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
         };
 
         Pkcs10CertificationRequest certificationRequest = new Pkcs10CertificationRequest(algorithm,
             subject,
-            pubKo.GetPublicKey(),
+            pubKo.GetSubjectPublicKeyInfo(),
             null,
             privKo.GetPrivateKey());
 
@@ -270,20 +272,22 @@ public class PkcsFacade : IPkcsFacade
             CKK.CKK_RSA => "SHA224WITHRSA",
             CKK.CKK_ECDSA => "SHA256WITHECDSA",
             CKK.CKK_EC_EDWARDS => this.GetEdwardsSignatureOid(privKo),
+            CKK.CKK_ML_DSA => this.GetMlDsaSignatureName(privKo),
+            CKK.CKK_SLH_DSA => this.GetSlhDsaSignatureName(privKo),
             _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
         };
 
         Asn1SignatureFactory asn1SignatureFactory = new Asn1SignatureFactory(algorithm,
             privKo.GetPrivateKey());
 
-        DateTime utcNow = this.timeAccessor.UtcNow;
+        DateTimeOffset utcNow = this.timeProvider.GetUtcNow();
         X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
         generator.SetIssuerDN(subject);
         generator.SetSubjectDN(subject);
         generator.SetSerialNumber(Org.BouncyCastle.Math.BigInteger.One);
-        generator.SetPublicKey(pubKo.GetPublicKey());
-        generator.SetNotBefore(utcNow);
-        generator.SetNotAfter(utcNow.Add(request.Validity));
+        generator.SetSubjectPublicKeyInfo(pubKo.GetSubjectPublicKeyInfo());
+        generator.SetNotBefore(utcNow.UtcDateTime);
+        generator.SetNotAfter(utcNow.Add(request.Validity).UtcDateTime);
         generator.AddExtension(X509Extensions.KeyUsage, false, this.CreateKeyUsage(privKo));
         X509Certificate certificate = generator.Generate(asn1SignatureFactory);
 
@@ -454,6 +458,7 @@ public class PkcsFacade : IPkcsFacade
             request.CkaLabel);
         pemObjectGenerator.ForWrap = request.Hints.ForWrap;
         pemObjectGenerator.ForEncryption = request.Hints.ForEncryption;
+        pemObjectGenerator.ForEncapsulation = request.Hints.ForEncapsulation;
         pemObjectGenerator.ForDerivation = request.Hints.ForDerivation;
         pemObjectGenerator.ForSigning = request.Hints.ForSigning;
         pemObjectGenerator.ImportMode = request.Hints.ImportMode;
@@ -530,7 +535,7 @@ public class PkcsFacade : IPkcsFacade
         return cert.SubjectDN.ToString();
     }
 
-    private async ValueTask<IEnumerable<T>> FindObjects<T>(uint slotId, CKO cko, CancellationToken cancellationToken, params KeyValuePair<CKA, IAttributeValue>[] additionalConstraints)
+    private async ValueTask<IEnumerable<T>> FindObjects<T>(uint slotId, CKO cko, CancellationToken cancellationToken, params IEnumerable<KeyValuePair<CKA, IAttributeValue>> additionalConstraints)
         where T : StorageObject
     {
         this.logger.LogTrace("Entering to FindObjects with slotId {slotId}m cko {cko}.", slotId, cko);
@@ -559,5 +564,19 @@ public class PkcsFacade : IPkcsFacade
         // Works beacose OID for key is same as oid for singature
         DerObjectIdentifier curveOid = EdEcUtils.GetOidFromParams(value.AsByteArray());
         return curveOid.Id;
+    }
+
+    private string GetMlDsaSignatureName(PrivateKeyObject privateKeyObject)
+    {
+        System.Diagnostics.Debug.Assert(privateKeyObject.CkaKeyType == CKK.CKK_ML_DSA, "Key type is not ML-DSA.");
+
+        return MlDsaUtils.GetSignatureAlgorithmName(((MlDsaPrivateKeyObject)privateKeyObject).CkaParameterSet);
+    }
+
+    private string GetSlhDsaSignatureName(PrivateKeyObject privateKeyObject)
+    {
+        System.Diagnostics.Debug.Assert(privateKeyObject.CkaKeyType == CKK.CKK_SLH_DSA, "Key type is not SLH-DSA.");
+
+        return SlhDsaUtils.GetSignatureAlgorithmName(((SlhDsaPrivateKeyObject)privateKeyObject).CkaParameterSet);
     }
 }

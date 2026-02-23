@@ -25,7 +25,7 @@ internal class DeleteSlotCommand : AsyncCommand<DeleteSlotCommand.Settings>
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -35,7 +35,7 @@ internal class DeleteSlotCommand : AsyncCommand<DeleteSlotCommand.Settings>
             await AnsiConsole.Status()
                .StartAsync("Loading...", async ctx =>
                {
-                   slot = await client.GetSlotAsync(settings.SlotId);
+                   slot = await client.GetSlotAsync(settings.SlotId, cancellationToken);
                });
 
             if (!AnsiConsole.Confirm($"Do you really want to delete the slot [green]{settings.SlotId}[/] with token label '[green]{slot.Token.Label}[/]' and serial '[green]{slot.Token.SerialNumber}[/]'?"))

@@ -38,6 +38,12 @@ public class GenerateKeyAttributes
         set;
     }
 
+    public bool ForEncapsulation
+    {
+        get;
+        set;
+    }
+
     public bool ForDerivation
     {
         get;

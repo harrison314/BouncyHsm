@@ -105,7 +105,7 @@ public class T32_SetPin
 
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
 
-        Assert.ThrowsException<Pkcs11Exception>(() => session.SetPin("bad pin...", OtherUserPin));
+        Assert.Throws<Pkcs11Exception>(() => session.SetPin("bad pin...", OtherUserPin));
     }
 
     [TestMethod]
@@ -122,6 +122,6 @@ public class T32_SetPin
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
-        Assert.ThrowsException<Pkcs11Exception>(() => session.SetPin("bad pin...", OtherUserPin));
+        Assert.Throws<Pkcs11Exception>(() => session.SetPin("bad pin...", OtherUserPin));
     }
 }

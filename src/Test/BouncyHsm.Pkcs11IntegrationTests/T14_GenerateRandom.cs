@@ -21,7 +21,7 @@ public class T14_GenerateRandom
         byte[] data = session.GenerateRandom(14);
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(14, data.Length);
+        Assert.HasCount(14, data);
     }
 
     [TestMethod]

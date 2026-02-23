@@ -68,7 +68,7 @@ public class StorageObjectsFacade : IStorageObjectsFacade
                 TypeTag = kvp.Value.TypeTag,
                 Size = (int)kvp.Value.GuessSize(),
                 ValueHex = kvp.Value.ToHexadecimal(),
-                ValueText = kvp.Value.ToPrintable(kvp.Key)
+                ValueText = kvp.Value.ToPrintable(kvp.Key, memento.Values)
             };
 
             detail.Attributes.Add(attrInfo);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pkcs11Interop.Ext.HighLevelAPI81.MechanismParams;
 
-internal class CkEddsaParams: ICkEddsaParams
+internal class CkEddsaParams : ICkEddsaParams
 {
     private bool disposedValue;
 

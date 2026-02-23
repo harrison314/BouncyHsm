@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@inject IConfiguration Configuration
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bouncy Hsm</title>
+    <base href="@(this.BasePath)" />
+
+    <ResourcePreloader />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <link href="@Assets["css/bootstrap/bootstrap.min.css"]" rel="stylesheet" />
+    <link href="@Assets["css/app.css"]" rel="stylesheet" />
+    <link href="@Assets["css/icon-moon/style.css"]" rel="stylesheet" async />
+    <link href="@Assets["BouncyHsm.styles.css"]" rel="stylesheet" />
+
+    <ImportMap />
+    <style>
+        #loading-progress-bar {
+            width: var(--blazor-load-percentage, 0%);
+        }
+    </style>
+    <HeadOutlet @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveWebAssembly" />
+</head>
+
+<body>
+    <BouncyHsm.Spa.Routes @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveWebAssembly" />
+
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="@Assets["_content/BlazorStrap/popper.min.js"]"></script>
+    <script src="@Assets[" _content /BlazorStrap/blazorstrap.js"]"></script>
+    <script src="@Assets["js/site.js"]"></script>
+</body>
+
+</html>
+
+@code {
+    private string BasePath
+    {
+        get => string.Concat((this.Configuration.GetValue<string>("AppBasePath") ?? string.Empty).TrimEnd('/'), "/");
+    }
+}

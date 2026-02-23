@@ -68,8 +68,8 @@ internal class HmacWrapperSigner : IWrapperSigner
         try
         {
             return (this.generalParameter.HasValue)
-            ? new HmacGeneralSignerAdapter(this.hmac, this.generalParameter.Value)
-            : new HmacSignerAdapter(this.hmac);
+            ? new MacGeneralSignerAdapter(this.hmac, this.generalParameter.Value)
+            : new MacSignerAdapter(this.hmac);
 
         }
         catch (ArgumentOutOfRangeException ex)

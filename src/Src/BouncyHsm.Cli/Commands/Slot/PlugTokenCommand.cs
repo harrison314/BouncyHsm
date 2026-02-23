@@ -16,7 +16,7 @@ internal class PlugTokenCommand : AsyncCommand<PlugTokenCommand.Settings>
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -26,7 +26,7 @@ internal class PlugTokenCommand : AsyncCommand<PlugTokenCommand.Settings>
                    await client.SetSlotPluggedStateAsync(settings.SlotId, new SetPluggedStateDto()
                    {
                        Plugged = false
-                   });
+                   }, cancellationToken);
                });
 
         AnsiConsole.MarkupLine("Token is plugged from slot with id [green]{0}[/].", settings.SlotId);

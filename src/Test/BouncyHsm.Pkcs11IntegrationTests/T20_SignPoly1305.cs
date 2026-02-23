@@ -12,7 +12,7 @@ public class T20_SignPoly1305
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_POLY1305)]
     [DataRow(CKK_V3_0.CKK_POLY1305, CKM_V3_0.CKM_POLY1305)]
     public void Sign_Poly1305_Success(CKK type, CKM signatureMechanism)

@@ -32,7 +32,7 @@ public class SlotEntity : Entity
         set;
     }
 
-    public bool IsUnplugged
+    public bool IsPlugged
     {
         get;
         set;

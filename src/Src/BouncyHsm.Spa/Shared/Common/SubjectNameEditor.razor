@@ -1,4 +1,5 @@
-﻿@foreach ((uint bKey, OidValuePair pair) in pairs)
+﻿@rendermode InteractiveWebAssembly
+@foreach ((uint bKey, OidValuePair pair) in pairs)
 {
     <div class="row mb-1" @key="@bKey">
         <div class="col-2">

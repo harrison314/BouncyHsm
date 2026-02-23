@@ -18,10 +18,13 @@ namespace BouncyHsm.Infrastructure.Storage.LiteDbFile;
 internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 {
     private readonly LiteDatabase database;
+    private readonly IOptions<LiteDbPersistentRepositorySetup> persistenceSetup;
+    private readonly TimeProvider timeProvider;
     private readonly ILogger<LiteDbPersistentRepository> logger;
     private bool disposedValue;
 
     public LiteDbPersistentRepository(IOptions<LiteDbPersistentRepositorySetup> persistenceSetup,
+        TimeProvider timeProvider,
         ILogger<LiteDbPersistentRepository> logger)
     {
         ConnectionString connectionString = new ConnectionString()
@@ -44,7 +47,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         }
 
         logger.LogInformation("Open database {databasePath}.", connectionString.Filename);
-
+        this.persistenceSetup = persistenceSetup;
+        this.timeProvider = timeProvider;
         this.logger = logger;
 
         this.InitAllIndex();
@@ -73,9 +77,9 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         int insertedId = slotSequence.Insert(new SlotSequence());
         this.logger.LogDebug("Create new slotId using slot sequence {insertedId}.", insertedId);
 
-        slotModel.Id = Guid.NewGuid();
+        slotModel.Id = Guid.CreateVersion7();
         slotModel.SlotId = (uint)insertedId;
-        slotModel.Created = DateTime.UtcNow;
+        slotModel.Created = this.timeProvider.GetUtcNow().UtcDateTime;
 
         PasswordsModel passwords = new PasswordsModel()
         {
@@ -138,7 +142,6 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         return CryptographicOperations.FixedTimeEquals(hash, hashModel.Hash);
     }
 
-
     public ValueTask<SlotEntity?> GetSlot(uint slotId, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to GetSlot with slotId {slotId}.", slotId);
@@ -165,7 +168,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         if (specification.WithTokenPresent)
         {
-            IReadOnlyList<SlotEntity> list = collection.Find(t => !(t.IsRemovableDevice && t.IsUnplugged)).Select(t => mapper.MapSlot(t)).ToList();
+            IReadOnlyList<SlotEntity> list = collection.Find(t => !(t.IsRemovableDevice && !t.IsPlugged!.Value)).Select(t => mapper.MapSlot(t)).ToList();
             return new ValueTask<IReadOnlyList<SlotEntity>>(list);
         }
         else
@@ -333,7 +336,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         if (storageObject.Id == Guid.Empty)
         {
-            storageObject.Id = Guid.NewGuid();
+            storageObject.Id = Guid.CreateVersion7();
         }
 
         ILiteCollection<StorageObjectInfo> collection = this.database.GetCollection<StorageObjectInfo>();
@@ -476,7 +479,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             LabelHash = this.CalculateXxxHash(storageObject.CkaLabel),
             IsPrivate = storageObject.CkaPrivate,
             SlotId = slotId,
-            Created = DateTime.UtcNow
+            Created = this.timeProvider.GetUtcNow().UtcDateTime
         };
 
         StorageObjectMemento memento = storageObject.ToMemento();
@@ -587,7 +590,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             currentVersion = new VersionModel()
             {
                 Id = version,
-                MigrationTime = DateTime.UtcNow
+                MigrationTime = this.timeProvider.GetUtcNow().UtcDateTime
             };
 
             collection.Insert(currentVersion);

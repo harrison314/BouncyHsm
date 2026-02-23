@@ -4,7 +4,7 @@ namespace BouncyHsm.Infrastructure.Common;
 
 public class P11HwServices : IP11HwServices
 {
-    public ITimeAccessor Time
+    public TimeProvider Time
     {
         get;
     }
@@ -19,9 +19,9 @@ public class P11HwServices : IP11HwServices
         get;
     }
 
-    public P11HwServices(ITimeAccessor time, IPersistentRepository persistence, IClientApplicationContext clientAppCtx)
+    public P11HwServices(TimeProvider timeProvider, IPersistentRepository persistence, IClientApplicationContext clientAppCtx)
     {
-        this.Time = time;
+        this.Time = timeProvider;
         this.Persistence = persistence;
         this.ClientAppCtx = clientAppCtx;
     }

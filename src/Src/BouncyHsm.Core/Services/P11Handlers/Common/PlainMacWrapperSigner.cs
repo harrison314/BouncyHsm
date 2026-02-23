@@ -39,7 +39,7 @@ internal class PlainMacWrapperSigner : IWrapperSigner
 
         try
         {
-            HmacSignerAdapter signer = new HmacSignerAdapter(this.macAlgorithm);
+            MacSignerAdapter signer = new MacSignerAdapter(this.macAlgorithm);
             signer.Init(true, new KeyParameter(secretKey.GetSecret()));
 
             return new AuthenticatedSigner(signer, false);
@@ -64,7 +64,7 @@ internal class PlainMacWrapperSigner : IWrapperSigner
         }
         try
         {
-            HmacSignerAdapter signer = new HmacSignerAdapter(this.macAlgorithm);
+            MacSignerAdapter signer = new MacSignerAdapter(this.macAlgorithm);
             signer.Init(false, new KeyParameter(secretKey.GetSecret()));
 
             return signer;

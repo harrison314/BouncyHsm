@@ -1,5 +1,7 @@
-﻿using Net.Pkcs11Interop.HighLevelAPI;
-using Net.Pkcs11Interop.Common;
+﻿using Net.Pkcs11Interop.Common;
+using Net.Pkcs11Interop.HighLevelAPI;
+using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Security.Cryptography;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
@@ -13,7 +15,7 @@ public class T20_SignHmac
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC, 32)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA_1_HMAC, 32)]
     [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 32)]
@@ -53,7 +55,7 @@ public class T20_SignHmac
         session.DestroyObject(handle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_224_HMAC, 28)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 32)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 14)]
@@ -92,7 +94,7 @@ public class T20_SignHmac
         session.DestroyObject(handle);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_160_HMAC, 28)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 14)]
@@ -100,6 +102,40 @@ public class T20_SignHmac
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 48)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_512_HMAC, 64)]
     public void Sign_HmacBlake2_Success(CKK type, CKM signatureMechanism, int size)
+    {
+        byte[] dataToSign = new byte[64];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        this.GenerateSeecret(type, size, factories, session, label, ckId);
+
+        IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(signatureMechanism);
+
+        byte[] signature = session.Sign(mechanism, handle, dataToSign);
+        byte[] seecrit = this.GetSeecretKeyValue(session, handle);
+
+        session.DestroyObject(handle);
+    }
+
+    [TestMethod]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 16)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 28)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 64)]
+    public void Sign_HmacGost3411_Success(CKK type, CKM signatureMechanism, int size)
     {
         byte[] dataToSign = new byte[64];
         Random.Shared.NextBytes(dataToSign);

@@ -34,7 +34,7 @@ public class SlotFacade : ISlotFacade
             Description = createSlotData.Description.Trim(),
             IsHwDevice = createSlotData.IsHwDevice,
             IsRemovableDevice = createSlotData.IsRemovableDevice,
-            IsUnplugged = false,
+            IsPlugged = true,
             Token = new TokenInfo()
             {
                 IsSoPinLocked = false,
@@ -134,9 +134,9 @@ public class SlotFacade : ISlotFacade
                 return new VoidDomainResult.InvalidInput("Slot is not removable device.");
             }
 
-            if (slot.IsUnplugged != plugged)
+            if (slot.IsPlugged == plugged)
             {
-                this.logger.LogDebug("Slot with slotId {slotId} already set IsUnplugged to {isUnplugged}.", slotId, slot.IsUnplugged);
+                this.logger.LogDebug("Slot with slotId {slotId} already set IsPlugged to {isPlugged}.", slotId, slot.IsPlugged);
                 return new VoidDomainResult.Ok();
             }
 
@@ -147,7 +147,7 @@ public class SlotFacade : ISlotFacade
             if (slotChanged)
             {
                 this.clientAppCtx.NotifySlotEvent(slotId);
-                this.logger.LogInformation("Slot with slotId {slotId} set IsUnplugged to {isUnplugged}.", slotId, slot.IsUnplugged);
+                this.logger.LogInformation("Slot with slotId {slotId} set IsPlugged to {isPlugged}.", slotId, slot.IsPlugged);
             }
 
             return new VoidDomainResult.Ok();

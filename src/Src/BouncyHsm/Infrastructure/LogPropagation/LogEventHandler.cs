@@ -4,7 +4,7 @@ namespace BouncyHsm.Infrastructure.LogPropagation;
 
 internal class LogEventHandler
 {
-    private static object syncRoot = new object();
+    private static Lock syncRoot = new Lock();
 
     private static event EventHandler<LogEvent>? onLog;
 
@@ -28,6 +28,6 @@ internal class LogEventHandler
 
     internal static void SendLog(LogEvent logEvent)
     {
-        onLog?.Invoke(syncRoot, logEvent);
+        onLog?.Invoke(null, logEvent);
     }
 }

@@ -16,12 +16,12 @@ public interface IMemorySession
         get;
     }
 
-    DateTime StartAt
+    DateTimeOffset StartAt
     {
         get;
     }
 
-    DateTime LastActivity
+    DateTimeOffset LastActivity
     {
         get;
         set;

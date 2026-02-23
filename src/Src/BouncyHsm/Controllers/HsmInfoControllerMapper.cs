@@ -12,7 +12,7 @@ namespace BouncyHsm.Controllers;
     ThrowOnPropertyMappingNullMismatch = true)]
 internal static partial class HsmInfoControllerMapper
 {
-    public static partial CurveInfoDto ToDto(SupportedNameCurve entity);
+    public static partial SupportedKeysDto ToDto(SupportedKeys entity);
 
     public static partial IEnumerable<CurveInfoDto> ToDto(IEnumerable<SupportedNameCurve> entitys);
 
@@ -23,6 +23,8 @@ internal static partial class HsmInfoControllerMapper
     public static partial IEnumerable<MechanismInfoDto> ToDto(IEnumerable<MechanismInfoData> mechanismInfoData);
 
     public static partial MechanismProfileDto ToDto(MechanismProfile mechanismProfile);
+
+    public static partial IReadOnlyList<FunctionImplStateDto> ToDto(IReadOnlyList<FunctionImplState> states);
 
     private static MechanismFlags MapFlags(MechanismCkf flags)
     {
@@ -39,6 +41,8 @@ internal static partial class HsmInfoControllerMapper
             Unwrap = flags.HasFlag(MechanismCkf.CKF_UNWRAP),
             Verify = flags.HasFlag(MechanismCkf.CKF_VERIFY),
             VerifyRecover = flags.HasFlag(MechanismCkf.CKF_VERIFY_RECOVER),
+            Encapsulate = flags.HasFlag(MechanismCkf.CKF_ENCAPSULATE),
+            Decapsulate = flags.HasFlag(MechanismCkf.CKF_DECAPSULATE),
             Wrap = flags.HasFlag(MechanismCkf.CKF_WRAP),
         };
     }

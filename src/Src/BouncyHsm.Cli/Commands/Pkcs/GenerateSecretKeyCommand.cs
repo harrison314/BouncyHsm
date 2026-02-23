@@ -96,7 +96,7 @@ internal class GenerateSecretKeyCommand : AsyncCommand<GenerateSecretKeyCommand.
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
@@ -118,7 +118,7 @@ internal class GenerateSecretKeyCommand : AsyncCommand<GenerateSecretKeyCommand.
                        ForWrap = settings.ForWrap,
                        Sensitive = settings.Sensitive,
                    }
-               });
+               }, cancellationToken);
            });
 
         AnsiConsole.MarkupLine("Secret key has created.");

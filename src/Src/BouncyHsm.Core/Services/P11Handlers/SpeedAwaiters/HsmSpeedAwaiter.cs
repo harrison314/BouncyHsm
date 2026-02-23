@@ -5,8 +5,8 @@ namespace BouncyHsm.Core.Services.P11Handlers.SpeedAwaiters;
 
 internal class HsmSpeedAwaiter : BaseSpeedAwaiter
 {
-    public HsmSpeedAwaiter(ITimeAccessor timeAccessor, ILogger<HsmSpeedAwaiter> logger) 
-        : base(timeAccessor, logger)
+    public HsmSpeedAwaiter(TimeProvider timeProvider, ILogger<HsmSpeedAwaiter> logger) 
+        : base(timeProvider, logger)
     {
     }
 

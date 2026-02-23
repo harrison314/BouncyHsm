@@ -60,7 +60,7 @@ internal class ImportP12Command : AsyncCommand<ImportP12Command.Settings>
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
         string password;
@@ -93,7 +93,7 @@ internal class ImportP12Command : AsyncCommand<ImportP12Command.Settings>
                     ImportMode = settings.ImportMode,
                     Password = password,
                     Pkcs12Content = p12Content
-                });
+                }, cancellationToken);
             });
 
         AnsiConsole.MarkupLine("P12 file has imported successfully.");

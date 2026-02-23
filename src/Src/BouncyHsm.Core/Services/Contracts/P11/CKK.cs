@@ -256,4 +256,14 @@ public enum CKK : uint
     CKK_SHA512_256_HMAC = 0x00000044,
     CKK_SHA512_T_HMAC = 0x00000045,
     CKK_HSS = 0x00000046,
+
+    /*
+    * Version 3.2
+   */
+
+    CKK_XMSS = 0x00000047,
+    CKK_XMSSMT = 0x00000048,
+    CKK_ML_KEM = 0x00000049,
+    CKK_ML_DSA = 0x0000004a,
+    CKK_SLH_DSA = 0x0000004b,
 }

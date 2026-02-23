@@ -1,0 +1,35 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../README.md" />
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="RpcDefintion.yaml" />
+  </Folder>
+  <Folder Name="/Src/">
+    <Project Path="Src/BouncyHsm.Cli/BouncyHsm.Cli.csproj" />
+    <Project Path="Src/BouncyHsm.Client/BouncyHsm.Client.csproj" />
+    <Project Path="Src/BouncyHsm.Core/BouncyHsm.Core.csproj" />
+    <Project Path="Src/BouncyHsm.Infrastructure/BouncyHsm.Infrastructure.csproj" />
+    <Project Path="Src/BouncyHsm.Pkcs11Lib/BouncyHsm.Pkcs11Lib.vcxproj" Id="6f83b51b-8fda-40f2-88b5-f1e415918ba8" />
+    <Project Path="Src/BouncyHsm.Spa/BouncyHsm.Spa.csproj" />
+    <Project Path="Src/BouncyHsm/BouncyHsm.csproj" />
+  </Folder>
+  <Folder Name="/Test/">
+    <Project Path="Test/BouncyHsm.Core.Tests/BouncyHsm.Core.Tests.csproj" />
+    <Project Path="Test/BouncyHsm.ExampleApp/BouncyHsm.ExampleApp.csproj">
+      <BuildDependency Project="Src/BouncyHsm.Pkcs11Lib/BouncyHsm.Pkcs11Lib.vcxproj" />
+    </Project>
+    <Project Path="Test/BouncyHsm.Pkcs11IntegrationTests/BouncyHsm.Pkcs11IntegrationTests.csproj" />
+    <Project Path="Test/BouncyHsm.Pkcs11ScenarioTests/BouncyHsm.Pkcs11ScenarioTests.csproj" />
+    <Project Path="Test/Pkcs11Interop.Ext/Pkcs11Interop.Ext.csproj" />
+  </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="Tools/BouncyHsm.DocGenerator/BouncyHsm.DocGenerator.csproj" />
+    <Project Path="Tools/BouncyHsm.RpcGenerator/BouncyHsm.RpcGenerator.csproj" />
+  </Folder>
+</Solution>

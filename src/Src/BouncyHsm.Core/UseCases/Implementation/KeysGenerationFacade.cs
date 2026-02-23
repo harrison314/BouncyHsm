@@ -67,6 +67,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
             { CKA.CKA_MODULUS_BITS, AttributeValue.Create((uint)request.KeySize) },
+            { CKA.CKA_ENCAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_PUBLIC_EXPONENT, AttributeValue.Create(new byte[] { 0x01, 0x00, 0x01 }) }
         };
 
@@ -82,6 +83,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_DECAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
         };
 
@@ -135,6 +137,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_ENCAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_EC_PARAMS, AttributeValue.Create(namedCurveOid) },
         };
 
@@ -151,6 +154,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DECAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
         };
 
@@ -203,6 +207,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_ENCAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_EC_PARAMS, AttributeValue.Create(ecParams) },
         };
 
@@ -219,6 +224,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DECAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
         };
 
@@ -271,6 +277,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_ENCAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_EC_PARAMS, AttributeValue.Create(ecParams) },
         };
 
@@ -287,12 +294,196 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
             { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DECAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
             { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
         };
 
         MontgomeryKeyPairGenerator montgomeryKeyPairGenerator = new MontgomeryKeyPairGenerator(this.loggerFactory.CreateLogger<MontgomeryKeyPairGenerator>());
         montgomeryKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
         (PublicKeyObject publicKey, PrivateKeyObject privateKey) = montgomeryKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
+
+        this.UpdateKeys(slotEntity, publicKey, privateKey);
+
+        publicKey.Validate();
+        privateKey.Validate();
+
+        await this.persistentRepository.StoreObject(slotId, publicKey, cancellationToken);
+        await this.persistentRepository.StoreObject(slotId, privateKey, cancellationToken);
+
+        return new DomainResult<GeneratedKeyPairIds>.Ok(new GeneratedKeyPairIds(publicKey.Id, privateKey.Id));
+    }
+
+    public async Task<DomainResult<GeneratedKeyPairIds>> GenerateMLDsaKeyPair(uint slotId, GenerateMLDsaKeyPairRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateMLDsaKeyPair with slotId {slotId}, ML-DSA parameter {mlDsaParameter}, label {label}.", slotId, request.MlDsaParameter, request.KeyAttributes.CkaLabel);
+
+        SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (slotEntity == null)
+        {
+            this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid slotId.");
+        }
+
+        byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
+
+        Dictionary<CKA, IAttributeValue> publicKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(false) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_ENCRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_ENCAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
+            { CKA.CKA_PARAMETER_SET, AttributeValue.Create((uint)request.MlDsaParameter) },
+        };
+
+        Dictionary<CKA, IAttributeValue> privateKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
+            { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
+            { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
+            { CKA.CKA_DECAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
+            { CKA.CKA_PARAMETER_SET, AttributeValue.Create((uint)request.MlDsaParameter) },
+        };
+
+        MlKemKeyPairGenerator mlDsaKeyPairGenerator = new MlKemKeyPairGenerator(this.loggerFactory.CreateLogger<MlKemKeyPairGenerator>());
+        mlDsaKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
+        (PublicKeyObject publicKey, PrivateKeyObject privateKey) = mlDsaKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
+
+        this.UpdateKeys(slotEntity, publicKey, privateKey);
+
+        publicKey.Validate();
+        privateKey.Validate();
+
+        await this.persistentRepository.StoreObject(slotId, publicKey, cancellationToken);
+        await this.persistentRepository.StoreObject(slotId, privateKey, cancellationToken);
+
+        return new DomainResult<GeneratedKeyPairIds>.Ok(new GeneratedKeyPairIds(publicKey.Id, privateKey.Id));
+    }
+
+    public async Task<DomainResult<GeneratedKeyPairIds>> GenerateSlhDsaKeyPair(uint slotId, GenerateSlhDsaKeyPairRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateSlhDsaKeyPair with slotId {slotId}, SLH-DSA parameter {slhDsaParameter}, label {label}.", slotId, request.SlhDsaParameter, request.KeyAttributes.CkaLabel);
+
+        SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (slotEntity == null)
+        {
+            this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid slotId.");
+        }
+
+        byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
+
+        Dictionary<CKA, IAttributeValue> publicKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(false) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_ENCRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_ENCAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
+            { CKA.CKA_PARAMETER_SET, AttributeValue.Create((uint)request.SlhDsaParameter) },
+        };
+
+        Dictionary<CKA, IAttributeValue> privateKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
+            { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
+            { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
+            { CKA.CKA_DECAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
+            { CKA.CKA_PARAMETER_SET, AttributeValue.Create((uint)request.SlhDsaParameter) },
+        };
+
+        SlhDsaKeyPairGenerator slhDsaKeyPairGenerator = new SlhDsaKeyPairGenerator(this.loggerFactory.CreateLogger<SlhDsaKeyPairGenerator>());
+        slhDsaKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
+        (PublicKeyObject publicKey, PrivateKeyObject privateKey) = slhDsaKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
+
+        this.UpdateKeys(slotEntity, publicKey, privateKey);
+
+        publicKey.Validate();
+        privateKey.Validate();
+
+        await this.persistentRepository.StoreObject(slotId, publicKey, cancellationToken);
+        await this.persistentRepository.StoreObject(slotId, privateKey, cancellationToken);
+
+        return new DomainResult<GeneratedKeyPairIds>.Ok(new GeneratedKeyPairIds(publicKey.Id, privateKey.Id));
+    }
+
+    public async Task<DomainResult<GeneratedKeyPairIds>> GenerateMLKemKeyPair(uint slotId, GenerateMLKemKeyPairRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateMLDsaKeyPair with slotId {slotId}, ML-KEM parameter {mlKemParameter}, label {label}.", slotId, request.MlKemParameter, request.KeyAttributes.CkaLabel);
+
+        SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (slotEntity == null)
+        {
+            this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid slotId.");
+        }
+
+        byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
+
+        Dictionary<CKA, IAttributeValue> publicKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(false) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_ENCRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_VERIFY_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_ENCAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
+            { CKA.CKA_PARAMETER_SET, AttributeValue.Create((uint)request.MlKemParameter) },
+        };
+
+        Dictionary<CKA, IAttributeValue> privateKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
+            { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
+            { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_SIGN_RECOVER, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_DERIVE, AttributeValue.Create(request.KeyAttributes.ForDerivation) },
+            { CKA.CKA_DECAPSULATE, AttributeValue.Create(request.KeyAttributes.ForEncapsulation) },
+            { CKA.CKA_PARAMETER_SET, AttributeValue.Create((uint)request.MlKemParameter) },
+        };
+
+        MlKemKeyPairGenerator mlKemKeyPairGenerator = new MlKemKeyPairGenerator(this.loggerFactory.CreateLogger<MlKemKeyPairGenerator>());
+        mlKemKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
+        (PublicKeyObject publicKey, PrivateKeyObject privateKey) = mlKemKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
 
         this.UpdateKeys(slotEntity, publicKey, privateKey);
 
@@ -552,10 +743,61 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         return new DomainResult<GeneratedSecretId>.Ok(new GeneratedSecretId(secretKeyObject.Id));
     }
 
+    public async Task<DomainResult<GeneratedSecretId>> GenerateCamelliaKey(uint slotId, GenerateCamelliaKeyRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateCamelliaKey with slotId {slotId}, keySize {keySize}, label {label}.", slotId, request.Size, request.KeyAttributes.CkaLabel);
+
+        if (await this.persistentRepository.GetSlot(slotId, cancellationToken) == null)
+        {
+            this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
+            return new DomainResult<GeneratedSecretId>.InvalidInput("Invalid slotId.");
+        }
+
+        if (request.KeyAttributes.ForDerivation)
+        {
+            this.logger.LogError("CAMELLIA keys can not support derivation.");
+            return new DomainResult<GeneratedSecretId>.InvalidInput("CAMELLIA keys can not support derivation.");
+        }
+
+        byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
+        Dictionary<CKA, IAttributeValue> template = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_ENCRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_DECRYPT, AttributeValue.Create(request.KeyAttributes.ForEncryption) },
+            { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(request.KeyAttributes.Sensitive) },
+            { CKA.CKA_EXTRACTABLE, AttributeValue.Create(request.KeyAttributes.Exportable) },
+
+            { CKA.CKA_WRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+            { CKA.CKA_UNWRAP, AttributeValue.Create(request.KeyAttributes.ForWrap) },
+
+            { CKA.CKA_VALUE_LEN, AttributeValue.Create((uint) request.Size) },
+        };
+
+        CamelliaKeyGenerator generator = new CamelliaKeyGenerator(this.loggerFactory.CreateLogger<CamelliaKeyGenerator>());
+        generator.Init(template);
+        SecretKeyObject secretKeyObject = generator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
+
+        this.UpdateKey(secretKeyObject);
+        secretKeyObject.Validate();
+
+        await this.persistentRepository.StoreObject(slotId, secretKeyObject, cancellationToken);
+
+        return new DomainResult<GeneratedSecretId>.Ok(new GeneratedSecretId(secretKeyObject.Id));
+    }
+
     private void UpdatePrivateKey(bool simulateQualifiedArea, PrivateKeyObject privateKeyObject)
     {
         privateKeyObject.CkaLocal = true;
         privateKeyObject.CkaAlwaysSensitive = privateKeyObject.CkaSensitive;
+        privateKeyObject.CkaNewerExtractable = !privateKeyObject.CkaExtractable;
 
         if (simulateQualifiedArea)
         {
@@ -588,6 +830,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
     private void UpdateKey(SecretKeyObject secretKeyObject)
     {
         secretKeyObject.CkaLocal = true;
+        secretKeyObject.CkaNewerExtractable = !secretKeyObject.CkaExtractable;
         secretKeyObject.ReComputeAttributes();
     }
 }

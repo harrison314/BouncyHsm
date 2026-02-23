@@ -15,10 +15,10 @@ The _BouncyHsm_ project was created as an alternative to SoftHSMv2, due to ongoi
 
 ![Screenshots - BouncyHsm web UI](Doc/Screenshots.gif)
 
-(Screenshots from version 1.1.0)
+(Screenshots from version 2.0.0)
 
 ## Features
-_Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40 with some mechanism from version 3.0.
+_Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40, 3.1 and version 3.2.
 
 * Multiple application and users access using PKCS#11 interface.
 * Slot and crypto object management using web interface and REST API.
@@ -34,18 +34,21 @@ _Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40 with some 
 * Possibility to simulate _protected authentication path_ using web interface.
 * Possibility to simulate removable devices (tokens).
 * Supports RSA keys (with size 2-6K).
-* Supports [80 named elliptic curves](/Doc/SuportedAlgorithms.md#elliptic-curves) and user-defined elliptic curves.
+* Supports [80 named elliptic curves](/Doc/SupportedAlgorithms.md#elliptic-curves) and user-defined elliptic curves.
 * Edwards curves (Ed25519, Ed448).
 * Mongomery curves (X25519, X448).
+* Post-Quantum Cryptography (ML-DSA, SLH-DSA, ML-KEM)
 * Supports secrets (HMAC, derive,...)
 * Supports AES keys.
 * Supports Salsa20 keys.
 * Supports ChaCha20 keys (also ChaCha20Poly1305 algorithm).
-* [Supports mechanisms](/Doc/SuportedAlgorithms.md)
+* Supports Camellia keys.
+* [Supports mechanisms](/Doc/SupportedAlgorithms.md)
+* [Supports PKCS#11 functions](/Doc/SupportedFunctions.md)
 * Supports [custom profiles for mechanisms](/Doc/Profiles.md) (To limit mechanisms to simulate a specific type of HSM or card).
 * Same behavior and algorithm support across platforms and versions of Linux operating systems.
 * Native PKCS#11 library without dependencies (no dependency hell, no permission configuration).
-* _BouncyHsm_ runs on all platform supported [.Net 8.0](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64, RHEL like x64 ([it can also be compiled for other platforms](/Doc/BuildPkcs11Lib.md)).
+* _BouncyHsm_ runs on all platform supported [.Net 10.0](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64, RHEL like x64 ([it can also be compiled for other platforms](/Doc/BuildPkcs11Lib.md)).
 * CLI tool for management.
 * Nuget ([BouncyHsm.Client](https://www.nuget.org/packages/BouncyHsm.Client)) with REST API client and native PKCS#11 libraries for unit testing. (See [example project](/Examples/BouncyHsmTestExample).)
 
@@ -64,7 +67,7 @@ See more rules in [CONTRIBUTING](/.github/CONTRIBUTING.md).
 ## Links
 
 ### Technology
-* [Dotnet 8.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8)
+* [Dotnet 10.0](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview)
 * [BouncyCastle](https://github.com/bcgit/bc-csharp)
 * [Pkcs11Interop](https://github.com/Pkcs11Interop)
 * [LiteDb](https://www.litedb.org/)
@@ -74,7 +77,8 @@ See more rules in [CONTRIBUTING](/.github/CONTRIBUTING.md).
 
 ### Other links
 * [PKCS #11 Cryptographic Token Interface Base Specification Version 2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf)
-* [PKCS #11 Cryptographic Token Interface Base Specification Version 3.0](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v3.0/pkcs11-curr-v3.0.pdf)
+* [PKCS #11 Cryptographic Token Interface Base Specification Version 3.1](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf)
+* [PKCS #11 Cryptographic Token Interface Base Specification Version 3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.pdf)
 * [Software Ideas Modeler](https://www.softwareideas.net/) - tool in which the diagrams in the documentation were drawn
 * [NSwag studio](https://github.com/RicoSuter/NSwag/wiki/NSwagStudio) - tool for generate OpenApi client
 * [Ako som robil BouncyHsm](https://harrison314.github.io/BouncyHsm.html) - My blog post about BouncyHsm development, technological decisions and reasons for development - in Slovak language

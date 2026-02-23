@@ -12,7 +12,7 @@ public class T21_VerifyPoly1305
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_POLY1305, 64)]
     [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_POLY1305, 32)]
     [DataRow(CKK_V3_0.CKK_POLY1305, CKM_V3_0.CKM_POLY1305, 64)]

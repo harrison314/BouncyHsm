@@ -1,4 +1,5 @@
 ﻿@page "/About"
+@rendermode InteractiveWebAssembly
 @using BouncyHsm.Client
 @inject IBouncyHsmClient bouncyHsmClient
 
@@ -26,7 +27,7 @@
                     </tr>
                     <tr>
                         <td scope="row">PKCS#11 standard version</td>
-                        <td>@this.version.P11Version</td>
+                        <td>@string.Join(", ", this.version.P11Versions)</td>
                     </tr>
                     <tr>
                         <td scope="row">Bouncy Castle version</td>

@@ -1,4 +1,5 @@
-﻿@using BouncyHsm.Client
+﻿@rendermode InteractiveWebAssembly
+@using BouncyHsm.Client
 @if (this.Version != Pkcs11SpecVersion.V2_40)
 {
     <sub>@this.GetVersion()</sub>
@@ -18,7 +19,8 @@
         return this.Version switch
         {
             Pkcs11SpecVersion.V2_40 => "v2.40",
-            Pkcs11SpecVersion.V3_0 => "v3.0",
+            Pkcs11SpecVersion.V3_1 => "v3.1",
+            Pkcs11SpecVersion.V3_2 => "v3.2",
             _ => throw new InvalidProgramException($"Enum value {this.Version} is not supported")
         };
     }

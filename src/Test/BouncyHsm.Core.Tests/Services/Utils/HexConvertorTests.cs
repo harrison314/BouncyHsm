@@ -10,7 +10,7 @@ namespace BouncyHsm.Core.Tests.Services.Utils;
 [TestClass]
 public class HexConvertorTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("0aac1f00")]
     [DataRow("0AAC1F00")]
     [DataRow("0x0AAC1F00")]
@@ -22,16 +22,16 @@ public class HexConvertorTests
         CollectionAssert.AreEquivalent(excepted, result);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("0aac1f00a")]
     [DataRow("0AAš1F00")]
     [DataRow("0x0\tAC1F00")]
     public void GetBytes_WithError_Throw(string input)
     {
-        Assert.ThrowsException<ArgumentException>(() => HexConvertor.GetBytes(input));
+        Assert.Throws<ArgumentException>(() => HexConvertor.GetBytes(input));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("0aac1f00")]
     [DataRow("0AAC1F00")]
     [DataRow("0x0AAC1F00")]

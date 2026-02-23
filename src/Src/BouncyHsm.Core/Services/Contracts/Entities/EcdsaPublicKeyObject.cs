@@ -1,10 +1,10 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.Nist;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Math.EC;
-using Org.BouncyCastle.Security;
+using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,10 +43,7 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
 
     public override AsymmetricKeyParameter GetPublicKey()
     {
-        Org.BouncyCastle.Asn1.X9.X9ECParameters ecParams = EcdsaUtils.ParseEcParams(this.CkaEcParams);
-
-        return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ecParams, this.CkaEcPoint),
-            new ECDomainParameters(ecParams));
+        return EcdsaUtils.ParsePublicKey(this.CkaEcParams, this.CkaEcPoint);
     }
 
     public override void SetPublicKey(AsymmetricKeyParameter publicKey)

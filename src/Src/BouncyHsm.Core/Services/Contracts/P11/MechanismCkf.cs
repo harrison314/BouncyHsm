@@ -108,6 +108,10 @@ public enum MechanismCkf : uint
     /// </summary>
     CKF_EXTENSION = 0x80000000,
 
+    CKF_ENCAPSULATE = 0x10000000,
+
+    CKF_DECAPSULATE = 0x20000000,
+
     /// <summary>
     /// True if the mechanism can be used with EC domain parameters of the choice curveName (ASN1 printed string)
     /// </summary>

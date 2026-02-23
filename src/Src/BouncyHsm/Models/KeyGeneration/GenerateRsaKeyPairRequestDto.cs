@@ -1,27 +1,26 @@
 ﻿using BouncyHsm.Core.UseCases.Contracts;
 using System.ComponentModel.DataAnnotations;
 
-namespace BouncyHsm.Models.KeyGeneration
+namespace BouncyHsm.Models.KeyGeneration;
+
+public class GenerateRsaKeyPairRequestDto
 {
-    public class GenerateRsaKeyPairRequestDto
+    [Required]
+    public int KeySize
     {
-        [Required]
-        public int KeySize
-        {
-            get;
-            set;
-        }
+        get;
+        set;
+    }
 
-        [Required]
-        public GenerateKeyAttributesDto KeyAttributes
-        {
-            get;
-            set;
-        }
+    [Required]
+    public GenerateKeyAttributesDto KeyAttributes
+    {
+        get;
+        set;
+    }
 
-        public GenerateRsaKeyPairRequestDto()
-        {
-            this.KeyAttributes = default!;
-        }
+    public GenerateRsaKeyPairRequestDto()
+    {
+        this.KeyAttributes = default!;
     }
 }

@@ -160,6 +160,17 @@ typedef struct _InitTokenRequest InitTokenRequest;
 typedef struct _InitTokenEnvelope InitTokenEnvelope;
 typedef struct _InitPinRequest InitPinRequest;
 typedef struct _InitPinEnvelope InitPinEnvelope;
+typedef struct _SessionCancelRequest SessionCancelRequest;
+typedef struct _SessionCancelEnvelope SessionCancelEnvelope;
+typedef struct _EncapsulateKeyRequest EncapsulateKeyRequest;
+typedef struct _EncapsulateKeyData EncapsulateKeyData;
+typedef struct _EncapsulateKeyEnvelope EncapsulateKeyEnvelope;
+typedef struct _DecapsulateKeyRequest DecapsulateKeyRequest;
+typedef struct _DecapsulateKeyDadta DecapsulateKeyDadta;
+typedef struct _DecapsulateKeyEnvelope DecapsulateKeyEnvelope;
+typedef struct _GetSessionValidationFlagsRequest GetSessionValidationFlagsRequest;
+typedef struct _GetSessionValidationFlagsData GetSessionValidationFlagsData;
+typedef struct _GetSessionValidationFlagsEnvelope GetSessionValidationFlagsEnvelope;
 typedef struct _CkP_MacGeneralParams CkP_MacGeneralParams;
 typedef struct _CkP_ExtractParams CkP_ExtractParams;
 typedef struct _CkP_RsaPkcsPssParams CkP_RsaPkcsPssParams;
@@ -175,9 +186,14 @@ typedef struct _Ckp_CkChaCha20Params Ckp_CkChaCha20Params;
 typedef struct _Ckp_CkSalsa20Params Ckp_CkSalsa20Params;
 typedef struct _Ckp_CkSalsa20ChaCha20Poly1305Params Ckp_CkSalsa20ChaCha20Poly1305Params;
 typedef struct _Ckp_CkEddsaParams Ckp_CkEddsaParams;
+typedef struct _Ckp_CkSignAdditionalContext Ckp_CkSignAdditionalContext;
+typedef struct _Ckp_CkHashSignAdditionalContext Ckp_CkHashSignAdditionalContext;
+typedef struct _Ckp_CkHkdfParams Ckp_CkHkdfParams;
+typedef struct _Ckp_CkCamelliaCbcEncryptDataParams Ckp_CkCamelliaCbcEncryptDataParams;
 
 typedef struct _Binary Binary;
 
+typedef struct _ArrayOfString ArrayOfString;
 typedef struct _ArrayOfuint32_t ArrayOfuint32_t;
 typedef struct _ArrayOfAttrValueFromNative ArrayOfAttrValueFromNative;
 typedef struct _ArrayOfGetAttributeInputValues ArrayOfGetAttributeInputValues;
@@ -192,6 +208,15 @@ int Binary_Release(Binary* value);
 
 typedef int (*SerializeFnPtr_t)(cmp_ctx_t* ctx, void* data);
 int nmrpc_writeAsBinary(void *data, SerializeFnPtr_t serialize, Binary** outBinary);
+
+typedef struct _ArrayOfString 
+{
+    const char** array;
+    int length;
+} ArrayOfString;
+int ArrayOfString_Serialize(cmp_ctx_t* ctx, ArrayOfString* value);
+int ArrayOfString_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfString* value);
+int ArrayOfString_Release(ArrayOfString* value);
 
 typedef struct _ArrayOfuint32_t 
 {
@@ -232,8 +257,8 @@ int ArrayOfGetAttributeOutValue_Release(ArrayOfGetAttributeOutValue* value);
 
 typedef struct _AppIdentification
 {
-    char* AppName;
-    char* AppNonce;
+    const char* AppName;
+    const char* AppNonce;
     uint64_t Pid;
 } AppIdentification;
 
@@ -245,9 +270,10 @@ typedef struct _ExtendedClientInfo
 {
     uint32_t CkUlongSize;
     uint32_t PointerSize;
-    char* CompiuterName;
-    char* Platform;
-    char* LibVersion;
+    const char* CompiuterName;
+    ArrayOfString CmdLine;
+    const char* Platform;
+    const char* LibVersion;
 } ExtendedClientInfo;
 
 int ExtendedClientInfo_Serialize(cmp_ctx_t* ctx, ExtendedClientInfo* value);
@@ -325,7 +351,7 @@ int GetInfoRequest_Release(GetInfoRequest* value);
 typedef struct _GetInfoEnvelope
 {
     uint32_t Rv;
-    char* ManufacturerID;
+    const char* ManufacturerID;
 } GetInfoEnvelope;
 
 int GetInfoEnvelope_Serialize(cmp_ctx_t* ctx, GetInfoEnvelope* value);
@@ -389,8 +415,8 @@ int CkSpecialUint_Release(CkSpecialUint* value);
 
 typedef struct _SlotInfo
 {
-    char* SlotDescription;
-    char* ManufacturerID;
+    const char* SlotDescription;
+    const char* ManufacturerID;
     bool FlagsTokenPresent;
     bool FlagsRemovableDevice;
     bool FlagsHwSlot;
@@ -424,10 +450,10 @@ int GetTokenInfoRequest_Release(GetTokenInfoRequest* value);
 
 typedef struct _TokenInfo
 {
-    char* Label;
-    char* ManufacturerId;
-    char* Model;
-    char* SerialNumber;
+    const char* Label;
+    const char* ManufacturerId;
+    const char* Model;
+    const char* SerialNumber;
     uint32_t Flags;
     CkSpecialUint MaxSessionCount;
     CkSpecialUint SessionCount;
@@ -441,7 +467,7 @@ typedef struct _TokenInfo
     CkSpecialUint FreePrivateMemory;
     CkVersion HardwareVersion;
     CkVersion FirmwareVersion;
-    char* UtcTime;
+    const char* UtcTime;
 } TokenInfo;
 
 int TokenInfo_Serialize(cmp_ctx_t* ctx, TokenInfo* value);
@@ -850,7 +876,7 @@ typedef struct _AttrValueFromNative
     Binary ValueRawBytes;
     bool ValueBool;
     uint32_t ValueCkUlong;
-    char* ValueCkDate;
+    const char* ValueCkDate;
 } AttrValueFromNative;
 
 int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value);
@@ -1019,7 +1045,7 @@ typedef struct _GetAttributeOutValue
     uint32_t ValueUint;
     bool ValueBool;
     Binary ValueBytes;
-    char* ValueCkDate;
+    const char* ValueCkDate;
 } GetAttributeOutValue;
 
 int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value);
@@ -1781,7 +1807,7 @@ typedef struct _InitTokenRequest
     AppIdentification AppId;
     uint32_t SlotId;
     Binary* Pin;
-    char* Label;
+    const char* Label;
 } InitTokenRequest;
 
 int InitTokenRequest_Serialize(cmp_ctx_t* ctx, InitTokenRequest* value);
@@ -1816,6 +1842,126 @@ typedef struct _InitPinEnvelope
 int InitPinEnvelope_Serialize(cmp_ctx_t* ctx, InitPinEnvelope* value);
 int InitPinEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, InitPinEnvelope* value);
 int InitPinEnvelope_Release(InitPinEnvelope* value);
+
+typedef struct _SessionCancelRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    uint32_t CkfFlags;
+} SessionCancelRequest;
+
+int SessionCancelRequest_Serialize(cmp_ctx_t* ctx, SessionCancelRequest* value);
+int SessionCancelRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SessionCancelRequest* value);
+int SessionCancelRequest_Release(SessionCancelRequest* value);
+
+typedef struct _SessionCancelEnvelope
+{
+    uint32_t Rv;
+} SessionCancelEnvelope;
+
+int SessionCancelEnvelope_Serialize(cmp_ctx_t* ctx, SessionCancelEnvelope* value);
+int SessionCancelEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, SessionCancelEnvelope* value);
+int SessionCancelEnvelope_Release(SessionCancelEnvelope* value);
+
+typedef struct _EncapsulateKeyRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    MechanismValue Mechanism;
+    uint32_t PublicKeyHandle;
+    ArrayOfAttrValueFromNative Template;
+    bool IsCiphertextPtrSet;
+    uint32_t PulCiphertextLen;
+} EncapsulateKeyRequest;
+
+int EncapsulateKeyRequest_Serialize(cmp_ctx_t* ctx, EncapsulateKeyRequest* value);
+int EncapsulateKeyRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, EncapsulateKeyRequest* value);
+int EncapsulateKeyRequest_Release(EncapsulateKeyRequest* value);
+
+typedef struct _EncapsulateKeyData
+{
+    uint32_t PulCiphertextLen;
+    Binary* Ciphertext;
+    bool IsPhKeySet;
+    uint32_t PhKeyHandle;
+} EncapsulateKeyData;
+
+int EncapsulateKeyData_Serialize(cmp_ctx_t* ctx, EncapsulateKeyData* value);
+int EncapsulateKeyData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, EncapsulateKeyData* value);
+int EncapsulateKeyData_Release(EncapsulateKeyData* value);
+
+typedef struct _EncapsulateKeyEnvelope
+{
+    uint32_t Rv;
+    EncapsulateKeyData* Data;
+} EncapsulateKeyEnvelope;
+
+int EncapsulateKeyEnvelope_Serialize(cmp_ctx_t* ctx, EncapsulateKeyEnvelope* value);
+int EncapsulateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, EncapsulateKeyEnvelope* value);
+int EncapsulateKeyEnvelope_Release(EncapsulateKeyEnvelope* value);
+
+typedef struct _DecapsulateKeyRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    MechanismValue Mechanism;
+    uint32_t PrivateKeyHandle;
+    ArrayOfAttrValueFromNative Template;
+    Binary Ciphertext;
+} DecapsulateKeyRequest;
+
+int DecapsulateKeyRequest_Serialize(cmp_ctx_t* ctx, DecapsulateKeyRequest* value);
+int DecapsulateKeyRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecapsulateKeyRequest* value);
+int DecapsulateKeyRequest_Release(DecapsulateKeyRequest* value);
+
+typedef struct _DecapsulateKeyDadta
+{
+    uint32_t PhKeyHandle;
+} DecapsulateKeyDadta;
+
+int DecapsulateKeyDadta_Serialize(cmp_ctx_t* ctx, DecapsulateKeyDadta* value);
+int DecapsulateKeyDadta_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecapsulateKeyDadta* value);
+int DecapsulateKeyDadta_Release(DecapsulateKeyDadta* value);
+
+typedef struct _DecapsulateKeyEnvelope
+{
+    uint32_t Rv;
+    DecapsulateKeyDadta* Data;
+} DecapsulateKeyEnvelope;
+
+int DecapsulateKeyEnvelope_Serialize(cmp_ctx_t* ctx, DecapsulateKeyEnvelope* value);
+int DecapsulateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DecapsulateKeyEnvelope* value);
+int DecapsulateKeyEnvelope_Release(DecapsulateKeyEnvelope* value);
+
+typedef struct _GetSessionValidationFlagsRequest
+{
+    AppIdentification AppId;
+    uint32_t SessionId;
+    uint32_t Type;
+} GetSessionValidationFlagsRequest;
+
+int GetSessionValidationFlagsRequest_Serialize(cmp_ctx_t* ctx, GetSessionValidationFlagsRequest* value);
+int GetSessionValidationFlagsRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, GetSessionValidationFlagsRequest* value);
+int GetSessionValidationFlagsRequest_Release(GetSessionValidationFlagsRequest* value);
+
+typedef struct _GetSessionValidationFlagsData
+{
+    uint32_t Flags;
+} GetSessionValidationFlagsData;
+
+int GetSessionValidationFlagsData_Serialize(cmp_ctx_t* ctx, GetSessionValidationFlagsData* value);
+int GetSessionValidationFlagsData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, GetSessionValidationFlagsData* value);
+int GetSessionValidationFlagsData_Release(GetSessionValidationFlagsData* value);
+
+typedef struct _GetSessionValidationFlagsEnvelope
+{
+    uint32_t Rv;
+    GetSessionValidationFlagsData* Data;
+} GetSessionValidationFlagsEnvelope;
+
+int GetSessionValidationFlagsEnvelope_Serialize(cmp_ctx_t* ctx, GetSessionValidationFlagsEnvelope* value);
+int GetSessionValidationFlagsEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, GetSessionValidationFlagsEnvelope* value);
+int GetSessionValidationFlagsEnvelope_Release(GetSessionValidationFlagsEnvelope* value);
 
 typedef struct _CkP_MacGeneralParams
 {
@@ -1878,7 +2024,7 @@ typedef struct _Ckp_CkEcdh1DeriveParams
 {
     uint32_t Kdf;
     Binary* SharedData;
-    Binary PublicData;
+    Binary* PublicData;
 } Ckp_CkEcdh1DeriveParams;
 
 int Ckp_CkEcdh1DeriveParams_Serialize(cmp_ctx_t* ctx, Ckp_CkEcdh1DeriveParams* value);
@@ -1975,6 +2121,52 @@ int Ckp_CkEddsaParams_Serialize(cmp_ctx_t* ctx, Ckp_CkEddsaParams* value);
 int Ckp_CkEddsaParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkEddsaParams* value);
 int Ckp_CkEddsaParams_Release(Ckp_CkEddsaParams* value);
 
+typedef struct _Ckp_CkSignAdditionalContext
+{
+    uint32_t HedgeVariant;
+    Binary* Context;
+} Ckp_CkSignAdditionalContext;
+
+int Ckp_CkSignAdditionalContext_Serialize(cmp_ctx_t* ctx, Ckp_CkSignAdditionalContext* value);
+int Ckp_CkSignAdditionalContext_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkSignAdditionalContext* value);
+int Ckp_CkSignAdditionalContext_Release(Ckp_CkSignAdditionalContext* value);
+
+typedef struct _Ckp_CkHashSignAdditionalContext
+{
+    uint32_t HedgeVariant;
+    Binary* Context;
+    uint32_t Hash;
+} Ckp_CkHashSignAdditionalContext;
+
+int Ckp_CkHashSignAdditionalContext_Serialize(cmp_ctx_t* ctx, Ckp_CkHashSignAdditionalContext* value);
+int Ckp_CkHashSignAdditionalContext_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkHashSignAdditionalContext* value);
+int Ckp_CkHashSignAdditionalContext_Release(Ckp_CkHashSignAdditionalContext* value);
+
+typedef struct _Ckp_CkHkdfParams
+{
+    bool Extract;
+    bool Expand;
+    uint32_t HashMechanism;
+    uint32_t SaltType;
+    Binary* Salt;
+    uint32_t SaltKey;
+    Binary* Info;
+} Ckp_CkHkdfParams;
+
+int Ckp_CkHkdfParams_Serialize(cmp_ctx_t* ctx, Ckp_CkHkdfParams* value);
+int Ckp_CkHkdfParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkHkdfParams* value);
+int Ckp_CkHkdfParams_Release(Ckp_CkHkdfParams* value);
+
+typedef struct _Ckp_CkCamelliaCbcEncryptDataParams
+{
+    Binary Iv;
+    Binary Data;
+} Ckp_CkCamelliaCbcEncryptDataParams;
+
+int Ckp_CkCamelliaCbcEncryptDataParams_Serialize(cmp_ctx_t* ctx, Ckp_CkCamelliaCbcEncryptDataParams* value);
+int Ckp_CkCamelliaCbcEncryptDataParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkCamelliaCbcEncryptDataParams* value);
+int Ckp_CkCamelliaCbcEncryptDataParams_Release(Ckp_CkCamelliaCbcEncryptDataParams* value);
+
 
 typedef void* (*nmrpc_malloc_fn_t)(size_t size);
 typedef void (*nmrpc_free_fn_t)(void* ptr);
@@ -2059,5 +2251,9 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
 int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* request, SignRecoverEnvelope* response);
 int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitRequest* request, VerifyRecoverInitEnvelope* response);
 int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* request, VerifyRecoverEnvelope* response);
+int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* request, SessionCancelEnvelope* response);
+int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest* request, EncapsulateKeyEnvelope* response);
+int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest* request, DecapsulateKeyEnvelope* response);
+int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSessionValidationFlagsRequest* request, GetSessionValidationFlagsEnvelope* response);
 
 #endif // NMRPC_rpc

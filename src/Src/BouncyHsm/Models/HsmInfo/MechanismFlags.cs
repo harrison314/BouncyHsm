@@ -74,6 +74,18 @@ public class MechanismFlags
         set; 
     }
 
+    public bool Encapsulate
+    {
+        get;
+        set;
+    }
+
+    public bool Decapsulate
+    {
+        get;
+        set;
+    }
+
     public MechanismFlags()
     {
 

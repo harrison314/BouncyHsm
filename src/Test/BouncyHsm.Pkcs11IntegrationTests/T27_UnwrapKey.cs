@@ -16,7 +16,7 @@ public class T27_UnwrapKey
         set;
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_AES_CBC_PAD)]
     public void Unwrap_AesWithIv_Success(CKM mechanismType)
     {
@@ -178,7 +178,7 @@ public class T27_UnwrapKey
         IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, privateKey, wrappedKey, this.GetAesKeytamplate(session));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_SHA_1, CKG.CKG_MGF1_SHA1)]
     [DataRow(CKM.CKM_SHA256, CKG.CKG_MGF1_SHA256)]
     [DataRow(CKM.CKM_SHA512, CKG.CKG_MGF1_SHA512)]
@@ -213,7 +213,7 @@ public class T27_UnwrapKey
         IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, privateKey, wrappedKey, this.GetAesKeytamplate(session));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_AES_CBC, 16)]
     [DataRow(CKM.CKM_AES_ECB, 0)]
     [DataRow(CKM.CKM_AES_OFB, 16)]
@@ -296,7 +296,7 @@ public class T27_UnwrapKey
         Assert.AreEqual(Convert.ToHexString(secretValue), Convert.ToHexString(unwrapedSecretValue), "Error during unwrap secret key - keys mismtch.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(CKM.CKM_AES_CBC, 16)]
     [DataRow(CKM.CKM_AES_ECB, 0)]
     [DataRow(CKM.CKM_AES_OFB, 16)]

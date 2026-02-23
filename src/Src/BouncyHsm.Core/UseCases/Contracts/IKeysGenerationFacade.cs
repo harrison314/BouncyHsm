@@ -15,14 +15,22 @@ public interface IKeysGenerationFacade
     Task<DomainResult<GeneratedSecretId>> GenerateSecretKey(uint slotId, GenerateSecretKeyRequest request, CancellationToken cancellationToken);
 
     Task<DomainResult<GeneratedSecretId>> GenerateAesKey(uint slotId, GenerateAesKeyRequest request, CancellationToken cancellationToken);
-    
+
     Task<DomainResult<GeneratedSecretId>> GeneratePoly1305Key(uint slotId, GeneratePoly1305KeyRequest request, CancellationToken cancellationToken);
-    
+
     Task<DomainResult<GeneratedSecretId>> GenerateChaCha20Key(uint slotId, GenerateChaCha20KeyRequest request, CancellationToken cancellationToken);
-    
+
     Task<DomainResult<GeneratedSecretId>> GenerateSalsa20Key(uint slotId, GenerateSalsa20KeyRequest request, CancellationToken cancellationToken);
-    
+
+    Task<DomainResult<GeneratedSecretId>> GenerateCamelliaKey(uint slotId, GenerateCamelliaKeyRequest request, CancellationToken cancellationToken);
+
     Task<DomainResult<GeneratedKeyPairIds>> GenerateEdwardsKeyPair(uint slotId, GenerateEdwardsKeyPairRequest request, CancellationToken cancellationToken);
-    
+
     Task<DomainResult<GeneratedKeyPairIds>> GenerateMontgomeryKeyPair(uint slotId, GenerateMontgomeryKeyPairRequest request, CancellationToken cancellationToken);
+
+    Task<DomainResult<GeneratedKeyPairIds>> GenerateMLDsaKeyPair(uint slotId, GenerateMLDsaKeyPairRequest request, CancellationToken cancellationToken);
+
+    Task<DomainResult<GeneratedKeyPairIds>> GenerateSlhDsaKeyPair(uint slotId, GenerateSlhDsaKeyPairRequest request, CancellationToken cancellationToken);
+
+    Task<DomainResult<GeneratedKeyPairIds>> GenerateMLKemKeyPair(uint slotId, GenerateMLKemKeyPairRequest request, CancellationToken cancellationToken);
 }

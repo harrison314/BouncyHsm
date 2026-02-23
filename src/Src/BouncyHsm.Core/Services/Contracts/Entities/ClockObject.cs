@@ -5,7 +5,7 @@ namespace BouncyHsm.Core.Services.Contracts.Entities;
 
 public sealed class ClockObject : IHardwareFeature
 {
-    private readonly ITimeAccessor timeAccessor;
+    private readonly TimeProvider timeProvider;
 
     public const uint HwHandle = 51;
 
@@ -21,12 +21,12 @@ public sealed class ClockObject : IHardwareFeature
 
     public string Value
     {
-        get => string.Format("{0:yyyyMMddHHmmss}00", this.timeAccessor.UtcNow);
+        get => string.Format("{0:yyyyMMddHHmmss}00", this.timeProvider.GetUtcNow());
     }
 
-    public ClockObject(ITimeAccessor timeAccessor)
+    public ClockObject(TimeProvider timeProvider)
     {
-        this.timeAccessor = timeAccessor;
+        this.timeProvider = timeProvider;
     }
 
     public AttributeValueResult GetValue(CKA attributeType)

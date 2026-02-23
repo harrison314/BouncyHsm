@@ -1,0 +1,26 @@
+# Supported PKCS#11 funtions
+{{~
+func toCheck(b)
+   if b.IsSupported
+      ret '✓'
+   end
+
+   if b.IsSupportedNativeOnly
+     ret '✓<sub>1</sub>'
+   end
+
+   ret ''
+end
+~}}
+
+Supported PKCS#11 functions for _Bouncy Hsm_ version {{ Versions.Version }} (commit _{{Versions.Commit}}_).
+
+
+| Function | Is supported |
+| ---  | --- |
+{{~ for f in Functions ~}}
+| {{ f.Name }} | {{ f | toCheck}} |
+{{~ end ~}}
+
+1. The function is implemented only in the native library, so it does not call the server and its call will not appear in the logs.
+

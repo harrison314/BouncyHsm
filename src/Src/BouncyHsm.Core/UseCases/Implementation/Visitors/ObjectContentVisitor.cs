@@ -55,7 +55,7 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
 
     public DomainResult<ObjectContent> Visit(EcdsaPublicKeyObject ecdsaPublicKeyObject)
     {
-        return this.CreatePemResult("rsa_public_key.pem", SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(ecdsaPublicKeyObject.GetPublicKey()));
+        return this.CreatePemResult("ec_public_key.pem", SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(ecdsaPublicKeyObject.GetPublicKey()));
     }
 
     public DomainResult<ObjectContent> Visit(EcdsaPrivateKeyObject ecdsaPrivateKeyObject)
@@ -107,6 +107,46 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
     public DomainResult<ObjectContent> Visit(MontgomeryPublicKeyObject montgomeryPublicKey)
     {
         return this.CreatePemResult("ec_x_public_key.pem", montgomeryPublicKey.GetPublicKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(TrustObject trustObject)
+    {
+        return new DomainResult<ObjectContent>.InvalidInput("Trust object is not downloadable.");
+    }
+
+    public DomainResult<ObjectContent> Visit(MlDsaPublicKeyObject mlDsaPublicKeyObject)
+    {
+        return this.CreatePemResult("ml_dsa_public_key.pem", mlDsaPublicKeyObject.GetPublicKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(MlDsaPrivateKeyObject mlDsaPrivateKeyObject)
+    {
+        return this.CreatePemResult("ml_dsa_private_key.pem", mlDsaPrivateKeyObject.GetPrivateKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(SlhDsaPublicKeyObject slhDsaPublicKeyObject)
+    {
+        return this.CreatePemResult("slh_dsa_public_key.pem", slhDsaPublicKeyObject.GetPublicKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject)
+    {
+        return this.CreatePemResult("slh_dsa_private_key.pem", slhDsaPrivateKeyObject.GetPrivateKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(MlKemPublicKeyObject mlKemPublicKeyObject)
+    {
+        return this.CreatePemResult("ml_kem_public_key.pem", mlKemPublicKeyObject.GetPublicKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(MlKemPrivateKeyObject mlKemPrivateKeyObject)
+    {
+        return this.CreatePemResult("ml_kem_private_key.pem", mlKemPrivateKeyObject.GetPrivateKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(CamelliaKeyObject camelliaKeyObject)
+    {
+        return new DomainResult<ObjectContent>.Ok(new ObjectContent("camellia_key.bin", camelliaKeyObject.CkaValue));
     }
 
     private DomainResult<ObjectContent> CreatePemResult(string fileName, object pemObject)

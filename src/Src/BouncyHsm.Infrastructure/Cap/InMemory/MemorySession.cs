@@ -13,7 +13,8 @@ public class MemorySession : IMemorySession
     private readonly ConcurrentDictionary<Guid, uint> objectHandlesToGuid;
     private readonly ConcurrentDictionary<uint, Guid> objectHandlesToHandles;
     private readonly HashSet<uint> slotEvents;
-    private DateTime lastActivity;
+    private readonly Lock slotEventsLock;
+    private DateTimeOffset lastActivity;
 
     public Guid Id
     {
@@ -25,12 +26,12 @@ public class MemorySession : IMemorySession
         get;
     }
 
-    public DateTime StartAt
+    public DateTimeOffset StartAt
     {
         get;
     }
 
-    public DateTime LastActivity
+    public DateTimeOffset LastActivity
     {
         get => this.lastActivity;
         set => this.lastActivity = (value >= this.lastActivity)
@@ -38,7 +39,7 @@ public class MemorySession : IMemorySession
             : throw new ArgumentException("The last activity must be later than the start and the last activity.", nameof(this.LastActivity));
     }
 
-    public MemorySession(MemorySessionData sessionData, DateTime startAt)
+    public MemorySession(MemorySessionData sessionData, DateTimeOffset startAt)
     {
         this.sessions = new ConcurrentDictionary<uint, P11Session>();
         this.objectHandlesToGuid = new ConcurrentDictionary<Guid, uint>();
@@ -48,6 +49,7 @@ public class MemorySession : IMemorySession
         this.Data = sessionData;
         this.StartAt = startAt;
         this.lastActivity = startAt;
+        this.slotEventsLock = new Lock();
     }
 
     public uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom)
@@ -193,7 +195,7 @@ public class MemorySession : IMemorySession
 
     public uint? GetLastSlotEvent()
     {
-        lock (this.slotEvents)
+        lock (this.slotEventsLock)
         {
             if (this.slotEvents.Count == 0)
             {
@@ -209,7 +211,7 @@ public class MemorySession : IMemorySession
 
     internal void NotifySlotEvent(uint slotId)
     {
-        lock (this.slotEvents)
+        lock (this.slotEventsLock)
         {
             _ = this.slotEvents.Add(slotId);
         }

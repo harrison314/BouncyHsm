@@ -6,42 +6,42 @@ namespace BouncyHsm.Core.Services.P11Handlers.SpeedAwaiters;
 
 internal abstract class BaseSpeedAwaiter : ISpeedAwaiter
 {
-    private readonly ITimeAccessor timeAccessor;
+    private readonly TimeProvider timeProvider;
     private readonly ILogger logger;
 
-    public BaseSpeedAwaiter(ITimeAccessor timeAccessor, ILogger logger)
+    public BaseSpeedAwaiter(TimeProvider timeProvider, ILogger logger)
     {
-        this.timeAccessor = timeAccessor;
+        this.timeProvider = timeProvider;
         this.logger = logger;
     }
 
-    public async ValueTask AwaitKeyGeneration(KeyObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken)
+    public async ValueTask AwaitKeyGeneration(KeyObject keyObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to AwaitKeyGeneration with storageObject {storageObject}.", keyObject);
 
-        TimeSpan elapsedTime = this.timeAccessor.UtcNow - utcStartTime;
+        TimeSpan elapsedTime = this.timeProvider.GetUtcNow() - utcStartTime;
         TimeSpan waitTime = keyObject.Accept(new GenerateKeyVisitor(this.GetMultiplicationVector()));
 
         await this.TryWait(waitTime - elapsedTime, cancellationToken);
     }
 
-    public async ValueTask AwaitSignature(KeyObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken)
+    public async ValueTask AwaitSignature(KeyObject keyObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to AwaitSignature with storageObject {storageObject}.", keyObject);
 
-        TimeSpan elapsedTime = this.timeAccessor.UtcNow - utcStartTime;
+        TimeSpan elapsedTime = this.timeProvider.GetUtcNow() - utcStartTime;
         TimeSpan waitTime = keyObject.Accept(new SignVisitor(this.GetMultiplicationVector()));
 
         await this.TryWait(waitTime - elapsedTime, cancellationToken);
     }
 
-    public async ValueTask AwaitDestroy(StorageObject storageObject, DateTime utcStartTime, CancellationToken cancellationToken)
+    public async ValueTask AwaitDestroy(StorageObject storageObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to AwaitDestroy with storageObject {storageObject}.", storageObject);
 
         const int blockSize = 8 * 1024;
 
-        TimeSpan elapsedTime = this.timeAccessor.UtcNow - utcStartTime;
+        TimeSpan elapsedTime = this.timeProvider.GetUtcNow() - utcStartTime;
         uint objectSize = storageObject.TryGetSize(true) ?? blockSize;
         objectSize += blockSize - 1;
 

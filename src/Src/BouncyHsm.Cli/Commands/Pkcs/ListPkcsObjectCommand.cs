@@ -23,7 +23,7 @@ internal class ListPkcsObjectCommand : AsyncCommand<ListPkcsObjectCommand.Settin
         }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
         PkcsObjectsDto objects = default!;
@@ -31,7 +31,7 @@ internal class ListPkcsObjectCommand : AsyncCommand<ListPkcsObjectCommand.Settin
         await AnsiConsole.Status()
             .StartAsync("Loading...", async ctx =>
             {
-                objects = await client.GetPkcsObjectsAsync(settings.SlotId);
+                objects = await client.GetPkcsObjectsAsync(settings.SlotId, cancellationToken);
             });
 
         foreach (PkcsObjectInfoDto info in objects.Objects)

@@ -252,6 +252,23 @@ Rpc:
     Summary: Call for C_VerifyRecover
     Request: VerifyRecoverRequest
     Response: VerifyRecoverEnvelope
+  
+  SessionCancel:
+    Summary: Call for C_SessionCancel (PKCS11 version 3.1)
+    Request: SessionCancelRequest
+    Response: SessionCancelEnvelope
+  EncapsulateKey:
+    Summary: Call for C_EncapsulateKey (PKCS11 version 3.2)
+    Request: EncapsulateKeyRequest
+    Response: EncapsulateKeyEnvelope
+  DecapsulateKey:
+    Summary: Call for C_DecapsulateKey (PKCS11 version 3.2)
+    Request: DecapsulateKeyRequest
+    Response: DecapsulateKeyEnvelope
+  GetSessionValidationFlags:
+    Summary: Call for C_GetSessionValidationFlags (PKCS11 version 3.2)
+    Request: GetSessionValidationFlagsRequest
+    Response: GetSessionValidationFlagsEnvelope
 
 Messages:
   AppIdentification:
@@ -267,6 +284,7 @@ Messages:
       CkUlongSize: uint32
       PointerSize: uint32
       CompiuterName: string
+      CmdLine: string[]
       Platform: string
       LibVersion: string
 
@@ -1248,6 +1266,82 @@ Messages:
     Fields:
       Rv: uint32
 
+  SessionCancelRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      CkfFlags: uint32
+
+  SessionCancelEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+
+  EncapsulateKeyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      PublicKeyHandle: uint32
+      Template: AttrValueFromNative[]
+      IsCiphertextPtrSet: bool
+      PulCiphertextLen: uint32
+
+  EncapsulateKeyData:
+    Summary:
+    Fields:
+      PulCiphertextLen: uint32
+      Ciphertext: binary?
+      IsPhKeySet: bool
+      PhKeyHandle: uint32
+
+  EncapsulateKeyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: EncapsulateKeyData?
+
+  DecapsulateKeyRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Mechanism: MechanismValue
+      PrivateKeyHandle: uint32
+      Template: AttrValueFromNative[]
+      Ciphertext: binary
+
+  DecapsulateKeyDadta:
+    Summary:
+    Fields:
+      PhKeyHandle: uint32
+
+  DecapsulateKeyEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: DecapsulateKeyDadta?
+
+  GetSessionValidationFlagsRequest:
+    Summary:
+    Fields:
+      AppId: AppIdentification
+      SessionId: uint32
+      Type: uint32
+
+  GetSessionValidationFlagsData:
+    Summary:
+    Fields:
+      Flags: uint32
+
+  GetSessionValidationFlagsEnvelope:
+    Summary:
+    Fields:
+      Rv: uint32
+      Data: GetSessionValidationFlagsData?
+
   # CK_parsms DTO's
   CkP_MacGeneralParams:
     Summary: Representes CK_MAC_GENERAL_PARAMS
@@ -1287,7 +1381,7 @@ Messages:
     Fields:
       Kdf: uint32
       SharedData: binary?
-      PublicData: binary
+      PublicData: binary?
 
   Ckp_CkGcmParams:
     Summary: Representes CK_GCM_PARAMS
@@ -1346,3 +1440,35 @@ Messages:
     Fields:
       PhFlag: bool
       ContextData: binary?
+
+  Ckp_CkSignAdditionalContext:
+    Summary: Representes CK_SIGN_ADDITIONAL_CONTEXT for ML-DSA
+    Fields:
+      HedgeVariant: uint32
+      Context: binary?
+
+  Ckp_CkHashSignAdditionalContext:
+    Summary: Representes CK_HASH_SIGN_ADDITIONAL_CONTEXT for ML-DSA
+    Fields:
+      HedgeVariant: uint32
+      Context: binary?
+      Hash: uint32
+
+  Ckp_CkHkdfParams:
+    Summary: Representes CK_HKDF_PARAMS
+    Fields:
+      Extract: bool
+      Expand: bool
+      HashMechanism: uint32
+      SaltType: uint32
+      Salt: binary?
+      SaltKey: uint32
+      Info: binary?
+
+  Ckp_CkCamelliaCbcEncryptDataParams:
+    Summary: Representes CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS
+    Fields:
+      Iv: binary
+      Data: binary
+
+

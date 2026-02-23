@@ -28,7 +28,7 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
     {
         this.logger.LogTrace("Entering to Handle with sessionId {SessionId}.", request.SessionId);
 
-        DateTime utcStartTime = this.hwServices.Time.UtcNow;
+        DateTimeOffset utcStartTime = this.hwServices.Time.GetUtcNow();
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
@@ -102,6 +102,9 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
             CKM.CKM_ECDSA_KEY_PAIR_GEN => new EcdsaKeyPairGenerator(this.loggerFactory.CreateLogger<EcdsaKeyPairGenerator>()),
             CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN => new EdwardsKeyPairGenerator(this.loggerFactory.CreateLogger<EdwardsKeyPairGenerator>()),
             CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN => new MontgomeryKeyPairGenerator(this.loggerFactory.CreateLogger<MontgomeryKeyPairGenerator>()),
+            CKM.CKM_ML_DSA_KEY_PAIR_GEN => new MlDsaKeyPairGenerator(this.loggerFactory.CreateLogger<MlDsaKeyPairGenerator>()),
+            CKM.CKM_SLH_DSA_KEY_PAIR_GEN => new SlhDsaKeyPairGenerator(this.loggerFactory.CreateLogger<SlhDsaKeyPairGenerator>()),
+            CKM.CKM_ML_KEM_KEY_PAIR_GEN => new MlKemKeyPairGenerator(this.loggerFactory.CreateLogger<MlKemKeyPairGenerator>()),
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for generate key pair.")
         };
     }

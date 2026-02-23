@@ -21,8 +21,13 @@ internal static class AttributeValueExtensions
         };
     }
 
-    public static string? ToPrintable(this IAttributeValue attributeValue, CKA attributeType)
+    public static string? ToPrintable(this IAttributeValue attributeValue, CKA attributeType, Dictionary<CKA, IAttributeValue> memenoto)
     {
+        if (attributeType == CKA.CKA_PARAMETER_SET)
+        {
+            return ParameterSetToString(attributeValue, memenoto);
+        }
+
         return attributeValue.TypeTag switch
         {
             AttrTypeTag.ByteArray when
@@ -64,9 +69,40 @@ internal static class AttributeValueExtensions
             CKA.CKA_KEY_TYPE => ((CKK)value).ToString(),
             CKA.CKA_NAME_HASH_ALGORITHM => ((CKM)value).ToString(),
             CKA.CKA_CERTIFICATE_CATEGORY => ((CKCertificateCategory)value).ToString(),
+            CKA.CKA_TRUST_SERVER_AUTH => ((CKT)value).ToString(),
+            CKA.CKA_TRUST_CLIENT_AUTH => ((CKT)value).ToString(),
+            CKA.CKA_TRUST_CODE_SIGNING => ((CKT)value).ToString(),
+            CKA.CKA_TRUST_EMAIL_PROTECTION => ((CKT)value).ToString(),
+            CKA.CKA_TRUST_IPSEC_IKE => ((CKT)value).ToString(),
+            CKA.CKA_TRUST_TIME_STAMPING => ((CKT)value).ToString(),
+            CKA.CKA_TRUST_OCSP_SIGNING => ((CKT)value).ToString(),
 
             _ => value.ToString()
         };
+    }
+
+    private static string ParameterSetToString(IAttributeValue attributeValue, Dictionary<CKA, IAttributeValue> memenoto)
+    {
+        if (memenoto.TryGetValue(CKA.CKA_KEY_TYPE, out IAttributeValue? keyPyteAttr))
+        {
+            CKK keyType = (CKK)keyPyteAttr.AsUint();
+            if (keyType == CKK.CKK_ML_DSA)
+            {
+                return ((CK_ML_DSA_PARAMETER_SET)attributeValue.AsUint()).ToString();
+            }
+
+            if (keyType == CKK.CKK_SLH_DSA)
+            {
+                return ((CK_SLH_DSA_PARAMETER_SET)attributeValue.AsUint()).ToString();
+            }
+
+            if (keyType == CKK.CKK_ML_KEM)
+            {
+                return ((CK_ML_KEM_PARAMETER_SET)attributeValue.AsUint()).ToString();
+            }
+        }
+
+        return attributeValue.AsUint().ToString();
     }
 
     private static string? ByteArrayToPrintable(Span<byte> array)

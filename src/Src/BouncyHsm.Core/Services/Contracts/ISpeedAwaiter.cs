@@ -9,9 +9,9 @@ namespace BouncyHsm.Core.Services.Contracts;
 
 public interface ISpeedAwaiter
 {
-    ValueTask AwaitKeyGeneration(KeyObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken);
+    ValueTask AwaitKeyGeneration(KeyObject keyObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken);
 
-    ValueTask AwaitSignature(KeyObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken);
+    ValueTask AwaitSignature(KeyObject keyObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken);
     
-    ValueTask AwaitDestroy(StorageObject keyObject, DateTime utcStartTime, CancellationToken cancellationToken);
+    ValueTask AwaitDestroy(StorageObject keyObject, DateTimeOffset utcStartTime, CancellationToken cancellationToken);
 }

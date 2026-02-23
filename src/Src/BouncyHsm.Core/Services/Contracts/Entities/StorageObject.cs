@@ -42,6 +42,12 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         set => this.values[CKA.CKA_LABEL] = AttributeValue.Create(value);
     }
 
+    public string CkaUniqueId
+    {
+        get => this.values[CKA.CKA_UNIQUE_ID].AsString();
+        set => this.values[CKA.CKA_UNIQUE_ID] = AttributeValue.Create(value);
+    }
+
     public bool CkaDestroyable
     {
         get => this.values[CKA.CKA_DESTROYABLE].AsBool();
@@ -61,6 +67,7 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         this.CkaCopyable = true;
         this.CkaDestroyable = true;
         this.CkaLabel = string.Empty;
+        this.CkaUniqueId = $"obj:{Guid.NewGuid():d}";
     }
 
     internal StorageObject(StorageObjectMemento memento)
@@ -170,7 +177,8 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         return attributeType is CKA.CKA_ALWAYS_SENSITIVE
             or CKA.CKA_NEVER_EXTRACTABLE
             or CKA.CKA_ALWAYS_AUTHENTICATE
-            or CKA.CKA_LOCAL;
+            or CKA.CKA_LOCAL
+            or CKA.CKA_UNIQUE_ID;
     }
 
     public override string ToString()

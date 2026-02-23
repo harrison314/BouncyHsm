@@ -29,31 +29,13 @@ public class HsmInfoController : Controller
     }
 
 
-    [HttpGet("SupportedCurves", Name = nameof(GetSupportedEcCurves))]
-    [ProducesResponseType(typeof(IEnumerable<CurveInfoDto>), 200)]
-    public IActionResult GetSupportedEcCurves()
+    [HttpGet("SupportedKeys", Name = nameof(GetSupportedKeys))]
+    [ProducesResponseType(typeof(SupportedKeysDto), 200)]
+    public IActionResult GetSupportedKeys()
     {
-        this.logger.LogTrace("Entering to GetSupportedEcCurves");
+        this.logger.LogTrace("Entering to GetSupportedKeys");
 
-        return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetCurves()));
-    }
-
-    [HttpGet("SupportedEdwardsCurves", Name = nameof(GetSupportedEdwardsCurves))]
-    [ProducesResponseType(typeof(IEnumerable<CurveInfoDto>), 200)]
-    public IActionResult GetSupportedEdwardsCurves()
-    {
-        this.logger.LogTrace("Entering to GetSupportedEdwardsCurves");
-
-        return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetEdwardsCurves()));
-    }
-
-    [HttpGet("SupportedMontgomeryCurves", Name = nameof(GetSupportedMontgomeryCurves))]
-    [ProducesResponseType(typeof(IEnumerable<CurveInfoDto>), 200)]
-    public IActionResult GetSupportedMontgomeryCurves()
-    {
-        this.logger.LogTrace("Entering to GetSupportedMontgomeryCurves");
-
-        return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetMontgomeryCurves()));
+        return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetSupportedKeys()));
     }
 
     [HttpGet("GetMechanism", Name = nameof(GetMechanism))]
@@ -63,5 +45,14 @@ public class HsmInfoController : Controller
         this.logger.LogTrace("Entering to GetMechanism");
 
         return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetAllMechanism()));
+    }
+
+    [HttpGet("GetFunctionsState", Name = nameof(GetFunctionsState))]
+    [ProducesResponseType(typeof(IEnumerable<FunctionImplStateDto>), 200)]
+    public IActionResult GetFunctionsState()
+    {
+        this.logger.LogTrace("Entering to GetMechanism");
+
+        return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetFunctionsState()));
     }
 }

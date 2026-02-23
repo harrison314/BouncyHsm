@@ -1,6 +1,8 @@
 ﻿using BouncyHsm.Models.KeyGeneration;
 using System.ComponentModel.DataAnnotations;
 
+namespace BouncyHsm.Models.KeyGeneration;
+
 public class GenerateEcKeyPairRequestDto
 {
     [Required]
