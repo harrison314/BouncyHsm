@@ -6,7 +6,7 @@ namespace BouncyHsm.Core.Services.Contracts.Entities;
 public partial record AttributeValueResult
 {
     partial record Ok(IAttributeValue Value);
-    partial record Computed(Task<IAttributeValue> TaskValue);
+    partial record Computed(Task<IAttributeValue> TaskValue, bool Updated);
     partial record SensitiveOrUnextractable();
     partial record InvalidAttribute();
 
@@ -18,19 +18,19 @@ public partial record AttributeValueResult
     //    return match;
     //}
 
-    public async Task<(bool IsOk, IAttributeValue? Value)> GetOkOrComputed()
+    public async Task<IAttributeValue?> GetOkOrComputed()
     {
-        (bool isOk, Task<IAttributeValue>? task) = this.Match<(bool IsOk, Task<IAttributeValue>? Value)>(ok => (true, Task.FromResult(ok.Value)),
-              computed => (true, computed.TaskValue),
-              _ => (false, null),
-              _ => (false, null));
+        Task<IAttributeValue>? task = this.Match<Task<IAttributeValue>?>(ok => Task.FromResult(ok.Value),
+              computed => computed.TaskValue,
+              sensitiveOrUnextractable => null,
+              invalidAttribute => null);
 
-        if (isOk)
+        if (task != null)
         {
-            return (true, await task!);
+            return await task;
         }
 
-        return (false, null);
+        return null;
     }
 
     public sealed override string ToString()

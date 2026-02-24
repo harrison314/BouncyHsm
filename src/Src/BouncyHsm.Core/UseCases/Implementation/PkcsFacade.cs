@@ -379,8 +379,8 @@ public class PkcsFacade : IPkcsFacade
         }
 
         AttributeValueResult idResult = storageObject.GetValue(CKA.CKA_ID);
-        (bool attributeIsOk, IAttributeValue? ckaId) = await idResult.GetOkOrComputed();
-        if (!attributeIsOk)
+        IAttributeValue? ckaId = await idResult.GetOkOrComputed();
+        if (ckaId == null)
         {
             return new VoidDomainResult.InvalidInput("Object is not PKCS object (does not contains CKA_ID).");
         }

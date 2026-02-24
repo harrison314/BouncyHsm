@@ -54,13 +54,11 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
 
             this.UpdateCkr(ref rv, attributeValueResult);
 
-            (bool attributeIsOk, IAttributeValue? attributeValue) = await attributeValueResult.GetOkOrComputed();
-            outValue.ValueLen = this.GuessValueLength(attributeIsOk, attributeValue);
+            IAttributeValue? attributeValue = await attributeValueResult.GetOkOrComputed();
+            outValue.ValueLen = this.GuessValueLength(attributeValue != null, attributeValue);
 
-            if (attributeIsOk)
+            if (attributeValue != null)
             {
-                System.Diagnostics.Debug.Assert(attributeValue != null);
-
                 this.SetOutValue(ref outValue, attributeValue);
                 this.logger.LogDebug("Return attribute {attributeType} with value type {valueType} on position {position}.",
                     attributeType,
