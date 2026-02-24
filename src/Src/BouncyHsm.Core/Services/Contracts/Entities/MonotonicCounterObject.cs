@@ -1,5 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
+using System;
 using System.Buffers.Binary;
 using System.Text;
 
@@ -7,9 +8,10 @@ namespace BouncyHsm.Core.Services.Contracts.Entities;
 
 public sealed class MonotonicCounterObject : IHardwareFeature
 {
+    public const uint HwHandle = 52;
+
     private readonly IPersistentRepository persistentRepository;
     private readonly uint slotId;
-    private SlotEntity? slot;
 
     public CKH CkHwFeatureType
     {
@@ -33,13 +35,15 @@ public sealed class MonotonicCounterObject : IHardwareFeature
 
     public byte[] Value
     {
-        get => this.IncrementAndreturnValue();
+        get;
+        private set;
     }
 
     public MonotonicCounterObject(IPersistentRepository persistentRepository, uint slotId)
     {
         this.persistentRepository = persistentRepository;
         this.slotId = slotId;
+        this.Value = new byte[sizeof(ulong)];
     }
 
     public void Accept(ICryptoApiObjectVisitor visitor)
@@ -52,7 +56,7 @@ public sealed class MonotonicCounterObject : IHardwareFeature
         throw new NotImplementedException();
     }
 
-    public AttributeValueResult GetValue(CKA attributeType)
+    public AttributeValueResult GetValue(CKA attributeType, CryptoApiObjectGetValueMode mode)
     {
         return attributeType switch
         {
@@ -60,7 +64,8 @@ public sealed class MonotonicCounterObject : IHardwareFeature
             CKA.CKA_HW_FEATURE_TYPE => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKH.CKH_CLOCK)),
             CKA.CKA_RESET_ON_INIT => new AttributeValueResult.Ok(AttributeValue.Create(this.ResetOnInit)),
             CKA.CKA_HAS_RESET => new AttributeValueResult.Ok(AttributeValue.Create(this.HasReset)),
-            CKA.CKA_VALUE => new AttributeValueResult.Ok(AttributeValue.Create(Encoding.UTF8.GetBytes(this.Value.PadRight(16, ' ')))),
+            CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.SkipComputing => new AttributeValueResult.Ok(AttributeValue.Create(this.Value)),
+            CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.Default => new AttributeValueResult.Computed(this.IncerementValue(), true),
             _ => new AttributeValueResult.InvalidAttribute()
         };
     }
@@ -105,36 +110,41 @@ public sealed class MonotonicCounterObject : IHardwareFeature
         return sizeof(ulong) + sizeof(int);
     }
 
-    private byte[] IncrementAndreturnValue()
+    internal async Task LoadData()
     {
-        //TODO: Async all the way.
-        SlotEntity? slot = this.persistentRepository.GetSlot(this.slotId, default).GetAwaiter().GetResult();
-        
-        byte[] buffer = new byte[sizeof(ulong)];
-        BinaryPrimitives.WriteUInt64BigEndian(buffer.AsSpan(), slot.Token.MonotonicCounter);
-        return buffer;
+        SlotEntity slot = await this.persistentRepository.EnsureSlot(this.slotId, true, default);
+        BinaryPrimitives.WriteUInt64BigEndian(this.Value.AsSpan(), slot.Token.MonotonicCounter);
     }
 
-    private async Task<ulong> IncrementAndreturnValueAsync()
+    private async Task<IAttributeValue> IncerementValue()
     {
-        SlotEntity slot = await this.EnshureSlot();
+        UpdateSlotCommand command = new UpdateSlotCommand();
 
+        await this.persistentRepository.ExecuteSlotCommand(this.slotId, command, default);
 
-        ulong value = 0;
         byte[] buffer = new byte[sizeof(ulong)];
-        BinaryPrimitives.WriteUInt64BigEndian(buffer.AsSpan(), value);
-        return buffer;
+        BinaryPrimitives.WriteUInt64BigEndian(buffer.AsSpan(), command.MonotonicCounter);
+        return AttributeValue.Create(buffer);
     }
 
-    private async Task<SlotEntity> EnshureSlot()
+    private class UpdateSlotCommand : IPersistentRepositorySlotCommand
     {
-        if (this.slot != null)
+        public ulong MonotonicCounter
         {
-            return this.slot;
+            get;
+            private set;
         }
 
-        this.slot = await this.persistentRepository.EnsureSlot(this.slotId, true, default);
+        public UpdateSlotCommand()
+        {
 
-        return this.slot;
+        }
+
+        public bool UpdateSlot(SlotEntity slotEntity)
+        {
+            slotEntity.Token.MonotonicCounter++;
+            this.MonotonicCounter = slotEntity.Token.MonotonicCounter;
+            return true;
+        }
     }
 }

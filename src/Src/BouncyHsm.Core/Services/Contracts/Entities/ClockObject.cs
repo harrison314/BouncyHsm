@@ -29,13 +29,14 @@ public sealed class ClockObject : IHardwareFeature
         this.timeProvider = timeProvider;
     }
 
-    public AttributeValueResult GetValue(CKA attributeType)
+    public AttributeValueResult GetValue(CKA attributeType, CryptoApiObjectGetValueMode mode)
     {
         return attributeType switch
         {
             CKA.CKA_CLASS => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKH.CKH_CLOCK)),
             CKA.CKA_HW_FEATURE_TYPE => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKH.CKH_CLOCK)),
-            CKA.CKA_VALUE => new AttributeValueResult.Ok(AttributeValue.Create(Encoding.UTF8.GetBytes(this.Value.PadRight(16, ' ')))),
+            CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.Default => new AttributeValueResult.Ok(AttributeValue.Create(Encoding.UTF8.GetBytes(this.Value.PadRight(16, ' ')))),
+            CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.SkipComputing => new AttributeValueResult.Ok(AttributeValue.Create(Encoding.UTF8.GetBytes(string.Empty.PadRight(16, ' ')))),
             _ => new AttributeValueResult.InvalidAttribute()
         };
     }

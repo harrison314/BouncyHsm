@@ -5,7 +5,6 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
 using System.Text;
-using static BouncyHsm.Core.Services.Contracts.Entities.AttributeValueResult;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -49,13 +48,15 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
                 td.IsValuePtrSet,
                 i);
 
-            AttributeValueResult attributeValueResult = pkcs11Object.GetValue(attributeType);
+            AttributeValueResult attributeValueResult = pkcs11Object.GetValue(attributeType,
+                td.IsValuePtrSet ? CryptoApiObjectGetValueMode.Default : CryptoApiObjectGetValueMode.SkipComputing);
+
             GetAttributeOutValue outValue = new GetAttributeOutValue();
 
             this.UpdateCkr(ref rv, attributeValueResult);
 
             IAttributeValue? attributeValue = await attributeValueResult.GetOkOrComputed();
-            outValue.ValueLen = this.GuessValueLength(attributeValue != null, attributeValue);
+            outValue.ValueLen = this.GuessValueLength(attributeValue);
 
             if (attributeValue != null)
             {
@@ -99,11 +100,10 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
         };
     }
 
-    private CkSpecialUint GuessValueLength(bool attributeIsOk, IAttributeValue? attributeValue)
+    private CkSpecialUint GuessValueLength(IAttributeValue? attributeValue)
     {
-        if (attributeIsOk)
+        if (attributeValue != null)
         {
-            System.Diagnostics.Debug.Assert(attributeValue != null);
             return CkSpecialUint.Create(attributeValue.GuessSize());
         }
         else
