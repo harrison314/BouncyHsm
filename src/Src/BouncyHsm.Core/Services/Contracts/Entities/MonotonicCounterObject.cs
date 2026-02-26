@@ -2,6 +2,7 @@
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using System;
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
@@ -30,7 +31,8 @@ public sealed class MonotonicCounterObject : IHardwareFeature
 
     public bool HasReset
     {
-        get => true;
+        get;
+        private set;
     }
 
     public byte[] Value
@@ -39,11 +41,22 @@ public sealed class MonotonicCounterObject : IHardwareFeature
         private set;
     }
 
-    public MonotonicCounterObject(IPersistentRepository persistentRepository, uint slotId)
+    private MonotonicCounterObject(IPersistentRepository persistentRepository, uint slotId)
     {
         this.persistentRepository = persistentRepository;
         this.slotId = slotId;
         this.Value = new byte[sizeof(ulong)];
+    }
+
+    public static async Task<MonotonicCounterObject> Load(IPersistentRepository persistentRepository, uint slotId)
+    {
+        MonotonicCounterObject self = new MonotonicCounterObject(persistentRepository, slotId);
+        SlotEntity slot = await self.persistentRepository.EnsureSlot(self.slotId, true, default);
+        BinaryPrimitives.WriteUInt64BigEndian(self.Value.AsSpan(), slot.Token.MonotonicCounter);
+        self.HasReset = slot.Token.MonotonicCounterHasReset;
+
+
+        return self;
     }
 
     public void Accept(ICryptoApiObjectVisitor visitor)
@@ -108,12 +121,6 @@ public sealed class MonotonicCounterObject : IHardwareFeature
     public uint? TryGetSize(bool isLoggedIn)
     {
         return sizeof(ulong) + sizeof(int);
-    }
-
-    internal async Task LoadData()
-    {
-        SlotEntity slot = await this.persistentRepository.EnsureSlot(this.slotId, true, default);
-        BinaryPrimitives.WriteUInt64BigEndian(this.Value.AsSpan(), slot.Token.MonotonicCounter);
     }
 
     private async Task<IAttributeValue> IncerementValue()

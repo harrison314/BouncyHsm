@@ -25,11 +25,8 @@ internal static class P11HwServicesExtensions
 
         if (objectHandle == MonotonicCounterObject.HwHandle)
         {
-            MonotonicCounterObject monotonicCounterObject = new MonotonicCounterObject(hwServices.Persistence,
+            return await MonotonicCounterObject.Load(hwServices.Persistence,
                 session.SlotId);
-
-            await monotonicCounterObject.LoadData();
-            return monotonicCounterObject;
         }
 
         Guid? storageObjectId = memorySession.FindObjectHandle(objectHandle);

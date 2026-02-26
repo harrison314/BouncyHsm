@@ -56,7 +56,7 @@ public partial class InitTokenHandler : IRpcRequestHandler<InitTokenRequest, Ini
         this.logger.LogInformation("All objects destroyed in slot {SlotId} for InitToken request.", request.SlotId);
 
         await this.hwServices.Persistence.ExecuteSlotCommand(request.SlotId,
-            new ChangeLabelCommand(request.Label),
+            new ResetTokenCommand(request.Label),
              cancellationToken);
         this.logger.LogInformation("Token label changed to {Label} in slot {SlotId} for InitToken request.", request.Label, request.SlotId);
 
