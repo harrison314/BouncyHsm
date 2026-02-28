@@ -28,7 +28,7 @@
 #define NULL_PTR 0
 #endif
 
-#include "cryptoki\pkcs11.h"
+#include "cryptoki/pkcs11.h"
 
 #pragma pack(pop, cryptoki)
 
@@ -47,6 +47,6 @@
 #define NULL_PTR 0
 #endif
 
-#include <cryptoki/pkcs11.h>
+#include "cryptoki/pkcs11.h"
 
 #endif // #ifdef _WIN32
