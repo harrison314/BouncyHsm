@@ -78,9 +78,7 @@ public partial class FindObjectsInitHandler : IRpcRequestHandler<FindObjectsInit
                 result.Add(ClockObject.HwHandle);
             }
 
-            MonotonicCounterObject monotonicCounterObject = new MonotonicCounterObject(this.hwServices.Persistence, slotId);
-            await monotonicCounterObject.LoadData();
-
+            MonotonicCounterObject monotonicCounterObject = await MonotonicCounterObject.Load(this.hwServices.Persistence, slotId);
             if (monotonicCounterObject.IsMatch(searchTemplate))
             {
                 result.Add(MonotonicCounterObject.HwHandle);
