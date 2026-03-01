@@ -10,14 +10,6 @@ public partial record AttributeValueResult
     partial record SensitiveOrUnextractable();
     partial record InvalidAttribute();
 
-    //public bool IsOK([NotNullWhen(true)] out IAttributeValue? value)
-    //{
-    //    (value, bool match) = this.MatchOk<(IAttributeValue?, bool)>(ok => (ok.Value, true),
-    //        () => (null, false));
-
-    //    return match;
-    //}
-
     public async Task<IAttributeValue?> GetOkOrComputed()
     {
         Task<IAttributeValue>? task = this.Match<Task<IAttributeValue>?>(ok => Task.FromResult(ok.Value),
