@@ -5764,6 +5764,12 @@ namespace BouncyHsm.Client
         [System.Text.Json.Serialization.JsonPropertyName("SimulateProtectedAuthPath")]
         public bool SimulateProtectedAuthPath { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("MonotonicCounter")]
+        public ulong MonotonicCounter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MonotonicCounterHasReset")]
+        public bool MonotonicCounterHasReset { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("IsUserPinLocked")]
         public bool IsUserPinLocked { get; set; } = default!;
 
