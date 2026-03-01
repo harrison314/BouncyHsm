@@ -14,7 +14,7 @@ If you want to create your own Docker image, you can do so using the following D
 ```dockerfile
 FROM alpine:3.23
 
-ENV APP_VERSION=2.0.0
+ENV APP_VERSION=2.0.1
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .
@@ -89,7 +89,7 @@ For example - download from release:
 ```dockerfile
 FROM alpine:3.23
 
-ENV APP_VERSION=2.0.0
+ENV APP_VERSION=2.0.1
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .

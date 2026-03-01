@@ -4,12 +4,12 @@
   <Description></Description>
   <RepositoryType>git</RepositoryType>
   <PackageTags></PackageTags>
-  <RepositoryUrl></RepositoryUrl>
-  <PackageProjectUrl></PackageProjectUrl>
+  <RepositoryUrl>https://github.com/harrison314/BouncyHsm</RepositoryUrl>
+  <PackageProjectUrl>https://github.com/harrison314/BouncyHsm</PackageProjectUrl>
   <Product>BouncyHsm</Product>
   <Copyright>Copyright (c) $([System.DateTime]::Now.ToString('yyyy')), Jozef Gajdoš</Copyright>
   <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-  <Version>2.0.0</Version>
+  <Version>2.0.1</Version>
  </PropertyGroup>
 </Project>
