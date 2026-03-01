@@ -41,6 +41,18 @@ public class TokenDto
         set;
     }
 
+    public ulong MonotonicCounter
+    {
+        get;
+        set;
+    }
+
+    public bool MonotonicCounterHasReset
+    {
+        get;
+        set;
+    }
+
     public bool IsUserPinLocked
     {
         get;

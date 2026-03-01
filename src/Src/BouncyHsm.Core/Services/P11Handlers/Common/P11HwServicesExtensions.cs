@@ -23,6 +23,12 @@ internal static class P11HwServicesExtensions
             return new ClockObject(hwServices.Time);
         }
 
+        if (objectHandle == MonotonicCounterObject.HwHandle)
+        {
+            return await MonotonicCounterObject.Load(hwServices.Persistence,
+                session.SlotId);
+        }
+
         Guid? storageObjectId = memorySession.FindObjectHandle(objectHandle);
         if (!storageObjectId.HasValue)
         {

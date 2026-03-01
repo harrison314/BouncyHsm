@@ -5,7 +5,6 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
 using System.Text;
-using static BouncyHsm.Core.Services.Contracts.Entities.AttributeValueResult;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -49,13 +48,17 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
                 td.IsValuePtrSet,
                 i);
 
-            AttributeValueResult attributeValueResult = pkcs11Object.GetValue(attributeType);
+            AttributeValueResult attributeValueResult = pkcs11Object.GetValue(attributeType,
+                td.IsValuePtrSet ? CryptoApiObjectGetValueMode.Default : CryptoApiObjectGetValueMode.SkipComputing);
+
             GetAttributeOutValue outValue = new GetAttributeOutValue();
 
-            outValue.ValueLen = this.GuessValueLength(attributeValueResult);
             this.UpdateCkr(ref rv, attributeValueResult);
 
-            if (attributeValueResult.IsOK(out IAttributeValue? attributeValue))
+            IAttributeValue? attributeValue = await attributeValueResult.GetOkOrComputed();
+            outValue.ValueLen = this.GuessValueLength(attributeValue);
+
+            if (attributeValue != null)
             {
                 this.SetOutValue(ref outValue, attributeValue);
                 this.logger.LogDebug("Return attribute {attributeType} with value type {valueType} on position {position}.",
@@ -97,11 +100,16 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
         };
     }
 
-    private CkSpecialUint GuessValueLength(AttributeValueResult attributeValueResult)
+    private CkSpecialUint GuessValueLength(IAttributeValue? attributeValue)
     {
-        return attributeValueResult.Match<CkSpecialUint>(value => CkSpecialUint.Create(value.Value.GuessSize()),
-            sensitiveOrUnextractable => CkSpecialUint.CreateUnavailableInformation(),
-            invalidAttribute => CkSpecialUint.CreateUnavailableInformation());
+        if (attributeValue != null)
+        {
+            return CkSpecialUint.Create(attributeValue.GuessSize());
+        }
+        else
+        {
+            return CkSpecialUint.CreateUnavailableInformation();
+        }
     }
 
     private void UpdateCkr(ref CKR ckr, AttributeValueResult attributeValueResult)
@@ -109,6 +117,7 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
         if (ckr == CKR.CKR_OK)
         {
             ckr = attributeValueResult.Match<CKR>(ok => CKR.CKR_OK,
+                computed => CKR.CKR_OK,
                 sensitiveOrUnextractable => CKR.CKR_ATTRIBUTE_SENSITIVE,
                 invalidAttribute => CKR.CKR_ATTRIBUTE_TYPE_INVALID);
         }
@@ -145,6 +154,7 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
 
             default:
                 throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.");
-        };
+        }
+        ;
     }
 }

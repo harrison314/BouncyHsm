@@ -106,7 +106,7 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         this.values[attributeType] = value;
     }
 
-    public AttributeValueResult GetValue(CKA attributeType)
+    public AttributeValueResult GetValue(CKA attributeType, CryptoApiObjectGetValueMode mode)
     {
         if (!this.values.TryGetValue(attributeType, out IAttributeValue? value))
         {

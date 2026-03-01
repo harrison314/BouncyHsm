@@ -14,7 +14,7 @@ public interface ICryptoApiObject
         get;
     }
 
-    AttributeValueResult GetValue(CKA attributeType);
+    AttributeValueResult GetValue(CKA attributeType, CryptoApiObjectGetValueMode mode);
 
     bool IsMatch(IEnumerable<KeyValuePair<CKA, IAttributeValue>> matchTemplate);
 

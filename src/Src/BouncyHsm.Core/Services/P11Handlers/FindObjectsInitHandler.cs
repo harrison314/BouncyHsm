@@ -5,6 +5,7 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -31,7 +32,7 @@ public partial class FindObjectsInitHandler : IRpcRequestHandler<FindObjectsInit
 
         Dictionary<CKA, IAttributeValue> searchTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 
-        IReadOnlyList<uint> hwFeatures = this.FindHwFeatures(searchTemplate);
+        IReadOnlyList<uint> hwFeatures = await this.FindHwFeatures(p11Session.SlotId, searchTemplate);
 
         FindObjectSpecification findObjectSpecification = new FindObjectSpecification(searchTemplate,
             memorySession.IsUserLogged(p11Session.SlotId));
@@ -62,7 +63,7 @@ public partial class FindObjectsInitHandler : IRpcRequestHandler<FindObjectsInit
         };
     }
 
-    private IReadOnlyList<uint> FindHwFeatures(IReadOnlyDictionary<CKA, IAttributeValue> searchTemplate)
+    private async Task<IReadOnlyList<uint>> FindHwFeatures(uint slotId, IReadOnlyDictionary<CKA, IAttributeValue> searchTemplate)
     {
         List<uint> result = new List<uint>();
 
@@ -75,6 +76,12 @@ public partial class FindObjectsInitHandler : IRpcRequestHandler<FindObjectsInit
             if (clockObject.IsMatch(searchTemplate))
             {
                 result.Add(ClockObject.HwHandle);
+            }
+
+            MonotonicCounterObject monotonicCounterObject = await MonotonicCounterObject.Load(this.hwServices.Persistence, slotId);
+            if (monotonicCounterObject.IsMatch(searchTemplate))
+            {
+                result.Add(MonotonicCounterObject.HwHandle);
             }
         }
 

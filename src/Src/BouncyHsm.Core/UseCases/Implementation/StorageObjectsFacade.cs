@@ -199,11 +199,11 @@ public class StorageObjectsFacade : IStorageObjectsFacade
 
     private StorageObjectInfo BuildInfo(StorageObject storageObject, string description)
     {
-        string? ckaIdHex = storageObject.GetValue(CKA.CKA_ID)
+        string? ckaIdHex = storageObject.GetValue(CKA.CKA_ID, CryptoApiObjectGetValueMode.Default)
             .MatchOk<string?>(ok => HexConvertor.GetString(ok.Value.AsByteArray()),
             () => null);
 
-        CKK? keyType = storageObject.GetValue(CKA.CKA_KEY_TYPE)
+        CKK? keyType = storageObject.GetValue(CKA.CKA_KEY_TYPE, CryptoApiObjectGetValueMode.Default)
             .MatchOk<CKK?>(ok => (CKK)ok.Value.AsUint(),
             () => null);
 
