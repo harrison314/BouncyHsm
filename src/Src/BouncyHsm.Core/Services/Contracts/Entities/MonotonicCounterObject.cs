@@ -74,8 +74,8 @@ public sealed class MonotonicCounterObject : IHardwareFeature
     {
         return attributeType switch
         {
-            CKA.CKA_CLASS => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKO.CKO_HW_FEATURE)),
-            CKA.CKA_HW_FEATURE_TYPE => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKH.CKH_MONOTONIC_COUNTER)),
+            CKA.CKA_CLASS => new AttributeValueResult.Ok(AttributeValue.Create((uint)this.CkaClass)),
+            CKA.CKA_HW_FEATURE_TYPE => new AttributeValueResult.Ok(AttributeValue.Create((uint)this.CkHwFeatureType)),
             CKA.CKA_RESET_ON_INIT => new AttributeValueResult.Ok(AttributeValue.Create(this.ResetOnInit)),
             CKA.CKA_HAS_RESET => new AttributeValueResult.Ok(AttributeValue.Create(this.HasReset)),
             CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.SkipComputing => new AttributeValueResult.Ok(AttributeValue.Create(this.Value)),
@@ -88,12 +88,12 @@ public sealed class MonotonicCounterObject : IHardwareFeature
     {
         foreach ((CKA attrType, IAttributeValue attrValue) in matchTemplate)
         {
-            if (attrType == CKA.CKA_CLASS && attrValue.Equals((uint)CKO.CKO_HW_FEATURE))
+            if (attrType == CKA.CKA_CLASS && attrValue.Equals((uint)this.CkaClass))
             {
                 continue;
             }
 
-            if (attrType == CKA.CKA_HW_FEATURE_TYPE && attrValue.Equals((uint)CKH.CKH_MONOTONIC_COUNTER))
+            if (attrType == CKA.CKA_HW_FEATURE_TYPE && attrValue.Equals((uint)this.CkHwFeatureType))
             {
                 continue;
             }
