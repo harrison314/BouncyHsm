@@ -14,16 +14,17 @@ public sealed class MonotonicCounterObject : IHardwareFeature
     private readonly IPersistentRepository persistentRepository;
     private readonly uint slotId;
 
-    public CKH CkHwFeatureType
-    {
-        get => CKH.CKH_MONOTONIC_COUNTER;
-    }
-
     public CKO CkaClass
     {
         get => CKO.CKO_HW_FEATURE;
     }
 
+
+    public CKH CkHwFeatureType
+    {
+        get => CKH.CKH_MONOTONIC_COUNTER;
+    }
+    
     public bool ResetOnInit
     {
         get => true;
@@ -73,8 +74,8 @@ public sealed class MonotonicCounterObject : IHardwareFeature
     {
         return attributeType switch
         {
-            CKA.CKA_CLASS => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKH.CKH_MONOTONIC_COUNTER)),
-            CKA.CKA_HW_FEATURE_TYPE => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKH.CKH_CLOCK)),
+            CKA.CKA_CLASS => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKO.CKO_HW_FEATURE)),
+            CKA.CKA_HW_FEATURE_TYPE => new AttributeValueResult.Ok(AttributeValue.Create((uint)CKH.CKH_MONOTONIC_COUNTER)),
             CKA.CKA_RESET_ON_INIT => new AttributeValueResult.Ok(AttributeValue.Create(this.ResetOnInit)),
             CKA.CKA_HAS_RESET => new AttributeValueResult.Ok(AttributeValue.Create(this.HasReset)),
             CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.SkipComputing => new AttributeValueResult.Ok(AttributeValue.Create(this.Value)),
