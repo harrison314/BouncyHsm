@@ -151,7 +151,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         {
             if (string.IsNullOrEmpty(settings.TokenSignaturePin))
             {
-                signaturePin = AnsiConsole.Prompt(new TextPrompt<string>("Enter [green]so PIN[/]:").Secret());
+                signaturePin = AnsiConsole.Prompt(new TextPrompt<string>("Enter [green]signature PIN[/]:").Secret());
             }
             else
             {
