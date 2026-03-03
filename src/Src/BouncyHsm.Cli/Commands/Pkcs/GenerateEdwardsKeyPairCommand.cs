@@ -11,35 +11,35 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
     {
         [CommandArgument(0, "[SlotId]")]
         [Description("Slot Id.")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(1, "[CkaLabel]")]
         [Description("CkaLabel.")]
-        public string CkaLabel
+        public required string CkaLabel
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandArgument(2, "[CkaId]")]
         [Description("CkaId with prefix 'utf8:' for text representation, 'hex:' for hexadecimal representation and 'base64:' for base64 representation.")]
-        public string CkaId
+        public required string CkaId
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandArgument(3, "[ElipticCurveName]")]
         [Description("Name or OID of edwards curve name.")]
-        public string OidOrName
+        public required string OidOrName
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandOption("--exportable")]
         [Description("Set CKA_EXPORTABLE to true.")]
@@ -47,7 +47,7 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
         public bool Exportable
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--forderivation")]
@@ -56,7 +56,7 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
         public bool ForDerivation
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--forencryption")]
@@ -65,7 +65,7 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
         public bool ForEncryption
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--forencapsulation")]
@@ -74,7 +74,7 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
         public bool ForEncapsulation
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--forsign")]
@@ -83,7 +83,7 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
         public bool ForSigning
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--forwrap")]
@@ -92,7 +92,7 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
         public bool ForWrap
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--sensitive")]
@@ -101,7 +101,7 @@ internal class GenerateEdwardsKeyPairCommand : AsyncCommand<GenerateEdwardsKeyPa
         public bool Sensitive
         {
             get;
-            set;
+            init;
         }
     }
 

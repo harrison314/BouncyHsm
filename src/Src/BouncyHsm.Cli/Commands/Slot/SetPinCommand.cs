@@ -10,18 +10,18 @@ internal class SetPinCommand : AsyncCommand<SetPinCommand.Settings>
     internal sealed class Settings : BaseSettings
     {
         [CommandArgument(0, "[SlotId]")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(1, "[CKU]")]
         [Description($"User type. Allowed values are {nameof(CKU.CKU_USER)}, {nameof(CKU.CKU_SO)}, {nameof(CKU.CKU_CONTEXT_SPECIFIC)}.")]
-        public CKU UserType
+        public required CKU UserType
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("-u|--pin <PIN>")]
@@ -30,7 +30,7 @@ internal class SetPinCommand : AsyncCommand<SetPinCommand.Settings>
         public string? NewPin
         {
             get;
-            set;
+            init;
         }
     }
 

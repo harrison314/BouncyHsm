@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
 
 namespace BouncyHsm.Cli.Commands.Pkcs;
@@ -11,27 +12,27 @@ internal class ImportCertificateCommand : AsyncCommand<ImportCertificateCommand.
     {
         [CommandArgument(0, "[SlotId]")]
         [Description("Slot Id.")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(1, "[PrivateKeyId]")]
         [Description("Private key id.")]
-        public Guid PrivateKeyId
+        public required Guid PrivateKeyId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(2, "[CertPath]")]
         [Description("Path to X509 certificate file.")]
-        public string CertPath
+        public required string CertPath
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)

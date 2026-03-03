@@ -6,10 +6,10 @@ namespace BouncyHsm.Cli.Commands;
 internal class BaseSettings : CommandSettings
 {
     [Description("BouncyHsm REST API endpoint.")]
-    [CommandOption("-e|--endpoint")]
-    public string Endpoint
+    [CommandOption("-e|--endpoint", isRequired: true)]
+    public required string Endpoint
     {
         get;
         init;
-    } = default!;
+    }
 }

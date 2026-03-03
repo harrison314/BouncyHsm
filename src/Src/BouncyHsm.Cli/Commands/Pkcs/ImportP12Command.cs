@@ -11,35 +11,35 @@ internal class ImportP12Command : AsyncCommand<ImportP12Command.Settings>
     {
         [CommandArgument(0, "[SlotId]")]
         [Description("Slot Id.")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(1, "[CkaLabel]")]
         [Description("CkaLabel.")]
-        public string CkaLabel
+        public required string CkaLabel
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandArgument(2, "[CkaId]")]
         [Description("CkaId with prefix 'utf8:' for text representation, 'hex:' for hexadecimal representation and 'base64:' for base64 representation.")]
-        public string CkaId
+        public required string CkaId
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandArgument(3, "[P12FilePath]")]
         [Description("Path to P12/PFX file.")]
-        public string P12FilePath
+        public required string P12FilePath
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandOption("-p|--password <Password>")]
         [DefaultValue(null)]
@@ -47,7 +47,7 @@ internal class ImportP12Command : AsyncCommand<ImportP12Command.Settings>
         public string? Password
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("-m|--importMode <ImportMode>")]
@@ -56,7 +56,7 @@ internal class ImportP12Command : AsyncCommand<ImportP12Command.Settings>
         public PrivateKeyImportMode ImportMode
         {
             get;
-            set;
+            init;
         }
     }
 

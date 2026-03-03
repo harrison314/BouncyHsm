@@ -16,10 +16,10 @@ internal class ListPkcsObjectCommand : AsyncCommand<ListPkcsObjectCommand.Settin
     {
         [CommandArgument(0, "[SlotId]")]
         [Description("Slot Id.")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
     }
 

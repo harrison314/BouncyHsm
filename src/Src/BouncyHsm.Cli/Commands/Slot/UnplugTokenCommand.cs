@@ -9,10 +9,10 @@ internal class UnplugTokenCommand : AsyncCommand<UnplugTokenCommand.Settings>
     internal sealed class Settings : BaseSettings
     {
         [CommandArgument(0, "[SlotId]")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
     }
 

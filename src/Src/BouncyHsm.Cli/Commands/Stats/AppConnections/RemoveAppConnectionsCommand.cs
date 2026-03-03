@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
 
 namespace BouncyHsm.Cli.Commands.Stats.AppConnections;
@@ -10,10 +11,10 @@ internal class RemoveAppConnectionsCommand : AsyncCommand<RemoveAppConnectionsCo
     internal sealed class Settings : BaseSettings
     {
         [CommandArgument(0, "[AppConnectionId]")]
-        public Guid AppSessionId
+        public required Guid AppSessionId
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("-y")]

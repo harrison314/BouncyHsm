@@ -10,10 +10,10 @@ internal class DeleteSlotCommand : AsyncCommand<DeleteSlotCommand.Settings>
     internal sealed class Settings : BaseSettings
     {
         [CommandArgument(0, "[SlotId]")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("-y")]

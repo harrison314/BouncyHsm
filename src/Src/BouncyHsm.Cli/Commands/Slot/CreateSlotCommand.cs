@@ -17,26 +17,26 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
     {
         [CommandOption("-d|--slotDescription <SlotDescription>")]
         [Description("Slot description.")]
-        public string SlotDescription
+        public required string SlotDescription
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandOption("-l|--tokenLabel <TokenLabel>")]
         [Description("Token label.")]
-        public string TokenLabel
+        public required string TokenLabel
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
 
         [CommandOption("-s|--tokenSerial <TokenSerial>")]
         [Description("Token serial number. If not set it is created automatically. (Optional parameter)")]
         public string? TokenSerial
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--simulateHwMechanism")]
@@ -81,7 +81,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         public SpeedMode SpeedMode
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("-u|--userPin <UserPin>")]
@@ -90,7 +90,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         public string? TokenUserPin
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("-q|--soPin <UserPin>")]
@@ -99,7 +99,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         public string? TokenSoPin
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--signaturePin <SignaturePin>")]
@@ -108,7 +108,7 @@ internal class CreateSlotCommand : AsyncCommand<CreateSlotCommand.Settings>
         public string? TokenSignaturePin
         {
             get;
-            set;
+            init;
         }
 
         [CommandOption("--removableDevice")]

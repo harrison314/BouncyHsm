@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
 
 namespace BouncyHsm.Cli.Commands.Pkcs;
@@ -11,26 +12,26 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
     {
         [CommandArgument(0, "[SlotId]")]
         [Description("Slot Id.")]
-        public int SlotId
+        public required int SlotId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(1, "[PrivateKeyId]")]
         [Description("Private key id.")]
-        public Guid PrivateKeyId
+        public required Guid PrivateKeyId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(2, "[PublicKeyId]")]
         [Description("Public key id.")]
-        public Guid PublicKeyId
+        public required Guid PublicKeyId
         {
             get;
-            set;
+            init;
         }
 
         [CommandArgument(3, "[SubjectName]")]
@@ -38,16 +39,16 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
         public string? SubjectName
         {
             get;
-            set;
+            init;
         }
 
-        [CommandOption("-o|--outputPath <OutputPath>")]
+        [CommandOption("-o|--outputPath <OutputPath>", isRequired: true)]
         [Description("Path for store CSR file (*.csr).")]
-        public string OutputPath
+        public required string OutputPath
         {
             get;
-            set;
-        } = default!;
+            init;
+        }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, GenerateCsrCommand.Settings settings, CancellationToken cancellationToken)
@@ -78,7 +79,7 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
                },
                cancellationToken);
 
-               await File.WriteAllBytesAsync(settings.OutputPath, result.Content,cancellationToken);
+               await File.WriteAllBytesAsync(settings.OutputPath, result.Content, cancellationToken);
            });
 
         AnsiConsole.MarkupLine("CSR request stored.");

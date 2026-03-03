@@ -17,7 +17,7 @@ internal class ListObjectsCommand : AsyncCommand<ListObjectsCommand.Settings>
     {
         [CommandArgument(0, "[SlotId]")]
         [Description("Slot Id.")]
-        public int SlotId
+        public required int SlotId
         {
             get;
             set;
