@@ -76,6 +76,7 @@ public static class Program
             config.AddBranch("stats", stats =>
             {
                 stats.AddCommand<GetOverviewStatsCommand>("overview").WithDescription("Get overview stats.");
+                stats.AddCommand<ShowLogoCommand>("logo").WithDescription("Show BouncyHsm logo.");
 
                 stats.SetDescription("Display of statistical data.");
             });
