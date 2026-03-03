@@ -17,3 +17,8 @@ internal static class BuildTarget
 
     public const string RebuildDocumentation = nameof(RebuildDocumentation);
 }
+
+internal record BuildData(
+    string GitCommit,
+    string GitBranch,
+    string ThisVersion);

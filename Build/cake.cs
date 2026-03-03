@@ -8,15 +8,20 @@ string SourceDirectory = "./src/Src/";
 string ArtifactsDirectory = "./artifacts";
 string ArtifactsTmpDirectory = "./artifacts/.tmp/";
 
-GitCommit gitTip = GitLogTip(".");
-GitBranch gitBranchObj = GitBranchCurrent(".");
+Setup<BuildData>(ctx =>
+{
+    GitCommit gitTip = GitLogTip(".");
+    GitBranch gitBranchObj = GitBranchCurrent(".");
 
-string gitCommit = gitTip.Sha;
-string gitBranch = gitBranchObj.CanonicalName;
-string ThisVersion = XmlPeek("src/Directory.Build.props", "//Version/text()");
+    string gitCommit = gitTip.Sha;
+    string gitBranch = gitBranchObj.CanonicalName;
+    string ThisVersion = XmlPeek("src/Directory.Build.props", "//Version/text()");
+
+    return new BuildData(gitCommit, gitBranch, ThisVersion);
+});
 
 Task(BuildTarget.RebuildDocumentation)
-    .Does(() =>
+    .Does<BuildData>((ctx, data) =>
     {
         DotNetRun("./src/Tools/BouncyHsm.DocGenerator/BouncyHsm.DocGenerator.csproj",
             new ProcessArgumentBuilder().Append("Doc/SupportedAlgorithms.md"),
@@ -27,7 +32,7 @@ Task(BuildTarget.RebuildDocumentation)
                 {
                     Properties =
                 {
-                    {"GitCommit", new List<string>() { gitCommit } }
+                    {"GitCommit", new List<string>() { data.GitCommit } }
                 }
                 },
                 DiagnosticOutput = true
@@ -54,7 +59,7 @@ Task(BuildTarget.Clean)
 
 Task(BuildTarget.BuildBouncyHsm)
     .IsDependentOn(BuildTarget.Clean)
-    .Does(() =>
+    .Does<BuildData>((ctx, data) =>
     {
         string projectFile = $"{SourceDirectory}BouncyHsm/BouncyHsm.csproj";
         string outputDir = $"{ArtifactsTmpDirectory}BouncyHsm";
@@ -66,14 +71,14 @@ Task(BuildTarget.BuildBouncyHsm)
             MSBuildSettings = new DotNetMSBuildSettings(),
         };
 
-        settings.MSBuildSettings.Properties.Add("GitCommit", new List<string>() { gitCommit });
+        settings.MSBuildSettings.Properties.Add("GitCommit", new List<string>() { data.GitCommit });
 
         DotNetPublish(projectFile, settings);
     });
 
 Task(BuildTarget.BuildBouncyHsmCli)
     .IsDependentOn(BuildTarget.Clean)
-    .Does(() =>
+    .Does<BuildData>((ctx, data) =>
     {
         string projectFile = $"{SourceDirectory}BouncyHsm.Cli/BouncyHsm.Cli.csproj";
         string outputDir = $"{ArtifactsTmpDirectory}BouncyHsm.Cli";
@@ -85,7 +90,7 @@ Task(BuildTarget.BuildBouncyHsmCli)
             MSBuildSettings = new DotNetMSBuildSettings(),
         };
 
-        settings.MSBuildSettings.Properties.Add("GitCommit", new List<string>() { gitCommit });
+        settings.MSBuildSettings.Properties.Add("GitCommit", new List<string>() { data.GitCommit });
 
         DotNetPublish(projectFile, settings);
     });
@@ -137,7 +142,7 @@ Task(BuildTarget.BuildBouncyHsmClient)
     .IsDependentOn(BuildTarget.Clean)
     .IsDependentOn(BuildTarget.BuildPkcs11LibWin32)
     .IsDependentOn(BuildTarget.BuildPkcs11LibX64)
-    .Does(() =>
+    .Does<BuildData>((ctx, data) =>
     {
         string projectFile = $"{SourceDirectory}BouncyHsm.Client/BouncyHsm.Client.csproj";
 
@@ -164,8 +169,8 @@ Task(BuildTarget.BuildBouncyHsmClient)
             MSBuildSettings = new DotNetMSBuildSettings(),
         };
 
-        settings.MSBuildSettings.Properties.Add("RepositoryCommit", new List<string>() { gitCommit });
-        settings.MSBuildSettings.Properties.Add("RepositoryBranch", new List<string>() { gitBranch });
+        settings.MSBuildSettings.Properties.Add("RepositoryCommit", new List<string>() { data.GitCommit });
+        settings.MSBuildSettings.Properties.Add("RepositoryBranch", new List<string>() { data.GitBranch });
         settings.MSBuildSettings.Properties.Add("IncludeNativeLibs", new List<string>() { "True" });
 
         DotNetPack(projectFile, settings);
@@ -178,19 +183,19 @@ Task(BuildTarget.BuildAll)
     .IsDependentOn(BuildTarget.BuildBouncyHsm)
     .IsDependentOn(BuildTarget.BuildBouncyHsmCli)
     .IsDependentOn(BuildTarget.BuildBouncyHsmClient)
-    .Does(() =>
+    .Does<BuildData>((ctx, data) =>
     {
         CopyDirectory($"{ArtifactsTmpDirectory}native", $"{ArtifactsTmpDirectory}BouncyHsm/native");
 
         CreateZip(JoinPaths(ArtifactsTmpDirectory, "native/Win-x64/BouncyHsm.Pkcs11Lib.dll"),
             "Win X64",
-            ThisVersion,
-            JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/native/BouncyHsm.Pkcs11Lib-Winx64.zip"));
+            JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/native/BouncyHsm.Pkcs11Lib-Winx64.zip"),
+            data);
 
         CreateZip(JoinPaths(ArtifactsTmpDirectory, "native/Win-x86/BouncyHsm.Pkcs11Lib.dll"),
             "Win X64",
-            ThisVersion,
-            JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/native/BouncyHsm.Pkcs11Lib-Winx86.zip"));
+            JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/native/BouncyHsm.Pkcs11Lib-Winx86.zip"),
+            data);
 
 
         string linuxNativeLibx64 = JoinPaths("build_linux", "BouncyHsm.Pkcs11Lib-x64.so");
@@ -202,8 +207,8 @@ Task(BuildTarget.BuildAll)
 
             CreateZip(linuxNativeLibx64,
                        "Linux X64",
-                       ThisVersion,
-                       JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "wwwroot", "native", "BouncyHsm.Pkcs11Lib-Linuxx64.zip"));
+                       JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "wwwroot", "native", "BouncyHsm.Pkcs11Lib-Linuxx64.zip"),
+                       data);
         }
         else
         {
@@ -220,8 +225,8 @@ Task(BuildTarget.BuildAll)
 
             CreateZip(linuxNativeLibx32,
                        "Linux X64",
-                       ThisVersion,
-                       JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "wwwroot", "native", "BouncyHsm.Pkcs11Lib-Linuxx86.zip"));
+                       JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "wwwroot", "native", "BouncyHsm.Pkcs11Lib-Linuxx86.zip"),
+                       data);
         }
         else
         {
@@ -238,8 +243,8 @@ Task(BuildTarget.BuildAll)
 
             CreateZip(rhelNativeLibx64,
                        "RHEL X64",
-                       ThisVersion,
-                       JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "wwwroot", "native", "BouncyHsm.Pkcs11Lib-RHELx64.zip"));
+                       JoinPaths(ArtifactsTmpDirectory, "BouncyHsm", "wwwroot", "native", "BouncyHsm.Pkcs11Lib-RHELx64.zip"),
+                       data);
         }
         else
         {
@@ -254,8 +259,8 @@ Task(BuildTarget.BuildAll)
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/.gitkeep"));
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/appsettings.Development.json"));
 
-        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"));
-        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli"));
+        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"), data);
+        CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli"), data);
 
         Zip(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"), JoinPaths(ArtifactsDirectory, "BouncyHsm.zip"));
 
@@ -265,7 +270,7 @@ Task(BuildTarget.BuildAll)
         Zip(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli"), JoinPaths(ArtifactsDirectory, "BouncyHsm.Cli.zip"));
     });
 
-void CreateZip(string dllFile, string platform, string version, string destination)
+void CreateZip(string dllFile, string platform, string destination, BuildData buildData)
 {
     Debug("Creating ZIP file from dll {0}", dllFile);
 
@@ -278,9 +283,9 @@ void CreateZip(string dllFile, string platform, string version, string destinati
     byte[] content = Encoding.UTF8.GetBytes($"""
         Bouncy Hsm PKCS11 library
         
-          Version: {version}
+          Version: {buildData.ThisVersion}
           For platform: {platform}
-          Git commit: {gitCommit}
+          Git commit: {buildData.GitCommit}
           
           Project site: https://github.com/harrison314/BouncyHsm
           License: BSD 3 Clausule
@@ -290,13 +295,13 @@ void CreateZip(string dllFile, string platform, string version, string destinati
     readmeStream.Flush();
 }
 
-void CopyLicenses(string outFolder)
+void CopyLicenses(string outFolder, BuildData buildData)
 {
     CopyFile("./LICENSE", JoinPaths(outFolder, "License.txt"));
     System.IO.File.WriteAllText(JoinPaths(outFolder, "version.txt"),
         $"""
-        Version: {ThisVersion}
-        GIT: {gitBranch} - {gitCommit}
+        Version: {buildData.ThisVersion}
+        GIT: {buildData.GitBranch} - {buildData.GitCommit}
 
         """);
 }
