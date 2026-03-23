@@ -14,3 +14,4 @@ Please note we have a code of conduct. Please follow it in all your interactions
 1. Make sure you are not violating some other 3rd party licenses with your contribution. For example, don't copy source code from other open source or commercial software without adding the necessary LICENSE copyright notice!
 1. If the found error or changes refer to the PKCS#11 standard, please complete the link section of the standard.
 1. Rules are subject to change. Please add your complaints and suggestions to the discussion page.
+1. If you generated the code using AI, please state this in the merge request and mention what model or agent you used.
