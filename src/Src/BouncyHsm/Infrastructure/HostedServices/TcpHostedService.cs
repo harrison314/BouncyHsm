@@ -111,25 +111,4 @@ internal sealed class TcpHostedService : BackgroundService
     {
         return timeout.HasValue ? (int)timeout.Value.TotalMilliseconds : 0;
     }
-
-    /// <summary>
-    /// Read exactly <paramref name="buffer"/>.Length bytes from the socket.
-    /// A single ReceiveAsync call may return fewer bytes than requested
-    /// because TCP is a stream protocol and the kernel may deliver data
-    /// in multiple chunks, especially for large payloads.
-    /// </summary>
-    private static async Task ReceiveExactAsync(Socket socket, Memory<byte> buffer, CancellationToken ct)
-    {
-        int totalRead = 0;
-        while (totalRead < buffer.Length)
-        {
-            int bytesRead = await socket.ReceiveAsync(buffer.Slice(totalRead), SocketFlags.None, ct);
-            if (bytesRead == 0)
-            {
-                throw new SocketException((int)SocketError.ConnectionReset);
-            }
-
-            totalRead += bytesRead;
-        }
-    }
 }
