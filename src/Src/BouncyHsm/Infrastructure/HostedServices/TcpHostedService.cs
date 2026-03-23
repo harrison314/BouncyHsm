@@ -67,15 +67,15 @@ internal sealed class TcpHostedService : BackgroundService
         try
         {
             using ExactOwnedMemory headBuffer = ExactOwnedMemory.Rent(8);
-            await clientConnection.ReceiveAsync(headBuffer.Memory, SocketFlags.None, stoppingToken);
+            await ReceiveExactAsync(clientConnection, headBuffer.Memory, stoppingToken);
 
             (int headerSize, int bodySize) = HeadEncoder.Decode(headBuffer.Memory.Span.Slice(0, 8));
 
             using ExactOwnedMemory requestHeader = ExactOwnedMemory.Rent(headerSize);
             using ExactOwnedMemory requestBody = ExactOwnedMemory.Rent(bodySize);
 
-            await clientConnection.ReceiveAsync(requestHeader.Memory, SocketFlags.None, stoppingToken);
-            await clientConnection.ReceiveAsync(requestBody.Memory, SocketFlags.None, stoppingToken);
+            await ReceiveExactAsync(clientConnection, requestHeader.Memory, stoppingToken);
+            await ReceiveExactAsync(clientConnection, requestBody.Memory, stoppingToken);
 
             using (IServiceScope scope = this.serviceProvider.CreateScope())
             {
@@ -109,6 +109,27 @@ internal sealed class TcpHostedService : BackgroundService
 
     private int TimeSpanToTimeout(TimeSpan? timeout)
     {
-        return timeout.HasValue ? timeout.Value.Milliseconds : 0;
+        return timeout.HasValue ? (int)timeout.Value.TotalMilliseconds : 0;
+    }
+
+    /// <summary>
+    /// Read exactly <paramref name="buffer"/>.Length bytes from the socket.
+    /// A single ReceiveAsync call may return fewer bytes than requested
+    /// because TCP is a stream protocol and the kernel may deliver data
+    /// in multiple chunks, especially for large payloads.
+    /// </summary>
+    private static async Task ReceiveExactAsync(Socket socket, Memory<byte> buffer, CancellationToken ct)
+    {
+        int totalRead = 0;
+        while (totalRead < buffer.Length)
+        {
+            int bytesRead = await socket.ReceiveAsync(buffer.Slice(totalRead), SocketFlags.None, ct);
+            if (bytesRead == 0)
+            {
+                throw new SocketException((int)SocketError.ConnectionReset);
+            }
+
+            totalRead += bytesRead;
+        }
     }
 }

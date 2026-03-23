@@ -210,10 +210,21 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
         ctx->isInitialized = 1;
     }
 
-    if (send(ctx->s, (const char*)request_data, (int)request_data_size, 0) < 0)
+    // send() may return a short count on large payloads; loop until all sent
     {
-        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error.", __FUNCTION__, __LINE__);
-        return NMRPC_FATAL_ERROR;
+        const char* ptr = (const char*)request_data;
+        size_t remaining = request_data_size;
+        while (remaining > 0)
+        {
+            int sent = send(ctx->s, ptr, (int)remaining, 0);
+            if (sent < 0)
+            {
+                log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error.", __FUNCTION__, __LINE__);
+                return NMRPC_FATAL_ERROR;
+            }
+            ptr += sent;
+            remaining -= (size_t)sent;
+        }
     }
 
     return NMRPC_OK;
@@ -396,10 +407,21 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
         ctx->isInitialized = 1;
     }
 
-    if (send(ctx->s, (const char*)request_data, (int)request_data_size, 0) < 0)
+    // send() may return a short count on large payloads; loop until all sent
     {
-        log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
-        return NMRPC_FATAL_ERROR;
+        const char* ptr = (const char*)request_data;
+        size_t remaining = request_data_size;
+        while (remaining > 0)
+        {
+            ssize_t sent = send(ctx->s, ptr, remaining, 0);
+            if (sent < 0)
+            {
+                log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
+                return NMRPC_FATAL_ERROR;
+            }
+            ptr += sent;
+            remaining -= (size_t)sent;
+        }
     }
 
     return NMRPC_OK;
