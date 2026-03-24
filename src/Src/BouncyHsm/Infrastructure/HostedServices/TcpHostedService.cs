@@ -67,15 +67,15 @@ internal sealed class TcpHostedService : BackgroundService
         try
         {
             using ExactOwnedMemory headBuffer = ExactOwnedMemory.Rent(8);
-            await ReceiveExactAsync(clientConnection, headBuffer.Memory, stoppingToken);
+            await this.ReceiveExact(clientConnection, headBuffer.Memory, stoppingToken);
 
             (int headerSize, int bodySize) = HeadEncoder.Decode(headBuffer.Memory.Span.Slice(0, 8));
 
             using ExactOwnedMemory requestHeader = ExactOwnedMemory.Rent(headerSize);
             using ExactOwnedMemory requestBody = ExactOwnedMemory.Rent(bodySize);
 
-            await ReceiveExactAsync(clientConnection, requestHeader.Memory, stoppingToken);
-            await ReceiveExactAsync(clientConnection, requestBody.Memory, stoppingToken);
+            await this.ReceiveExact(clientConnection, requestHeader.Memory, stoppingToken);
+            await this.ReceiveExact(clientConnection, requestBody.Memory, stoppingToken);
 
             using (IServiceScope scope = this.serviceProvider.CreateScope())
             {
@@ -112,21 +112,16 @@ internal sealed class TcpHostedService : BackgroundService
         return timeout.HasValue ? (int)timeout.Value.TotalMilliseconds : 0;
     }
 
-    /// <summary>
-    /// Read exactly <paramref name="buffer"/>.Length bytes from the socket.
-    /// A single ReceiveAsync call may return fewer bytes than requested
-    /// because TCP is a stream protocol and the kernel may deliver data
-    /// in multiple chunks, especially for large payloads.
-    /// </summary>
-    private static async Task ReceiveExactAsync(Socket socket, Memory<byte> buffer, CancellationToken ct)
+    private async Task ReceiveExact(Socket socket, Memory<byte> buffer, CancellationToken cancellationToken)
     {
         int totalRead = 0;
         while (totalRead < buffer.Length)
         {
-            int bytesRead = await socket.ReceiveAsync(buffer.Slice(totalRead), SocketFlags.None, ct);
+            int bytesRead = await socket.ReceiveAsync(buffer.Slice(totalRead), SocketFlags.None, cancellationToken);
             if (bytesRead == 0)
             {
-                throw new SocketException((int)SocketError.ConnectionReset);
+                this.logger.LogError("Read socket error with error in ReceiveExact.");
+                throw new SocketException((int)SocketError.ConnectionReset, "Read socket erro in method ReceiveExact.");
             }
 
             totalRead += bytesRead;
