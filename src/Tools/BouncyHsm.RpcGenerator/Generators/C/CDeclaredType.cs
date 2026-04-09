@@ -45,6 +45,26 @@ internal class CDeclaredType : DeclaredType
         return (this.IsNullable) ? $"{cBaseType}*" : cBaseType;
     }
 
+    public override bool Equals(object? obj)
+    {
+        if (obj is CDeclaredType other)
+        {
+            return this.CType == other.CType;
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return this.CType.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return $"C type: {this.CType}";
+    }
+
     private string TranslateBaseType()
     {
         return this.BaseDefinition switch

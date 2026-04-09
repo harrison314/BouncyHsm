@@ -385,7 +385,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             if (type.IsArray)
             {
 
-                body.AppendLine($"  result = {type.CType}_Serialize(ctx, &value->{name});");
+                body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Serialize(ctx, &value->{name});");
                 body.AppendLine("   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
                 body.AppendLine();
 
@@ -475,7 +475,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
     protected override void DeserializeGenerator(StringBuilder body, string mainTypeName, MessageDefinition value)
     {
-        body.AppendLine($"int {mainTypeName}_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, {mainTypeName}* value)");
+        body.AppendLine($"int {mainTypeName.TrimEnd('*')}_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, {mainTypeName.TrimEnd('*')}* value)");
         body.AppendLine("{");
         body.AppendLine("  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;");
         body.AppendLine("  int result = 0;");
@@ -628,7 +628,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
     protected override void ArraySerializeGenerator(StringBuilder body, CDeclaredType type)
     {
-        body.AppendLine($"int {type.CType}_Serialize(cmp_ctx_t* ctx, {type.CType}* value)");
+        body.AppendLine($"int {type.CType.TrimEnd('*')}_Serialize(cmp_ctx_t* ctx, {type.CType.TrimEnd('*')}* value)");
         body.AppendLine("{");
         body.AppendLine("  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;");
 
@@ -711,7 +711,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
     protected override void ArrayDeserializeGenerator(StringBuilder body, CDeclaredType type)
     {
-        body.AppendLine($"int {type.CType}_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, {type.CType}* value)");
+        body.AppendLine($"int {type.CType.TrimEnd('*')}_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, {type.CType.TrimEnd('*')}* value)");
         body.AppendLine("{");
         body.AppendLine("  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;");
 

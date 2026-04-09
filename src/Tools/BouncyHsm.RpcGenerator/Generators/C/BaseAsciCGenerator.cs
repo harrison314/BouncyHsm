@@ -34,7 +34,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
     protected virtual void ReleaseGenerator(StringBuilder sb, string name, MessageDefinition md)
     {
 
-        sb.AppendFormat("int {0}_Release({0}* value)", name).AppendLine();
+        sb.AppendFormat("int {0}_Release({0}* value)", name.TrimEnd('*')).AppendLine();
         sb.AppendLine("{");
         sb.AppendLine("     if (value == NULL) return NMRPC_BAD_ARGUMENT;");
         sb.AppendLine();
@@ -187,7 +187,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
 
     protected virtual void ArrayReleaseGenerator(StringBuilder sb, CDeclaredType type)
     {
-        sb.AppendFormat("int {0}_Release({0}* value)", type.CType).AppendLine();
+        sb.AppendFormat("int {0}_Release({0}* value)", type.CType.TrimEnd('*')).AppendLine();
         sb.AppendLine("{");
         sb.AppendLine("     if (value == NULL) return NMRPC_BAD_ARGUMENT;");
         sb.AppendLine();
@@ -430,7 +430,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
     protected HashSet<CDeclaredType> GetArrayDefinitions(RpcDefinition definition)
     {
         IEnumerable<CDeclaredType> arrays = definition.Messages.SelectMany(t => t.Value.Fields)
-             .Select(t => new CDeclaredType(t.Value))
+             .Select(t => new CDeclaredType(t.Value.EndsWith("[]?") ? t.Value.Trim('?') : t.Value))
              .Where(t => t.IsArray);
 
         return new HashSet<CDeclaredType>(arrays);
