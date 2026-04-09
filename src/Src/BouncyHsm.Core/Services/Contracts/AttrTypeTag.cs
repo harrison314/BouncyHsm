@@ -13,5 +13,6 @@ public enum AttrTypeTag
     CkUint,
     CkBool,
     DateTime,
+    UintArray,
     CkAttributeArray
 }

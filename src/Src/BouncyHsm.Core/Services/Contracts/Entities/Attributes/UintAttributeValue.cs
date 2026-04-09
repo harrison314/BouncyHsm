@@ -33,7 +33,7 @@ internal class UintAttributeValue : IAttributeValue
 
     public uint AsUint()
     {
-        return value;
+        return this.value;
     }
 
     public CkDate AsDate()
@@ -41,9 +41,14 @@ internal class UintAttributeValue : IAttributeValue
         throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
     }
 
+    public uint[] AsUintArray()
+    {
+        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
+    }
+
     public override string ToString()
     {
-        return $"{GetType().Name}: {value}";
+        return $"{this.GetType().Name}: {this.value}";
     }
 
     public bool Equals(IAttributeValue? other)
@@ -53,12 +58,12 @@ internal class UintAttributeValue : IAttributeValue
             return false;
         }
 
-        return value == other.AsUint();
+        return this.value == other.AsUint();
     }
 
     public bool Equals(uint other)
     {
-        return value == other;
+        return this.value == other;
     }
 
     public uint GuessSize()

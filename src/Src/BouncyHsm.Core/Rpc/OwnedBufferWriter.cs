@@ -42,14 +42,14 @@ internal sealed class OwnedBufferWriter : IBufferWriter<byte>, IMemoryOwner<byte
 
     public Memory<byte> GetMemory(int sizeHint = 0)
     {
-        CheckBufferAndEnsureCapacity(sizeHint);
+        this.CheckBufferAndEnsureCapacity(sizeHint);
 
         return this.array.AsMemory(this.index);
     }
 
     public Span<byte> GetSpan(int sizeHint = 0)
     {
-        CheckBufferAndEnsureCapacity(sizeHint);
+        this.CheckBufferAndEnsureCapacity(sizeHint);
 
         return this.array.AsSpan(this.index);
     }

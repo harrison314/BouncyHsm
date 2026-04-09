@@ -21,7 +21,7 @@ internal class BoolAttributeValue : IAttributeValue
 
     public bool AsBool()
     {
-        return value;
+        return this.value;
     }
 
     public byte[] AsByteArray()
@@ -44,9 +44,14 @@ internal class BoolAttributeValue : IAttributeValue
         throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
     }
 
+    public uint[] AsUintArray()
+    {
+        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
+    }
+
     public override string ToString()
     {
-        return $"{GetType().Name}: {value}";
+        return $"{this.GetType().Name}: {this.value}";
     }
 
     public bool Equals(IAttributeValue? other)
@@ -56,7 +61,7 @@ internal class BoolAttributeValue : IAttributeValue
             return false;
         }
 
-        return value == other.AsBool();
+        return this.value == other.AsBool();
     }
 
     public bool Equals(uint other)

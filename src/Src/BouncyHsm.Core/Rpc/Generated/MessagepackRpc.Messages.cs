@@ -1510,6 +1510,13 @@ public partial class AttrValueFromNative
         set;
     }
 
+    [Key(6)]
+    public uint[]? ValueUintArray
+    {
+        get;
+        set;
+    }
+
 }
 
 [MessagePackObject]

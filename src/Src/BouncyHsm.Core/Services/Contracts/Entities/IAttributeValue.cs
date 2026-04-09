@@ -20,5 +20,7 @@ public interface IAttributeValue : IEquatable<IAttributeValue>, IEquatable<uint>
 
     CkDate AsDate();
 
+    uint[] AsUintArray();
+
     uint GuessSize();
 }

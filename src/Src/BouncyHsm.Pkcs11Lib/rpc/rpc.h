@@ -195,6 +195,7 @@ typedef struct _Binary Binary;
 
 typedef struct _ArrayOfString ArrayOfString;
 typedef struct _ArrayOfuint32_t ArrayOfuint32_t;
+typedef struct _ArrayOfuint32_t ArrayOfuint32_t;
 typedef struct _ArrayOfAttrValueFromNative ArrayOfAttrValueFromNative;
 typedef struct _ArrayOfGetAttributeInputValues ArrayOfGetAttributeInputValues;
 typedef struct _ArrayOfGetAttributeOutValue ArrayOfGetAttributeOutValue;
@@ -217,6 +218,15 @@ typedef struct _ArrayOfString
 int ArrayOfString_Serialize(cmp_ctx_t* ctx, ArrayOfString* value);
 int ArrayOfString_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfString* value);
 int ArrayOfString_Release(ArrayOfString* value);
+
+typedef struct _ArrayOfuint32_t 
+{
+    uint32_t* array;
+    int length;
+} ArrayOfuint32_t;
+int ArrayOfuint32_t_Serialize(cmp_ctx_t* ctx, ArrayOfuint32_t* value);
+int ArrayOfuint32_t_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfuint32_t* value);
+int ArrayOfuint32_t_Release(ArrayOfuint32_t* value);
 
 typedef struct _ArrayOfuint32_t 
 {
@@ -877,6 +887,7 @@ typedef struct _AttrValueFromNative
     bool ValueBool;
     uint32_t ValueCkUlong;
     const char* ValueCkDate;
+    ArrayOfuint32_t* ValueUintArray;
 } AttrValueFromNative;
 
 int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value);

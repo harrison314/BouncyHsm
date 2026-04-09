@@ -471,6 +471,65 @@ int ArrayOfuint32_t_Release(ArrayOfuint32_t* value)
   value->array = NULL;
     return NMRPC_OK;
 }
+int ArrayOfuint32_t*_Serialize(cmp_ctx_t* ctx, ArrayOfuint32_t** value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  int i = 0;
+
+    result = cmp_write_array(ctx, value->length);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  for (i = 0; i < value->length; i++)
+  {
+  result = cmp_write_uinteger(ctx, value->array[i]);
+   if (!result) return NMRPC_FATAL_ERROR;
+
+  }
+
+    return NMRPC_OK;
+}
+
+int ArrayOfuint32_t*_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfuint32_t** value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  uint32_t array_size;
+  uint32_t i;
+
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result) return NMRPC_DESERIALIZE_ERR;
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result) return NMRPC_DESERIALIZE_ERR;
+
+  value->length = (int)array_size;
+  value->array = (uint32_t*) malloc(sizeof(uint32_t) * array_size);
+  if (value->array == NULL) return NMRPC_FATAL_ERROR;
+  for (i = 0; i < array_size; i++)
+  {
+   result = cmp_read_uint(ctx, &value->array[i]);
+   if (!result) return NMRPC_FATAL_ERROR;
+  }
+
+    return NMRPC_OK;
+}
+
+int ArrayOfuint32_t*_Release(ArrayOfuint32_t** value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  free((void*) value->array);
+
+  value->length = 0;
+  value->array = NULL;
+    return NMRPC_OK;
+}
 int ArrayOfAttrValueFromNative_Serialize(cmp_ctx_t* ctx, ArrayOfAttrValueFromNative* value)
 {
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
@@ -4113,7 +4172,7 @@ int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value)
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 6);
+    result = cmp_write_array(ctx, 7);
    if (!result) return NMRPC_FATAL_ERROR;
 
   result = cmp_write_uinteger(ctx, value->AttributeType);
@@ -4133,6 +4192,9 @@ int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value)
 
   result = (value->ValueCkDate != NULL)? cmp_write_str(ctx, value->ValueCkDate, (uint32_t)strlen(value->ValueCkDate)) : cmp_write_nil(ctx);
    if (!result) return NMRPC_FATAL_ERROR;
+
+  result = ArrayOfuint32_t*_Serialize(ctx, &value->ValueUintArray);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
 
     return NMRPC_OK;
 }
@@ -4154,7 +4216,7 @@ int AttrValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 6) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 7) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = cmp_read_uint(ctx, &value->AttributeType);
    if (!result) return NMRPC_FATAL_ERROR;
@@ -4174,6 +4236,9 @@ int AttrValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   result = cmph_read_nullable_str(ctx, &value->ValueCkDate);
    if (result != NMRPC_OK) return result;
 
+  result = ArrayOfuint32_t_Deserialize(ctx, NULL, &value->ValueUintArray);
+   if (result != NMRPC_OK) return result;
+
     return NMRPC_OK;
 }
 
@@ -4187,6 +4252,10 @@ int AttrValueFromNative_Release(AttrValueFromNative* value)
      free((void*) value->ValueCkDate);
      value->ValueCkDate = NULL;
  }
+  if(ArrayOfuint32_t_Release(&value->ValueUintArray) != NMRPC_OK)
+   {
+       return NMRPC_FATAL_ERROR;
+   }
     return NMRPC_OK;
 }
 int CreateObjectRequest_Serialize(cmp_ctx_t* ctx, CreateObjectRequest* value)

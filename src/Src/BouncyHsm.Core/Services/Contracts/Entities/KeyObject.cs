@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
+
 public abstract class KeyObject : StorageObject
 {
     public virtual CKK CkaKeyType
@@ -45,12 +46,11 @@ public abstract class KeyObject : StorageObject
         set => this.values[CKA.CKA_KEY_GEN_MECHANISM] = AttributeValue.Create((uint)value);
     }
 
-    //TODO: Implement uint array attribute
-    //public CKM[] AllovedMechanism
-    //{
-    //    get => (CKM)this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUint();
-    //    set => this.values[CKA.CKA_ALLOWED_MECHANISMS] = AttributeValue.Create((uint)value);
-    //}
+    public CKM[] AllovedMechanism
+    {
+        get => this.ConvertArray(this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUintArray());
+        set => this.values[CKA.CKA_ALLOWED_MECHANISMS] = AttributeValue.Create(this.ConvertArray(value));
+    }
 
     public KeyObject(CKK keyType, CKM genMechanism)
     {
@@ -61,6 +61,7 @@ public abstract class KeyObject : StorageObject
         this.CkaKeyGenMechanism = genMechanism;
         this.CkaStartDate = new CkDate();
         this.CkaEndDate = new CkDate();
+        this.AllovedMechanism = this.GetAllovedMechanism();
     }
 
     internal KeyObject(StorageObjectMemento memento)
@@ -76,4 +77,36 @@ public abstract class KeyObject : StorageObject
     }
 
     protected abstract CKM[] GetAllovedMechanism();
+
+    private CKM[] ConvertArray(uint[] array)
+    {
+        if (array.Length == 0)
+        {
+            return Array.Empty<CKM>();
+        }
+
+        CKM[] destination = new CKM[array.Length];
+        for (uint i = 0; i < array.Length; i++)
+        {
+            destination[i] = (CKM)array[i];
+        }
+
+        return destination;
+    }
+
+    private uint[] ConvertArray(CKM[] array)
+    {
+        if (array.Length == 0)
+        {
+            return Array.Empty<uint>();
+        }
+
+        uint[] destination = new uint[array.Length];
+        for (uint i = 0; i < array.Length; i++)
+        {
+            destination[i] = (uint)array[i];
+        }
+
+        return destination;
+    }
 }
