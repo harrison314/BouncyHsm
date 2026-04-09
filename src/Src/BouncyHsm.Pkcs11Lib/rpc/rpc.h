@@ -1057,6 +1057,7 @@ typedef struct _GetAttributeOutValue
     bool ValueBool;
     Binary ValueBytes;
     const char* ValueCkDate;
+    ArrayOfuint32_t* ValueUintArray;
 } GetAttributeOutValue;
 
 int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value);

@@ -770,6 +770,7 @@ Messages:
       ValueBool: bool
       ValueBytes: binary
       ValueCkDate: string?
+      ValueUintArray: uint32[]?
 
 
   GetAttributeOutValues:

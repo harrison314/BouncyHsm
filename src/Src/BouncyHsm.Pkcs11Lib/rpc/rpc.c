@@ -5112,7 +5112,7 @@ int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value)
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 6);
+    result = cmp_write_array(ctx, 7);
    if (!result) return NMRPC_FATAL_ERROR;
 
   result = CkSpecialUint_Serialize(ctx, &value->ValueLen);
@@ -5132,6 +5132,9 @@ int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value)
 
   result = (value->ValueCkDate != NULL)? cmp_write_str(ctx, value->ValueCkDate, (uint32_t)strlen(value->ValueCkDate)) : cmp_write_nil(ctx);
    if (!result) return NMRPC_FATAL_ERROR;
+
+  result = ArrayOfuint32_t*_Serialize(ctx, &value->ValueUintArray);
+   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
 
     return NMRPC_OK;
 }
@@ -5153,7 +5156,7 @@ int GetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 6) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 7) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = CkSpecialUint_Deserialize(ctx, NULL, &value->ValueLen);
    if (result != NMRPC_OK) return result;
@@ -5173,6 +5176,9 @@ int GetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   result = cmph_read_nullable_str(ctx, &value->ValueCkDate);
    if (result != NMRPC_OK) return result;
 
+  result = ArrayOfuint32_t_Deserialize(ctx, NULL, &value->ValueUintArray);
+   if (result != NMRPC_OK) return result;
+
     return NMRPC_OK;
 }
 
@@ -5186,6 +5192,10 @@ int GetAttributeOutValue_Release(GetAttributeOutValue* value)
      free((void*) value->ValueCkDate);
      value->ValueCkDate = NULL;
  }
+  if(ArrayOfuint32_t_Release(&value->ValueUintArray) != NMRPC_OK)
+   {
+       return NMRPC_FATAL_ERROR;
+   }
     return NMRPC_OK;
 }
 int GetAttributeOutValues_Serialize(cmp_ctx_t* ctx, GetAttributeOutValues* value)

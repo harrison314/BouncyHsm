@@ -1900,6 +1900,13 @@ public partial class GetAttributeOutValue
         set;
     }
 
+    [Key(6)]
+    public uint[]? ValueUintArray
+    {
+        get;
+        set;
+    }
+
 }
 
 [MessagePackObject]
