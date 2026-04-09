@@ -1522,12 +1522,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                     else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_UintArray)
                     {
                         CK_ULONG* destinationUintArray = (CK_ULONG*)pTemplate[i].pValue;
-                        size_t i;
-                        size_t arrayLength = outAttrPtr[i].ValueUintArray->length;
+                        size_t j;
+                        size_t arrayLength = (size_t)outAttrPtr[i].ValueUintArray->length;
                         uint32_t* uintArray = outAttrPtr[i].ValueUintArray->array;
-                        for (i = 0; i < arrayLength; i++)
+                        for (j = 0; j < arrayLength; j++)
                         {
-                            destinationUintArray[i] = (CK_ULONG)uintArray[i];
+                            destinationUintArray[j] = (CK_ULONG)uintArray[j];
                         }
                     }
                     else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Void)
