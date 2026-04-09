@@ -113,4 +113,12 @@ public sealed class Salsa20KeyObject : SecretKeyObject
 
         base.SetValue(attributeType, value, isUpdating);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+           CKM.CKM_SALSA20,
+        };
+    }
 }

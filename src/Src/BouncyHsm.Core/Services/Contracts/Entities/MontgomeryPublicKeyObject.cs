@@ -104,4 +104,13 @@ public class MontgomeryPublicKeyObject : PublicKeyObject
     {
         return visitor.Visit(this);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+            CKM.CKM_ECDH1_DERIVE,
+            CKM.CKM_ECDH1_COFACTOR_DERIVE,
+        };
+    }
 }

@@ -113,4 +113,12 @@ public sealed class Poly1305KeyObject : SecretKeyObject
 
         base.SetValue(attributeType, value, isUpdating);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+            CKM.CKM_POLY1305,
+        };
+    }
 }

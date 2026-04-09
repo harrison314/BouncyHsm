@@ -109,4 +109,13 @@ public class MontgomeryPrivateKeyObject : PrivateKeyObject
             throw new ArgumentException("privateKey is not montgomery key parameters", nameof(privateKey));
         }
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+            CKM.CKM_ECDH1_DERIVE,
+            CKM.CKM_ECDH1_COFACTOR_DERIVE,
+        };
+    }
 }

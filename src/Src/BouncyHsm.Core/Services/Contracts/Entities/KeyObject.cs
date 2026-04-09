@@ -74,4 +74,6 @@ public abstract class KeyObject : StorageObject
         base.Validate();
         CryptoObjectValueChecker.CheckStartEndDate(this.CkaStartDate, this.CkaEndDate);
     }
+
+    protected abstract CKM[] GetAllovedMechanism();
 }

@@ -92,4 +92,23 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
     {
         return visitor.Visit(this);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+            CKM.CKM_ECDSA,
+            CKM.CKM_ECDSA_SHA1,
+            CKM.CKM_ECDSA_SHA224,
+            CKM.CKM_ECDSA_SHA256,
+            CKM.CKM_ECDSA_SHA384,
+            CKM.CKM_ECDSA_SHA512,
+            CKM.CKM_ECDSA_SHA3_224,
+            CKM.CKM_ECDSA_SHA3_256,
+            CKM.CKM_ECDSA_SHA3_384,
+            CKM.CKM_ECDSA_SHA3_512,
+            CKM.CKM_ECDH1_DERIVE,
+            CKM.CKM_ECDH1_COFACTOR_DERIVE,
+        };
+    }
 }

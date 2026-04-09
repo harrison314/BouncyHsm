@@ -95,4 +95,38 @@ public sealed class RsaPublicKeyObject : PublicKeyObject
             this.CkaModulusBits = (uint)(this.CkaModulus.Length * 8);
         }
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+            CKM.CKM_RSA_PKCS,
+            CKM.CKM_SHA1_RSA_PKCS,
+            CKM.CKM_SHA224_RSA_PKCS,
+            CKM.CKM_SHA256_RSA_PKCS,
+            CKM.CKM_SHA384_RSA_PKCS,
+            CKM.CKM_SHA512_RSA_PKCS,
+            CKM.CKM_MD2_RSA_PKCS,
+            CKM.CKM_MD5_RSA_PKCS,
+            CKM.CKM_RIPEMD128_RSA_PKCS,
+            CKM.CKM_RIPEMD160_RSA_PKCS,
+            CKM.CKM_SHA3_224_RSA_PKCS,
+            CKM.CKM_SHA3_256_RSA_PKCS,
+            CKM.CKM_SHA3_384_RSA_PKCS,
+            CKM.CKM_SHA3_512_RSA_PKCS,
+            CKM.CKM_RSA_PKCS_OAEP,
+            CKM.CKM_SHA1_RSA_X9_31,
+            CKM.CKM_RSA_PKCS_PSS,
+            CKM.CKM_SHA1_RSA_PKCS_PSS,
+            CKM.CKM_SHA224_RSA_PKCS_PSS,
+            CKM.CKM_SHA256_RSA_PKCS_PSS,
+            CKM.CKM_SHA384_RSA_PKCS_PSS,
+            CKM.CKM_SHA512_RSA_PKCS_PSS,
+            CKM.CKM_SHA3_224_RSA_PKCS_PSS,
+            CKM.CKM_SHA3_256_RSA_PKCS_PSS,
+            CKM.CKM_SHA3_384_RSA_PKCS_PSS,
+            CKM.CKM_SHA3_512_RSA_PKCS_PSS,
+            CKM.CKM_RSA_9796,
+        };
+    }
 }

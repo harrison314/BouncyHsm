@@ -109,4 +109,12 @@ public class EdwardsPublicKeyObject : PublicKeyObject
     {
         return visitor.Visit(this);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+           CKM.CKM_EDDSA,
+        };
+    }
 }

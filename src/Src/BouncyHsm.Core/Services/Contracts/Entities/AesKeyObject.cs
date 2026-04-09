@@ -141,4 +141,28 @@ public sealed class AesKeyObject : SecretKeyObject
         cipher.ProcessBlock(vector, outVector);
         return outVector.Slice(0, 3).ToArray();
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return new CKM[]
+        {
+            CKM.CKM_AES_CMAC,
+            CKM.CKM_AES_CMAC_GENERAL,
+            CKM.CKM_AES_ECB_ENCRYPT_DATA,
+            CKM.CKM_AES_CBC_ENCRYPT_DATA,
+            CKM.CKM_AES_ECB,
+            CKM.CKM_AES_CBC,
+            CKM.CKM_AES_CBC_PAD,
+            CKM.CKM_AES_CFB1,
+            CKM.CKM_AES_CFB8,
+            CKM.CKM_AES_CFB64,
+            CKM.CKM_AES_CFB128,
+            CKM.CKM_AES_OFB,
+            CKM.CKM_AES_CTR,
+            CKM.CKM_AES_CTS,
+            CKM.CKM_AES_GCM,
+            CKM.CKM_AES_CCM,
+            CKM.CKM_AES_KEY_WRAP_PAD,
+        };
+    }
 }
