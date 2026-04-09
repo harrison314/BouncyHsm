@@ -77,7 +77,7 @@ internal class NativeAttributeValue : IAttributeValue
     {
         if (this.TypeTag != tag)
         {
-            throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint, fnName);
+            throw new InvalidATtributeTypeCastException(tag, fnName);
         }
     }
 
