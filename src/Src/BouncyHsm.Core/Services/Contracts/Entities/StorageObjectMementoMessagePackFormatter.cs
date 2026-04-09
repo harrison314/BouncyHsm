@@ -57,14 +57,7 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                     break;
 
                 case AttrTypeTag.UintArray:
-                    {
-                        uint[] uintArray = attrVal.AsUintArray();
-                        writer.WriteArrayHeader(uintArray.Length);
-                        for (int i = 0; i < uintArray.Length; i++)
-                        {
-                            writer.Write(uintArray[i]);
-                        }
-                    }
+                    this.WriteUintArray(ref writer, attrVal);
                     break;
 
                 default:
@@ -128,6 +121,16 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         }
 
         return idBytes.Value.ToArray();
+    }
+
+    private void WriteUintArray(ref MessagePackWriter writer, IAttributeValue attrVal)
+    {
+        uint[] uintArray = attrVal.AsUintArray();
+        writer.WriteArrayHeader(uintArray.Length);
+        for (int i = 0; i < uintArray.Length; i++)
+        {
+            writer.Write(uintArray[i]);
+        }
     }
 
     private uint[] ReaduintArray(ref MessagePackReader reader)
