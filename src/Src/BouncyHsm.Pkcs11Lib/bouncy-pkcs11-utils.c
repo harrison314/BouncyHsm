@@ -88,6 +88,32 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
         ptr[i].ValueBool = false;
         ptr[i].ValueCkUlong = 0;
         ptr[i].ValueCkDate = NULL;
+        ptr[i].ValueUintArray = NULL;
+
+        if (pTemplate[i].type == CKA_ALLOWED_MECHANISMS)
+        {
+            ArrayOfuint32_t* uintArray = (ArrayOfuint32_t*)malloc(sizeof(ArrayOfuint32_t));
+            if (uintArray == NULL)
+            {
+                log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
+                return NULL;
+            }
+
+            uintArray->length = (int)pTemplate[i].ulValueLen / sizeof(CK_ULONG);
+            uintArray->array = (uint32_t*)malloc(uintArray->length * sizeof(uint32_t));
+            if (uintArray->array == NULL)
+            {
+                free((void*)uintArray);
+
+                log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
+                return NULL;
+            }
+
+            ptr[i].ValueUintArray = uintArray;
+            ptr[i].ValueTypeHint |= AttrValueFromNative_TypeHint_UintArray;
+
+            continue;
+        }
 
         if (ptr[i].ValueRawBytes.size == sizeof(CK_BBOOL))
         {
@@ -168,6 +194,18 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
         if (datePtr != NULL)
         {
             free(datePtr);
+        }
+
+        ArrayOfuint32_t* uintArray = ptr[i].ValueUintArray;
+        if (uintArray != NULL)
+        {
+            uint32_t* innerArray = uintArray->array;
+            if (innerArray != NULL)
+            {
+                free((void*)innerArray);
+            }
+
+            free((void*)uintArray);
         }
     }
 
@@ -829,7 +867,7 @@ static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     ckHkdfParams.HashMechanism = (uint32_t)hkdfparams->prfHashMechanism;
     ckHkdfParams.SaltType = (uint32_t)hkdfparams->ulSaltType;
     ckHkdfParams.SaltKey = (uint32_t)hkdfparams->hSaltKey;
-    
+
     if (hkdfparams->pSalt != NULL)
     {
         salt.data = (uint8_t*)hkdfparams->pSalt;
@@ -843,7 +881,7 @@ static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         info.size = (size_t)hkdfparams->ulInfoLen;
         ckHkdfParams.Info = &info;
     }
-   
+
     result = nmrpc_writeAsBinary(&ckHkdfParams, (SerializeFnPtr_t)Ckp_CkHkdfParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
