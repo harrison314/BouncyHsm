@@ -24,12 +24,12 @@ internal class StringAttributeValue : IAttributeValue
 
     public byte[] AsByteArray()
     {
-        return Encoding.UTF8.GetBytes(value);
+        return Encoding.UTF8.GetBytes(this.value);
     }
 
     public string AsString()
     {
-        return value;
+        return this.value;
     }
 
     public uint AsUint()
@@ -44,7 +44,7 @@ internal class StringAttributeValue : IAttributeValue
 
     public override string ToString()
     {
-        return $"{GetType().Name}: {value}";
+        return $"{this.GetType().Name}: {this.value}";
     }
 
     public bool Equals(IAttributeValue? other)
@@ -54,7 +54,7 @@ internal class StringAttributeValue : IAttributeValue
             return false;
         }
 
-        return string.Equals(value, other.AsString(), StringComparison.Ordinal);
+        return string.Equals(this.value, other.AsString(), StringComparison.Ordinal);
     }
 
     public bool Equals(uint other)
@@ -64,6 +64,6 @@ internal class StringAttributeValue : IAttributeValue
 
     public uint GuessSize()
     {
-        return (uint)Encoding.UTF8.GetByteCount(value);
+        return (uint)Encoding.UTF8.GetByteCount(this.value);
     }
 }

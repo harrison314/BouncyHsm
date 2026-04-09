@@ -40,7 +40,7 @@ internal class CkDateAttributeValue : IAttributeValue
 
     public CkDate AsDate()
     {
-        return date;
+        return this.date;
     }
 
     public bool Equals(IAttributeValue? other)
@@ -65,11 +65,11 @@ internal class CkDateAttributeValue : IAttributeValue
 
     public uint GuessSize()
     {
-        return date.HasValue ? 8U : 0U;
+        return this.date.HasValue ? 8U : 0U;
     }
 
     public override string ToString()
     {
-        return $"{GetType().Name}: {date}";
+        return $"{this.GetType().Name}: {this.date}";
     }
 }
