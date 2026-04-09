@@ -67,20 +67,6 @@ public class SlhDsaPrivateKeyObject : PrivateKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-            CKM.CKM_SLH_DSA,
-            CKM.CKM_HASH_SLH_DSA,
-            CKM.CKM_HASH_SLH_DSA_SHA224,
-            CKM.CKM_HASH_SLH_DSA_SHA256,
-            CKM.CKM_HASH_SLH_DSA_SHA384,
-            CKM.CKM_HASH_SLH_DSA_SHA512,
-            CKM.CKM_HASH_SLH_DSA_SHA3_224,
-            CKM.CKM_HASH_SLH_DSA_SHA3_256,
-            CKM.CKM_HASH_SLH_DSA_SHA3_384,
-            CKM.CKM_HASH_SLH_DSA_SHA3_512,
-            CKM.CKM_HASH_SLH_DSA_SHAKE128,
-            CKM.CKM_HASH_SLH_DSA_SHAKE256,
-        };
+        return AllovedMechanismLookup.SlhDsaKeyObject;
     }
 }

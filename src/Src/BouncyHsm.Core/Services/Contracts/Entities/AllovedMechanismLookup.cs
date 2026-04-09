@@ -1,0 +1,235 @@
+﻿using BouncyHsm.Core.Services.Contracts.P11;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace BouncyHsm.Core.Services.Contracts.Entities;
+
+internal static class AllovedMechanismLookup
+{
+    public static readonly CKM[] AesKeyObject = new CKM[]
+    {
+        CKM.CKM_AES_CMAC,
+        CKM.CKM_AES_CMAC_GENERAL,
+        CKM.CKM_AES_ECB_ENCRYPT_DATA,
+        CKM.CKM_AES_CBC_ENCRYPT_DATA,
+        CKM.CKM_AES_ECB,
+        CKM.CKM_AES_CBC,
+        CKM.CKM_AES_CBC_PAD,
+        CKM.CKM_AES_CFB1,
+        CKM.CKM_AES_CFB8,
+        CKM.CKM_AES_CFB64,
+        CKM.CKM_AES_CFB128,
+        CKM.CKM_AES_OFB,
+        CKM.CKM_AES_CTR,
+        CKM.CKM_AES_CTS,
+        CKM.CKM_AES_GCM,
+        CKM.CKM_AES_CCM,
+        CKM.CKM_AES_KEY_WRAP_PAD,
+    };
+
+    public static readonly CKM[] CamelliaKeyObject = new CKM[]
+    {
+        CKM.CKM_CAMELLIA_ECB,
+        CKM.CKM_CAMELLIA_CBC,
+        CKM.CKM_CAMELLIA_CBC_PAD,
+        CKM.CKM_CAMELLIA_ECB_ENCRYPT_DATA,
+        CKM.CKM_CAMELLIA_CBC_ENCRYPT_DATA,
+    };
+
+    public static readonly CKM[] ChaCha20KeyObject = new CKM[]
+    {
+       CKM.CKM_CHACHA20,
+       CKM.CKM_CHACHA20_POLY1305,
+    };
+
+    public static readonly CKM[] EcdsaKeyObject = new CKM[]
+    {
+        CKM.CKM_ECDSA,
+        CKM.CKM_ECDSA_SHA1,
+        CKM.CKM_ECDSA_SHA224,
+        CKM.CKM_ECDSA_SHA256,
+        CKM.CKM_ECDSA_SHA384,
+        CKM.CKM_ECDSA_SHA512,
+        CKM.CKM_ECDSA_SHA3_224,
+        CKM.CKM_ECDSA_SHA3_256,
+        CKM.CKM_ECDSA_SHA3_384,
+        CKM.CKM_ECDSA_SHA3_512,
+        CKM.CKM_ECDH1_DERIVE,
+        CKM.CKM_ECDH1_COFACTOR_DERIVE,
+    };
+
+    public static readonly CKM[] EdwardsKeyObject = new CKM[]
+    {
+       CKM.CKM_EDDSA,
+    };
+
+    public static readonly CKM[] GenericSecretKeyObject = new CKM[]
+    {
+        CKM.CKM_SHA_1_KEY_GEN,
+        CKM.CKM_SHA224_KEY_GEN,
+        CKM.CKM_SHA256_KEY_GEN,
+        CKM.CKM_SHA384_KEY_GEN,
+        CKM.CKM_SHA512_KEY_GEN,
+        CKM.CKM_SHA512_224_KEY_GEN,
+        CKM.CKM_SHA512_256_KEY_GEN,
+        CKM.CKM_SHA512_T_KEY_GEN,
+        CKM.CKM_SHA3_224_KEY_GEN,
+        CKM.CKM_SHA3_256_KEY_GEN,
+        CKM.CKM_SHA3_384_KEY_GEN,
+        CKM.CKM_SHA3_512_KEY_GEN,
+        CKM.CKM_BLAKE2B_160_KEY_GEN,
+        CKM.CKM_BLAKE2B_256_KEY_GEN,
+        CKM.CKM_BLAKE2B_384_KEY_GEN,
+        CKM.CKM_BLAKE2B_512_KEY_GEN,
+        CKM.CKM_MD2_HMAC,
+        CKM.CKM_MD5_HMAC,
+        CKM.CKM_RIPEMD128_HMAC,
+        CKM.CKM_RIPEMD160_HMAC,
+        CKM.CKM_SHA_1_HMAC,
+        CKM.CKM_SHA224_HMAC,
+        CKM.CKM_SHA256_HMAC,
+        CKM.CKM_SHA384_HMAC,
+        CKM.CKM_SHA512_HMAC,
+        CKM.CKM_SHA512_224_HMAC,
+        CKM.CKM_SHA512_256_HMAC,
+        CKM.CKM_GOSTR3411_HMAC,
+        CKM.CKM_SHA3_256_HMAC,
+        CKM.CKM_SHA3_224_HMAC,
+        CKM.CKM_SHA3_384_HMAC,
+        CKM.CKM_SHA3_512_HMAC,
+        CKM.CKM_BLAKE2B_160_HMAC,
+        CKM.CKM_BLAKE2B_256_HMAC,
+        CKM.CKM_BLAKE2B_384_HMAC,
+        CKM.CKM_BLAKE2B_512_HMAC,
+        CKM.CKM_MD2_HMAC_GENERAL,
+        CKM.CKM_MD5_HMAC_GENERAL,
+        CKM.CKM_RIPEMD128_HMAC_GENERAL,
+        CKM.CKM_RIPEMD160_HMAC_GENERAL,
+        CKM.CKM_SHA_1_HMAC_GENERAL,
+        CKM.CKM_SHA224_HMAC_GENERAL,
+        CKM.CKM_SHA256_HMAC_GENERAL,
+        CKM.CKM_SHA384_HMAC_GENERAL,
+        CKM.CKM_SHA512_HMAC_GENERAL,
+        CKM.CKM_SHA512_224_HMAC_GENERAL,
+        CKM.CKM_SHA512_256_HMAC_GENERAL,
+        CKM.CKM_SHA3_256_HMAC_GENERAL,
+        CKM.CKM_SHA3_224_HMAC_GENERAL,
+        CKM.CKM_SHA3_384_HMAC_GENERAL,
+        CKM.CKM_SHA3_512_HMAC_GENERAL,
+        CKM.CKM_BLAKE2B_160_HMAC_GENERAL,
+        CKM.CKM_BLAKE2B_256_HMAC_GENERAL,
+        CKM.CKM_BLAKE2B_384_HMAC_GENERAL,
+        CKM.CKM_BLAKE2B_512_HMAC_GENERAL,
+        CKM.CKM_AES_CMAC_GENERAL,
+        CKM.CKM_MD2_KEY_DERIVATION,
+        CKM.CKM_MD5_KEY_DERIVATION,
+        CKM.CKM_SHA1_KEY_DERIVATION,
+        CKM.CKM_SHA224_KEY_DERIVATION,
+        CKM.CKM_SHA256_KEY_DERIVATION,
+        CKM.CKM_SHA384_KEY_DERIVATION,
+        CKM.CKM_SHA512_KEY_DERIVATION,
+        CKM.CKM_SHA512_224_KEY_DERIVATION,
+        CKM.CKM_SHA512_256_KEY_DERIVATION,
+        CKM.CKM_SHA3_256_KEY_DERIVATION,
+        CKM.CKM_SHA3_224_KEY_DERIVATION,
+        CKM.CKM_SHA3_384_KEY_DERIVATION,
+        CKM.CKM_SHA3_512_KEY_DERIVATION,
+        CKM.CKM_BLAKE2B_160_KEY_DERIVE,
+        CKM.CKM_BLAKE2B_256_KEY_DERIVE,
+        CKM.CKM_BLAKE2B_384_KEY_DERIVE,
+        CKM.CKM_BLAKE2B_512_KEY_DERIVE,
+        CKM.CKM_SHAKE_128_KEY_DERIVATION,
+        CKM.CKM_SHAKE_256_KEY_DERIVATION,
+        CKM.CKM_HKDF_DERIVE,
+        CKM.CKM_CONCATENATE_BASE_AND_DATA,
+        CKM.CKM_CONCATENATE_DATA_AND_BASE,
+        CKM.CKM_XOR_BASE_AND_DATA,
+        CKM.CKM_CONCATENATE_BASE_AND_KEY,
+        CKM.CKM_EXTRACT_KEY_FROM_KEY,
+    };
+
+    public static readonly CKM[] MlDsaKeyObject = new CKM[]
+    {
+         CKM.CKM_ML_DSA,
+         CKM.CKM_HASH_ML_DSA,
+         CKM.CKM_HASH_ML_DSA_SHA224,
+         CKM.CKM_HASH_ML_DSA_SHA256,
+         CKM.CKM_HASH_ML_DSA_SHA384,
+         CKM.CKM_HASH_ML_DSA_SHA512,
+         CKM.CKM_HASH_ML_DSA_SHA3_224,
+         CKM.CKM_HASH_ML_DSA_SHA3_256,
+         CKM.CKM_HASH_ML_DSA_SHA3_384,
+         CKM.CKM_HASH_ML_DSA_SHA3_512,
+         CKM.CKM_HASH_ML_DSA_SHAKE128,
+         CKM.CKM_HASH_ML_DSA_SHAKE256,
+    };
+
+    public static readonly CKM[] MlKemKeyObject = new CKM[]
+    {
+       CKM.CKM_ML_KEM,
+    };
+
+    public static readonly CKM[] MontgomeryKeyObject = new CKM[]
+    {
+        CKM.CKM_ECDH1_DERIVE,
+        CKM.CKM_ECDH1_COFACTOR_DERIVE,
+    };
+
+    public static readonly CKM[] Poly1305KeyObject = new CKM[]
+    {
+        CKM.CKM_POLY1305,
+    };
+
+    public static readonly CKM[] RsaKeyObject = new CKM[]
+    {
+        CKM.CKM_RSA_PKCS,
+        CKM.CKM_SHA1_RSA_PKCS,
+        CKM.CKM_SHA224_RSA_PKCS,
+        CKM.CKM_SHA256_RSA_PKCS,
+        CKM.CKM_SHA384_RSA_PKCS,
+        CKM.CKM_SHA512_RSA_PKCS,
+        CKM.CKM_MD2_RSA_PKCS,
+        CKM.CKM_MD5_RSA_PKCS,
+        CKM.CKM_RIPEMD128_RSA_PKCS,
+        CKM.CKM_RIPEMD160_RSA_PKCS,
+        CKM.CKM_SHA3_224_RSA_PKCS,
+        CKM.CKM_SHA3_256_RSA_PKCS,
+        CKM.CKM_SHA3_384_RSA_PKCS,
+        CKM.CKM_SHA3_512_RSA_PKCS,
+        CKM.CKM_RSA_PKCS_OAEP,
+        CKM.CKM_SHA1_RSA_X9_31,
+        CKM.CKM_RSA_PKCS_PSS,
+        CKM.CKM_SHA1_RSA_PKCS_PSS,
+        CKM.CKM_SHA224_RSA_PKCS_PSS,
+        CKM.CKM_SHA256_RSA_PKCS_PSS,
+        CKM.CKM_SHA384_RSA_PKCS_PSS,
+        CKM.CKM_SHA512_RSA_PKCS_PSS,
+        CKM.CKM_SHA3_224_RSA_PKCS_PSS,
+        CKM.CKM_SHA3_256_RSA_PKCS_PSS,
+        CKM.CKM_SHA3_384_RSA_PKCS_PSS,
+        CKM.CKM_SHA3_512_RSA_PKCS_PSS,
+        CKM.CKM_RSA_9796,
+    };
+
+    public static readonly CKM[] Salsa20KeyObject = new CKM[]
+    {
+         CKM.CKM_SALSA20,
+    };
+
+    public static readonly CKM[] SlhDsaKeyObject = new CKM[]
+    {
+        CKM.CKM_SLH_DSA,
+        CKM.CKM_HASH_SLH_DSA,
+        CKM.CKM_HASH_SLH_DSA_SHA224,
+        CKM.CKM_HASH_SLH_DSA_SHA256,
+        CKM.CKM_HASH_SLH_DSA_SHA384,
+        CKM.CKM_HASH_SLH_DSA_SHA512,
+        CKM.CKM_HASH_SLH_DSA_SHA3_224,
+        CKM.CKM_HASH_SLH_DSA_SHA3_256,
+        CKM.CKM_HASH_SLH_DSA_SHA3_384,
+        CKM.CKM_HASH_SLH_DSA_SHA3_512,
+        CKM.CKM_HASH_SLH_DSA_SHAKE128,
+        CKM.CKM_HASH_SLH_DSA_SHAKE256,
+    };
+}

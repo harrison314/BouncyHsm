@@ -71,20 +71,6 @@ public class MlDsaPublicKeyObject : PublicKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-            CKM.CKM_ML_DSA,
-            CKM.CKM_HASH_ML_DSA,
-            CKM.CKM_HASH_ML_DSA_SHA224,
-            CKM.CKM_HASH_ML_DSA_SHA256,
-            CKM.CKM_HASH_ML_DSA_SHA384,
-            CKM.CKM_HASH_ML_DSA_SHA512,
-            CKM.CKM_HASH_ML_DSA_SHA3_224,
-            CKM.CKM_HASH_ML_DSA_SHA3_256,
-            CKM.CKM_HASH_ML_DSA_SHA3_384,
-            CKM.CKM_HASH_ML_DSA_SHA3_512,
-            CKM.CKM_HASH_ML_DSA_SHAKE128,
-            CKM.CKM_HASH_ML_DSA_SHAKE256,
-        };
+        return AllovedMechanismLookup.MlDsaKeyObject;
     }
 }

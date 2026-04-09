@@ -142,13 +142,6 @@ public sealed class CamelliaKeyObject : SecretKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[] 
-        {
-            CKM.CKM_CAMELLIA_ECB,
-            CKM.CKM_CAMELLIA_CBC,
-            CKM.CKM_CAMELLIA_CBC_PAD,
-            CKM.CKM_CAMELLIA_ECB_ENCRYPT_DATA,
-            CKM.CKM_CAMELLIA_CBC_ENCRYPT_DATA,
-        };
+        return AllovedMechanismLookup.CamelliaKeyObject;
     }
 }

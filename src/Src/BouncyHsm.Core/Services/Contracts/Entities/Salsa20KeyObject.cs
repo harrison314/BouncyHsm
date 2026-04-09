@@ -116,9 +116,6 @@ public sealed class Salsa20KeyObject : SecretKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-           CKM.CKM_SALSA20,
-        };
+        return AllovedMechanismLookup.Salsa20KeyObject;
     }
 }

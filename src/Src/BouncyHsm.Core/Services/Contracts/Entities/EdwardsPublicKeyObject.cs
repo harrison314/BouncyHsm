@@ -112,9 +112,6 @@ public class EdwardsPublicKeyObject : PublicKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-           CKM.CKM_EDDSA,
-        };
+        return AllovedMechanismLookup.EdwardsKeyObject;
     }
 }

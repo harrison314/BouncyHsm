@@ -107,10 +107,6 @@ public class MontgomeryPublicKeyObject : PublicKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-            CKM.CKM_ECDH1_DERIVE,
-            CKM.CKM_ECDH1_COFACTOR_DERIVE,
-        };
+        return AllovedMechanismLookup.MontgomeryKeyObject;
     }
 }

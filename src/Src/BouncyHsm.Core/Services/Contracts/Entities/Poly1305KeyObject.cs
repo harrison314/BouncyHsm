@@ -116,9 +116,6 @@ public sealed class Poly1305KeyObject : SecretKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-            CKM.CKM_POLY1305,
-        };
+        return AllovedMechanismLookup.Poly1305KeyObject;
     }
 }

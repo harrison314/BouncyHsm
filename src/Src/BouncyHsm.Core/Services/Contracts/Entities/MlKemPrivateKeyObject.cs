@@ -68,9 +68,6 @@ public class MlKemPrivateKeyObject : PrivateKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-           CKM.CKM_ML_KEM,
-        };
+        return AllovedMechanismLookup.MlKemKeyObject;
     }
 }

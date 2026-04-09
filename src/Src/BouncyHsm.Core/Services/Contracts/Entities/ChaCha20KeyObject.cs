@@ -116,10 +116,6 @@ public sealed class ChaCha20KeyObject : SecretKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-           CKM.CKM_CHACHA20,
-           CKM.CKM_CHACHA20_POLY1305,
-        };
+        return AllovedMechanismLookup.ChaCha20KeyObject;
     }
 }

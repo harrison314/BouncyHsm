@@ -112,10 +112,6 @@ public class MontgomeryPrivateKeyObject : PrivateKeyObject
 
     protected override CKM[] GetAllovedMechanism()
     {
-        return new CKM[]
-        {
-            CKM.CKM_ECDH1_DERIVE,
-            CKM.CKM_ECDH1_COFACTOR_DERIVE,
-        };
+        return AllovedMechanismLookup.MontgomeryKeyObject;
     }
 }
