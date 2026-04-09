@@ -57,7 +57,7 @@ internal class CkDateAttributeValue : IAttributeValue
 
         if (other.TypeTag == AttrTypeTag.DateTime)
         {
-
+            return this.AsDate().Equals(other.AsDate());
         }
 
         return false;
