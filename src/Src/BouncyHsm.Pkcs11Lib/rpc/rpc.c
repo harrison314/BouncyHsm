@@ -1636,8 +1636,16 @@ int GetSlotInfoEnvelope_Serialize(cmp_ctx_t* ctx, GetSlotInfoEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? SlotInfo_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = SlotInfo_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -1934,8 +1942,16 @@ int GetTokenInfoEnvelope_Serialize(cmp_ctx_t* ctx, GetTokenInfoEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? TokenInfo_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = TokenInfo_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -2122,8 +2138,16 @@ int GetMechanismListEnvelope_Serialize(cmp_ctx_t* ctx, GetMechanismListEnvelope*
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? MechanismList_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = MechanismList_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -2312,8 +2336,16 @@ int GetMechanismInfoEnvelope_Serialize(cmp_ctx_t* ctx, GetMechanismInfoEnvelope*
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? MechanismInfo_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = MechanismInfo_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -2928,8 +2960,16 @@ int GetSessionInfoEnvelope_Serialize(cmp_ctx_t* ctx, GetSessionInfoEnvelope* val
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? SessionInfoData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = SessionInfoData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -3711,8 +3751,16 @@ int DigestEnvelope_Serialize(cmp_ctx_t* ctx, DigestEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? DigestValue_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = DigestValue_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -4049,8 +4097,16 @@ int DigestFinalEnvelope_Serialize(cmp_ctx_t* ctx, DigestFinalEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? DigestValue_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = DigestValue_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -4183,8 +4239,16 @@ int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value)
   result = (value->ValueCkDate != NULL)? cmp_write_str(ctx, value->ValueCkDate, (uint32_t)strlen(value->ValueCkDate)) : cmp_write_nil(ctx);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->ValueUintArray != NULL)? UintArrayData_Serialize(ctx, value->ValueUintArray) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->ValueUintArray != NULL)
+  {
+    result = UintArrayData_Serialize(ctx, value->ValueUintArray);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -4706,8 +4770,16 @@ int FindObjectsEnvelope_Serialize(cmp_ctx_t* ctx, FindObjectsEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? FindObjectsData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = FindObjectsData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -4929,8 +5001,16 @@ int GetObjectSizeEnvelope_Serialize(cmp_ctx_t* ctx, GetObjectSizeEnvelope* value
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? CkSpecialUint_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = CkSpecialUint_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -5138,8 +5218,16 @@ int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value)
   result = (value->ValueCkDate != NULL)? cmp_write_str(ctx, value->ValueCkDate, (uint32_t)strlen(value->ValueCkDate)) : cmp_write_nil(ctx);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->ValueUintArray != NULL)? UintArrayData_Serialize(ctx, value->ValueUintArray) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->ValueUintArray != NULL)
+  {
+    result = UintArrayData_Serialize(ctx, value->ValueUintArray);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -5278,8 +5366,16 @@ int GetAttributeValueEnvelope_Serialize(cmp_ctx_t* ctx, GetAttributeValueEnvelop
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? GetAttributeOutValues_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = GetAttributeOutValues_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -5476,8 +5572,16 @@ int GenerateKeyPairEnvelope_Serialize(cmp_ctx_t* ctx, GenerateKeyPairEnvelope* v
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? GenerateKeyPairData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = GenerateKeyPairData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -5776,8 +5880,16 @@ int SignEnvelope_Serialize(cmp_ctx_t* ctx, SignEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? SignatureData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = SignatureData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -6012,8 +6124,16 @@ int SignFinalEnvelope_Serialize(cmp_ctx_t* ctx, SignFinalEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? SignatureData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = SignatureData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -6618,8 +6738,16 @@ int GenerateKeyEnvelope_Serialize(cmp_ctx_t* ctx, GenerateKeyEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? GenerateKeyData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = GenerateKeyData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -6806,8 +6934,16 @@ int DeriveKeyEnvelope_Serialize(cmp_ctx_t* ctx, DeriveKeyEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? DeriveKeyData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = DeriveKeyData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -7106,8 +7242,16 @@ int EncryptEnvelope_Serialize(cmp_ctx_t* ctx, EncryptEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? EncryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = EncryptData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -7246,8 +7390,16 @@ int EncryptUpdateEnvelope_Serialize(cmp_ctx_t* ctx, EncryptUpdateEnvelope* value
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? EncryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = EncryptData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -7379,8 +7531,16 @@ int EncryptFinalEnvelope_Serialize(cmp_ctx_t* ctx, EncryptFinalEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? EncryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = EncryptData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -7679,8 +7839,16 @@ int DecryptEnvelope_Serialize(cmp_ctx_t* ctx, DecryptEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? DecryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = DecryptData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -7819,8 +7987,16 @@ int DecryptUpdateEnvelope_Serialize(cmp_ctx_t* ctx, DecryptUpdateEnvelope* value
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? DecryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = DecryptData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -7952,8 +8128,16 @@ int DecryptFinalEnvelope_Serialize(cmp_ctx_t* ctx, DecryptFinalEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? DecryptData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = DecryptData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -8155,8 +8339,16 @@ int WrapKeyEnvelope_Serialize(cmp_ctx_t* ctx, WrapKeyEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? WrapKeyData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = WrapKeyData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -8350,8 +8542,16 @@ int UnwrapKeyEnvelope_Serialize(cmp_ctx_t* ctx, UnwrapKeyEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? UnwrapKeyData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = UnwrapKeyData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -8644,8 +8844,16 @@ int CopyObjectEnvelope_Serialize(cmp_ctx_t* ctx, CopyObjectEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? CopyObjectData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = CopyObjectData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -8777,8 +8985,16 @@ int WaitForSlotEventEnvelope_Serialize(cmp_ctx_t* ctx, WaitForSlotEventEnvelope*
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? WaitForSlotEventData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = WaitForSlotEventData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -9122,8 +9338,16 @@ int SignRecoverEnvelope_Serialize(cmp_ctx_t* ctx, SignRecoverEnvelope* value)
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? SignRecoverData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = SignRecoverData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -9422,8 +9646,16 @@ int VerifyRecoverEnvelope_Serialize(cmp_ctx_t* ctx, VerifyRecoverEnvelope* value
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? VerifyRecoverData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = VerifyRecoverData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -9976,8 +10208,16 @@ int EncapsulateKeyEnvelope_Serialize(cmp_ctx_t* ctx, EncapsulateKeyEnvelope* val
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? EncapsulateKeyData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = EncapsulateKeyData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -10171,8 +10411,16 @@ int DecapsulateKeyEnvelope_Serialize(cmp_ctx_t* ctx, DecapsulateKeyEnvelope* val
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? DecapsulateKeyDadta_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = DecapsulateKeyDadta_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
@@ -10343,8 +10591,16 @@ int GetSessionValidationFlagsEnvelope_Serialize(cmp_ctx_t* ctx, GetSessionValida
   result = cmp_write_uinteger(ctx, value->Rv);
    if (!result) return NMRPC_FATAL_ERROR;
 
-  result = (value->Data != NULL)? GetSessionValidationFlagsData_Serialize(ctx, value->Data) : cmp_write_nil(ctx);
-   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  if (value->Data != NULL)
+  {
+    result = GetSessionValidationFlagsData_Serialize(ctx, value->Data);
+    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return NMRPC_FATAL_ERROR;
+  }
 
     return NMRPC_OK;
 }
