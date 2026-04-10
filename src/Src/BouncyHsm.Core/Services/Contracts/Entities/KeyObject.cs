@@ -74,6 +74,7 @@ public abstract class KeyObject : StorageObject
     {
         base.Validate();
         CryptoObjectValueChecker.CheckStartEndDate(this.CkaStartDate, this.CkaEndDate);
+        CryptoObjectValueChecker.CheckAllovedMechanism(this.AllovedMechanism, this.GetAllovedMechanism());
     }
 
     protected abstract CKM[] GetAllovedMechanism();
@@ -86,10 +87,15 @@ public abstract class KeyObject : StorageObject
         }
 
         CKM[] destination = new CKM[array.Length];
-        for (uint i = 0; i < array.Length; i++)
-        {
-            destination[i] = (CKM)array[i];
-        }
+
+        //TODO: Check
+        System.Diagnostics.Debug.Assert(sizeof(uint) == sizeof(CKM));
+        Buffer.BlockCopy(array, 0, destination, 0, destination.Length * sizeof(uint));
+
+        //for (uint i = 0; i < array.Length; i++)
+        //{
+        //    destination[i] = (CKM)array[i];
+        //}
 
         return destination;
     }
@@ -102,10 +108,15 @@ public abstract class KeyObject : StorageObject
         }
 
         uint[] destination = new uint[array.Length];
-        for (uint i = 0; i < array.Length; i++)
-        {
-            destination[i] = (uint)array[i];
-        }
+
+        //TODO: Check
+        System.Diagnostics.Debug.Assert(sizeof(uint) == sizeof(CKM));
+        Buffer.BlockCopy(array, 0, destination, 0, destination.Length * sizeof(uint));
+
+        //for (uint i = 0; i < array.Length; i++)
+        //{
+        //    destination[i] = (uint)array[i];
+        //}
 
         return destination;
     }
