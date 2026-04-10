@@ -82,7 +82,7 @@ internal class NativeAttributeValue : IAttributeValue
             throw new InvalidATtributeTypeCastException($"Property {nameof(this.value.ValueUintArray)} is null");
         }
 
-        return this.value.ValueUintArray;
+        return this.value.ValueUintArray.Array;
     }
 
     private void CheckValueType(AttrTypeTag tag, [CallerMemberName] string fnName = "")

@@ -154,7 +154,10 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
 
             case AttrTypeTag.UintArray:
                 outValue.ValueType = NativeAttributeValue.AttrValueFromNativeTypeUintArray;
-                outValue.ValueUintArray = attributeValue.AsUintArray();
+                outValue.ValueUintArray = new UintArrayData()
+                {
+                    Array = attributeValue.AsUintArray()
+                };
                 break;
 
             default:

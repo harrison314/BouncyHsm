@@ -657,6 +657,11 @@ Messages:
       Rv: uint32
       Data: DigestValue?
 
+  UintArrayData:
+    Summary: Data container for uint array.
+    Fields:
+      Array: uint32[]
+
   AttrValueFromNative:
     Summary: Transport attribute value from native code to dotnet, with type hinting 1 - byte array, 2 - CK_BBOOL, 4 - CK_UINT, 8 - CK_DATE, 16 - CKM[]
     Fields:
@@ -666,7 +671,7 @@ Messages:
       ValueBool: bool
       ValueCkUlong: uint32
       ValueCkDate: string?
-      ValueUintArray: uint32[]?
+      ValueUintArray: UintArrayData?
 
   CreateObjectRequest:
     Summary:
@@ -770,7 +775,7 @@ Messages:
       ValueBool: bool
       ValueBytes: binary
       ValueCkDate: string?
-      ValueUintArray: uint32[]?
+      ValueUintArray: UintArrayData?
 
 
   GetAttributeOutValues:

@@ -69,6 +69,7 @@ typedef struct _DigestKeyRequest DigestKeyRequest;
 typedef struct _DigestKeyEnvelope DigestKeyEnvelope;
 typedef struct _DigestFinalRequest DigestFinalRequest;
 typedef struct _DigestFinalEnvelope DigestFinalEnvelope;
+typedef struct _UintArrayData UintArrayData;
 typedef struct _AttrValueFromNative AttrValueFromNative;
 typedef struct _CreateObjectRequest CreateObjectRequest;
 typedef struct _CreateObjectEnvelope CreateObjectEnvelope;
@@ -869,6 +870,15 @@ int DigestFinalEnvelope_Serialize(cmp_ctx_t* ctx, DigestFinalEnvelope* value);
 int DigestFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, DigestFinalEnvelope* value);
 int DigestFinalEnvelope_Release(DigestFinalEnvelope* value);
 
+typedef struct _UintArrayData
+{
+    ArrayOfuint32_t Array;
+} UintArrayData;
+
+int UintArrayData_Serialize(cmp_ctx_t* ctx, UintArrayData* value);
+int UintArrayData_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, UintArrayData* value);
+int UintArrayData_Release(UintArrayData* value);
+
 typedef struct _AttrValueFromNative
 {
     uint32_t AttributeType;
@@ -877,7 +887,7 @@ typedef struct _AttrValueFromNative
     bool ValueBool;
     uint32_t ValueCkUlong;
     const char* ValueCkDate;
-    ArrayOfuint32_t* ValueUintArray;
+    UintArrayData* ValueUintArray;
 } AttrValueFromNative;
 
 int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value);
@@ -1047,7 +1057,7 @@ typedef struct _GetAttributeOutValue
     bool ValueBool;
     Binary ValueBytes;
     const char* ValueCkDate;
-    ArrayOfuint32_t* ValueUintArray;
+    UintArrayData* ValueUintArray;
 } GetAttributeOutValue;
 
 int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value);

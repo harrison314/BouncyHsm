@@ -1474,7 +1474,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_UintArray)
                 {
-                    newValueLen = (outAttrPtr->ValueUintArray == NULL) ? 0 : (outAttrPtr->ValueUintArray->length * sizeof(CK_ULONG));
+                    newValueLen = (outAttrPtr->ValueUintArray == NULL) ? 0 : (outAttrPtr->ValueUintArray->Array.length * sizeof(CK_ULONG));
                 }
                 else
                 {
@@ -1523,8 +1523,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                     {
                         CK_ULONG* destinationUintArray = (CK_ULONG*)pTemplate[i].pValue;
                         size_t j;
-                        size_t arrayLength = (size_t)outAttrPtr[i].ValueUintArray->length;
-                        uint32_t* uintArray = outAttrPtr[i].ValueUintArray->array;
+                        size_t arrayLength = (size_t)outAttrPtr[i].ValueUintArray->Array.length;
+                        uint32_t* uintArray = outAttrPtr[i].ValueUintArray->Array.array;
                         for (j = 0; j < arrayLength; j++)
                         {
                             destinationUintArray[j] = (CK_ULONG)uintArray[j];

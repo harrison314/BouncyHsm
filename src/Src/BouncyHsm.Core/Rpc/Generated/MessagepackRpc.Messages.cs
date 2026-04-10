@@ -73,7 +73,7 @@ public partial class ExtendedClientInfo
     {
         get;
         set;
-    } = Array.Empty<string>();
+    } = global::System.Array.Empty<string>();
 
     [Key(4)]
     public string Platform
@@ -294,7 +294,7 @@ public partial class GetSlotListEnvelope : IRpcResponse
     {
         get;
         set;
-    } = Array.Empty<uint>();
+    } = global::System.Array.Empty<uint>();
 
 }
 
@@ -669,7 +669,7 @@ public partial class MechanismList
     {
         get;
         set;
-    } = Array.Empty<uint>();
+    } = global::System.Array.Empty<uint>();
 
 }
 
@@ -1125,7 +1125,7 @@ public partial class SeedRandomRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -1272,7 +1272,7 @@ public partial class DigestRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsDigestPtrSet
@@ -1353,7 +1353,7 @@ public partial class DigestUpdateRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -1466,6 +1466,19 @@ public partial class DigestFinalEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
+public partial class UintArrayData
+{
+    [Key(0)]
+    public uint[] Array
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<uint>();
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class AttrValueFromNative
 {
     [Key(0)]
@@ -1487,7 +1500,7 @@ public partial class AttrValueFromNative
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool ValueBool
@@ -1511,7 +1524,7 @@ public partial class AttrValueFromNative
     }
 
     [Key(6)]
-    public uint[]? ValueUintArray
+    public UintArrayData? ValueUintArray
     {
         get;
         set;
@@ -1542,7 +1555,7 @@ public partial class CreateObjectRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -1629,7 +1642,7 @@ public partial class FindObjectsInitRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -1689,7 +1702,7 @@ public partial class FindObjectsData
     {
         get;
         set;
-    } = Array.Empty<uint>();
+    } = global::System.Array.Empty<uint>();
 
 }
 
@@ -1850,7 +1863,7 @@ public partial class GetAttributeValueRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<GetAttributeInputValues>();
+    } = global::System.Array.Empty<GetAttributeInputValues>();
 
 }
 
@@ -1891,7 +1904,7 @@ public partial class GetAttributeOutValue
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(5)]
     public string? ValueCkDate
@@ -1901,7 +1914,7 @@ public partial class GetAttributeOutValue
     }
 
     [Key(6)]
-    public uint[]? ValueUintArray
+    public UintArrayData? ValueUintArray
     {
         get;
         set;
@@ -1918,7 +1931,7 @@ public partial class GetAttributeOutValues
     {
         get;
         set;
-    } = Array.Empty<GetAttributeOutValue>();
+    } = global::System.Array.Empty<GetAttributeOutValue>();
 
 }
 
@@ -1972,14 +1985,14 @@ public partial class GenerateKeyPairRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
     [Key(4)]
     public AttrValueFromNative[] PrivateKeyTemplate
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -2093,7 +2106,7 @@ public partial class SignRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsSignaturePtrSet
@@ -2127,7 +2140,7 @@ public partial class SignatureData
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -2174,7 +2187,7 @@ public partial class SignUpdateRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -2315,14 +2328,14 @@ public partial class VerifyRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public byte[] Signature
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -2362,7 +2375,7 @@ public partial class VerifyUpdateRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -2402,7 +2415,7 @@ public partial class VerifyFinalRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -2449,7 +2462,7 @@ public partial class GenerateKeyRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -2523,7 +2536,7 @@ public partial class DeriveKeyRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -2630,7 +2643,7 @@ public partial class EncryptRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsEncryptedDataPtrSet
@@ -2664,7 +2677,7 @@ public partial class EncryptData
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -2711,7 +2724,7 @@ public partial class EncryptUpdateRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsEncryptedDataPtrSet
@@ -2873,7 +2886,7 @@ public partial class DecryptRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsDataPtrSet
@@ -2900,7 +2913,7 @@ public partial class DecryptData
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(1)]
     public uint PullDataLen
@@ -2954,7 +2967,7 @@ public partial class DecryptUpdateRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsDataPtrSet
@@ -3110,7 +3123,7 @@ public partial class WrapKeyData
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(1)]
     public uint PulWrappedKeyLen
@@ -3178,14 +3191,14 @@ public partial class UnwrapKeyRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(5)]
     public AttrValueFromNative[] Template
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -3252,7 +3265,7 @@ public partial class SetAttributeValueRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -3299,7 +3312,7 @@ public partial class CopyObjectRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
 }
 
@@ -3473,7 +3486,7 @@ public partial class SignRecoverRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsSignaturePtrSet
@@ -3507,7 +3520,7 @@ public partial class SignRecoverData
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -3601,7 +3614,7 @@ public partial class VerifyRecoverRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(3)]
     public bool IsPtrDataSet
@@ -3635,7 +3648,7 @@ public partial class VerifyRecoverData
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -3823,7 +3836,7 @@ public partial class EncapsulateKeyRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
     [Key(5)]
     public bool IsCiphertextPtrSet
@@ -3932,14 +3945,14 @@ public partial class DecapsulateKeyRequest : IRpcRequest
     {
         get;
         set;
-    } = Array.Empty<AttrValueFromNative>();
+    } = global::System.Array.Empty<AttrValueFromNative>();
 
     [Key(5)]
     public byte[] Ciphertext
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -4098,7 +4111,7 @@ public partial class CkP_RawDataParams
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -4111,7 +4124,7 @@ public partial class CkP_KeyDerivationStringData
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(1)]
     public uint Len
@@ -4273,14 +4286,14 @@ public partial class Ckp_CkAesCbcEnryptDataParams
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(1)]
     public byte[] Data
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -4321,7 +4334,7 @@ public partial class Ckp_CkChaCha20Params
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -4348,7 +4361,7 @@ public partial class Ckp_CkSalsa20Params
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
@@ -4361,7 +4374,7 @@ public partial class Ckp_CkSalsa20ChaCha20Poly1305Params
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(1)]
     public byte[]? AadData
@@ -4503,14 +4516,14 @@ public partial class Ckp_CkCamelliaCbcEncryptDataParams
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
     [Key(1)]
     public byte[] Data
     {
         get;
         set;
-    } = Array.Empty<byte>();
+    } = global::System.Array.Empty<byte>();
 
 }
 
