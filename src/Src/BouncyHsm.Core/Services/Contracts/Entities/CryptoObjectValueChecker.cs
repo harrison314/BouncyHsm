@@ -257,7 +257,7 @@ internal static class CryptoObjectValueChecker
     {
         for (int i = 0; i < allovedMechanism.Length; i++)
         {
-            for (int j = i + 1; j < allovedMechanism.Length;)
+            for (int j = i + 1; j < allovedMechanism.Length; j++)
             {
                 if (allovedMechanism[i] == allovedMechanism[j])
                 {
