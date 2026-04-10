@@ -15,6 +15,11 @@ internal class CSharpDeclaredType : DeclaredType
     public CSharpDeclaredType(string def) : base(def)
     {
         this.CharpType = this.TranslateType();
+
+        if (this.IsArray && this.IsNullable)
+        {
+            Console.WriteLine("Error: Type {0} is nullable array - is not supported.", def);
+        }
     }
 
     private string TranslateType()
