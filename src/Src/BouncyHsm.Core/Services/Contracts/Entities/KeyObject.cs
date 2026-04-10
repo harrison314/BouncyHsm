@@ -77,6 +77,11 @@ public abstract class KeyObject : StorageObject
         CryptoObjectValueChecker.CheckAllovedMechanism(this.AllovedMechanism, this.GetAllovedMechanism());
     }
 
+    public bool MechanismIsAllowed(CKM mechanism)
+    {
+        return this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUintArray().Contains((uint)mechanism);
+    }
+
     protected abstract CKM[] GetAllovedMechanism();
 
     private CKM[] ConvertArray(uint[] array)
