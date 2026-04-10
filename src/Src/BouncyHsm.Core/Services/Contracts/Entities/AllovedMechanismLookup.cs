@@ -66,22 +66,6 @@ internal static class AllovedMechanismLookup
 
     public static readonly CKM[] GenericSecretKeyObject = new CKM[]
     {
-        CKM.CKM_SHA_1_KEY_GEN,
-        CKM.CKM_SHA224_KEY_GEN,
-        CKM.CKM_SHA256_KEY_GEN,
-        CKM.CKM_SHA384_KEY_GEN,
-        CKM.CKM_SHA512_KEY_GEN,
-        CKM.CKM_SHA512_224_KEY_GEN,
-        CKM.CKM_SHA512_256_KEY_GEN,
-        CKM.CKM_SHA512_T_KEY_GEN,
-        CKM.CKM_SHA3_224_KEY_GEN,
-        CKM.CKM_SHA3_256_KEY_GEN,
-        CKM.CKM_SHA3_384_KEY_GEN,
-        CKM.CKM_SHA3_512_KEY_GEN,
-        CKM.CKM_BLAKE2B_160_KEY_GEN,
-        CKM.CKM_BLAKE2B_256_KEY_GEN,
-        CKM.CKM_BLAKE2B_384_KEY_GEN,
-        CKM.CKM_BLAKE2B_512_KEY_GEN,
         CKM.CKM_MD2_HMAC,
         CKM.CKM_MD5_HMAC,
         CKM.CKM_RIPEMD128_HMAC,
