@@ -384,10 +384,26 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
             if (type.IsArray)
             {
-
-                body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Serialize(ctx, &value->{name});");
-                body.AppendLine("   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
+                if (type.IsNullable)
+                {
+                    body.AppendLine($"  if (value->{name} != NULL)");
+                    body.AppendLine("  {");
+                    body.AppendLine($"    result = {type.CType.TrimEnd('*')}_Serialize(ctx, value->{name});");
+                    body.AppendLine("    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
+                    body.AppendLine("  }");
+                    body.AppendLine("  else");
+                    body.AppendLine("  {");
+                    body.AppendLine("    result = cmp_write_nil(ctx);");
+                    body.AppendLine("    if (!result) return NMRPC_FATAL_ERROR;");
+                    body.AppendLine("  }");
+                    body.AppendLine();
+                }
+                else
+                {
+                    body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Serialize(ctx, &value->{name});");
+                    body.AppendLine("   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
+                    body.AppendLine();
+                }
 
                 continue;
             }
@@ -454,8 +470,16 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             string writeFnName = this.GetSerializeFnName(type);
             if (type.IsNullable)
             {
-                body.AppendLine($"  result = (value->{name} != NULL)? {writeFnName}(ctx, value->{name}) : cmp_write_nil(ctx);");
-                body.AppendLine("   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
+                body.AppendLine($"  if (value->{name} != NULL)");
+                body.AppendLine("  {");
+                body.AppendLine($"    result = {writeFnName}(ctx, value->{name});");
+                body.AppendLine("    if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
+                body.AppendLine("  }");
+                body.AppendLine("  else");
+                body.AppendLine("  {");
+                body.AppendLine("    result = cmp_write_nil(ctx);");
+                body.AppendLine("    if (!result) return NMRPC_FATAL_ERROR;");
+                body.AppendLine("  }");
                 body.AppendLine();
             }
             else
