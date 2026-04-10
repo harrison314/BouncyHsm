@@ -384,10 +384,18 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
             if (type.IsArray)
             {
-
-                body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Serialize(ctx, &value->{name});");
-                body.AppendLine("   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
-                body.AppendLine();
+                if (type.IsNullable)
+                {
+                    body.AppendLine($"  result = (value->{name} != NULL)? {type.CType.TrimEnd('*')}_Serialize(ctx, value->{name}) : cmp_write_nil(ctx);");
+                    body.AppendLine("   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
+                    body.AppendLine();
+                }
+                else
+                {
+                    body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Serialize(ctx, &value->{name});");
+                    body.AppendLine("   if (result != NMRPC_OK) return NMRPC_FATAL_ERROR;");
+                    body.AppendLine();
+                }
 
                 continue;
             }
