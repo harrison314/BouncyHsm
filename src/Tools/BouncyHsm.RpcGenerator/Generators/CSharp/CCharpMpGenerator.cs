@@ -97,8 +97,8 @@ internal class CCharpMpGenerator : IRpcGenerator
                 {
                     defaultValue = propType.BaseDefinition switch
                     {
-                        _ when propType.IsArray => $"Array.Empty<{propType.CharpType[..^2]}>()",
-                        CSharpDeclaredType.BinaryName => "Array.Empty<byte>()",
+                        _ when propType.IsArray => $"global::System.Array.Empty<{propType.CharpType[..^2]}>()",
+                        CSharpDeclaredType.BinaryName => "global::System.Array.Empty<byte>()",
                         CSharpDeclaredType.StringName => "string.Empty",
                         _ => "default!"
                     };
