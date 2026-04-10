@@ -92,24 +92,24 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
 
         if (pTemplate[i].type == CKA_ALLOWED_MECHANISMS)
         {
-            ArrayOfuint32_t* uintArray = (ArrayOfuint32_t*)malloc(sizeof(ArrayOfuint32_t));
-            if (uintArray == NULL)
+            UintArrayData* uintArrayData = (UintArrayData*)malloc(sizeof(UintArrayData));
+            if (uintArrayData == NULL)
             {
                 log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
                 return NULL;
             }
 
-            uintArray->length = (int)pTemplate[i].ulValueLen / sizeof(CK_ULONG);
-            uintArray->array = (uint32_t*)malloc(uintArray->length * sizeof(uint32_t));
-            if (uintArray->array == NULL)
+            uintArrayData->Array.length = (int)(pTemplate[i].ulValueLen / sizeof(CK_ULONG));
+            uintArrayData->Array.array = (uint32_t*)malloc(uintArrayData->Array.length * sizeof(uint32_t));
+            if (uintArrayData->Array.array == NULL)
             {
-                free((void*)uintArray);
+                free((void*)uintArrayData);
 
                 log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
                 return NULL;
             }
 
-            ptr[i].ValueUintArray = uintArray;
+            ptr[i].ValueUintArray = uintArrayData;
             ptr[i].ValueTypeHint |= AttrValueFromNative_TypeHint_UintArray;
 
             continue;
