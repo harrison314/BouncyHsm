@@ -83,6 +83,10 @@ public class HighLevelAttributeValue
                 this.ValueAsString = attributeValue.AsString();
                 break;
 
+            case AttrTypeTag.UintArray:
+                this.ValueAttributeArray = attributeValue.AsUintArray();
+                break;
+
             default:
                 throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.");
         }
