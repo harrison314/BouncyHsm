@@ -46,7 +46,7 @@ public abstract class KeyObject : StorageObject
         set => this.values[CKA.CKA_KEY_GEN_MECHANISM] = AttributeValue.Create((uint)value);
     }
 
-    public CKM[] AllovedMechanism
+    public CKM[] CkaAllovedMechanism
     {
         get => this.ConvertArray(this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUintArray());
         set => this.values[CKA.CKA_ALLOWED_MECHANISMS] = AttributeValue.Create(this.ConvertArray(value));
@@ -61,7 +61,7 @@ public abstract class KeyObject : StorageObject
         this.CkaKeyGenMechanism = genMechanism;
         this.CkaStartDate = new CkDate();
         this.CkaEndDate = new CkDate();
-        this.AllovedMechanism = this.GetAllovedMechanism();
+        this.CkaAllovedMechanism = this.GetAllovedMechanism();
     }
 
     internal KeyObject(StorageObjectMemento memento)
@@ -74,7 +74,7 @@ public abstract class KeyObject : StorageObject
     {
         base.Validate();
         CryptoObjectValueChecker.CheckStartEndDate(this.CkaStartDate, this.CkaEndDate);
-        CryptoObjectValueChecker.CheckAllovedMechanism(this.AllovedMechanism, this.GetAllovedMechanism());
+        CryptoObjectValueChecker.CheckAllovedMechanism(this.CkaAllovedMechanism, this.GetAllovedMechanism());
     }
 
     public bool MechanismIsAllowed(CKM mechanism)
