@@ -40,6 +40,7 @@ public partial class EncapsulateKeyHandler : IRpcRequestHandler<EncapsulateKeyRe
         PublicKeyObject publicKey = await this.hwServices.FindObjectByHandle<PublicKeyObject>(memorySession, p11Session, request.PublicKeyHandle, cancellationToken);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_ENCAPSULATE);
+        publicKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         Dictionary<CKA, IAttributeValue> template = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 
