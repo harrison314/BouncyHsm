@@ -49,7 +49,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
             {
                 sb.AppendLine($"  if({this.GetArrayReleaseFnName(declaredType)}(&value->{fieldName}) != NMRPC_OK)");
                 sb.AppendLine("   {");
-                sb.AppendLine("       return NMRPC_FATAL_ERROR;");
+                sb.AppendLine("       return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);");
                 sb.AppendLine("   }");
                 continue;
             }
@@ -95,7 +95,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
                                {
                                    if ({{declaredType.BaseDefinition}}_Release(value->{{fieldName}}) != NMRPC_OK)
                                    {
-                                      return NMRPC_FATAL_ERROR;
+                                      return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
                                    }
                                    free((void*) value->{{fieldName}});
                                    value->{{fieldName}} = NULL;
@@ -109,7 +109,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
                         string fn = $$"""
                                    if ({{declaredType.BaseDefinition}}_Release(&value->{{fieldName}}) != NMRPC_OK)
                                    {
-                                      return NMRPC_FATAL_ERROR;
+                                      return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
                                    }
                               """;
                         sb.Append(fn).AppendLine();

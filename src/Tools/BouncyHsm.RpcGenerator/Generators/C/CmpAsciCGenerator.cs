@@ -325,7 +325,6 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 return true;
             }
 
-
             int nmrpc_writeAsBinary(void *data, SerializeFnPtr_t serialize, Binary** outBinary)
             {
                 if (data == NULL || serialize == NULL || outBinary == NULL) return NMRPC_BAD_ARGUMENT;
@@ -542,7 +541,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             else
             {
                 body.AppendLine($"  result = {writeFnName}(ctx, &value->{name});");
-                body.AppendLine("   if (result != NMRPC_OK) return return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine();
             }
         }
@@ -587,7 +586,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             if (type.IsArray)
             {
                 body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Deserialize(ctx, NULL, &value->{name});");
-                body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine();
 
                 continue;
@@ -600,14 +599,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     if (type.IsNullable)
                     {
                         body.AppendLine($"  result = cmph_read_nullable_str(ctx, &value->{name});");
-                        body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                         body.AppendLine();
                     }
                     else
                     {
                         body.AppendLine($"  result = cmph_read_nullable_str(ctx, &value->{name});");
-                        body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
-                        body.AppendLine($"   if (value->{name} == NULL) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                        body.AppendLine($"  if (value->{name} == NULL) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, \"field {name} is NULL\");");
                         body.AppendLine();
                     }
                 }
@@ -617,13 +616,13 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     if (type.IsNullable)
                     {
                         body.AppendLine($"  result = cmph_read_nullable_binary(ctx, &value->{name});");
-                        body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                         body.AppendLine();
                     }
                     else
                     {
                         body.AppendLine($"  result = cmph_read_binary(ctx, &value->{name});");
-                        body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine($"   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                         body.AppendLine();
                     }
                 }
@@ -631,34 +630,34 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 if (type.BaseDefinition == CDeclaredType.Int32Name)
                 {
                     body.AppendLine($"  result = cmp_read_int(ctx, &value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
                 if (type.BaseDefinition == CDeclaredType.Int64Name)
                 {
                     body.AppendLine($"  result = cmp_read_long(ctx, &value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition == CDeclaredType.UInt32Name)
                 {
                     body.AppendLine($"  result = cmp_read_uint(ctx, &value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition == CDeclaredType.UInt64Name)
                 {
                     body.AppendLine($"  result = cmp_read_ulong(ctx, &value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine($"   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition == CDeclaredType.BoolName)
                 {
                     body.AppendLine($"  result = cmp_read_bool(ctx, &value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
@@ -679,14 +678,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 body.AppendLine($"     value->{name} = ({type.BaseDefinition}*) malloc(sizeof({type.BaseDefinition}));");
                 body.AppendLine($"     if (value->{name} == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"Allocation error\");");
                 body.AppendLine($"     result = {readFnName}(ctx, &tmp_obj, value->{name});");
-                body.AppendLine("      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine($"     if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine("  }");
                 body.AppendLine();
             }
             else
             {
                 body.AppendLine($"  result = {readFnName}(ctx, NULL, &value->{name});");
-                body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine();
             }
         }
