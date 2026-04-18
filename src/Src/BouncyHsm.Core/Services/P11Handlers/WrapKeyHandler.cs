@@ -37,7 +37,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         KeyObject key = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyHandle, cancellationToken);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_WRAP);
-        key.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
+        wrappingKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         this.CheckExtractable(key);
 
