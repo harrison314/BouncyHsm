@@ -93,14 +93,8 @@ public abstract class KeyObject : StorageObject
 
         CKM[] destination = new CKM[array.Length];
 
-        //TODO: Check
         System.Diagnostics.Debug.Assert(sizeof(uint) == sizeof(CKM));
         Buffer.BlockCopy(array, 0, destination, 0, destination.Length * sizeof(uint));
-
-        //for (uint i = 0; i < array.Length; i++)
-        //{
-        //    destination[i] = (CKM)array[i];
-        //}
 
         return destination;
     }
@@ -114,14 +108,8 @@ public abstract class KeyObject : StorageObject
 
         uint[] destination = new uint[array.Length];
 
-        //TODO: Check
         System.Diagnostics.Debug.Assert(sizeof(uint) == sizeof(CKM));
         Buffer.BlockCopy(array, 0, destination, 0, destination.Length * sizeof(uint));
-
-        //for (uint i = 0; i < array.Length; i++)
-        //{
-        //    destination[i] = (uint)array[i];
-        //}
 
         return destination;
     }
