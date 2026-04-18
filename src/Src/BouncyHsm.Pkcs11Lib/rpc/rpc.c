@@ -386,6 +386,15 @@ static int log_serilization_error(int rc, const char* functionName, int line, co
     return rc;
 }
 
+static int log_malloc_error(const char* functionName, int line)
+{
+  log_message(LOG_LEVEL_ERROR,
+            "malloc returns NULL in the function %s on line %i, the status %s was returned.",
+            functionName,
+            line);
+
+  return NMRPC_FATAL_ERROR;
+}
 
 
 int Binary_Release(Binary* value)
@@ -447,7 +456,7 @@ int ArrayOfString_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, Array
 
   value->length = (int)array_size;
   value->array = (const char**) malloc(sizeof(const char*) * array_size);
-  if (value->array == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "memory allocation");
+  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = cmph_read_nullable_str(ctx, &value->array[i]);
@@ -507,7 +516,7 @@ int ArrayOfuint32_t_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, Arr
 
   value->length = (int)array_size;
   value->array = (uint32_t*) malloc(sizeof(uint32_t) * array_size);
-  if (value->array == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "memory allocation");
+  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = cmp_read_uint(ctx, &value->array[i]);
@@ -566,7 +575,7 @@ int ArrayOfAttrValueFromNative_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_o
 
   value->length = (int)array_size;
   value->array = (AttrValueFromNative*) malloc(sizeof(AttrValueFromNative) * array_size);
-  if (value->array == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "memory allocation");
+  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = AttrValueFromNative_Deserialize(ctx, NULL, &value->array[i]);
@@ -634,7 +643,7 @@ int ArrayOfGetAttributeInputValues_Deserialize(cmp_ctx_t* ctx, cmp_object_t* sta
 
   value->length = (int)array_size;
   value->array = (GetAttributeInputValues*) malloc(sizeof(GetAttributeInputValues) * array_size);
-  if (value->array == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "memory allocation");
+  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = GetAttributeInputValues_Deserialize(ctx, NULL, &value->array[i]);
@@ -702,7 +711,7 @@ int ArrayOfGetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_
 
   value->length = (int)array_size;
   value->array = (GetAttributeOutValue*) malloc(sizeof(GetAttributeOutValue) * array_size);
-  if (value->array == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "memory allocation");
+  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = GetAttributeOutValue_Deserialize(ctx, NULL, &value->array[i]);
@@ -1736,7 +1745,7 @@ int GetSlotInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   else
   {
      value->Data = (SlotInfo*) malloc(sizeof(SlotInfo));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = SlotInfo_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -2042,7 +2051,7 @@ int GetTokenInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   else
   {
      value->Data = (TokenInfo*) malloc(sizeof(TokenInfo));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = TokenInfo_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -2238,7 +2247,7 @@ int GetMechanismListEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* sta
   else
   {
      value->Data = (MechanismList*) malloc(sizeof(MechanismList));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = MechanismList_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -2436,7 +2445,7 @@ int GetMechanismInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* sta
   else
   {
      value->Data = (MechanismInfo*) malloc(sizeof(MechanismInfo));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = MechanismInfo_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -3060,7 +3069,7 @@ int GetSessionInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start
   else
   {
      value->Data = (SessionInfoData*) malloc(sizeof(SessionInfoData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = SessionInfoData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -3851,7 +3860,7 @@ int DigestEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr
   else
   {
      value->Data = (DigestValue*) malloc(sizeof(DigestValue));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = DigestValue_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -4197,7 +4206,7 @@ int DigestFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   else
   {
      value->Data = (DigestValue*) malloc(sizeof(DigestValue));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = DigestValue_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -4354,7 +4363,7 @@ int AttrValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   else
   {
      value->ValueUintArray = (UintArrayData*) malloc(sizeof(UintArrayData));
-     if (value->ValueUintArray == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->ValueUintArray == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = UintArrayData_Deserialize(ctx, &tmp_obj, value->ValueUintArray);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueUintArray");
   }
@@ -4870,7 +4879,7 @@ int FindObjectsEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   else
   {
      value->Data = (FindObjectsData*) malloc(sizeof(FindObjectsData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = FindObjectsData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -5101,7 +5110,7 @@ int GetObjectSizeEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   else
   {
      value->Data = (CkSpecialUint*) malloc(sizeof(CkSpecialUint));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = CkSpecialUint_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -5333,7 +5342,7 @@ int GetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   else
   {
      value->ValueUintArray = (UintArrayData*) malloc(sizeof(UintArrayData));
-     if (value->ValueUintArray == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->ValueUintArray == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = UintArrayData_Deserialize(ctx, &tmp_obj, value->ValueUintArray);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueUintArray");
   }
@@ -5466,7 +5475,7 @@ int GetAttributeValueEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* st
   else
   {
      value->Data = (GetAttributeOutValues*) malloc(sizeof(GetAttributeOutValues));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = GetAttributeOutValues_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -5672,7 +5681,7 @@ int GenerateKeyPairEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* star
   else
   {
      value->Data = (GenerateKeyPairData*) malloc(sizeof(GenerateKeyPairData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = GenerateKeyPairData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -5980,7 +5989,7 @@ int SignEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, 
   else
   {
      value->Data = (SignatureData*) malloc(sizeof(SignatureData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = SignatureData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -6224,7 +6233,7 @@ int SignFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
   else
   {
      value->Data = (SignatureData*) malloc(sizeof(SignatureData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = SignatureData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -6838,7 +6847,7 @@ int GenerateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   else
   {
      value->Data = (GenerateKeyData*) malloc(sizeof(GenerateKeyData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = GenerateKeyData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -7034,7 +7043,7 @@ int DeriveKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
   else
   {
      value->Data = (DeriveKeyData*) malloc(sizeof(DeriveKeyData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = DeriveKeyData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -7342,7 +7351,7 @@ int EncryptEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_pt
   else
   {
      value->Data = (EncryptData*) malloc(sizeof(EncryptData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = EncryptData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -7490,7 +7499,7 @@ int EncryptUpdateEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   else
   {
      value->Data = (EncryptData*) malloc(sizeof(EncryptData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = EncryptData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -7631,7 +7640,7 @@ int EncryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   else
   {
      value->Data = (EncryptData*) malloc(sizeof(EncryptData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = EncryptData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -7939,7 +7948,7 @@ int DecryptEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_pt
   else
   {
      value->Data = (DecryptData*) malloc(sizeof(DecryptData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = DecryptData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -8087,7 +8096,7 @@ int DecryptUpdateEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   else
   {
      value->Data = (DecryptData*) malloc(sizeof(DecryptData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = DecryptData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -8228,7 +8237,7 @@ int DecryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   else
   {
      value->Data = (DecryptData*) malloc(sizeof(DecryptData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = DecryptData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -8439,7 +8448,7 @@ int WrapKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_pt
   else
   {
      value->Data = (WrapKeyData*) malloc(sizeof(WrapKeyData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = WrapKeyData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -8642,7 +8651,7 @@ int UnwrapKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
   else
   {
      value->Data = (UnwrapKeyData*) malloc(sizeof(UnwrapKeyData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = UnwrapKeyData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -8944,7 +8953,7 @@ int CopyObjectEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj
   else
   {
      value->Data = (CopyObjectData*) malloc(sizeof(CopyObjectData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = CopyObjectData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -9085,7 +9094,7 @@ int WaitForSlotEventEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* sta
   else
   {
      value->Data = (WaitForSlotEventData*) malloc(sizeof(WaitForSlotEventData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = WaitForSlotEventData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -9438,7 +9447,7 @@ int SignRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   else
   {
      value->Data = (SignRecoverData*) malloc(sizeof(SignRecoverData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = SignRecoverData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -9746,7 +9755,7 @@ int VerifyRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   else
   {
      value->Data = (VerifyRecoverData*) malloc(sizeof(VerifyRecoverData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = VerifyRecoverData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -10308,7 +10317,7 @@ int EncapsulateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start
   else
   {
      value->Data = (EncapsulateKeyData*) malloc(sizeof(EncapsulateKeyData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = EncapsulateKeyData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -10511,7 +10520,7 @@ int DecapsulateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start
   else
   {
      value->Data = (DecapsulateKeyDadta*) malloc(sizeof(DecapsulateKeyDadta));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = DecapsulateKeyDadta_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }
@@ -10691,7 +10700,7 @@ int GetSessionValidationFlagsEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_obje
   else
   {
      value->Data = (GetSessionValidationFlagsData*) malloc(sizeof(GetSessionValidationFlagsData));
-     if (value->Data == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "Allocation error");
+     if (value->Data == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
      result = GetSessionValidationFlagsData_Deserialize(ctx, &tmp_obj, value->Data);
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   }

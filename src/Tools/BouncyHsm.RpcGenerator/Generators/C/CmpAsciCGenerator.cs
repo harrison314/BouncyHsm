@@ -417,6 +417,15 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 return rc;
             }
 
+            static int log_malloc_error(const char* functionName, int line)
+            {
+              log_message(LOG_LEVEL_ERROR,
+                        "malloc returns NULL in the function %s on line %i, the status %s was returned.",
+                        functionName,
+                        line);
+
+              return NMRPC_FATAL_ERROR;
+            }
             """);
         body.AppendLine();
     }
@@ -676,7 +685,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 body.AppendLine("  else");
                 body.AppendLine("  {");
                 body.AppendLine($"     value->{name} = ({type.BaseDefinition}*) malloc(sizeof({type.BaseDefinition}));");
-                body.AppendLine($"     if (value->{name} == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"Allocation error\");");
+                body.AppendLine($"     if (value->{name} == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);");
                 body.AppendLine($"     result = {readFnName}(ctx, &tmp_obj, value->{name});");
                 body.AppendLine($"     if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine("  }");
@@ -814,7 +823,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
         body.AppendLine("  value->length = (int)array_size;");
         body.AppendLine($"  value->array = ({type.GetTypeFromAray()}*) malloc(sizeof({type.GetTypeFromAray()}) * array_size);");
-        body.AppendLine("  if (value->array == NULL) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"memory allocation\");");
+        body.AppendLine("  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);");
 
         body.AppendLine("  for (i = 0; i < array_size; i++)");
         body.AppendLine("  {");
