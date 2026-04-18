@@ -63,6 +63,18 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
     return (CK_ULONG)value.Value;
 }
 
+static void CopyCkUlongArrayToUint32Array(ArrayOfuint32_t* destination, CK_ULONG_PTR source)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    size_t i;
+    size_t length = (size_t)destination->length;
+    for (i = 0; i < length; i++)
+    {
+        destination->array[i] = (uint32_t)source[i];
+    }
+}
+
 AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 {
     LOG_ENTERING_TO_FUNCTION();
@@ -108,6 +120,8 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
                 log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
                 return NULL;
             }
+
+            CopyCkUlongArrayToUint32Array(&uintArrayData->Array, (CK_ULONG_PTR)pTemplate[i].pValue);
 
             ptr[i].ValueUintArray = uintArrayData;
             ptr[i].ValueTypeHint |= AttrValueFromNative_TypeHint_UintArray;
