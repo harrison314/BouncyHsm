@@ -372,7 +372,8 @@ static int log_serilization_error(int rc, const char* functionName, int line, co
         log_message(LOG_LEVEL_ERROR,
             "An error occurred in the function %s on line %i, the status %s was returned.",
             functionName,
-            line);
+            line,
+            codeStr);
     }
     else
     {
@@ -380,6 +381,7 @@ static int log_serilization_error(int rc, const char* functionName, int line, co
             "An error occurred in the function %s on line %i, the status %s was returned. Context: %s",
             functionName,
             line,
+            codeStr,
             context);
     }
 
