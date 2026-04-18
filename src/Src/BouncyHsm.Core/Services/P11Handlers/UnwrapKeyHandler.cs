@@ -39,6 +39,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         KeyObject wrappingKey = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.UnwrappingKeyHandle, cancellationToken);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_UNWRAP);
+        wrappingKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
         ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);

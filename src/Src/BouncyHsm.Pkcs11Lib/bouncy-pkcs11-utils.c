@@ -63,6 +63,18 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
     return (CK_ULONG)value.Value;
 }
 
+static void CopyCkUlongArrayToUint32Array(ArrayOfuint32_t* destination, CK_ULONG_PTR source)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    size_t i;
+    size_t length = (size_t)destination->length;
+    for (i = 0; i < length; i++)
+    {
+        destination->array[i] = (uint32_t)source[i];
+    }
+}
+
 AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 {
     LOG_ENTERING_TO_FUNCTION();
@@ -88,6 +100,34 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
         ptr[i].ValueBool = false;
         ptr[i].ValueCkUlong = 0;
         ptr[i].ValueCkDate = NULL;
+        ptr[i].ValueUintArray = NULL;
+
+        if (pTemplate[i].type == CKA_ALLOWED_MECHANISMS)
+        {
+            UintArrayData* uintArrayData = (UintArrayData*)malloc(sizeof(UintArrayData));
+            if (uintArrayData == NULL)
+            {
+                log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
+                return NULL;
+            }
+
+            uintArrayData->Array.length = (int)(pTemplate[i].ulValueLen / sizeof(CK_ULONG));
+            uintArrayData->Array.array = (uint32_t*)malloc(uintArrayData->Array.length * sizeof(uint32_t));
+            if (uintArrayData->Array.array == NULL)
+            {
+                free((void*)uintArrayData);
+
+                log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
+                return NULL;
+            }
+
+            CopyCkUlongArrayToUint32Array(&uintArrayData->Array, (CK_ULONG_PTR)pTemplate[i].pValue);
+
+            ptr[i].ValueUintArray = uintArrayData;
+            ptr[i].ValueTypeHint |= AttrValueFromNative_TypeHint_UintArray;
+
+            continue;
+        }
 
         if (ptr[i].ValueRawBytes.size == sizeof(CK_BBOOL))
         {
@@ -168,6 +208,18 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
         if (datePtr != NULL)
         {
             free(datePtr);
+        }
+
+        ArrayOfuint32_t* uintArray = ptr[i].ValueUintArray;
+        if (uintArray != NULL)
+        {
+            uint32_t* innerArray = uintArray->array;
+            if (innerArray != NULL)
+            {
+                free((void*)innerArray);
+            }
+
+            free((void*)uintArray);
         }
     }
 
@@ -829,7 +881,7 @@ static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     ckHkdfParams.HashMechanism = (uint32_t)hkdfparams->prfHashMechanism;
     ckHkdfParams.SaltType = (uint32_t)hkdfparams->ulSaltType;
     ckHkdfParams.SaltKey = (uint32_t)hkdfparams->hSaltKey;
-    
+
     if (hkdfparams->pSalt != NULL)
     {
         salt.data = (uint8_t*)hkdfparams->pSalt;
@@ -843,7 +895,7 @@ static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         info.size = (size_t)hkdfparams->ulInfoLen;
         ckHkdfParams.Info = &info;
     }
-   
+
     result = nmrpc_writeAsBinary(&ckHkdfParams, (SerializeFnPtr_t)Ckp_CkHkdfParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {

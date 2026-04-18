@@ -43,6 +43,11 @@ internal class ByteArrayAttributeValue : IAttributeValue
         throw new InvalidATtributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
+    public uint[] AsUintArray()
+    {
+        throw new InvalidATtributeTypeCastException(AttrTypeTag.ByteArray);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {Convert.ToHexString(this.value)}";

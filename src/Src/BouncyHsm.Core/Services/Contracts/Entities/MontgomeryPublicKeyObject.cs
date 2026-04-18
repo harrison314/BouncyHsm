@@ -104,4 +104,9 @@ public class MontgomeryPublicKeyObject : PublicKeyObject
     {
         return visitor.Visit(this);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.MontgomeryKeyObject;
+    }
 }

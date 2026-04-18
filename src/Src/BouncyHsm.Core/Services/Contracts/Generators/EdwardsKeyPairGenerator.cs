@@ -48,6 +48,11 @@ internal class EdwardsKeyPairGenerator : IKeyPairGenerator
         EdwardsPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate, ecParams);
         EdwardsPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate, ecParams);
 
+        if (this.privateKeyTemplate.ContainsKey(CKA.CKA_ALLOWED_MECHANISMS) && !this.publicKeyTemplate.ContainsKey(CKA.CKA_ALLOWED_MECHANISMS))
+        {
+            pubKeyObject.CkaAllovedMechanism = privKeyObject.CkaAllovedMechanism;
+        }
+
         return (pubKeyObject, privKeyObject);
     }
 

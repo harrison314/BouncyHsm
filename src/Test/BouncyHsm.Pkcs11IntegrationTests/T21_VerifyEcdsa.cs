@@ -144,6 +144,72 @@ public class T21_VerifyEcdsa
         Assert.IsFalse(isNotValid, "Inconsistent signature is valid");
     }
 
+    [TestMethod]
+    public void VerifyEcdsa_WithPermitedAlgorithm_Failed()
+    {
+        byte[] signature = new byte[64];
+        byte[] data = new byte[32];
+        Random.Shared.NextBytes(signature);
+        Random.Shared.NextBytes(data);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        //NIST P-256
+        byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
+
+        List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+        {
+             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, namedCurveOid),
+
+        };
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ALLOWED_MECHANISMS, new List<CKM>(){ CKM.CKM_ECDSA_SHA512 }),
+        };
+
+        using IMechanism generationMechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA_KEY_PAIR_GEN);
+        session.GenerateKeyPair(generationMechanism,
+            publicKeyAttributes,
+            privateKeyAttributes,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA);
+        Pkcs11Exception ex = Assert.ThrowsExactly<Pkcs11Exception>(() => session.Verify(mechanism, privateKey, data, signature, out _));
+        Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
+    }
+
     private IObjectHandle FindPrivateKey(ISession session, byte[] ckaId, string ckaLabel)
     {
         List<IObjectAttribute> searchTemplate = new List<IObjectAttribute>()

@@ -36,6 +36,8 @@ public partial class DecryptInitHandler : IRpcRequestHandler<DecryptInitRequest,
         KeyObject objectInstance = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_DECRYPT);
+        objectInstance.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
+
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
         ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
         CipherUinion cipherUinon = cipherWrapper.IntoDecryption(objectInstance);

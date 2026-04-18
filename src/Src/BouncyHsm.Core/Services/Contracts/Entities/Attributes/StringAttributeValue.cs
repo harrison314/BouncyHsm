@@ -42,6 +42,11 @@ internal class StringAttributeValue : IAttributeValue
         throw new InvalidATtributeTypeCastException(AttrTypeTag.String);
     }
 
+    public uint[] AsUintArray()
+    {
+        throw new InvalidATtributeTypeCastException(AttrTypeTag.String);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {this.value}";

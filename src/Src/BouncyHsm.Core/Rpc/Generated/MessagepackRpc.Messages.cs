@@ -1466,6 +1466,19 @@ public partial class DigestFinalEnvelope : IRpcResponse
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
+public partial class UintArrayData
+{
+    [Key(0)]
+    public uint[] Array
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<uint>();
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.2.0")]
 public partial class AttrValueFromNative
 {
     [Key(0)]
@@ -1505,6 +1518,13 @@ public partial class AttrValueFromNative
 
     [Key(5)]
     public string? ValueCkDate
+    {
+        get;
+        set;
+    }
+
+    [Key(6)]
+    public UintArrayData? ValueUintArray
     {
         get;
         set;
@@ -1888,6 +1908,13 @@ public partial class GetAttributeOutValue
 
     [Key(5)]
     public string? ValueCkDate
+    {
+        get;
+        set;
+    }
+
+    [Key(6)]
+    public UintArrayData? ValueUintArray
     {
         get;
         set;

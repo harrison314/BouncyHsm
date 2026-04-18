@@ -68,4 +68,9 @@ public class SlhDsaPublicKeyObject : PublicKeyObject
         CryptoObjectValueChecker.CheckEnumIsDefined<CK_SLH_DSA_PARAMETER_SET>(CKA.CKA_PARAMETER_SET, this.CkaParameterSet);
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_VALUE, this.CkaValue);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.SlhDsaKeyObject;
+    }
 }

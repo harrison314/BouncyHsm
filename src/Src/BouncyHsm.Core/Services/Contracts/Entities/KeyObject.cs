@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
+
 public abstract class KeyObject : StorageObject
 {
     public virtual CKK CkaKeyType
@@ -45,12 +46,11 @@ public abstract class KeyObject : StorageObject
         set => this.values[CKA.CKA_KEY_GEN_MECHANISM] = AttributeValue.Create((uint)value);
     }
 
-    //TODO: Implement uint array attribute
-    //public CKM[] AllovedMechanism
-    //{
-    //    get => (CKM)this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUint();
-    //    set => this.values[CKA.CKA_ALLOWED_MECHANISMS] = AttributeValue.Create((uint)value);
-    //}
+    public CKM[] CkaAllovedMechanism
+    {
+        get => this.ConvertArray(this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUintArray());
+        set => this.values[CKA.CKA_ALLOWED_MECHANISMS] = AttributeValue.Create(this.ConvertArray(value));
+    }
 
     public KeyObject(CKK keyType, CKM genMechanism)
     {
@@ -61,6 +61,7 @@ public abstract class KeyObject : StorageObject
         this.CkaKeyGenMechanism = genMechanism;
         this.CkaStartDate = new CkDate();
         this.CkaEndDate = new CkDate();
+        this.CkaAllovedMechanism = this.GetAllovedMechanism();
     }
 
     internal KeyObject(StorageObjectMemento memento)
@@ -73,5 +74,43 @@ public abstract class KeyObject : StorageObject
     {
         base.Validate();
         CryptoObjectValueChecker.CheckStartEndDate(this.CkaStartDate, this.CkaEndDate);
+        CryptoObjectValueChecker.CheckAllovedMechanism(this.CkaAllovedMechanism, this.GetAllovedMechanism());
+    }
+
+    public bool MechanismIsAllowed(CKM mechanism)
+    {
+        return this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUintArray().Contains((uint)mechanism);
+    }
+
+    protected abstract CKM[] GetAllovedMechanism();
+
+    private CKM[] ConvertArray(uint[] array)
+    {
+        if (array.Length == 0)
+        {
+            return Array.Empty<CKM>();
+        }
+
+        CKM[] destination = new CKM[array.Length];
+
+        System.Diagnostics.Debug.Assert(sizeof(uint) == sizeof(CKM));
+        Buffer.BlockCopy(array, 0, destination, 0, destination.Length * sizeof(uint));
+
+        return destination;
+    }
+
+    private uint[] ConvertArray(CKM[] array)
+    {
+        if (array.Length == 0)
+        {
+            return Array.Empty<uint>();
+        }
+
+        uint[] destination = new uint[array.Length];
+
+        System.Diagnostics.Debug.Assert(sizeof(uint) == sizeof(CKM));
+        Buffer.BlockCopy(array, 0, destination, 0, destination.Length * sizeof(uint));
+
+        return destination;
     }
 }

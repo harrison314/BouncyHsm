@@ -41,6 +41,11 @@ internal class UintAttributeValue : IAttributeValue
         throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
     }
 
+    public uint[] AsUintArray()
+    {
+        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {this.value}";

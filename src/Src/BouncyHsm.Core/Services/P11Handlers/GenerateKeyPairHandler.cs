@@ -5,7 +5,6 @@ using BouncyHsm.Core.Services.Contracts.Generators;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Crypto.Signers;
 using System.Runtime.CompilerServices;
 using System.Threading;
 

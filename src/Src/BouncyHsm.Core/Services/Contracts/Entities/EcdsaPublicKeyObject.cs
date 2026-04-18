@@ -92,4 +92,9 @@ public sealed class EcdsaPublicKeyObject : PublicKeyObject
     {
         return visitor.Visit(this);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.EcdsaKeyObject;
+    }
 }

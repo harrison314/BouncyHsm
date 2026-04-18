@@ -180,4 +180,9 @@ public sealed class GenericSecretKeyObject : SecretKeyObject
             _ => throw new InvalidProgramException($"Enum value {keyType} is not supported.")
         };
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.GenericSecretKeyObject;
+    }
 }
