@@ -47,10 +47,23 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
 
             if (declaredType.IsArray)
             {
-                sb.AppendLine($"  if({this.GetArrayReleaseFnName(declaredType)}(&value->{fieldName}) != NMRPC_OK)");
-                sb.AppendLine("   {");
-                sb.AppendLine("       return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);");
-                sb.AppendLine("   }");
+                if (declaredType.IsNullable)
+                {
+                    sb.AppendLine($"  if (value->{fieldName} != NULL)");
+                    sb.AppendLine("  {");
+                    sb.AppendLine($"     if({this.GetArrayReleaseFnName(declaredType)}(value->{fieldName}) != NMRPC_OK)");
+                    sb.AppendLine("      {");
+                    sb.AppendLine("          return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);");
+                    sb.AppendLine("      }");
+                    sb.AppendLine("  }");
+                }
+                else
+                {
+                    sb.AppendLine($"  if({this.GetArrayReleaseFnName(declaredType)}(&value->{fieldName}) != NMRPC_OK)");
+                    sb.AppendLine("   {");
+                    sb.AppendLine("       return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);");
+                    sb.AppendLine("   }");
+                }
                 continue;
             }
 

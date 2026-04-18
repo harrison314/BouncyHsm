@@ -36,6 +36,7 @@ public partial class VerifyRecoverInitHandler : IRpcRequestHandler<VerifyRecover
         p11Session.State.EnsureEmpty();
 
         KeyObject objectInstance = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);
+        objectInstance.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         WrapperSignWithRecoverFactory signerFactory = new WrapperSignWithRecoverFactory(this.loggerFactory);
 

@@ -95,4 +95,9 @@ public sealed class RsaPublicKeyObject : PublicKeyObject
             this.CkaModulusBits = (uint)(this.CkaModulus.Length * 8);
         }
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.RsaKeyObject;
+    }
 }

@@ -109,4 +109,9 @@ public class MontgomeryPrivateKeyObject : PrivateKeyObject
             throw new ArgumentException("privateKey is not montgomery key parameters", nameof(privateKey));
         }
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.MontgomeryKeyObject;
+    }
 }

@@ -115,4 +115,9 @@ public class EdwardsPrivateKeyObject : PrivateKeyObject
             throw new ArgumentException("privateKey is not edwards key parameters", nameof(privateKey));
         }
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.EdwardsKeyObject;
+    }
 }

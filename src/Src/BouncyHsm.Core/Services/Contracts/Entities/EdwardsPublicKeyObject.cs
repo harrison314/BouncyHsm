@@ -109,4 +109,9 @@ public class EdwardsPublicKeyObject : PublicKeyObject
     {
         return visitor.Visit(this);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.EdwardsKeyObject;
+    }
 }

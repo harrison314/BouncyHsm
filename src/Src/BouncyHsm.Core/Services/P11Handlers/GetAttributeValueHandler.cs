@@ -152,6 +152,14 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
                 outValue.ValueCkDate = attributeValue.AsDate().ToRpcString();
                 break;
 
+            case AttrTypeTag.UintArray:
+                outValue.ValueType = NativeAttributeValue.AttrValueFromNativeTypeUintArray;
+                outValue.ValueUintArray = new UintArrayData()
+                {
+                    Array = attributeValue.AsUintArray()
+                };
+                break;
+
             default:
                 throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.");
         }

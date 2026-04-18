@@ -1472,6 +1472,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                 {
                     newValueLen = (outAttrPtr->ValueCkDate == NULL) ? 0 : sizeof(CK_DATE);
                 }
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_UintArray)
+                {
+                    newValueLen = (outAttrPtr->ValueUintArray == NULL) ? 0 : (outAttrPtr->ValueUintArray->Array.length * sizeof(CK_ULONG));
+                }
                 else
                 {
                     log_message(LOG_LEVEL_ERROR, "Invalid ValueType %i on line %i in function %s.", (int)outAttrPtr->ValueType, __LINE__, __FUNCTION__);
@@ -1513,6 +1517,17 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                             date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
                             date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
                             date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[9];
+                        }
+                    }
+                    else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_UintArray)
+                    {
+                        CK_ULONG* destinationUintArray = (CK_ULONG*)pTemplate[i].pValue;
+                        size_t j;
+                        size_t arrayLength = (size_t)outAttrPtr[i].ValueUintArray->Array.length;
+                        uint32_t* uintArray = outAttrPtr[i].ValueUintArray->Array.array;
+                        for (j = 0; j < arrayLength; j++)
+                        {
+                            destinationUintArray[j] = (CK_ULONG)uintArray[j];
                         }
                     }
                     else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Void)
@@ -3523,7 +3538,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VER
         else
         {
             log_message(LOG_LEVEL_INFO, "Unsupported PKCS#11 version requested: %d.%d in %s.", pVersion->major, pVersion->minor, __FUNCTION__);
-           
+
             *ppInterface = NULL;
             return CKR_OK;
         }

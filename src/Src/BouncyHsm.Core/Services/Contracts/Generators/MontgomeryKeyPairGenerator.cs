@@ -46,6 +46,11 @@ internal class MontgomeryKeyPairGenerator : IKeyPairGenerator
         MontgomeryPublicKeyObject pubKeyObject = this.CreatePublicKey(publicKey, this.publicKeyTemplate, ecParams);
         MontgomeryPrivateKeyObject privKeyObject = this.CreatePrivateKey(privateKey, this.privateKeyTemplate, ecParams);
 
+        if (this.privateKeyTemplate.ContainsKey(CKA.CKA_ALLOWED_MECHANISMS) && !this.publicKeyTemplate.ContainsKey(CKA.CKA_ALLOWED_MECHANISMS))
+        {
+            pubKeyObject.CkaAllovedMechanism = privKeyObject.CkaAllovedMechanism;
+        }
+
         return (pubKeyObject, privKeyObject);
     }
 

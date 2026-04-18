@@ -65,4 +65,9 @@ public class MlKemPrivateKeyObject : PrivateKeyObject
         CryptoObjectValueChecker.CheckEnumIsDefined<CK_ML_KEM_PARAMETER_SET>(CKA.CKA_PARAMETER_SET, this.CkaParameterSet);
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_VALUE, this.CkaValue);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.MlKemKeyObject;
+    }
 }

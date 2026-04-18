@@ -73,7 +73,7 @@ public sealed class EcdsaPrivateKeyObject : PrivateKeyObject
 
         ECPrivateKeyParameters ecdsaPrivateKey = (ECPrivateKeyParameters)privateKey;
         this.CkaValue = ecdsaPrivateKey.D.ToByteArrayUnsigned();
-        
+
         if (ecdsaPrivateKey.PublicKeyParamSet != null)
         {
             this.CkaEcParams = ecdsaPrivateKey.PublicKeyParamSet.GetEncoded();
@@ -87,5 +87,10 @@ public sealed class EcdsaPrivateKeyObject : PrivateKeyObject
                 ecdsaPrivateKey.Parameters.GetSeed());
             this.CkaEcParams = x9EcParameters.GetEncoded();
         }
+    }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.EcdsaKeyObject;
     }
 }

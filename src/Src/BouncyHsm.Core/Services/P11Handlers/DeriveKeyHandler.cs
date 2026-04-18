@@ -58,6 +58,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         }
 
         IDeriveKeyGenerator generator = await this.CreateDeriveKeyGenerator(request.Mechanism, memorySession, p11Session, cancellationToken);
+        baseKeyObject.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
         generator.Init(keyTemplate);
         SecretKeyObject keyObject = generator.Generate(baseKeyObject);
 

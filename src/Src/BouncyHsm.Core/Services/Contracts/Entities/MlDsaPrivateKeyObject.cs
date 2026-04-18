@@ -81,4 +81,9 @@ public class MlDsaPrivateKeyObject : PrivateKeyObject
 
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_VALUE, this.CkaValue);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.MlDsaKeyObject;
+    }
 }

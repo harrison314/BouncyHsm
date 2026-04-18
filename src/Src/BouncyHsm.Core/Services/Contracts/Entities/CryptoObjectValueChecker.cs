@@ -234,6 +234,40 @@ internal static class CryptoObjectValueChecker
         }
     }
 
+    public static void CheckAllovedMechanism(CKM[] allovedMechanism, CKM[] exceptedMechanisms)
+    {
+        if (object.ReferenceEquals(allovedMechanism, exceptedMechanisms) || allovedMechanism.Length == 0)
+        {
+            return;
+        }
+
+        CheckDuplicateItems(allovedMechanism);
+
+        for (int i = 0; i < allovedMechanism.Length; i++)
+        {
+            if (!exceptedMechanisms.Contains(allovedMechanism[i]))
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                      $"Attribute {CKA.CKA_ALLOWED_MECHANISMS} contains invalid mechanism value {allovedMechanism[i]} for this type key object.");
+            }
+        }
+    }
+
+    private static void CheckDuplicateItems(CKM[] allovedMechanism)
+    {
+        for (int i = 0; i < allovedMechanism.Length; i++)
+        {
+            for (int j = i + 1; j < allovedMechanism.Length; j++)
+            {
+                if (allovedMechanism[i] == allovedMechanism[j])
+                {
+                    throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                       $"Attribute {CKA.CKA_ALLOWED_MECHANISMS} contains duplicate value {allovedMechanism[i]}.");
+                }
+            }
+        }
+    }
+
     private static string EscapeBytes(byte[] bytes)
     {
         return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);

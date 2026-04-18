@@ -113,4 +113,9 @@ public sealed class ChaCha20KeyObject : SecretKeyObject
 
         base.SetValue(attributeType, value, isUpdating);
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.ChaCha20KeyObject;
+    }
 }

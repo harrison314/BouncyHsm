@@ -17,6 +17,7 @@ internal static class AttributeValueExtensions
             AttrTypeTag.CkUint => attributeValue.AsUint().ToString("X8"),
             AttrTypeTag.String => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsString())),
             AttrTypeTag.DateTime => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsDate().ToString())),
+            AttrTypeTag.UintArray => UintArrayToHex(attributeValue.AsUintArray()),
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
         };
     }
@@ -37,6 +38,7 @@ internal static class AttributeValueExtensions
             AttrTypeTag.CkUint => UintToString(attributeType, attributeValue.AsUint()),
             AttrTypeTag.String => attributeValue.AsString(),
             AttrTypeTag.DateTime => attributeValue.AsDate().ToString(),
+            AttrTypeTag.UintArray => UintArrayToString(attributeType, attributeValue.AsUintArray()),
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
         };
     }
@@ -76,9 +78,28 @@ internal static class AttributeValueExtensions
             CKA.CKA_TRUST_IPSEC_IKE => ((CKT)value).ToString(),
             CKA.CKA_TRUST_TIME_STAMPING => ((CKT)value).ToString(),
             CKA.CKA_TRUST_OCSP_SIGNING => ((CKT)value).ToString(),
-
             _ => value.ToString()
         };
+    }
+
+    private static string UintArrayToString(CKA attributeType, uint[] uints)
+    {
+        return attributeType switch
+        {
+            CKA.CKA_ALLOWED_MECHANISMS => string.Concat("[", string.Join(", ", uints.Select(t => (CKM)t)), "]"),
+            _ => string.Concat("[", string.Join(", ", uints), "]"),
+        };
+    }
+
+    private static string UintArrayToHex(uint[] uints)
+    {
+        StringBuilder sb = new StringBuilder(uints.Length * 8);
+        for (int i = 0; i < uints.Length; i++)
+        {
+            sb.AppendFormat("{0:X8}", uints[i]);
+        }
+
+        return sb.ToString();
     }
 
     private static string ParameterSetToString(IAttributeValue attributeValue, Dictionary<CKA, IAttributeValue> memenoto)

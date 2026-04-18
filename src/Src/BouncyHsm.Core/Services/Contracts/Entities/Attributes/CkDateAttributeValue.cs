@@ -43,6 +43,11 @@ internal class CkDateAttributeValue : IAttributeValue
         return this.date;
     }
 
+    public uint[] AsUintArray()
+    {
+        throw new InvalidATtributeTypeCastException(AttrTypeTag.DateTime);
+    }
+
     public bool Equals(IAttributeValue? other)
     {
         if (other == null)

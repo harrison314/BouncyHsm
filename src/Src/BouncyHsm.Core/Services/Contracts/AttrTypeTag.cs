@@ -8,10 +8,11 @@ namespace BouncyHsm.Core.Services.Contracts;
 
 public enum AttrTypeTag
 {
-    ByteArray,
-    String,
-    CkUint,
-    CkBool,
-    DateTime,
-    CkAttributeArray
+    ByteArray = 0,
+    String = 1,
+    CkUint = 2,
+    CkBool = 3,
+    DateTime = 4,
+    CkAttributeArray = 5,
+    UintArray = 6,
 }

@@ -38,6 +38,7 @@ public partial class DecapsulateKeyHandler : IRpcRequestHandler<DecapsulateKeyRe
         PrivateKeyObject privateKeyObject = await this.hwServices.FindObjectByHandle<PrivateKeyObject>(memorySession, p11Session, request.PrivateKeyHandle, cancellationToken);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_DECAPSULATE);
+        privateKeyObject.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         Dictionary<CKA, IAttributeValue> template = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 

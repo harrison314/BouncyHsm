@@ -141,4 +141,9 @@ public sealed class AesKeyObject : SecretKeyObject
         cipher.ProcessBlock(vector, outVector);
         return outVector.Slice(0, 3).ToArray();
     }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.AesKeyObject;
+    }
 }

@@ -2,7 +2,6 @@
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
-using System.Security.Cryptography.X509Certificates;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
@@ -139,5 +138,10 @@ public sealed class RsaPrivateKeyObject : PrivateKeyObject
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_EXPONENT_1, this.CkaExponent1);
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_EXPONENT_2, this.CkaExponent2);
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_COEFFICIENT, this.CkaCoefficient);
+    }
+
+    protected override CKM[] GetAllovedMechanism()
+    {
+        return AllovedMechanismLookup.RsaKeyObject;
     }
 }

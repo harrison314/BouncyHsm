@@ -56,6 +56,10 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                     writer.Write(attrVal.AsString());
                     break;
 
+                case AttrTypeTag.UintArray:
+                    this.WriteUintArray(ref writer, attrVal);
+                    break;
+
                 default:
                     throw new InvalidProgramException($"Enum value {attrVal.TypeTag} is not supported.");
             }
@@ -98,6 +102,7 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                 AttrTypeTag.CkUint => AttributeValue.Create(reader.ReadUInt32()),
                 AttrTypeTag.DateTime => AttributeValue.Create(CkDate.Parse(reader.ReadString())),
                 AttrTypeTag.String => AttributeValue.Create(reader.ReadString() ?? string.Empty),
+                AttrTypeTag.UintArray => AttributeValue.Create(this.ReaduintArray(ref reader)),
                 _ => throw new InvalidProgramException($"Enum value {typeTag} is not supported.")
             };
 
@@ -116,5 +121,32 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         }
 
         return idBytes.Value.ToArray();
+    }
+
+    private void WriteUintArray(ref MessagePackWriter writer, IAttributeValue attrVal)
+    {
+        uint[] uintArray = attrVal.AsUintArray();
+        writer.WriteArrayHeader(uintArray.Length);
+        for (int i = 0; i < uintArray.Length; i++)
+        {
+            writer.Write(uintArray[i]);
+        }
+    }
+
+    private uint[] ReaduintArray(ref MessagePackReader reader)
+    {
+        int header = reader.ReadArrayHeader();
+        if (header == 0)
+        {
+            return Array.Empty<uint>();
+        }
+
+        uint[] array = new uint[header];
+        for (int i = 0; i < array.Length; i++)
+        {
+            array[i] = reader.ReadUInt32();
+        }
+
+        return array;
     }
 }

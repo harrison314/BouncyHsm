@@ -53,6 +53,11 @@ internal class RsaKeyPairGenerator : IKeyPairGenerator
         RsaPublicKeyObject publicKeyObject = this.CreatePublicKeyObject(this.publicKeyTemplate, publicKey);
         RsaPrivateKeyObject privateKeyObject = this.CreatePrivateKeyObject(this.privateKeyTemplate, privateKey);
 
+        if (this.privateKeyTemplate.ContainsKey(CKA.CKA_ALLOWED_MECHANISMS) && !this.publicKeyTemplate.ContainsKey(CKA.CKA_ALLOWED_MECHANISMS))
+        {
+            publicKeyObject.CkaAllovedMechanism = privateKeyObject.CkaAllovedMechanism;
+        }
+
         return (publicKeyObject, privateKeyObject);
     }
 

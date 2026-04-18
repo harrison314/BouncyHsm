@@ -1,6 +1,7 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.HighLevelAPI.MechanismParams;
+using System.Drawing;
 using System.Security.Cryptography;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
@@ -307,6 +308,59 @@ public class T26_WrapKey
         byte[] wrappedKey = session.WrapKey(mechanism, publicKey, aesKey);
 
         Assert.IsNotNull(wrappedKey);
+    }
+
+    [TestMethod]
+    public void Wrap_WithPermitedAlgorithm_Failed()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
+
+        string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)32),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ALLOWED_MECHANISMS, new List<CKM>(){ CKM.CKM_AES_CBC, CKM.CKM_AES_ECB }),
+        };
+
+        using IMechanism generationMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+
+        IObjectHandle key = session.GenerateKey(generationMechanism, keyAttributes);
+
+        byte[] nonce = session.GenerateRandom(16);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
+            (ulong)0,
+            null,
+            16 * 8);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_GCM, gcmParams);
+        Pkcs11Exception ex = Assert.ThrowsExactly<Pkcs11Exception>(() => session.WrapKey(mechanism, key, privateKey));
+        Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
     }
 
     public IObjectHandle GenerateAesKey(ISession session, int size)

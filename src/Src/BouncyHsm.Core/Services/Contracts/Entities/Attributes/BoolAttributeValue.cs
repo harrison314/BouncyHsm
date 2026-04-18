@@ -44,6 +44,11 @@ internal class BoolAttributeValue : IAttributeValue
         throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
     }
 
+    public uint[] AsUintArray()
+    {
+        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {this.value}";

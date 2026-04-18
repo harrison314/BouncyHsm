@@ -35,4 +35,10 @@ public static class AttributeValue
     {
         return (date.HasValue) ? new CkDateAttributeValue(date) : CkDateAttributeValue.Empty;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IAttributeValue Create(uint[] value)
+    {
+        return new UintArrayAttributeValue(value);
+    }
 }

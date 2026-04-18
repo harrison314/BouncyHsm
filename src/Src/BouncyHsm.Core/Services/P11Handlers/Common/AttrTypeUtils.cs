@@ -121,7 +121,7 @@ internal static class AttrTypeUtils
             CKA.CKA_REQUIRED_CMS_ATTRIBUTES => AttrTypeTag.ByteArray,
             CKA.CKA_DEFAULT_CMS_ATTRIBUTES => AttrTypeTag.ByteArray,
             CKA.CKA_SUPPORTED_CMS_ATTRIBUTES => AttrTypeTag.ByteArray,
-            CKA.CKA_ALLOWED_MECHANISMS => AttrTypeTag.CkAttributeArray,
+            CKA.CKA_ALLOWED_MECHANISMS => AttrTypeTag.UintArray,
             CKA.CKA_NAME_HASH_ALGORITHM => AttrTypeTag.CkUint,
             CKA.CKA_TRUST_SERVER_AUTH => AttrTypeTag.CkUint,
             CKA.CKA_TRUST_CLIENT_AUTH => AttrTypeTag.CkUint,
