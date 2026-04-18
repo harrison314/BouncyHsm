@@ -679,7 +679,8 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             string readFnName = this.GetDeserializeFnName(type);
             if (type.IsNullable)
             {
-                body.AppendLine("  cmp_read_object(ctx, &tmp_obj);"); //TODO: check return value
+                body.AppendLine("  result = cmp_read_object(ctx, &tmp_obj);");
+                body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine("  if (cmp_object_is_nil(&tmp_obj))");
                 body.AppendLine("  {");
                 body.AppendLine($"      value->{name} = NULL;");

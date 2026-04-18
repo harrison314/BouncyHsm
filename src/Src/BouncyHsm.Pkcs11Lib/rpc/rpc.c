@@ -1739,7 +1739,8 @@ int GetSlotInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -2045,7 +2046,8 @@ int GetTokenInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -2241,7 +2243,8 @@ int GetMechanismListEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* sta
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -2439,7 +2442,8 @@ int GetMechanismInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* sta
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -3063,7 +3067,8 @@ int GetSessionInfoEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -3854,7 +3859,8 @@ int DigestEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -4200,7 +4206,8 @@ int DigestFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -4357,7 +4364,8 @@ int AttrValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   result = cmph_read_nullable_str(ctx, &value->ValueCkDate);
   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueCkDate");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field ValueUintArray");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->ValueUintArray = NULL;
@@ -4873,7 +4881,8 @@ int FindObjectsEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -5104,7 +5113,8 @@ int GetObjectSizeEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -5336,7 +5346,8 @@ int GetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   result = cmph_read_nullable_str(ctx, &value->ValueCkDate);
   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueCkDate");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field ValueUintArray");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->ValueUintArray = NULL;
@@ -5469,7 +5480,8 @@ int GetAttributeValueEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* st
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -5675,7 +5687,8 @@ int GenerateKeyPairEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* star
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -5983,7 +5996,8 @@ int SignEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, 
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -6227,7 +6241,8 @@ int SignFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -6841,7 +6856,8 @@ int GenerateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -7037,7 +7053,8 @@ int DeriveKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -7345,7 +7362,8 @@ int EncryptEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_pt
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -7493,7 +7511,8 @@ int EncryptUpdateEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -7634,7 +7653,8 @@ int EncryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -7942,7 +7962,8 @@ int DecryptEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_pt
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -8090,7 +8111,8 @@ int DecryptUpdateEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -8231,7 +8253,8 @@ int DecryptFinalEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -8442,7 +8465,8 @@ int WrapKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_pt
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -8645,7 +8669,8 @@ int UnwrapKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -8947,7 +8972,8 @@ int CopyObjectEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -9088,7 +9114,8 @@ int WaitForSlotEventEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* sta
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -9441,7 +9468,8 @@ int SignRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -9749,7 +9777,8 @@ int VerifyRecoverEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -10311,7 +10340,8 @@ int EncapsulateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -10514,7 +10544,8 @@ int DecapsulateKeyEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
@@ -10694,7 +10725,8 @@ int GetSessionValidationFlagsEnvelope_Deserialize(cmp_ctx_t* ctx, const cmp_obje
   result = cmp_read_uint(ctx, &value->Rv);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Rv");
 
-  cmp_read_object(ctx, &tmp_obj);
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Data");
   if (cmp_object_is_nil(&tmp_obj))
   {
       value->Data = NULL;
