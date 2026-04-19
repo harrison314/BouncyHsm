@@ -214,16 +214,16 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
             free(datePtr);
         }
 
-        ArrayOfuint32_t* uintArray = ptr[i].ValueUintArray;
-        if (uintArray != NULL)
+        UintArrayData* arrayData = ptr[i].ValueUintArray;
+        if (arrayData != NULL)
         {
-            uint32_t* innerArray = uintArray->array;
+            uint32_t* innerArray = arrayData->Array.array;
             if (innerArray != NULL)
             {
                 free((void*)innerArray);
             }
 
-            free((void*)uintArray);
+            free((void*)arrayData);
         }
     }
 
