@@ -883,7 +883,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             string readFnName = this.GetDeserializeFnName(type);
 
             body.AppendLine($"   result = {readFnName}(ctx, NULL, &value->array[i]);");
-            body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);;");
+            body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
         }
 
         body.AppendLine("  }");
@@ -912,6 +912,8 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
         body.AppendLine($$"""
          int nmrpc_call_{{rpcName}}(nmrpc_global_context_t* ctx, {{requestType}}* request, {{responseType}}* response)
          {
+             log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
              if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
              int result = NMRPC_OK;
@@ -936,33 +938,50 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = InternalBuffer_init(&write_head_buffer, 256);
              if (result != NMRPC_OK)
              {
-                 return result;
+                 return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
              }
 
              result = InternalBuffer_init(&write_body_buffer, 256);
              if (result != NMRPC_OK)
              {
-                 return result;
+                 return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
              }
 
              cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
              cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-             cmp_write_array(&write_head_ctx, 2);
-             cmp_write_str(&write_head_ctx, "{{rpcName}}", {{rpcName.Length}});
+             if (!cmp_write_array(&write_head_ctx, 2)) 
+             {
+               result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+               goto err;
+             }
+             if (!cmp_write_str(&write_head_ctx, "{{rpcName}}", {{rpcName.Length}}))
+             {
+               result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+               goto err;
+             }
+
              if (ctx->tag != NULL)
              {
-                  cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+                  if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+                  {
+                    result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+                    goto err;
+                  }
              }
              else
              {
-                  cmp_write_nil(&write_head_ctx);
+                  if (!cmp_write_nil(&write_head_ctx))
+                  {
+                    result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+                    goto err;
+                  }
              }
-
 
              result = {{this.GetSerializeFnName(crequestType)}}(&write_body_ctx, request);
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -984,6 +1003,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -992,18 +1012,21 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
              result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
              result = ctx->flush(ctx->user_ctx);
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -1013,6 +1036,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
              if (!result)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -1028,24 +1052,28 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  return result;
              }
 
              result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  return result;
              }
 
              read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
              if (read_head_buffer.size != response_header_size)
              {
+                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
                  goto err;
              }
 
              read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
              if (read_body_buffer.size != response_body_size)
              {
+                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
                  goto err;
              }
 
@@ -1059,6 +1087,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = {{this.GetDeserializeFnName(cresponseType)}}(&read_body_ctx, NULL, response);
              if (result != NMRPC_OK)
              {
+                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 

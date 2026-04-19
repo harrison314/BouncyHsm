@@ -589,7 +589,7 @@ int ArrayOfAttrValueFromNative_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_o
   for (i = 0; i < array_size; i++)
   {
    result = AttrValueFromNative_Deserialize(ctx, NULL, &value->array[i]);
-   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);;
+   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
   }
 
     return NMRPC_OK;
@@ -660,7 +660,7 @@ int ArrayOfGetAttributeInputValues_Deserialize(cmp_ctx_t* ctx, cmp_object_t* sta
   for (i = 0; i < array_size; i++)
   {
    result = GetAttributeInputValues_Deserialize(ctx, NULL, &value->array[i]);
-   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);;
+   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
   }
 
     return NMRPC_OK;
@@ -731,7 +731,7 @@ int ArrayOfGetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_
   for (i = 0; i < array_size; i++)
   {
    result = GetAttributeOutValue_Deserialize(ctx, NULL, &value->array[i]);
-   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);;
+   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
   }
 
     return NMRPC_OK;
@@ -11916,6 +11916,8 @@ int Ckp_CkCamelliaCbcEncryptDataParams_Release(Ckp_CkCamelliaCbcEncryptDataParam
 }
 int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -11940,33 +11942,50 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Ping", 4);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Ping", 4))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = PingRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -11988,6 +12007,7 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -11996,18 +12016,21 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12017,6 +12040,7 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12032,24 +12056,28 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12063,6 +12091,7 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     result = PingEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12086,6 +12115,8 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
 
 int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* request, InitializeEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -12110,33 +12141,50 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Initialize", 10);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Initialize", 10))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = InitializeRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12158,6 +12206,7 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12166,18 +12215,21 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12187,6 +12239,7 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12202,24 +12255,28 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12233,6 +12290,7 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     result = InitializeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12256,6 +12314,8 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
 
 int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, FinalizeEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -12280,33 +12340,50 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Finalize", 8);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Finalize", 8))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = FinalizeRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12328,6 +12405,7 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12336,18 +12414,21 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12357,6 +12438,7 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12372,24 +12454,28 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12403,6 +12489,7 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     result = FinalizeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12426,6 +12513,8 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
 
 int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, GetInfoEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -12450,33 +12539,50 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetInfo", 7);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetInfo", 7))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12498,6 +12604,7 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12506,18 +12613,21 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12527,6 +12637,7 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12542,24 +12653,28 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12573,6 +12688,7 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     result = GetInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12596,6 +12712,8 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
 
 int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* request, GetSlotListEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -12620,33 +12738,50 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetSlotList", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetSlotList", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetSlotListRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12668,6 +12803,7 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12676,18 +12812,21 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12697,6 +12836,7 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12712,24 +12852,28 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12743,6 +12887,7 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     result = GetSlotListEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12766,6 +12911,8 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
 
 int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* request, GetSlotInfoEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -12790,33 +12937,50 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetSlotInfo", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetSlotInfo", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetSlotInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12838,6 +13002,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12846,18 +13011,21 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12867,6 +13035,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12882,24 +13051,28 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12913,6 +13086,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     result = GetSlotInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -12936,6 +13110,8 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
 
 int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* request, GetTokenInfoEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -12960,33 +13136,50 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetTokenInfo", 12);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetTokenInfo", 12))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetTokenInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13008,6 +13201,7 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13016,18 +13210,21 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13037,6 +13234,7 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13052,24 +13250,28 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13083,6 +13285,7 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     result = GetTokenInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13106,6 +13309,8 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
 
 int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListRequest* request, GetMechanismListEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -13130,33 +13335,50 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetMechanismList", 16);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetMechanismList", 16))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetMechanismListRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13178,6 +13400,7 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13186,18 +13409,21 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13207,6 +13433,7 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13222,24 +13449,28 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13253,6 +13484,7 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     result = GetMechanismListEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13276,6 +13508,8 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
 
 int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoRequest* request, GetMechanismInfoEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -13300,33 +13534,50 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetMechanismInfo", 16);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetMechanismInfo", 16))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetMechanismInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13348,6 +13599,7 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13356,18 +13608,21 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13377,6 +13632,7 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13392,24 +13648,28 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13423,6 +13683,7 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     result = GetMechanismInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13446,6 +13707,8 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
 
 int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request, InitTokenEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -13470,33 +13733,50 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "InitToken", 9);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "InitToken", 9))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = InitTokenRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13518,6 +13798,7 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13526,18 +13807,21 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13547,6 +13831,7 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13562,24 +13847,28 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13593,6 +13882,7 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     result = InitTokenEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13616,6 +13906,8 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
 
 int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, InitPinEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -13640,33 +13932,50 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "InitPIN", 7);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "InitPIN", 7))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = InitPinRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13688,6 +13997,7 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13696,18 +14006,21 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13717,6 +14030,7 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13732,24 +14046,28 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13763,6 +14081,7 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     result = InitPinEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13786,6 +14105,8 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
 
 int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPinEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -13810,33 +14131,50 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SetPin", 6);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SetPin", 6))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SetPinRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13858,6 +14196,7 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13866,18 +14205,21 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13887,6 +14229,7 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13902,24 +14245,28 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13933,6 +14280,7 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     result = SetPinEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -13956,6 +14304,8 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
 
 int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* request, OpenSessionEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -13980,33 +14330,50 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "OpenSession", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "OpenSession", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = OpenSessionRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14028,6 +14395,7 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14036,18 +14404,21 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14057,6 +14428,7 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14072,24 +14444,28 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14103,6 +14479,7 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     result = OpenSessionEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14126,6 +14503,8 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
 
 int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* request, CloseSessionEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -14150,33 +14529,50 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "CloseSession", 12);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "CloseSession", 12))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = CloseSessionRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14198,6 +14594,7 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14206,18 +14603,21 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14227,6 +14627,7 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14242,24 +14643,28 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14273,6 +14678,7 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     result = CloseSessionEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14296,6 +14702,8 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
 
 int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsRequest* request, CloseAllSessionsEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -14320,33 +14728,50 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "CloseAllSessions", 16);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "CloseAllSessions", 16))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = CloseAllSessionsRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14368,6 +14793,7 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14376,18 +14802,21 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14397,6 +14826,7 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14412,24 +14842,28 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14443,6 +14877,7 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     result = CloseAllSessionsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14466,6 +14901,8 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
 
 int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest* request, GetSessionInfoEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -14490,33 +14927,50 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetSessionInfo", 14);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetSessionInfo", 14))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetSessionInfoRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14538,6 +14992,7 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14546,18 +15001,21 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14567,6 +15025,7 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14582,24 +15041,28 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14613,6 +15076,7 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     result = GetSessionInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14636,6 +15100,8 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
 
 int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -14660,33 +15126,50 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Login", 5);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Login", 5))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = LoginRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14708,6 +15191,7 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14716,18 +15200,21 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14737,6 +15224,7 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14752,24 +15240,28 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14783,6 +15275,7 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     result = LoginEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14806,6 +15299,8 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
 
 int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, LogoutEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -14830,33 +15325,50 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Logout", 6);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Logout", 6))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = LogoutRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14878,6 +15390,7 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14886,18 +15399,21 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14907,6 +15423,7 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14922,24 +15439,28 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14953,6 +15474,7 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     result = LogoutEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -14976,6 +15498,8 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
 
 int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* request, SeedRandomEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -15000,33 +15524,50 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SeedRandom", 10);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SeedRandom", 10))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SeedRandomRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15048,6 +15589,7 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15056,18 +15598,21 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15077,6 +15622,7 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15092,24 +15638,28 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15123,6 +15673,7 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     result = SeedRandomEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15146,6 +15697,8 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
 
 int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest* request, GenerateRandomEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -15170,33 +15723,50 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GenerateRandom", 14);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GenerateRandom", 14))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GenerateRandomRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15218,6 +15788,7 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15226,18 +15797,21 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15247,6 +15821,7 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15262,24 +15837,28 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15293,6 +15872,7 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     result = GenerateRandomEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15316,6 +15896,8 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
 
 int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* request, DigestInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -15340,33 +15922,50 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DigestInit", 10);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DigestInit", 10))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DigestInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15388,6 +15987,7 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15396,18 +15996,21 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15417,6 +16020,7 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15432,24 +16036,28 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15463,6 +16071,7 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     result = DigestInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15486,6 +16095,8 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
 
 int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, DigestEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -15510,33 +16121,50 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Digest", 6);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Digest", 6))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DigestRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15558,6 +16186,7 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15566,18 +16195,21 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15587,6 +16219,7 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15602,24 +16235,28 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15633,6 +16270,7 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     result = DigestEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15656,6 +16294,8 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
 
 int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* request, DigestUpdateEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -15680,33 +16320,50 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DigestUpdate", 12);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DigestUpdate", 12))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DigestUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15728,6 +16385,7 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15736,18 +16394,21 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15757,6 +16418,7 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15772,24 +16434,28 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15803,6 +16469,7 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     result = DigestUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15826,6 +16493,8 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
 
 int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request, DigestKeyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -15850,33 +16519,50 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DigestKey", 9);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DigestKey", 9))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DigestKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15898,6 +16584,7 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15906,18 +16593,21 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15927,6 +16617,7 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15942,24 +16633,28 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15973,6 +16668,7 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     result = DigestKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -15996,6 +16692,8 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
 
 int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* request, DigestFinalEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -16020,33 +16718,50 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DigestFinal", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DigestFinal", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DigestFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16068,6 +16783,7 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16076,18 +16792,21 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16097,6 +16816,7 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16112,24 +16832,28 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16143,6 +16867,7 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     result = DigestFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16166,6 +16891,8 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
 
 int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* request, CreateObjectEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -16190,33 +16917,50 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "CreateObject", 12);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "CreateObject", 12))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = CreateObjectRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16238,6 +16982,7 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16246,18 +16991,21 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16267,6 +17015,7 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16282,24 +17031,28 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16313,6 +17066,7 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     result = CreateObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16336,6 +17090,8 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
 
 int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* request, DestroyObjectEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -16360,33 +17116,50 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DestroyObject", 13);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DestroyObject", 13))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DestroyObjectRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16408,6 +17181,7 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16416,18 +17190,21 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16437,6 +17214,7 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16452,24 +17230,28 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16483,6 +17265,7 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     result = DestroyObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16506,6 +17289,8 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
 
 int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitRequest* request, FindObjectsInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -16530,33 +17315,50 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "FindObjectsInit", 15);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "FindObjectsInit", 15))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = FindObjectsInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16578,6 +17380,7 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16586,18 +17389,21 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16607,6 +17413,7 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16622,24 +17429,28 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16653,6 +17464,7 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     result = FindObjectsInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16676,6 +17488,8 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
 
 int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* request, FindObjectsEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -16700,33 +17514,50 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "FindObjects", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "FindObjects", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = FindObjectsRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16748,6 +17579,7 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16756,18 +17588,21 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16777,6 +17612,7 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16792,24 +17628,28 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16823,6 +17663,7 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     result = FindObjectsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16846,6 +17687,8 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
 
 int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalRequest* request, FindObjectsFinalEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -16870,33 +17713,50 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "FindObjectsFinal", 16);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "FindObjectsFinal", 16))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = FindObjectsFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16918,6 +17778,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16926,18 +17787,21 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16947,6 +17811,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -16962,24 +17827,28 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16993,6 +17862,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     result = FindObjectsFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17016,6 +17886,8 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
 
 int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* request, GetObjectSizeEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -17040,33 +17912,50 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetObjectSize", 13);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetObjectSize", 13))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetObjectSizeRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17088,6 +17977,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17096,18 +17986,21 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17117,6 +18010,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17132,24 +18026,28 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17163,6 +18061,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     result = GetObjectSizeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17186,6 +18085,8 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
 
 int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueRequest* request, GetAttributeValueEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -17210,33 +18111,50 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetAttributeValue", 17);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetAttributeValue", 17))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetAttributeValueRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17258,6 +18176,7 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17266,18 +18185,21 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17287,6 +18209,7 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17302,24 +18225,28 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17333,6 +18260,7 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     result = GetAttributeValueEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17356,6 +18284,8 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
 
 int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairRequest* request, GenerateKeyPairEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -17380,33 +18310,50 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GenerateKeyPair", 15);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GenerateKeyPair", 15))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GenerateKeyPairRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17428,6 +18375,7 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17436,18 +18384,21 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17457,6 +18408,7 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17472,24 +18424,28 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17503,6 +18459,7 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     result = GenerateKeyPairEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17526,6 +18483,8 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
 
 int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueRequest* request, SetAttributeValueEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -17550,33 +18509,50 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SetAttributeValue", 17);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SetAttributeValue", 17))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SetAttributeValueRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17598,6 +18574,7 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17606,18 +18583,21 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17627,6 +18607,7 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17642,24 +18623,28 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17673,6 +18658,7 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     result = SetAttributeValueEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17696,6 +18682,8 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
 
 int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* request, CopyObjectEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -17720,33 +18708,50 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "CopyObject", 10);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "CopyObject", 10))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = CopyObjectRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17768,6 +18773,7 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17776,18 +18782,21 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17797,6 +18806,7 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17812,24 +18822,28 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17843,6 +18857,7 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     result = CopyObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17866,6 +18881,8 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
 
 int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, SignInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -17890,33 +18907,50 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SignInit", 8);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SignInit", 8))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SignInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17938,6 +18972,7 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17946,18 +18981,21 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17967,6 +19005,7 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -17982,24 +19021,28 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18013,6 +19056,7 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     result = SignInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18036,6 +19080,8 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
 
 int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -18060,33 +19106,50 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Sign", 4);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Sign", 4))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SignRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18108,6 +19171,7 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18116,18 +19180,21 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18137,6 +19204,7 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18152,24 +19220,28 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18183,6 +19255,7 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     result = SignEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18206,6 +19279,8 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
 
 int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* request, SignUpdateEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -18230,33 +19305,50 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SignUpdate", 10);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SignUpdate", 10))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SignUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18278,6 +19370,7 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18286,18 +19379,21 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18307,6 +19403,7 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18322,24 +19419,28 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18353,6 +19454,7 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     result = SignUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18376,6 +19478,8 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
 
 int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request, SignFinalEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -18400,33 +19504,50 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SignFinal", 9);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SignFinal", 9))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SignFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18448,6 +19569,7 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18456,18 +19578,21 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18477,6 +19602,7 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18492,24 +19618,28 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18523,6 +19653,7 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     result = SignFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18546,6 +19677,8 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
 
 int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* request, VerifyInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -18570,33 +19703,50 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "VerifyInit", 10);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "VerifyInit", 10))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = VerifyInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18618,6 +19768,7 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18626,18 +19777,21 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18647,6 +19801,7 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18662,24 +19817,28 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18693,6 +19852,7 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     result = VerifyInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18716,6 +19876,8 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
 
 int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, VerifyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -18740,33 +19902,50 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Verify", 6);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Verify", 6))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = VerifyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18788,6 +19967,7 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18796,18 +19976,21 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18817,6 +20000,7 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18832,24 +20016,28 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18863,6 +20051,7 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     result = VerifyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18886,6 +20075,8 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
 
 int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* request, VerifyUpdateEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -18910,33 +20101,50 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "VerifyUpdate", 12);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "VerifyUpdate", 12))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = VerifyUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18958,6 +20166,7 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18966,18 +20175,21 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -18987,6 +20199,7 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19002,24 +20215,28 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19033,6 +20250,7 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     result = VerifyUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19056,6 +20274,8 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
 
 int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* request, VerifyFinalEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -19080,33 +20300,50 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "VerifyFinal", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "VerifyFinal", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = VerifyFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19128,6 +20365,7 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19136,18 +20374,21 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19157,6 +20398,7 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19172,24 +20414,28 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19203,6 +20449,7 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     result = VerifyFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19226,6 +20473,8 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
 
 int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* request, GenerateKeyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -19250,33 +20499,50 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GenerateKey", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GenerateKey", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GenerateKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19298,6 +20564,7 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19306,18 +20573,21 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19327,6 +20597,7 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19342,24 +20613,28 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19373,6 +20648,7 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     result = GenerateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19396,6 +20672,8 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
 
 int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request, DeriveKeyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -19420,33 +20698,50 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DeriveKey", 9);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DeriveKey", 9))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DeriveKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19468,6 +20763,7 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19476,18 +20772,21 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19497,6 +20796,7 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19512,24 +20812,28 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19543,6 +20847,7 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     result = DeriveKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19566,6 +20871,8 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
 
 int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* request, EncryptInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -19590,33 +20897,50 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "EncryptInit", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "EncryptInit", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = EncryptInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19638,6 +20962,7 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19646,18 +20971,21 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19667,6 +20995,7 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19682,24 +21011,28 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19713,6 +21046,7 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     result = EncryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19736,6 +21070,8 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
 
 int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, EncryptEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -19760,33 +21096,50 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Encrypt", 7);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Encrypt", 7))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = EncryptRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19808,6 +21161,7 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19816,18 +21170,21 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19837,6 +21194,7 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19852,24 +21210,28 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19883,6 +21245,7 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     result = EncryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19906,6 +21269,8 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
 
 int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* request, EncryptUpdateEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -19930,33 +21295,50 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "EncryptUpdate", 13);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "EncryptUpdate", 13))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = EncryptUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19978,6 +21360,7 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -19986,18 +21369,21 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20007,6 +21393,7 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20022,24 +21409,28 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20053,6 +21444,7 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     result = EncryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20076,6 +21468,8 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
 
 int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* request, EncryptFinalEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -20100,33 +21494,50 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "EncryptFinal", 12);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "EncryptFinal", 12))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = EncryptFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20148,6 +21559,7 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20156,18 +21568,21 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20177,6 +21592,7 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20192,24 +21608,28 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20223,6 +21643,7 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     result = EncryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20246,6 +21667,8 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
 
 int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* request, DecryptInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -20270,33 +21693,50 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DecryptInit", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DecryptInit", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DecryptInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20318,6 +21758,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20326,18 +21767,21 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20347,6 +21791,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20362,24 +21807,28 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20393,6 +21842,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     result = DecryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20416,6 +21866,8 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
 
 int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, DecryptEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -20440,33 +21892,50 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "Decrypt", 7);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "Decrypt", 7))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DecryptRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20488,6 +21957,7 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20496,18 +21966,21 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20517,6 +21990,7 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20532,24 +22006,28 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20563,6 +22041,7 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     result = DecryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20586,6 +22065,8 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
 
 int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* request, DecryptUpdateEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -20610,33 +22091,50 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DecryptUpdate", 13);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DecryptUpdate", 13))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DecryptUpdateRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20658,6 +22156,7 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20666,18 +22165,21 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20687,6 +22189,7 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20702,24 +22205,28 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20733,6 +22240,7 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     result = DecryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20756,6 +22264,8 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
 
 int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* request, DecryptFinalEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -20780,33 +22290,50 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DecryptFinal", 12);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DecryptFinal", 12))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DecryptFinalRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20828,6 +22355,7 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20836,18 +22364,21 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20857,6 +22388,7 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20872,24 +22404,28 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20903,6 +22439,7 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     result = DecryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20926,6 +22463,8 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
 
 int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, WrapKeyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -20950,33 +22489,50 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "WrapKey", 7);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "WrapKey", 7))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = WrapKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -20998,6 +22554,7 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21006,18 +22563,21 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21027,6 +22587,7 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21042,24 +22603,28 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21073,6 +22638,7 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     result = WrapKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21096,6 +22662,8 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
 
 int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request, UnwrapKeyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -21120,33 +22688,50 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "UnwrapKey", 9);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "UnwrapKey", 9))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = UnwrapKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21168,6 +22753,7 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21176,18 +22762,21 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21197,6 +22786,7 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21212,24 +22802,28 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21243,6 +22837,7 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     result = UnwrapKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21266,6 +22861,8 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
 
 int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventRequest* request, WaitForSlotEventEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -21290,33 +22887,50 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "WaitForSlotEvent", 16);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "WaitForSlotEvent", 16))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = WaitForSlotEventRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21338,6 +22952,7 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21346,18 +22961,21 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21367,6 +22985,7 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21382,24 +23001,28 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21413,6 +23036,7 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     result = WaitForSlotEventEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21436,6 +23060,8 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
 
 int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitRequest* request, SignRecoverInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -21460,33 +23086,50 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SignRecoverInit", 15);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SignRecoverInit", 15))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SignRecoverInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21508,6 +23151,7 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21516,18 +23160,21 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21537,6 +23184,7 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21552,24 +23200,28 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21583,6 +23235,7 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     result = SignRecoverInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21606,6 +23259,8 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
 
 int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* request, SignRecoverEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -21630,33 +23285,50 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SignRecover", 11);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SignRecover", 11))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SignRecoverRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21678,6 +23350,7 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21686,18 +23359,21 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21707,6 +23383,7 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21722,24 +23399,28 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21753,6 +23434,7 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     result = SignRecoverEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21776,6 +23458,8 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
 
 int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitRequest* request, VerifyRecoverInitEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -21800,33 +23484,50 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "VerifyRecoverInit", 17);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "VerifyRecoverInit", 17))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = VerifyRecoverInitRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21848,6 +23549,7 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21856,18 +23558,21 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21877,6 +23582,7 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21892,24 +23598,28 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21923,6 +23633,7 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     result = VerifyRecoverInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -21946,6 +23657,8 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
 
 int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* request, VerifyRecoverEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -21970,33 +23683,50 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "VerifyRecover", 13);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "VerifyRecover", 13))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = VerifyRecoverRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22018,6 +23748,7 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22026,18 +23757,21 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22047,6 +23781,7 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22062,24 +23797,28 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22093,6 +23832,7 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     result = VerifyRecoverEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22116,6 +23856,8 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
 
 int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* request, SessionCancelEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -22140,33 +23882,50 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "SessionCancel", 13);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "SessionCancel", 13))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = SessionCancelRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22188,6 +23947,7 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22196,18 +23956,21 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22217,6 +23980,7 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22232,24 +23996,28 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22263,6 +24031,7 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     result = SessionCancelEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22286,6 +24055,8 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
 
 int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest* request, EncapsulateKeyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -22310,33 +24081,50 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "EncapsulateKey", 14);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "EncapsulateKey", 14))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = EncapsulateKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22358,6 +24146,7 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22366,18 +24155,21 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22387,6 +24179,7 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22402,24 +24195,28 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22433,6 +24230,7 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     result = EncapsulateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22456,6 +24254,8 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
 
 int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest* request, DecapsulateKeyEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -22480,33 +24280,50 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "DecapsulateKey", 14);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "DecapsulateKey", 14))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = DecapsulateKeyRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22528,6 +24345,7 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22536,18 +24354,21 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22557,6 +24378,7 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22572,24 +24394,28 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22603,6 +24429,7 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     result = DecapsulateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22626,6 +24453,8 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
 
 int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSessionValidationFlagsRequest* request, GetSessionValidationFlagsEnvelope* response)
 {
+    log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
+
     if (ctx == NULL || request == NULL || response == NULL ) return NMRPC_BAD_ARGUMENT;
 
     int result = NMRPC_OK;
@@ -22650,33 +24479,50 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     result = InternalBuffer_init(&write_head_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     result = InternalBuffer_init(&write_body_buffer, 256);
     if (result != NMRPC_OK)
     {
-        return result;
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
     cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
     cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
 
-    cmp_write_array(&write_head_ctx, 2);
-    cmp_write_str(&write_head_ctx, "GetSessionValidationFlags", 25);
+    if (!cmp_write_array(&write_head_ctx, 2)) 
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+    if (!cmp_write_str(&write_head_ctx, "GetSessionValidationFlags", 25))
+    {
+      result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+      goto err;
+    }
+
     if (ctx->tag != NULL)
     {
-         cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag));
+         if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
     else
     {
-         cmp_write_nil(&write_head_ctx);
+         if (!cmp_write_nil(&write_head_ctx))
+         {
+           result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+           goto err;
+         }
     }
-
 
     result = GetSessionValidationFlagsRequest_Serialize(&write_body_ctx, request);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22698,6 +24544,7 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22706,18 +24553,21 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
     result = ctx->flush(ctx->user_ctx);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22727,6 +24577,7 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
     if (!result)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
@@ -22742,24 +24593,28 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         return result;
     }
 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22773,6 +24628,7 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     result = GetSessionValidationFlagsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
     {
+        log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
         goto err;
     }
 
