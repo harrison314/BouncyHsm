@@ -25,6 +25,7 @@ void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const ch
 void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8CHAR* src)
 {
     LOG_ENTERING_TO_FUNCTION();
+
     if (src == NULL)
     {
         destination[0] = '\0';
@@ -84,8 +85,11 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
     AttrValueFromNative* ptr = (AttrValueFromNative*)malloc(allocCount);
     if (NULL == ptr)
     {
+        log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
         return NULL;
     }
+
+    memset(ptr, 0, allocCount);
 
     CK_ULONG i;
     for (i = 0; i < ulCount; i++)
@@ -108,6 +112,8 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
             if (uintArrayData == NULL)
             {
                 log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
+                AttrValueFromNative_Destroy(ptr, ulCount);
+
                 return NULL;
             }
 
@@ -115,9 +121,10 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
             uintArrayData->Array.array = (uint32_t*)malloc(uintArrayData->Array.length * sizeof(uint32_t));
             if (uintArrayData->Array.array == NULL)
             {
-                free((void*)uintArrayData);
-
                 log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
+                free((void*)uintArrayData);
+                AttrValueFromNative_Destroy(ptr, ulCount);
+
                 return NULL;
             }
 
@@ -168,10 +175,8 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
                 char* date = (char*)malloc(12);
                 if (date == NULL)
                 {
-                    if (ptr != NULL)
-                    {
-                        free((void*)ptr);
-                    }
+                    log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
+                    AttrValueFromNative_Destroy(ptr, ulCount);
 
                     return NULL;
                 }
@@ -190,7 +195,6 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
 
                 ptr[i].ValueCkDate = date;
             }
-
         }
     }
 
