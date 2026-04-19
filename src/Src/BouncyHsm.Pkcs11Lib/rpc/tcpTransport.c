@@ -102,7 +102,7 @@ bool toUtf8Msg(wchar_t* inBuffer, char* outBuffer, size_t outBufferLen)
         return false;
     }
 
-    if (length > outBufferLen)
+    if (((size_t)length) > outBufferLen)
     {
         return false;
     }

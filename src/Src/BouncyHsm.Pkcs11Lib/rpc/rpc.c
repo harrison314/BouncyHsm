@@ -212,9 +212,7 @@ static int InternalBuffer_init(InternalBuffer_t* buffer, size_t capacity)
 
 static void InternalBuffer_free(InternalBuffer_t* buffer)
 {
-   if (buffer == NULL) return NMRPC_BAD_ARGUMENT; 
-
-   if (buffer->buffer != NULL)
+   if (buffer != NULL && buffer->buffer != NULL)
    {
        free((void*)buffer->buffer);
        buffer->buffer = NULL;

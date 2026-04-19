@@ -88,7 +88,7 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 		return false;
 	}
 
-	TCHAR* last = wcsrchr(szFileName, L'\\');
+    wchar_t* last = wcsrchr(szFileName, L'\\');
 	if (last != NULL)
 	{
 		last++;
@@ -104,7 +104,7 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 		return false;
 	}
 
-	if (len >= maxSize)
+	if (((size_t)len) >= maxSize)
 	{
 		utfName[maxSize - 1] = 0;
 	}

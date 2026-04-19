@@ -5,6 +5,7 @@
 #endif
 
 #include "globalContext.h"
+#define USE_VARIABLE(x) (void)(x)
 
 #ifdef _WIN32
 #pragma comment(lib,"ws2_32.lib") 
@@ -14,6 +15,9 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     LPVOID lpReserved
 )
 {
+    USE_VARIABLE(hModule);
+    USE_VARIABLE(lpReserved);
+
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
