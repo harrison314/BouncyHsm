@@ -159,7 +159,7 @@ bool getProgramArgs(const char*** args, int* argc)
     LPWSTR* szArgList = NULL;
     int argCount;
 
-    szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
+    szArgList = CommandLineToArgvW((LPCWSTR)GetCommandLine(), &argCount);
     if (szArgList == NULL)
     {
         // Unable to parse command line

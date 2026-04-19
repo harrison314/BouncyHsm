@@ -108,6 +108,10 @@ static void send_log_message_syslog(int level, const char* levelText, const char
 	openlog("BouncyHsm.Pkcs11Lib.so", LOG_PID | LOG_CONS | LOG_ODELAY, LOG_USER);
 	syslog(syslogLevel, "%s", message);
 	closelog();
+#else
+    USE_VARIABLE(level);
+    USE_VARIABLE(levelText);
+    USE_VARIABLE(message);
 #endif
 }
 

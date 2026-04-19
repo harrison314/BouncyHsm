@@ -80,7 +80,7 @@ static char* toUtf8(const wchar_t* src, int* out_len)
 
 bool GetCurrentProgramName(char* buffer, size_t maxSize)
 {
-	TCHAR szFileName[MAX_PATH];
+	wchar_t szFileName[MAX_PATH];
 	int len;
 
 	if (GetModuleFileName(NULL, szFileName, MAX_PATH) == 0)
