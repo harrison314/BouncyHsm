@@ -211,22 +211,28 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
                   int i;
                   for (i = 0; i < value->length; i++)
                   {
-                     if (value->array[i]) free((void*) value->array[i]);
+                    if (value->array[i]) free((void*) value->array[i]);
                   }
 
-                  free((void*) value->array);
+                  if (value->array != NULL)
+                  {
+                    free((void*) value->array);
+                    value->array = NULL;
+                  }
 
                   value->length = 0;
-                  value->array = NULL;
                 """);
         }
         else if (type.IsBaseType)
         {
             sb.AppendLine("""
-                  free((void*) value->array);
+                  if (value->array != NULL)
+                  {
+                    free((void*) value->array);
+                    value->array = NULL;
+                  }
 
                   value->length = 0;
-                  value->array = NULL;
                 """);
         }
         else
@@ -241,10 +247,13 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
                      }
                   }
 
-                  free((void*) value->array);
+                  if (value->array != NULL)
+                  {
+                    free((void*) value->array);
+                    value->array = NULL;
+                  }
 
                   value->length = 0;
-                  value->array = NULL;
                 """);
         }
 

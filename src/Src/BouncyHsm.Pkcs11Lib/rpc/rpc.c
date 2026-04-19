@@ -477,10 +477,13 @@ int ArrayOfString_Release(ArrayOfString* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  free((void*) value->array);
+  if (value->array != NULL)
+  {
+    free((void*) value->array);
+    value->array = NULL;
+  }
 
   value->length = 0;
-  value->array = NULL;
     return NMRPC_OK;
 }
 int ArrayOfuint32_t_Serialize(cmp_ctx_t* ctx, ArrayOfuint32_t* value)
@@ -536,10 +539,13 @@ int ArrayOfuint32_t_Release(ArrayOfuint32_t* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  free((void*) value->array);
+  if (value->array != NULL)
+  {
+    free((void*) value->array);
+    value->array = NULL;
+  }
 
   value->length = 0;
-  value->array = NULL;
     return NMRPC_OK;
 }
 int ArrayOfAttrValueFromNative_Serialize(cmp_ctx_t* ctx, ArrayOfAttrValueFromNative* value)
@@ -604,10 +610,13 @@ int ArrayOfAttrValueFromNative_Release(ArrayOfAttrValueFromNative* value)
      }
   }
 
-  free((void*) value->array);
+  if (value->array != NULL)
+  {
+    free((void*) value->array);
+    value->array = NULL;
+  }
 
   value->length = 0;
-  value->array = NULL;
     return NMRPC_OK;
 }
 int ArrayOfGetAttributeInputValues_Serialize(cmp_ctx_t* ctx, ArrayOfGetAttributeInputValues* value)
@@ -672,10 +681,13 @@ int ArrayOfGetAttributeInputValues_Release(ArrayOfGetAttributeInputValues* value
      }
   }
 
-  free((void*) value->array);
+  if (value->array != NULL)
+  {
+    free((void*) value->array);
+    value->array = NULL;
+  }
 
   value->length = 0;
-  value->array = NULL;
     return NMRPC_OK;
 }
 int ArrayOfGetAttributeOutValue_Serialize(cmp_ctx_t* ctx, ArrayOfGetAttributeOutValue* value)
@@ -740,10 +752,13 @@ int ArrayOfGetAttributeOutValue_Release(ArrayOfGetAttributeOutValue* value)
      }
   }
 
-  free((void*) value->array);
+  if (value->array != NULL)
+  {
+    free((void*) value->array);
+    value->array = NULL;
+  }
 
   value->length = 0;
-  value->array = NULL;
     return NMRPC_OK;
 }
 int AppIdentification_Serialize(cmp_ctx_t* ctx, AppIdentification* value)
