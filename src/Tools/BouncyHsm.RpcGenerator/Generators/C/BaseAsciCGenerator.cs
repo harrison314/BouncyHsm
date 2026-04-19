@@ -282,11 +282,6 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
         this.header.AppendLine("typedef struct _Binary Binary;");
         this.header.AppendLine();
 
-        //header.AppendLine("#ifndef NMRPC_LOG_ERR_FIELD");
-        //header.AppendLine("#define NMRPC_LOG_ERR_FIELD(field) log_err_field(__FILE__, __LINE__, __FUNCTION__, field)");
-        //header.AppendLine("#endif");
-
-
         foreach (CDeclaredType type in this.GetArrayDefinitions(definition))
         {
             this.header.AppendFormat("typedef struct _{0} {0};", type.CType.TrimEnd('*'));

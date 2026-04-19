@@ -196,6 +196,8 @@ typedef struct _InternalBuffer {
 
 static int InternalBuffer_init(InternalBuffer_t* buffer, size_t capacity)
 {
+   if (buffer == NULL || capacity == 0) return NMRPC_BAD_ARGUMENT; 
+
    buffer->size = 0;
    buffer->capacity = capacity;
    buffer->buffer = (uint8_t*) malloc(capacity);
@@ -210,6 +212,8 @@ static int InternalBuffer_init(InternalBuffer_t* buffer, size_t capacity)
 
 static void InternalBuffer_free(InternalBuffer_t* buffer)
 {
+   if (buffer == NULL) return NMRPC_BAD_ARGUMENT; 
+
    if (buffer->buffer != NULL)
    {
        free((void*)buffer->buffer);
@@ -458,7 +462,7 @@ int ArrayOfString_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, Array
 
   value->length = (int)array_size;
   value->array = (const char**) malloc(sizeof(const char*) * array_size);
-  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+  if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = cmph_read_nullable_str(ctx, &value->array[i]);
@@ -518,7 +522,7 @@ int ArrayOfuint32_t_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, Arr
 
   value->length = (int)array_size;
   value->array = (uint32_t*) malloc(sizeof(uint32_t) * array_size);
-  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+  if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = cmp_read_uint(ctx, &value->array[i]);
@@ -577,7 +581,7 @@ int ArrayOfAttrValueFromNative_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_o
 
   value->length = (int)array_size;
   value->array = (AttrValueFromNative*) malloc(sizeof(AttrValueFromNative) * array_size);
-  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+  if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = AttrValueFromNative_Deserialize(ctx, NULL, &value->array[i]);
@@ -645,7 +649,7 @@ int ArrayOfGetAttributeInputValues_Deserialize(cmp_ctx_t* ctx, cmp_object_t* sta
 
   value->length = (int)array_size;
   value->array = (GetAttributeInputValues*) malloc(sizeof(GetAttributeInputValues) * array_size);
-  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+  if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = GetAttributeInputValues_Deserialize(ctx, NULL, &value->array[i]);
@@ -713,7 +717,7 @@ int ArrayOfGetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_
 
   value->length = (int)array_size;
   value->array = (GetAttributeOutValue*) malloc(sizeof(GetAttributeOutValue) * array_size);
-  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+  if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
    result = GetAttributeOutValue_Deserialize(ctx, NULL, &value->array[i]);

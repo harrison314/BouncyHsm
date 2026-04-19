@@ -227,6 +227,8 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
             static int InternalBuffer_init(InternalBuffer_t* buffer, size_t capacity)
             {
+               if (buffer == NULL || capacity == 0) return NMRPC_BAD_ARGUMENT; 
+
                buffer->size = 0;
                buffer->capacity = capacity;
                buffer->buffer = (uint8_t*) malloc(capacity);
@@ -241,6 +243,8 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
             static void InternalBuffer_free(InternalBuffer_t* buffer)
             {
+               if (buffer == NULL) return NMRPC_BAD_ARGUMENT; 
+
                if (buffer->buffer != NULL)
                {
                    free((void*)buffer->buffer);
@@ -826,7 +830,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
         body.AppendLine("  value->length = (int)array_size;");
         body.AppendLine($"  value->array = ({type.GetTypeFromAray()}*) malloc(sizeof({type.GetTypeFromAray()}) * array_size);");
-        body.AppendLine("  if (value->array == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);");
+        body.AppendLine("  if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);");
 
         body.AppendLine("  for (i = 0; i < array_size; i++)");
         body.AppendLine("  {");
