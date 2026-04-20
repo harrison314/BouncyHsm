@@ -6227,6 +6227,9 @@ namespace BouncyHsm.Client
         [System.Runtime.Serialization.EnumMember(Value = @"CkAttributeArray")]
         CkAttributeArray = 5,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"UintArray")]
+        UintArray = 6,
+
     }
 
 

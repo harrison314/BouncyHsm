@@ -53,7 +53,7 @@ public class HighLevelAttributeValue
 
     }
 
-    internal HighLevelAttributeValue(IAttributeValue attributeValue)
+    internal HighLevelAttributeValue(CKA attributeType, IAttributeValue attributeValue)
     {
         System.Diagnostics.Debug.Assert(attributeValue != null);
 
@@ -85,6 +85,10 @@ public class HighLevelAttributeValue
 
             case AttrTypeTag.UintArray:
                 this.ValueAttributeArray = attributeValue.AsUintArray();
+                if (attributeType == CKA.CKA_ALLOWED_MECHANISMS)
+                {
+                    this.ValueAsString = string.Concat("\n", this.ValueAttributeArray.Select(t => (CKM)t));
+                }
                 break;
 
             default:

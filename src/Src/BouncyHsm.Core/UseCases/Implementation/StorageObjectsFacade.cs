@@ -130,7 +130,7 @@ public class StorageObjectsFacade : IStorageObjectsFacade
             return new DomainResult<HighLevelAttributeValue>.NotFound();
         }
 
-        return new DomainResult<HighLevelAttributeValue>.Ok(new HighLevelAttributeValue(value));
+        return new DomainResult<HighLevelAttributeValue>.Ok(new HighLevelAttributeValue(attributeType, value));
     }
 
     public async ValueTask<VoidDomainResult> SetObjectAttribute(uint slotId, Guid id, string attributeName, HighLevelAttributeValue value, CancellationToken cancellationToken)
