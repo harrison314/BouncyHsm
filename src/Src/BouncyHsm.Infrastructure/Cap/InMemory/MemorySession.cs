@@ -36,10 +36,6 @@ public class MemorySession : IMemorySession
         get => this.lastActivity;
         set
         {
-            // Under concurrent HTTP requests from the Kestrel thread pool,
-            // a thread that called GetUtcNow() earlier may execute the setter
-            // after a thread that got a later timestamp, making value < lastActivity.
-            // Silently keep the maximum — this is benign for session-expiry bookkeeping.
             if (value > this.lastActivity)
             {
                 this.lastActivity = value;
