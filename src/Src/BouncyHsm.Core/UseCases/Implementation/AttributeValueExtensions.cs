@@ -86,8 +86,8 @@ internal static class AttributeValueExtensions
     {
         return attributeType switch
         {
-            CKA.CKA_ALLOWED_MECHANISMS => string.Concat("[", string.Join(", ", uints.Select(t => (CKM)t)), "]"),
-            _ => string.Concat("[", string.Join(", ", uints), "]"),
+            CKA.CKA_ALLOWED_MECHANISMS => string.Concat("{", string.Join(", ", uints.Select(t => (CKM)t)), "}"),
+            _ => string.Concat("{", string.Join(", ", uints), "}"),
         };
     }
 

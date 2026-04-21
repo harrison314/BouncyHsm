@@ -9,6 +9,7 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.UseCases.Implementation.Visitors;
 using BouncyHsm.Core.Services.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BouncyHsm.Core.UseCases.Implementation;
 
@@ -155,6 +156,19 @@ public class StorageObjectsFacade : IStorageObjectsFacade
             return new VoidDomainResult.InvalidInput($"Attribute {attributeName} cannot be set.");
         }
 
+        // Transform value for special CKA
+        if (attributeType == CKA.CKA_ALLOWED_MECHANISMS)
+        {
+            if(!this.TryParseCkmArray(value.ValueAsString ?? string.Empty, out uint[]? allowedMechanisms))
+            {
+                this.logger.LogError("Invalid value for {attributeName}.", attributeName);
+                return new VoidDomainResult.InvalidInput($"Invalid value for {attributeName}.");
+            }
+
+            value.ValueAttributeArray = allowedMechanisms;
+            value.ValueAsString = null;
+        }
+
         StorageObjectMemento memento = storageObject.ToMemento();
         if (!memento.Values.TryGetValue(attributeType, out IAttributeValue? oldValue))
         {
@@ -216,5 +230,32 @@ public class StorageObjectsFacade : IStorageObjectsFacade
             KeyType = keyType,
             Type = storageObject.CkaClass
         };
+    }
+
+    private bool TryParseCkmArray(string value, [NotNullWhen(true)] out uint[]? array)
+    {
+        try
+        {
+            array = value.Split('\n')
+                .Select(t => t.Trim())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .Select(t =>
+                 {
+                     if (Enum.TryParse<CKM>(t, out CKM value))
+                     {
+                         return (uint)value;
+                     }
+
+                     throw new ArgumentException();
+                 })
+                 .ToArray();
+
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            array = null;
+            return false;
+        }
     }
 }
