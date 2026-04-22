@@ -180,7 +180,7 @@ internal static class MechanismUtils
             {CKM.CKM_BLAKE2B_512_HMAC, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, false, Pkcs11SpecVersion.V3_1) },
 
             {CKM.CKM_AES_CMAC, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, false, Pkcs11SpecVersion.V2_40) },
-
+            {CKM.CKM_AES_GMAC, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, false, Pkcs11SpecVersion.V2_40) },
 
             //General hmacing
             {CKM.CKM_MD2_HMAC_GENERAL, new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, false, Pkcs11SpecVersion.V2_40) },

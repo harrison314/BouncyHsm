@@ -10,6 +10,7 @@ internal static class AllovedMechanismLookup
     public static readonly CKM[] AesKeyObject = new CKM[]
     {
         CKM.CKM_AES_CMAC,
+        CKM.CKM_AES_GMAC,
         CKM.CKM_AES_CMAC_GENERAL,
         CKM.CKM_AES_ECB_ENCRYPT_DATA,
         CKM.CKM_AES_CBC_ENCRYPT_DATA,

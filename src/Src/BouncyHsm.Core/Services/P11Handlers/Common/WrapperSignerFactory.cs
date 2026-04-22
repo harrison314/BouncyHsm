@@ -16,7 +16,6 @@ using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.Nist;
 using Org.BouncyCastle.Crypto.Macs;
-using System.Net.Http.Headers;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
@@ -105,6 +104,7 @@ internal class WrapperSignerFactory
             CKM.CKM_BLAKE2B_384_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Blake2bDigest(384), CKK.CKK_BLAKE2B_384_HMAC),
             CKM.CKM_BLAKE2B_512_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new Blake2bDigest(512), CKK.CKK_BLAKE2B_512_HMAC),
             CKM.CKM_AES_CMAC => this.CreateAesWrapperSigner(ckMechanism, new CMac(AesUtilities.CreateEngine())),
+            CKM.CKM_AES_GMAC => this.CreateAesGmac(mechanism),
 
             CKM.CKM_POLY1305 => new PlainMacWrapperSigner(ckMechanism, new Org.BouncyCastle.Crypto.Macs.Poly1305(), this.loggerFactory.CreateLogger<PlainMacWrapperSigner>(), CKK.CKK_POLY1305),
 
@@ -448,6 +448,26 @@ internal class WrapperSignerFactory
              mac,
              (int)generalParams.Value,
              this.loggerFactory.CreateLogger<AesWrapperSigner>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private AesGmacWrapperSigner CreateAesGmac(MechanismValue mechanism)
+    {
+        try
+        {
+            CkP_RawDataParams rawDataParams = MessagePack.MessagePackSerializer.Deserialize<CkP_RawDataParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+            this.logger.LogDebug("Extract IV with len {ivLen} for mechanism {mechanism}.",
+               rawDataParams.Value.Length,
+               (CKM)mechanism.MechanismType);
+
+            return new AesGmacWrapperSigner((CKM)mechanism.MechanismType,
+                rawDataParams.Value,
+                this.loggerFactory.CreateLogger<AesGmacWrapperSigner>());
         }
         catch (Exception ex)
         {

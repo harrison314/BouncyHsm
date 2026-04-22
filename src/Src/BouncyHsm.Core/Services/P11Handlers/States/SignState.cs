@@ -68,6 +68,11 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, "Error: CONTEXT_SPECIFIC login required.");
         }
 
+        if (this.signature != null)
+        {
+            return;
+        }
+
         if (data.Length > 0)
         {
             this.signer.BlockUpdate(data);

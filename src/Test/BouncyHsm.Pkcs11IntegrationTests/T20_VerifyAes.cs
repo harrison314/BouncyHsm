@@ -89,6 +89,43 @@ public class T20_VerifyAes
         session.DestroyObject(handle);
     }
 
+    [TestMethod]
+    [DataRow(16)]
+    [DataRow(24)]
+    [DataRow(32)]
+    public void Verify_AesGmac_Success(int size)
+    {
+        byte[] dataToSign = new byte[64];
+        byte[] iv = new byte[16];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.GenerateAesKey(session, size);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_AES_GMAC, iv);
+
+        byte[] signature = session.Sign(mechanism, handle, dataToSign);
+
+        session.Verify(mechanism, handle, dataToSign, signature, out bool isValid);
+        Assert.IsTrue(isValid, "Signature is not valid.");
+
+        signature[2] ^= 0x13;
+
+        session.Verify(mechanism, handle, dataToSign, signature, out isValid);
+        Assert.IsFalse(isValid, "Signature is valid.");
+
+        session.DestroyObject(handle);
+    }
+
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
