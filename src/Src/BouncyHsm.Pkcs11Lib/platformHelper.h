@@ -27,6 +27,7 @@
 int strcpy_s(char* destination, size_t SizeInBytes, const char* _Source);
 int strncpy_s(char* destination, size_t destsz, const char* _Source, size_t count);
 int memcpy_s(void* restrictDest, size_t destsz, const void* restrictSrc, size_t count);
+int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...);
 #endif
 
 #endif
