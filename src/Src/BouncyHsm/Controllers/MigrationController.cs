@@ -21,11 +21,12 @@ public class MigrationController : Controller
 
     [HttpPost("", Name = nameof(Migrate))]
     [ProducesResponseType(typeof(MigrationResultDto), 200)]
-    public async Task<IActionResult> Migrate()
+    public async Task<IActionResult> Migrate([FromBody] MigrationRequestDto model)
     {
         this.logger.LogTrace("Entering to Migrate");
 
-        DomainResult<MigrationResult> domainResult = await this.migrationFacade.Migrate(this.HttpContext.RequestAborted);
+        MigrationRequest request = MigrationControllerMapper.MapFromDto(model);
+        DomainResult<MigrationResult> domainResult = await this.migrationFacade.Migrate(request, this.HttpContext.RequestAborted);
 
         return domainResult.MapOk(MigrationControllerMapper.ToDto).ToActionResult();
     }

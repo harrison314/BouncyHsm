@@ -11,4 +11,6 @@ ThrowOnPropertyMappingNullMismatch = true)]
 internal static partial class MigrationControllerMapper
 {
     public static partial MigrationResultDto ToDto(MigrationResult model);
+
+    public static partial MigrationRequest MapFromDto(MigrationRequestDto model);
 }

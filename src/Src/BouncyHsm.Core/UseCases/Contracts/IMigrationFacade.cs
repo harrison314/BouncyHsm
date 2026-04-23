@@ -6,5 +6,5 @@ namespace BouncyHsm.Core.UseCases.Contracts;
 
 public interface IMigrationFacade
 {
-    ValueTask<DomainResult<MigrationResult>> Migrate(CancellationToken cancellationToken);
+    ValueTask<DomainResult<MigrationResult>> Migrate(MigrationRequest request, CancellationToken cancellationToken);
 }

@@ -77,6 +77,16 @@ public abstract class KeyObject : StorageObject
         CryptoObjectValueChecker.CheckAllovedMechanism(this.CkaAllovedMechanism, this.GetAllovedMechanism());
     }
 
+    public override void MigrateObject(MigrateObjectFlags flags)
+    {
+        base.MigrateObject(flags);
+
+        if (flags.HasFlag(MigrateObjectFlags.ResetAlowedMechanism))
+        {
+            this.CkaAllovedMechanism = this.GetAllovedMechanism();
+        }
+    }
+
     public bool MechanismIsAllowed(CKM mechanism)
     {
         return this.values[CKA.CKA_ALLOWED_MECHANISMS].AsUintArray().Contains((uint)mechanism);

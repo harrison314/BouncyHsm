@@ -3,6 +3,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 
@@ -12,17 +13,30 @@ internal class MigrateObjectsCommand : AsyncCommand<MigrateObjectsCommand.Settin
 {
     internal sealed class Settings : BaseSettings
     {
+        [CommandOption("--resetAllowedMechanism")]
+        [DefaultValue(false)]
+        [Description("Sets all keys to default allowed mechanisms.")]
+        public bool ResetAllowedMechanism
+        {
+            get;
+            set;
+        }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
+        MigrationRequestDto request = new MigrationRequestDto()
+        {
+            ResetAllowedMechanism = settings.ResetAllowedMechanism,
+        };
+
         MigrationResultDto? migrationResult = null;
         await AnsiConsole.Status()
            .StartAsync("Migrating objects...", async ctx =>
            {
-               migrationResult = await client.MigrateAsync(cancellationToken);
+               migrationResult = await client.MigrateAsync(request, cancellationToken);
            });
 
         Debug.Assert(migrationResult is not null);
