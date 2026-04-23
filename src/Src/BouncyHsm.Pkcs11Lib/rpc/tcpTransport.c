@@ -23,6 +23,7 @@
 #include "../rpc/rpc.h"
 #include "tcpTransport.h"
 #include "../logger.h"
+#include "../platformHelper.h"
 
 #define USE_VARIABLE(x) (void)(x)
 

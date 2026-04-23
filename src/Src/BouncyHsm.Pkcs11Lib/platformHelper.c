@@ -3,6 +3,7 @@
 #include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include <stdarg.h>
 
 #ifdef __linux__
 #include <sys/types.h>
@@ -72,6 +73,15 @@ int memcpy_s(void* restrictDest, size_t destsz, const void* restrictSrc, size_t 
 
     memcpy(restrictDest, restrictSrc, count);
     return 0;
+}
+
+int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    int result = vsnprintf(buffer, sizeOfBuffer, format, ap);
+    va_end(ap);
+    return result;
 }
 
 #undef _GCC_EINVAL

@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "../platformHelper.h"
 #include "../logger.h"
 
 #define USE_VARIABLE(x) (void)(x)
