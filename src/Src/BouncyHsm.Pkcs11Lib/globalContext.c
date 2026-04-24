@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "globalContext.h"
+#include "platformHelper.h"
 #include "logger.h"
 
 #ifndef _WIN32
@@ -124,7 +125,15 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 		return false;
 	}
 	size_t readChars = fread(buffer, sizeof(char), maxSize - 1, procFile);
-	buffer[readChars] = 0;
+    if (readChars < maxSize)
+    {
+        buffer[readChars] = 0;
+    }
+    else
+    {
+        buffer[maxSize - 1] = 0;
+    }
+
 	int rv = fclose(procFile);
     if (rv != 0)
     {
@@ -182,25 +191,29 @@ bool envVariableDup(const char* name, char** variableValuePtr)
 	*variableValuePtr = buffer;
 	return true;
 #else
-	char* variable = getenv(name);
-	if (variable == NULL)
-	{
-		*variableValuePtr = NULL;
-		return true;
-	}
-	else
-	{
-		char* buffer = (char*)malloc(strlen(variable) + 1);
-		if (buffer == NULL)
-		{
-			return false;
-		}
+    char* variable = getenv(name);
+    if (variable == NULL)
+    {
+        *variableValuePtr = NULL;
+        return true;
+    }
+    else
+    {
+        char* buffer = (char*)malloc(strlen(variable) + 1);
+        if (buffer == NULL)
+        {
+            return false;
+        }
 
-		strcpy(buffer, variable);
+        if (strcpy_s(buffer, strlen(variable) + 1, variable) != 0)
+        {
+            free((void*)buffer);
+            return false;
+        }
 
-		*variableValuePtr = buffer;
-		return true;
-	}
+        *variableValuePtr = buffer;
+        return true;
+    }
 #endif
 }
 
