@@ -330,12 +330,15 @@ void GlobalContextInit()
 {
 #ifdef _WIN32
 	uint64_t pid = (uint64_t)GetCurrentProcessId();
+    uint64_t threadId = (uint64_t)GetCurrentThreadId();
 #else
 	uint64_t pid = (uint64_t)getpid();
+    uint64_t threadId = (uint64_t)gettid();
 #endif
 
 	unsigned long generator = (unsigned long)time(NULL);
 	myRandAddSeed(&generator, (unsigned long)pid);
+    myRandAddSeed(&generator, (unsigned long)threadId);
 
 	myRandChars(&generator, globalContext.appIdRandomChars, 24);
 
