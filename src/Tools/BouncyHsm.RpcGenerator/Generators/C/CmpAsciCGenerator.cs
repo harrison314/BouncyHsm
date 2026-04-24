@@ -81,6 +81,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
               if (!ctx->read(ctx, (void*) buff, size))
               {
                   NMRPC_LOG_ERR_TEXT("Error during reading.");
+                  free((void*)buff);
                   return NMRPC_DESERIALIZE_ERR;
               }
 

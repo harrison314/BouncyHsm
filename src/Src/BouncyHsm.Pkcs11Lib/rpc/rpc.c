@@ -50,6 +50,7 @@ static int cmph_read_nullable_str(cmp_ctx_t* ctx, const char** ptr)
   if (!ctx->read(ctx, (void*) buff, size))
   {
       NMRPC_LOG_ERR_TEXT("Error during reading.");
+      free((void*)buff);
       return NMRPC_DESERIALIZE_ERR;
   }
 
