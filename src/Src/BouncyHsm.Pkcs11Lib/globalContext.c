@@ -20,7 +20,7 @@
 
 #include "platformHelper.h"
 
-void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
+static void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
 {
 	unsigned long next = *generator;
 	next = next ^ additionalSeed;
@@ -29,7 +29,7 @@ void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
 	*generator = next;
 }
 
-unsigned int myRandNext(unsigned long* generator)
+static unsigned int myRandNext(unsigned long* generator)
 {
 	unsigned long next = *generator;
 	next = next * 1103515245 + 12345;
@@ -38,7 +38,7 @@ unsigned int myRandNext(unsigned long* generator)
 	return((unsigned int)(next / 65536) % 32768);
 }
 
-void myRandChars(unsigned long* generator, char* buffer, size_t len)
+static void myRandChars(unsigned long* generator, char* buffer, size_t len)
 {
 	size_t i;
 	const char chars[] = "qwertzuiopasdfghjklyxcvbnm0123456789_";
@@ -79,7 +79,7 @@ static char* toUtf8(const wchar_t* src, int* out_len)
 	return output_buffer;
 }
 
-bool GetCurrentProgramName(char* buffer, size_t maxSize)
+static bool GetCurrentProgramName(char* buffer, size_t maxSize)
 {
 	wchar_t szFileName[MAX_PATH];
 	int len;
@@ -116,7 +116,7 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 	return true;
 }
 #else
-bool GetCurrentProgramName(char* buffer, size_t maxSize)
+static bool GetCurrentProgramName(char* buffer, size_t maxSize)
 {
 	FILE* procFile = fopen("/proc/self/comm", "r");
 	if (procFile == NULL)
@@ -145,7 +145,7 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 }
 #endif
 
-bool envVariableDup(const char* name, char** variableValuePtr)
+static bool envVariableDup(const char* name, char** variableValuePtr)
 {
 	if (variableValuePtr == NULL)
 	{
@@ -217,10 +217,8 @@ bool envVariableDup(const char* name, char** variableValuePtr)
 #endif
 }
 
-// premennu prostredia ako connection string NAME=VALUE; NAME2=VALUE2;
-// rozparsovat ako treba
 // "Server=127.0.0.1; Port=8765; LogTarget=ErrorCosnole; LogLevel=Error; Tag=45695;"
-bool parseConnectionString(const char* connectionString, const char* name, char* outValue, int* sizePtr)
+static bool parseConnectionString(const char* connectionString, const char* name, char* outValue, int* sizePtr)
 {
 	if (connectionString == NULL || name == NULL || sizePtr == NULL)
 	{
@@ -281,7 +279,7 @@ bool parseConnectionString(const char* connectionString, const char* name, char*
 	return rv;
 }
 
-bool parseConnectionStringOrDefault(const char* connectionString, const char* name, char* outValue, size_t outValueSize, const char* defaultValue)
+static bool parseConnectionStringOrDefault(const char* connectionString, const char* name, char* outValue, size_t outValueSize, const char* defaultValue)
 {
 	int size = (int)outValueSize;
 
@@ -301,7 +299,7 @@ bool parseConnectionStringOrDefault(const char* connectionString, const char* na
 	return true;
 }
 
-void configureLogging(const char* configurationString)
+static void configureLogging(const char* configurationString)
 {
 	char targetBuffer[64];
 	char levelBuffer[64];
@@ -329,15 +327,15 @@ GlobalContext_t globalContext;
 void GlobalContextInit()
 {
 #ifdef _WIN32
-	uint64_t pid = (uint64_t)GetCurrentProcessId();
+    uint64_t pid = (uint64_t)GetCurrentProcessId();
     uint64_t threadId = (uint64_t)GetCurrentThreadId();
 #else
-	uint64_t pid = (uint64_t)getpid();
+    uint64_t pid = (uint64_t)getpid();
     uint64_t threadId = (uint64_t)gettid();
 #endif
 
 	unsigned long generator = (unsigned long)time(NULL);
-	myRandAddSeed(&generator, (unsigned long)pid);
+    myRandAddSeed(&generator, (unsigned long)pid);
     myRandAddSeed(&generator, (unsigned long)threadId);
 
 	myRandChars(&generator, globalContext.appIdRandomChars, 24);
