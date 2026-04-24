@@ -1484,8 +1484,9 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
                 if (pTemplate[i].pValue != NULL)
                 {
-                    if (newValueLen < pTemplate[i].ulValueLen)
+                    if (newValueLen > pTemplate[i].ulValueLen)
                     {
+                        log_message(LOG_LEVEL_TRACE, "Invalid value length for attribute %i (exepted len %i actual %i) on line %i in function %s", (int)pTemplate[i].type, (int)newValueLen, (int)pTemplate[i].ulValueLen,  __LINE__, __FUNCTION__);
                         rvMethod = CKR_BUFFER_TOO_SMALL;
                         pTemplate[i].ulValueLen = newValueLen;
                         continue;
