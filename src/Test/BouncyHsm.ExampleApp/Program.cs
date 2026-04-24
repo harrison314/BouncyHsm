@@ -233,7 +233,7 @@ public static class Program
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
-            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
@@ -247,7 +247,7 @@ public static class Program
 
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
         {
-            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
@@ -268,12 +268,17 @@ public static class Program
             out IObjectHandle privateKey);
 
 
-        List<IObjectAttribute> attributes = session.GetAttributeValue(privateKey, new List<CKA>()
+        List<IObjectAttribute> attributes = session.GetAttributeValue(publicKey, new List<CKA>()
         {
+            CKA.CKA_CLASS, CKA.CKA_TOKEN, CKA. CKA_PRIVATE, CKA.CKA_MODIFIABLE, CKA. CKA_LABEL, 
+            CKA.CKA_ID, CKA. CKA_START_DATE, CKA. CKA_END_DATE, CKA.CKA_DERIVE, CKA.CKA_LOCAL, 
+            CKA.CKA_ALLOWED_MECHANISMS, CKA.CKA_SUBJECT, CKA. CKA_ENCRYPT, CKA.CKA_VERIFY,
+            CKA.CKA_VERIFY_RECOVER, CKA.CKA_WRAP, CKA.CKA_TRUSTED, CKA.CKA_WRAP_TEMPLATE,
+            CKA.CKA_KEY_TYPE, CKA.CKA_KEY_GEN_MECHANISM, CKA.CKA_MODULUS, CKA.CKA_MODULUS_BITS,
             CKA.CKA_PUBLIC_EXPONENT
         });
 
-        byte[] publicExponent = attributes[0].GetValueAsByteArray();
+        byte[] publicExponent = attributes.Last().GetValueAsByteArray();
         Console.WriteLine("Public exponent: {0}", Convert.ToHexString(publicExponent));
     }
 }
