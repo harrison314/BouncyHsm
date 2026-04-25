@@ -4828,25 +4828,32 @@ namespace BouncyHsm.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("RsaKeys")]
-        public System.Collections.Generic.ICollection<string> RsaKeys { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> RsaKeys { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
         [System.Text.Json.Serialization.JsonPropertyName("EcCurves")]
-        public System.Collections.Generic.ICollection<CurveInfoDto> EcCurves { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<CurveInfoDto> EcCurves { get; set; } = new System.Collections.ObjectModel.Collection<CurveInfoDto>();
 
         [System.Text.Json.Serialization.JsonPropertyName("EdwardsCurves")]
-        public System.Collections.Generic.ICollection<CurveInfoDto> EdwardsCurves { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<CurveInfoDto> EdwardsCurves { get; set; } = new System.Collections.ObjectModel.Collection<CurveInfoDto>();
 
         [System.Text.Json.Serialization.JsonPropertyName("MontgomeryCurves")]
-        public System.Collections.Generic.ICollection<CurveInfoDto> MontgomeryCurves { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<CurveInfoDto> MontgomeryCurves { get; set; } = new System.Collections.ObjectModel.Collection<CurveInfoDto>();
 
         [System.Text.Json.Serialization.JsonPropertyName("MlDsaKeys")]
-        public System.Collections.Generic.ICollection<string> MlDsaKeys { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> MlDsaKeys { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
         [System.Text.Json.Serialization.JsonPropertyName("SlhDsaKeys")]
-        public System.Collections.Generic.ICollection<string> SlhDsaKeys { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> SlhDsaKeys { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
         [System.Text.Json.Serialization.JsonPropertyName("MlKemKeys")]
-        public System.Collections.Generic.ICollection<string> MlKemKeys { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> MlKemKeys { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
     }
 
