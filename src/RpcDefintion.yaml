@@ -283,7 +283,7 @@ Messages:
     Fields:
       CkUlongSize: uint32
       PointerSize: uint32
-      CompiuterName: string
+      ComputerName: string
       CmdLine: string[]
       Platform: string
       LibVersion: string

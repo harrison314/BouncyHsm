@@ -403,12 +403,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
     request.ClientInfo.PointerSize = sizeof(void*);
     request.ClientInfo.LibVersion = BOUNCY_HSM_LIBVERSION;
     request.ClientInfo.Platform = "Unknown";
-    request.ClientInfo.CompiuterName = "";
+    request.ClientInfo.ComputerName = "";
 
-    char compiuterName[256];
-    if (GetCurrentCompiuterName(compiuterName, sizeof(compiuterName)))
+    char computerName[256];
+    if (GetCurrentComputerName(computerName, sizeof(computerName)))
     {
-        request.ClientInfo.CompiuterName = compiuterName;
+        request.ClientInfo.ComputerName = computerName;
     }
 
     request.ClientInfo.Platform = GetPlatformName();

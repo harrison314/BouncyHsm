@@ -62,7 +62,7 @@ public partial class ExtendedClientInfo
     }
 
     [Key(2)]
-    public string CompiuterName
+    public string ComputerName
     {
         get;
         set;

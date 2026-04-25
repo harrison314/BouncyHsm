@@ -38,9 +38,9 @@ public class MemorySessionData
         private set;
     }
 
-    public MemorySessionData(string compiuterName, string applicationName, ulong pid, uint ptrSize, uint ckUlongSize, string[] cmdLine)
+    public MemorySessionData(string computerName, string applicationName, ulong pid, uint ptrSize, uint ckUlongSize, string[] cmdLine)
     {
-        this.ComputerName = compiuterName;
+        this.ComputerName = computerName;
         this.ApplicationName = applicationName;
         this.Pid = pid;
         this.PtrSize = ptrSize;

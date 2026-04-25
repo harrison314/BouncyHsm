@@ -844,7 +844,7 @@ int ExtendedClientInfo_Serialize(cmp_ctx_t* ctx, ExtendedClientInfo* value)
   result = cmp_write_uinteger(ctx, value->PointerSize);
    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
-  result = cmp_write_str(ctx, value->CompiuterName, (uint32_t)strlen(value->CompiuterName));
+  result = cmp_write_str(ctx, value->ComputerName, (uint32_t)strlen(value->ComputerName));
    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = ArrayOfString_Serialize(ctx, &value->CmdLine);
@@ -884,9 +884,9 @@ int ExtendedClientInfo_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj
   result = cmp_read_uint(ctx, &value->PointerSize);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field PointerSize");
 
-  result = cmph_read_nullable_str(ctx, &value->CompiuterName);
-  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field CompiuterName");
-  if (value->CompiuterName == NULL) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, "field CompiuterName is NULL");
+  result = cmph_read_nullable_str(ctx, &value->ComputerName);
+  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ComputerName");
+  if (value->ComputerName == NULL) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, "field ComputerName is NULL");
 
   result = ArrayOfString_Deserialize(ctx, NULL, &value->CmdLine);
   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field CmdLine");
@@ -906,10 +906,10 @@ int ExtendedClientInfo_Release(ExtendedClientInfo* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
- if (value->CompiuterName != NULL)
+ if (value->ComputerName != NULL)
  {
-     free((void*) value->CompiuterName);
-     value->CompiuterName = NULL;
+     free((void*) value->ComputerName);
+     value->ComputerName = NULL;
  }
   if(ArrayOfString_Release(&value->CmdLine) != NMRPC_OK)
    {

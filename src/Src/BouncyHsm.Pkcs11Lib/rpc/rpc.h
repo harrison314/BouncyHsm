@@ -271,7 +271,7 @@ typedef struct _ExtendedClientInfo
 {
     uint32_t CkUlongSize;
     uint32_t PointerSize;
-    const char* CompiuterName;
+    const char* ComputerName;
     ArrayOfString CmdLine;
     const char* Platform;
     const char* LibVersion;

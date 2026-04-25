@@ -25,7 +25,7 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
             request.LibraryCantCreateOsThreads,
             request.OsLockingOk);
 
-        MemorySessionData sessionData = new MemorySessionData(request.ClientInfo.CompiuterName,
+        MemorySessionData sessionData = new MemorySessionData(request.ClientInfo.ComputerName,
             request.AppId.AppName,
             request.AppId.Pid,
             request.ClientInfo.PointerSize,
@@ -36,7 +36,7 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
 
         this.logger.LogInformation("Initialized client with nonce: {nonce} machine: {machine} pid: {pid}, CK_ULONG size {ckUlongSize}b, pointer size {pointerSize}b, platform: {Platform}, client version {clientVersion}, process CMD: {processCmdLine}.",
             request.AppId.AppNonce,
-            request.ClientInfo.CompiuterName,
+            request.ClientInfo.ComputerName,
             request.AppId.Pid,
             request.ClientInfo.CkUlongSize * 8,
             request.ClientInfo.PointerSize * 8,

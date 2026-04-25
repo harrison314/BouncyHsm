@@ -89,7 +89,7 @@ int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...)
 
 #endif
 
-bool GetCurrentCompiuterName(char* buffer, size_t maxSize)
+bool GetCurrentComputerName(char* buffer, size_t maxSize)
 {
     int result = gethostname(buffer, maxSize);
     return result == 0;
@@ -101,7 +101,7 @@ bool GetCurrentCompiuterName(char* buffer, size_t maxSize)
 
 #include <Windows.h>
 
-bool GetCurrentCompiuterName(char* buffer, size_t maxSize)
+bool GetCurrentComputerName(char* buffer, size_t maxSize)
 {
     DWORD size = (DWORD)maxSize;
     return (bool)GetComputerNameA(buffer, &size);

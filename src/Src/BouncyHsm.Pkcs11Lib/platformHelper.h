@@ -32,7 +32,7 @@ int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...);
 
 #endif
 
-bool GetCurrentCompiuterName(char* buffer, size_t maxSize);
+bool GetCurrentComputerName(char* buffer, size_t maxSize);
 const char* GetPlatformName();
 bool getProgramArgs(const char*** args, int* argc);
 bool freeProgramArgs(const char*** args, int* argc);
