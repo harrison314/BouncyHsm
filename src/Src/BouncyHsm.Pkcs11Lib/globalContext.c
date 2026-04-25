@@ -15,6 +15,7 @@
 #include <Windows.h>
 #else
 #include <sys/types.h>
+#include <sys/syscall.h> 
 #include <unistd.h>
 #endif // __WIN32
 
@@ -331,7 +332,7 @@ void GlobalContextInit()
     uint64_t threadId = (uint64_t)GetCurrentThreadId();
 #else
     uint64_t pid = (uint64_t)getpid();
-    uint64_t threadId = (uint64_t)gettid();
+    uint64_t threadId = (uint64_t)syscall(SYS_gettid);
 #endif
 
 	unsigned long generator = (unsigned long)time(NULL);
