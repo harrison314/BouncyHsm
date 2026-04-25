@@ -140,7 +140,7 @@ internal abstract class BaseAsciCGenerator : IRpcGenerator
     protected virtual void CreateBody(RpcDefinition definition)
     {
         this.body.AppendLine("// This file is generated.");
-        this.body.AppendLine("#include<stdlib.h>");
+        this.body.AppendLine("#include <stdlib.h>");
         this.body.AppendLine($"#include \"{this.Name}.h\"");
         this.body.AppendLine();
 

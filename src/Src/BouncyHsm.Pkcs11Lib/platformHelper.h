@@ -1,8 +1,8 @@
 #ifndef PLATFORM_HELPER_H
 #define PLATFORM_HELPER_H
 
-#include<stdint.h>
-#include<stdbool.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 #ifdef _WIN32
 #include <Windows.h>

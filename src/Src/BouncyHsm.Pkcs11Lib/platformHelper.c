@@ -1,8 +1,8 @@
 #include "platformHelper.h"
-#include<stdint.h>
-#include<string.h>
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 
 #ifdef __linux__
