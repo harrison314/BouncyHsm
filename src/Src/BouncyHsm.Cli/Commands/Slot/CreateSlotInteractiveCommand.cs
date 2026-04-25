@@ -20,7 +20,7 @@ internal class CreateSlotInteractiveCommand : AsyncCommand<CreateSlotInteractive
         public const string SimulateProtectedAuthPath = "Protected Auth Path";
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
+    protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         AnsiConsole.MarkupLine("a new slot with token in interactive mode");
 
