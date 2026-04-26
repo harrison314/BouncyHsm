@@ -53,7 +53,7 @@ public class HighLevelAttributeValue
 
     }
 
-    internal HighLevelAttributeValue(IAttributeValue attributeValue)
+    internal HighLevelAttributeValue(CKA attributeType, IAttributeValue attributeValue)
     {
         System.Diagnostics.Debug.Assert(attributeValue != null);
 
@@ -85,6 +85,10 @@ public class HighLevelAttributeValue
 
             case AttrTypeTag.UintArray:
                 this.ValueAttributeArray = attributeValue.AsUintArray();
+                if (attributeType == CKA.CKA_ALLOWED_MECHANISMS)
+                {
+                    this.ValueAsString = string.Join("\n", this.ValueAttributeArray.Select(t => (CKM)t));
+                }
                 break;
 
             default:
@@ -107,6 +111,8 @@ public class HighLevelAttributeValue
             AttrTypeTag.DateTime => AttributeValue.Create(CkDate.Parse(this.ValueAsDateTime ?? throw new InvalidDataException("Attribute is not DateTime."))),
             AttrTypeTag.String => AttributeValue.Create(this.ValueAsString
                 ?? throw new InvalidDataException("Attribute is not string.")),
+            AttrTypeTag.UintArray => AttributeValue.Create(this.ValueAttributeArray
+                ?? throw new InvalidDataException("Attribute is not attribute array.")),
             _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported."),
         };
     }
