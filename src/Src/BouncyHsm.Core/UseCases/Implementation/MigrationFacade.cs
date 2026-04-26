@@ -19,7 +19,7 @@ public class MigrationFacade : IMigrationFacade
         this.logger = logger;
     }
 
-    public async ValueTask<DomainResult<MigrationResult>> Migrate(CancellationToken cancellationToken)
+    public async ValueTask<DomainResult<MigrationResult>> Migrate(MigrationRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to Migrate");
 
@@ -34,6 +34,7 @@ public class MigrationFacade : IMigrationFacade
 
         int successed = 0;
         int failed = 0;
+        MigrateObjectFlags migrationFlags = this.CreateMigrationFlags(request);
         foreach (SlotEntity slot in slots)
         {
             this.logger.LogTrace("Process slot {SlotId} <{TokenLabel}>.", slot.SlotId, slot.Token.Label);
@@ -48,6 +49,7 @@ public class MigrationFacade : IMigrationFacade
 
                 try
                 {
+                    storageObject.MigrateObject(migrationFlags);
                     storageObject.ReComputeAttributes();
                     storageObject.Validate();
 
@@ -68,6 +70,17 @@ public class MigrationFacade : IMigrationFacade
 
         this.logger.LogInformation("Migration status: successed: {Successed}, failed: {Failed}.", successed, failed);
         return new DomainResult<MigrationResult>.Ok(new MigrationResult(successed, failed));
+    }
+
+    private MigrateObjectFlags CreateMigrationFlags(MigrationRequest request)
+    {
+        MigrateObjectFlags flags = MigrateObjectFlags.None;
+        if(request.ResetAllowedMechanism)
+        {
+            flags |= MigrateObjectFlags.ResetAlowedMechanism;
+        }
+
+        return flags;
     }
 
     private string GetObjectDescriptionSafe(StorageObject storageObject)

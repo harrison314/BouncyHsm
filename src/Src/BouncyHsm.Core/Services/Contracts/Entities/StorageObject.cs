@@ -172,6 +172,11 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         return false;
     }
 
+    public virtual void MigrateObject(MigrateObjectFlags flags)
+    {
+        // NOP
+    }
+
     protected virtual bool IsReadOnlyAttribute(CKA attributeType)
     {
         return attributeType is CKA.CKA_ALWAYS_SENSITIVE

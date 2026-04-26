@@ -999,6 +999,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_AES_OFB:
     case CKM_AES_CTR:
     case CKM_AES_CTS:
+    case CKM_AES_GMAC:
     case CKM_CAMELLIA_CBC:
     case CKM_CAMELLIA_CBC_PAD:
         return CreateRawParams(value, pMechanism);

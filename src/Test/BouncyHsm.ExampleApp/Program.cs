@@ -3,8 +3,6 @@ using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.HighLevelAPI.MechanismParams;
 using Pkcs11Interop.Ext.Common;
 using Pkcs11Interop.Ext;
-using System.Diagnostics.Metrics;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -43,7 +41,8 @@ public static class Program
         //CrateObjectExample();
         //EncryptAndDecrypt();
         // CreateSesitiveData();
-        ChaCha20();
+        //ChaCha20();
+        CreateAndReadRsa();
     }
 
     private static void CrateObjectExample()
@@ -154,7 +153,7 @@ public static class Program
         IObjectHandle key = session.GenerateKey(keyGenMechanism, keyAttributes);
 
         List<CKA> listAttr = new List<CKA>()
-        { 
+        {
          CKA.CKA_LABEL,
          CKA.CKA_ID,
          CKA.CKA_CLASS,
@@ -214,5 +213,72 @@ public static class Program
         byte[] cipherText = session.Encrypt(chacha20mechanism, keyHandle, plainText);
 
         Console.WriteLine("CipherText: {0}", Convert.ToBase64String(cipherText));
+    }
+
+    private static void CreateAndReadRsa()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.First();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, UserPin);
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_MODULUS_BITS, 2048),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PUBLIC_EXPONENT, new byte[] { 0x01, 0x00, 0x01 })
+        };
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
+        };
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN);
+
+        session.GenerateKeyPair(mechanism,
+            publicKeyAttributes,
+            privateKeyAttributes,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+
+
+        List<IObjectAttribute> attributes = session.GetAttributeValue(publicKey, new List<CKA>()
+        {
+            CKA.CKA_CLASS, CKA.CKA_TOKEN, CKA. CKA_PRIVATE, CKA.CKA_MODIFIABLE, CKA. CKA_LABEL, 
+            CKA.CKA_ID, CKA. CKA_START_DATE, CKA. CKA_END_DATE, CKA.CKA_DERIVE, CKA.CKA_LOCAL, 
+            CKA.CKA_ALLOWED_MECHANISMS, CKA.CKA_SUBJECT, CKA. CKA_ENCRYPT, CKA.CKA_VERIFY,
+            CKA.CKA_VERIFY_RECOVER, CKA.CKA_WRAP, CKA.CKA_TRUSTED, CKA.CKA_WRAP_TEMPLATE,
+            CKA.CKA_KEY_TYPE, CKA.CKA_KEY_GEN_MECHANISM, CKA.CKA_MODULUS, CKA.CKA_MODULUS_BITS,
+            CKA.CKA_PUBLIC_EXPONENT
+        });
+
+        byte[] publicExponent = attributes.Last().GetValueAsByteArray();
+        Console.WriteLine("Public exponent: {0}", Convert.ToHexString(publicExponent));
     }
 }

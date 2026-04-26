@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "globalContext.h"
+#include "platformHelper.h"
 #include "logger.h"
 
 #ifndef _WIN32
@@ -19,7 +20,7 @@
 
 #include "platformHelper.h"
 
-void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
+static void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
 {
 	unsigned long next = *generator;
 	next = next ^ additionalSeed;
@@ -28,7 +29,7 @@ void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
 	*generator = next;
 }
 
-unsigned int myRandNext(unsigned long* generator)
+static unsigned int myRandNext(unsigned long* generator)
 {
 	unsigned long next = *generator;
 	next = next * 1103515245 + 12345;
@@ -37,7 +38,7 @@ unsigned int myRandNext(unsigned long* generator)
 	return((unsigned int)(next / 65536) % 32768);
 }
 
-void myRandChars(unsigned long* generator, char* buffer, size_t len)
+static void myRandChars(unsigned long* generator, char* buffer, size_t len)
 {
 	size_t i;
 	const char chars[] = "qwertzuiopasdfghjklyxcvbnm0123456789_";
@@ -78,7 +79,7 @@ static char* toUtf8(const wchar_t* src, int* out_len)
 	return output_buffer;
 }
 
-bool GetCurrentProgramName(char* buffer, size_t maxSize)
+static bool GetCurrentProgramName(char* buffer, size_t maxSize)
 {
 	wchar_t szFileName[MAX_PATH];
 	int len;
@@ -115,7 +116,7 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 	return true;
 }
 #else
-bool GetCurrentProgramName(char* buffer, size_t maxSize)
+static bool GetCurrentProgramName(char* buffer, size_t maxSize)
 {
 	FILE* procFile = fopen("/proc/self/comm", "r");
 	if (procFile == NULL)
@@ -124,7 +125,15 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 		return false;
 	}
 	size_t readChars = fread(buffer, sizeof(char), maxSize - 1, procFile);
-	buffer[readChars] = 0;
+    if (readChars < maxSize)
+    {
+        buffer[readChars] = 0;
+    }
+    else
+    {
+        buffer[maxSize - 1] = 0;
+    }
+
 	int rv = fclose(procFile);
     if (rv != 0)
     {
@@ -136,7 +145,7 @@ bool GetCurrentProgramName(char* buffer, size_t maxSize)
 }
 #endif
 
-bool envVariableDup(const char* name, char** variableValuePtr)
+static bool envVariableDup(const char* name, char** variableValuePtr)
 {
 	if (variableValuePtr == NULL)
 	{
@@ -182,32 +191,34 @@ bool envVariableDup(const char* name, char** variableValuePtr)
 	*variableValuePtr = buffer;
 	return true;
 #else
-	char* variable = getenv(name);
-	if (variable == NULL)
-	{
-		*variableValuePtr = NULL;
-		return true;
-	}
-	else
-	{
-		char* buffer = (char*)malloc(strlen(variable) + 1);
-		if (buffer == NULL)
-		{
-			return false;
-		}
+    char* variable = getenv(name);
+    if (variable == NULL)
+    {
+        *variableValuePtr = NULL;
+        return true;
+    }
+    else
+    {
+        char* buffer = (char*)malloc(strlen(variable) + 1);
+        if (buffer == NULL)
+        {
+            return false;
+        }
 
-		strcpy(buffer, variable);
+        if (strcpy_s(buffer, strlen(variable) + 1, variable) != 0)
+        {
+            free((void*)buffer);
+            return false;
+        }
 
-		*variableValuePtr = buffer;
-		return true;
-	}
+        *variableValuePtr = buffer;
+        return true;
+    }
 #endif
 }
 
-// premennu prostredia ako connection string NAME=VALUE; NAME2=VALUE2;
-// rozparsovat ako treba
 // "Server=127.0.0.1; Port=8765; LogTarget=ErrorCosnole; LogLevel=Error; Tag=45695;"
-bool parseConnectionString(const char* connectionString, const char* name, char* outValue, int* sizePtr)
+static bool parseConnectionString(const char* connectionString, const char* name, char* outValue, int* sizePtr)
 {
 	if (connectionString == NULL || name == NULL || sizePtr == NULL)
 	{
@@ -268,7 +279,7 @@ bool parseConnectionString(const char* connectionString, const char* name, char*
 	return rv;
 }
 
-bool parseConnectionStringOrDefault(const char* connectionString, const char* name, char* outValue, size_t outValueSize, const char* defaultValue)
+static bool parseConnectionStringOrDefault(const char* connectionString, const char* name, char* outValue, size_t outValueSize, const char* defaultValue)
 {
 	int size = (int)outValueSize;
 
@@ -288,7 +299,7 @@ bool parseConnectionStringOrDefault(const char* connectionString, const char* na
 	return true;
 }
 
-void configureLogging(const char* configurationString)
+static void configureLogging(const char* configurationString)
 {
 	char targetBuffer[64];
 	char levelBuffer[64];
@@ -316,13 +327,16 @@ GlobalContext_t globalContext;
 void GlobalContextInit()
 {
 #ifdef _WIN32
-	uint64_t pid = (uint64_t)GetCurrentProcessId();
+    uint64_t pid = (uint64_t)GetCurrentProcessId();
+    uint64_t threadId = (uint64_t)GetCurrentThreadId();
 #else
-	uint64_t pid = (uint64_t)getpid();
+    uint64_t pid = (uint64_t)getpid();
+    uint64_t threadId = (uint64_t)gettid();
 #endif
 
 	unsigned long generator = (unsigned long)time(NULL);
-	myRandAddSeed(&generator, (unsigned long)pid);
+    myRandAddSeed(&generator, (unsigned long)pid);
+    myRandAddSeed(&generator, (unsigned long)threadId);
 
 	myRandChars(&generator, globalContext.appIdRandomChars, 24);
 
@@ -377,6 +391,12 @@ void GlobalContextInit()
 				log_message(LOG_LEVEL_ERROR, "Error during reading Port. Is not number.");
 				return;
 			}
+
+            if (portValue < 0 || portValue > 65535) 
+            { 
+                log_message(LOG_LEVEL_ERROR, "Error during reading Port. Invalid port number: %d.", portValue); 
+                return; 
+            }
 
 			globalContext.port = portValue;
 		}

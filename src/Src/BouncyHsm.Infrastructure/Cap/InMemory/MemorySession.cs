@@ -34,9 +34,13 @@ public class MemorySession : IMemorySession
     public DateTimeOffset LastActivity
     {
         get => this.lastActivity;
-        set => this.lastActivity = (value >= this.lastActivity)
-            ? value
-            : throw new ArgumentException("The last activity must be later than the start and the last activity.", nameof(this.LastActivity));
+        set
+        {
+            if (value > this.lastActivity)
+            {
+                this.lastActivity = value;
+            }
+        }
     }
 
     public MemorySession(MemorySessionData sessionData, DateTimeOffset startAt)

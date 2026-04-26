@@ -39,6 +39,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             #include <stdbool.h>
             #include <stddef.h>
             #include <stdint.h>
+            #include "../platformHelper.h"
             #include "../logger.h"
 
             #define USE_VARIABLE(x) (void)(x)
@@ -80,6 +81,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
               if (!ctx->read(ctx, (void*) buff, size))
               {
                   NMRPC_LOG_ERR_TEXT("Error during reading.");
+                  free((void*)buff);
                   return NMRPC_DESERIALIZE_ERR;
               }
 

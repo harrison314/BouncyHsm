@@ -1484,8 +1484,9 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
                 if (pTemplate[i].pValue != NULL)
                 {
-                    if (newValueLen < pTemplate[i].ulValueLen)
+                    if (newValueLen > pTemplate[i].ulValueLen)
                     {
+                        log_message(LOG_LEVEL_TRACE, "Invalid value length for attribute %i (exepted len %i actual %i) on line %i in function %s", (int)pTemplate[i].type, (int)newValueLen, (int)pTemplate[i].ulValueLen,  __LINE__, __FUNCTION__);
                         rvMethod = CKR_BUFFER_TOO_SMALL;
                         pTemplate[i].ulValueLen = newValueLen;
                         continue;
@@ -1523,8 +1524,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
                     {
                         CK_ULONG* destinationUintArray = (CK_ULONG*)pTemplate[i].pValue;
                         size_t j;
-                        size_t arrayLength = (size_t)outAttrPtr[i].ValueUintArray->Array.length;
-                        uint32_t* uintArray = outAttrPtr[i].ValueUintArray->Array.array;
+                        size_t arrayLength = (size_t)outAttrPtr->ValueUintArray->Array.length;
+                        uint32_t* uintArray = outAttrPtr->ValueUintArray->Array.array;
                         for (j = 0; j < arrayLength; j++)
                         {
                             destinationUintArray[j] = (CK_ULONG)uintArray[j];

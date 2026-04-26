@@ -65,5 +65,5 @@ clean:
 cleanso:
 	-rm -f *.so
 
-cleao:
+cleano:
 	-rm -f *.o

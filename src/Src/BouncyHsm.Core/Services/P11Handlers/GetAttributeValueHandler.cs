@@ -89,7 +89,7 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
             values[i] = outValue;
         }
 
-        // Posable attribute too small on client
+        // Posible attribute too small on client
         return new GetAttributeValueEnvelope()
         {
             Rv = (uint)rv,

@@ -23,11 +23,12 @@
 #include "../rpc/rpc.h"
 #include "tcpTransport.h"
 #include "../logger.h"
+#include "../platformHelper.h"
 
 #define USE_VARIABLE(x) (void)(x)
 
 #ifdef _WIN32
-static int isGlobalInit = 0;
+static volatile LONG isGlobalInit = 0;
 #define WSA_ERROR_MESSAGE_BUFFER_LEN 320
 
 int translateHostName(const char* hostName, int port, SockContext_t* ctx)
@@ -153,14 +154,15 @@ int SockContext_init(SockContext_t* ctx, const char* host, int port)
 {
     log_message(LOG_LEVEL_TRACE, "Init socket context with host: %s port: %d", host, port);
 
-    if (!isGlobalInit)
+    if (InterlockedCompareExchange(&isGlobalInit, 0, 0) == 0)
     {
         WSADATA wsa;
-        isGlobalInit = 1;
+        InterlockedExchange(&isGlobalInit, 1);
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         {
             char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
             getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+            InterlockedExchange(&isGlobalInit, 0);
 
             log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) WSA error: %s", __FUNCTION__, __LINE__, errorMsgBuffer);
             return NMRPC_FATAL_ERROR;
