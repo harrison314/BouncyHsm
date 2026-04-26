@@ -32,7 +32,7 @@ else
     {
         <AttrCkUintEdit AttributeValue="@this.attributeValue" ValueUpdated="this.OnValueUpdated" />
     }
-    else if (this.attributeValue.TypeTag == AttrTypeTag2.UintArray && this.Context.AttributeName == "CKA_ALLOWED_MECHANISMS")
+    else if (this.attributeValue.TypeTag == AttrTypeTag2.UintArray && this.Context?.AttributeName == "CKA_ALLOWED_MECHANISMS")
     {
         <AttrCkmArrayEdit AttributeValue="@this.attributeValue" ValueUpdated="this.OnValueUpdated" />
     }
