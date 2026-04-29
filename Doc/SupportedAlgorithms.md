@@ -1,9 +1,9 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 2.0.1.0 (commit _7dd0dc8ce3af87033f9d5040810898c55522ee62_).
+Supported algorithms for _Bouncy Hsm_ version 2.1.0.0 (commit _a9c6a4655de7a4740acbe50be50143c107f297eb_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 206 mechanisms.
+_Bouncy Hsm_ supports 207 mechanisms.
 
 BouncyHsm provides PKCS#11 interfaces for versions [2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf),
 [3.1](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf),
@@ -175,6 +175,7 @@ The mechanism can also be used in older versions of the native API.
 | `CKM_AES_CTS`  | 16  | 32 |   |   |   |   | ✓ |   |   |   |   |
 | `CKM_AES_CMAC`  | 16  | 32 |   | ✓ |   |   | ✓ |   |   |   |   |
 | `CKM_AES_CMAC_GENERAL`  | 16  | 32 |   | ✓ |   |   | ✓ |   |   |   |   |
+| `CKM_AES_GMAC`  | 16  | 32 |   | ✓ |   |   | ✓ |   |   |   |   |
 | `CKM_AES_ECB_ENCRYPT_DATA`  | 16  | 32 |   |   |   | ✓ |   |   |   |   |   |
 | `CKM_AES_CBC_ENCRYPT_DATA`  | 16  | 32 |   |   |   | ✓ |   |   |   |   |   |
 | `CKM_GOSTR3411`  | 0  | 0 | ✓ |   |   |   |   |   |   |   |   |

@@ -1,6 +1,6 @@
 ﻿# Supported PKCS#11 funtions
 
-Supported PKCS#11 functions for _Bouncy Hsm_ version 2.0.1.0 (commit _7dd0dc8ce3af87033f9d5040810898c55522ee62_).
+Supported PKCS#11 functions for _Bouncy Hsm_ version 2.1.0.0 (commit _a9c6a4655de7a4740acbe50be50143c107f297eb_).
 
 
 | Function | Is supported |
