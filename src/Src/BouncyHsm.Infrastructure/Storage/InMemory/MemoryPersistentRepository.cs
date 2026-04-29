@@ -7,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,7 +74,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             SlotEntity slotEntity = new SlotEntity()
             {
                 Id = Guid.NewGuid(),
-                SlotId = this.slots.Max(t => t.SlotId) + 1,
+                SlotId = this.slots.Any() ? (this.slots.Max(t => t.SlotId) + 1) : 1,
                 Description = slot.Description,
                 IsHwDevice = slot.IsHwDevice,
                 IsRemovableDevice = slot.IsRemovableDevice,
@@ -86,6 +87,10 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
                     SimulateHwRng = slot.Token.SimulateHwRng,
                     SimulateHwMechanism = slot.Token.SimulateHwMechanism,
                     SimulateQualifiedArea = slot.Token.SimulateQualifiedArea,
+                    MonotonicCounter = 0,
+                    MonotonicCounterHasReset = false,
+                    SimulateProtectedAuthPath = slot.Token.SimulateProtectedAuthPath, 
+                    SpeedMode = slot.Token.SpeedMode,
 
                     UserPin = pins.UserPin,
                     SoPin = pins.SoPin,
@@ -321,6 +326,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
         int privateKeys = this.storageObjects.Values.Count(t => t.IsPrivateKey());
         int certificates = this.storageObjects.Values.Count(t => t.IsX509Certificate());
 
+        this.readerWriterLock.EnterReadLock();
         try
         {
             return new ValueTask<PersistentRepositoryStats>(new PersistentRepositoryStats(this.slots.Count,
