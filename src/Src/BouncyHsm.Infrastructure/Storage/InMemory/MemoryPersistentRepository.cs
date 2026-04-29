@@ -32,6 +32,7 @@ internal class MemoryPersistentRepository : IPersistentRepository
                 SlotId = 1457,
                 Description = "Example",
                 IsHwDevice = false,
+                IsPlugged = true,
                 Token = new InMemoryTokenInfo()
                 {
                     Label = "Example token",
@@ -61,9 +62,10 @@ internal class MemoryPersistentRepository : IPersistentRepository
         SlotEntity slotEntity = new SlotEntity()
         {
             Id = Guid.NewGuid(),
-            SlotId = this.slots.Select(t => t.SlotId).Max() + 1,
+            SlotId = this.slots.Max(t => t.SlotId) + 1,
             Description = slot.Description,
             IsHwDevice = slot.IsHwDevice,
+            IsRemovableDevice = slot.IsRemovableDevice,
             Token = new InMemoryTokenInfo()
             {
                 Label = slot.Token.Label,
