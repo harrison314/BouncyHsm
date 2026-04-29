@@ -52,7 +52,10 @@ public class ClientApplicationContext : IClientApplicationContext
             throw new BouncyHsmInvalidInputException($"Not found memory session with id {applicationSessionId}.");
         }
 
-        this.apps.Remove(selectedKey, out _);
+        if (!this.apps.Remove(selectedKey, out _))
+        {
+            throw new BouncyHsmInvalidInputException($"Memory session with id {applicationSessionId} was already removed.");
+        }
     }
 
     public bool TryGetMemorySession(string key, [NotNullWhen(true)] out IMemorySession? memorySession)
