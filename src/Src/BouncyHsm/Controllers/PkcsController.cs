@@ -35,7 +35,7 @@ public class PkcsController : Controller
     [ProducesResponseType(typeof(GenerateSelfSignedCertResponseDto), 200)]
     public async Task<IActionResult> GenerateSelfSignedCert(uint slotId, [FromBody] GenerateSelfSignedCertRequestDto model)
     {
-        this.logger.LogTrace("Entering to GeneratePkcs10 with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to GenerateSelfSignedCert with slotId {slotId}.", slotId);
 
         GenerateSelfSignedCertRequest request = PkcsControllerMapper.FromDto(model, slotId);
         DomainResult<Guid> result = await this.pkcsFacade.GenerateSelfSignedCert(request, this.HttpContext.RequestAborted);
