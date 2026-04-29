@@ -107,7 +107,7 @@ public class KeyGenerationController : Controller
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateAesKey(uint slotId, [FromBody] GenerateAesKeyRequestDto model)
     {
-        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to GenerateAesKey with slotId {slotId}.", slotId);
 
         GenerateAesKeyRequest request = KeyGenerationControllerMapper.MapFromDto(model);
         DomainResult<GeneratedSecretId> result = await this.keyGenerationFacade.GenerateAesKey(slotId, request, this.HttpContext.RequestAborted);
@@ -119,7 +119,7 @@ public class KeyGenerationController : Controller
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GeneratePoly1305Key(uint slotId, [FromBody] GeneratePoly1305KeyRequestDto model)
     {
-        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to GeneratePoly1305Key with slotId {slotId}.", slotId);
 
         GeneratePoly1305KeyRequest request = KeyGenerationControllerMapper.MapFromDto(model);
         DomainResult<GeneratedSecretId> result = await this.keyGenerationFacade.GeneratePoly1305Key(slotId, request, this.HttpContext.RequestAborted);
@@ -131,7 +131,7 @@ public class KeyGenerationController : Controller
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateChaCha20Key(uint slotId, [FromBody] GenerateChaCha20KeyRequestDto model)
     {
-        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to GenerateChaCha20Key with slotId {slotId}.", slotId);
 
         GenerateChaCha20KeyRequest request = KeyGenerationControllerMapper.MapFromDto(model);
         DomainResult<GeneratedSecretId> result = await this.keyGenerationFacade.GenerateChaCha20Key(slotId, request, this.HttpContext.RequestAborted);
@@ -143,7 +143,7 @@ public class KeyGenerationController : Controller
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateSalsa20Key(uint slotId, [FromBody] GenerateSalsa20KeyRequestDto model)
     {
-        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to GenerateSalsa20Key with slotId {slotId}.", slotId);
 
         GenerateSalsa20KeyRequest request = KeyGenerationControllerMapper.MapFromDto(model);
         DomainResult<GeneratedSecretId> result = await this.keyGenerationFacade.GenerateSalsa20Key(slotId, request, this.HttpContext.RequestAborted);
@@ -155,7 +155,7 @@ public class KeyGenerationController : Controller
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateSecretKey(uint slotId, [FromBody] GenerateSecretKeyRequestDto model)
     {
-        this.logger.LogTrace("Entering to GenerateEcKeyPair with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to GenerateSecretKey with slotId {slotId}.", slotId);
 
         GenerateSecretKeyRequest request = KeyGenerationControllerMapper.MapFromDto(model);
         DomainResult<GeneratedSecretId> result = await this.keyGenerationFacade.GenerateSecretKey(slotId, request, this.HttpContext.RequestAborted);

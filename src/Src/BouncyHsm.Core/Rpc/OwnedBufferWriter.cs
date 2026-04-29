@@ -13,11 +13,16 @@ internal sealed class OwnedBufferWriter : IBufferWriter<byte>, IMemoryOwner<byte
 {
     private byte[] array;
     private int index;
+    private bool disposed;
 
     public Memory<byte> Memory
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => this.array.AsMemory(0, this.index);
+        get
+        {
+            System.Diagnostics.Debug.Assert(!this.disposed);
+            return this.array.AsMemory(0, this.index);
+        }
     }
 
     public OwnedBufferWriter(int initialSize)
@@ -25,11 +30,14 @@ internal sealed class OwnedBufferWriter : IBufferWriter<byte>, IMemoryOwner<byte
         System.Diagnostics.Debug.Assert(initialSize > 0);
 
         this.index = 0;
+        this.disposed = false;
         this.array = ArrayPool<byte>.Shared.Rent(initialSize);
     }
 
     public void Advance(int count)
     {
+        System.Diagnostics.Debug.Assert(!this.disposed);
+
         byte[] buffer = this.array;
 
         if (this.index > buffer.Length - count)
@@ -42,6 +50,8 @@ internal sealed class OwnedBufferWriter : IBufferWriter<byte>, IMemoryOwner<byte
 
     public Memory<byte> GetMemory(int sizeHint = 0)
     {
+        System.Diagnostics.Debug.Assert(!this.disposed);
+
         this.CheckBufferAndEnsureCapacity(sizeHint);
 
         return this.array.AsMemory(this.index);
@@ -49,6 +59,8 @@ internal sealed class OwnedBufferWriter : IBufferWriter<byte>, IMemoryOwner<byte
 
     public Span<byte> GetSpan(int sizeHint = 0)
     {
+        System.Diagnostics.Debug.Assert(!this.disposed);
+
         this.CheckBufferAndEnsureCapacity(sizeHint);
 
         return this.array.AsSpan(this.index);
@@ -56,7 +68,11 @@ internal sealed class OwnedBufferWriter : IBufferWriter<byte>, IMemoryOwner<byte
 
     public void Dispose()
     {
-        ArrayPool<byte>.Shared.Return(this.array);
+        if (!this.disposed)
+        {
+            this.disposed = true;
+            ArrayPool<byte>.Shared.Return(this.array);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -93,10 +109,10 @@ internal sealed class OwnedBufferWriter : IBufferWriter<byte>, IMemoryOwner<byte
         {
             minimumSize = BitOperations.RoundUpToPowerOf2(minimumSize);
         }
-        
+
         byte[] newBuffer = ArrayPool<byte>.Shared.Rent((int)minimumSize);
         Buffer.BlockCopy(currentBuffer, 0, newBuffer, 0, this.index);
-        
+
         this.array = newBuffer;
 
         ArrayPool<byte>.Shared.Return(currentBuffer);

@@ -130,9 +130,6 @@ public class Program
 
         app.UseAuthorization();
         app.UseAntiforgery();
-       
-
-        app.UseAuthorization();
 
         app.MapHub<BouncyHsm.Infrastructure.LogPropagation.LogHub>("/loghub");
         app.MapHub<BouncyHsm.Infrastructure.PapServices.PapHub>("/paphub");
