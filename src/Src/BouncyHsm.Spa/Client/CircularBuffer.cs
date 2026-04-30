@@ -13,12 +13,10 @@ public class CircularBuffer<T> : IEnumerable<T>
     {
         get => this.buffer.Length;
     }
+
     public bool IsFull
     {
-        get
-        {
-            return this.size == this.Capacity;
-        }
+        get => this.size == this.Capacity;
     }
 
     public bool IsEmpty
@@ -76,7 +74,7 @@ public class CircularBuffer<T> : IEnumerable<T>
             throw new ArgumentException(
                 "Circular buffer cannot have negative or zero capacity.", nameof(capacity));
         }
-        
+
         if (items.Length > capacity)
         {
             throw new ArgumentException(
@@ -170,7 +168,7 @@ public class CircularBuffer<T> : IEnumerable<T>
         Memory<T> arrayTwo = this.ArrayTwo();
 
         arrayOne.CopyTo(newArray.AsMemory(0, arrayOne.Length));
-        arrayTwo.CopyTo(newArray.AsMemory(arrayOne.Length, arrayOne.Length));
+        arrayTwo.CopyTo(newArray.AsMemory(arrayOne.Length, arrayTwo.Length));
 
         return newArray;
     }
@@ -239,7 +237,7 @@ public class CircularBuffer<T> : IEnumerable<T>
     {
         if (this.IsEmpty)
         {
-            return new Memory<T>();
+            return Memory<T>.Empty;
         }
         else if (this.start < this.end)
         {
@@ -255,7 +253,7 @@ public class CircularBuffer<T> : IEnumerable<T>
     {
         if (this.IsEmpty)
         {
-            return new Memory<T>();
+            return Memory<T>.Empty;
         }
         else if (this.start < this.end)
         {
