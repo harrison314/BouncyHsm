@@ -46,7 +46,7 @@
                     {
                         <button type="button"
                                 class="btn btn-outline-danger"
-                            @onclick="this.Stop">
+                                @onclick="this.Stop">
                             <span class="spinner-border text-danger spinner-border-sm" role="status" aria-hidden="true"></span>
                             Stop
                         </button>
@@ -55,7 +55,7 @@
                     {
                         <button type="button"
                                 class="btn btn-outline-primary"
-                            @onclick="this.Start">
+                                @onclick="this.Start">
                             <span class="icon-feed icon-1x"></span>
                             Start
                         </button>
@@ -112,13 +112,13 @@
 
     private Task Stop()
     {
-        this.cts.Cancel();
+        this.CancelCanncelationTokenSourceSafe();
         return Task.CompletedTask;
     }
 
     private async Task StartInternal(string? currentTag, LogLevel minLogLevel)
     {
-        this.cts.Cancel();
+        this.CancelCanncelationTokenSourceSafe();
         this.cts.Dispose();
         this.cts = new CancellationTokenSource();
 
@@ -157,12 +157,24 @@
 
     public async ValueTask DisposeAsync()
     {
-        this.cts.Cancel();
+        this.CancelCanncelationTokenSourceSafe();
         this.cts.Dispose();
 
         if (hubConnection is not null)
         {
             await hubConnection.DisposeAsync();
+        }
+    }
+
+    private void CancelCanncelationTokenSourceSafe()
+    {
+        try
+        {
+            this.cts.Cancel();
+        }
+        catch
+        {
+            // NOP
         }
     }
 
