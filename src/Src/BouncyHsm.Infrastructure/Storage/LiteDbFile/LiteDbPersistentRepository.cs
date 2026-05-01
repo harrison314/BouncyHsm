@@ -647,6 +647,11 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
            certificates));
     }
 
+    public async ValueTask CheckHealth(CancellationToken cancellationToken)
+    {
+        await Task.Run(() => _ = this.database.GetCollectionNames().ToArray(), cancellationToken);
+    }
+
     private ulong CalculateXxxHash(ReadOnlySpan<byte> data)
     {
         this.logger.LogTrace("Entering to CalculateXxxHash.");

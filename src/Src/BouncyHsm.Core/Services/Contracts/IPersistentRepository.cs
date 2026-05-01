@@ -35,4 +35,6 @@ public interface IPersistentRepository
     ValueTask DestroyObject(uint slotId, StorageObject storageObject, CancellationToken cancellationToken);
 
     ValueTask<PersistentRepositoryStats> GetStats(CancellationToken cancellationToken);
+
+    ValueTask CheckHealth(CancellationToken cancellationToken);
 }

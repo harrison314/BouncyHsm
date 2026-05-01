@@ -1,7 +1,12 @@
 # Deployment as service
 
 This document describes the deployment for the supported platforms.
-_Bouncy Hsm_ can also be used by just running it under the current user (non-privileged user).
+
+## Deployment notes
+_Bouncy Hsm_
+ - can also be used by just running it under the current user,
+ - does not require a privileged user,
+ - publishes healtchek HTTP endpoint to `/health`.
 
 ## Prerequisites
 - [Net 10.0 Runtime and ASP.NET Core Runtime 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)

@@ -16,7 +16,6 @@ namespace BouncyHsm.Infrastructure.Storage.InMemory;
 internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
 {
     private readonly ILogger<MemoryPersistentRepository> logger;
-
     private readonly List<SlotEntity> slots;
     private readonly ConcurrentDictionary<StorageObjectId, StorageObjectMemento> storageObjects;
     private readonly ReaderWriterLockSlim readerWriterLock;
@@ -34,8 +33,8 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             new SlotEntity()
             {
                 Id = Guid.NewGuid(),
-                SlotId = 1457,
-                Description = "Example",
+                SlotId = 101,
+                Description = "Example token with PIN 123456",
                 IsHwDevice = false,
                 IsPlugged = true,
                 IsRemovableDevice = false,
@@ -89,7 +88,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
                     SimulateQualifiedArea = slot.Token.SimulateQualifiedArea,
                     MonotonicCounter = 0,
                     MonotonicCounterHasReset = false,
-                    SimulateProtectedAuthPath = slot.Token.SimulateProtectedAuthPath, 
+                    SimulateProtectedAuthPath = slot.Token.SimulateProtectedAuthPath,
                     SpeedMode = slot.Token.SpeedMode,
 
                     UserPin = pins.UserPin,
@@ -338,6 +337,16 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
         {
             this.readerWriterLock.ExitReadLock();
         }
+    }
+
+    public ValueTask CheckHealth(CancellationToken cancellationToken)
+    {
+        if (this.disposedValue)
+        {
+            throw new ObjectDisposedException(nameof(MemoryPersistentRepository));
+        }
+
+        return new ValueTask();
     }
 
     public void Dispose()

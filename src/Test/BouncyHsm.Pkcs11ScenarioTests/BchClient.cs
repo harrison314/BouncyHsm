@@ -5,13 +5,13 @@ namespace BouncyHsm.Pkcs11ScenarioTests;
 
 internal static class BchClient
 {
-    private static HttpClient httpClient = new HttpClient();
+    internal readonly static HttpClient httpClient = new HttpClient();
 
-    private const string BouncyhsmEndpoint = "https://localhost:7007/";
+    internal const string BouncyHsmEndpoint = "https://localhost:7007/";
 
     public static IBouncyHsmClient Client
     {
-        get => new BouncyHsmClient(BouncyhsmEndpoint, httpClient);
+        get => new BouncyHsmClient(BouncyHsmEndpoint, httpClient);
     }
 
     public static string P11LibPath

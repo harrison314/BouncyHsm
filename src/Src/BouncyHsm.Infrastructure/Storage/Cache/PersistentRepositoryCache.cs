@@ -119,4 +119,9 @@ public class PersistentRepositoryCache : IPersistentRepository
     {
         return this.repository.SetPin(slot, userType, newPin, context, cancellationToken);
     }
+
+    public ValueTask CheckHealth(CancellationToken cancellationToken)
+    {
+        return this.repository.CheckHealth(cancellationToken);
+    }
 }

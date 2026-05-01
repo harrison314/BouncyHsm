@@ -102,6 +102,11 @@ public class Program
         builder.Services.AddSignalR();
         builder.TryUseProfileFromConfiguration();
 
+        builder.Services.AddHealthChecks()
+            .AddCheck<Infrastructure.HealthChecks.PersistentRepozitoryHealthCheck>("PersistentRepozitoryHealthCheck",
+            tags: ["perzistence"],
+            timeout: TimeSpan.FromSeconds(10.0));
+
         WebApplication app = builder.Build();
         UseBasePath(app);
         LogStartup(app);
@@ -134,6 +139,7 @@ public class Program
         app.MapHub<BouncyHsm.Infrastructure.LogPropagation.LogHub>("/loghub");
         app.MapHub<BouncyHsm.Infrastructure.PapServices.PapHub>("/paphub");
 
+        app.MapHealthChecks("/health");
         app.MapControllers();
 
         app.MapRazorComponents<App>()
