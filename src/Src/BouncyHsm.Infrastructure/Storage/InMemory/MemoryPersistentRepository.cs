@@ -77,6 +77,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
                 Description = slot.Description,
                 IsHwDevice = slot.IsHwDevice,
                 IsRemovableDevice = slot.IsRemovableDevice,
+                IsPlugged = true,
                 Token = new InMemoryTokenInfo()
                 {
                     Label = slot.Token.Label,
@@ -163,7 +164,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             if (specification.WithTokenPresent)
             {
                 List<SlotEntity> result = new List<SlotEntity>();
-                result.AddRange(this.slots.Where(t => t.IsPlugged));
+                result.AddRange(this.slots.Where(t => !t.IsRemovableDevice || (t.IsRemovableDevice && t.IsPlugged)));
                 return new ValueTask<IReadOnlyList<SlotEntity>>(result);
             }
 
