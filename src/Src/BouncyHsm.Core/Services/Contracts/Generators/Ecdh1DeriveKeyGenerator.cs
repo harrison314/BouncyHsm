@@ -6,6 +6,7 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Utilities;
 
 namespace BouncyHsm.Core.Services.Contracts.Generators;
 
@@ -104,7 +105,13 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         Org.BouncyCastle.Math.BigInteger agreementIntValue = agreement.CalculateAgreement(publicKey);
         this.logger.LogTrace("Calculated agreement as big integer.");
 
-        return agreementIntValue.ToByteArrayUnsigned();
+        byte[] secret = agreementIntValue.ToByteArrayUnsigned();
+        if (secret.Length < minKeySize)
+        {
+            secret = BigIntegers.AsUnsignedByteArray((int)minKeySize, agreementIntValue);
+        }
+
+        return secret;
     }
 
     private byte[] DeriveSecretFroMongomeryKey(SecretKeyObject generalSecretKeyObject, MontgomeryPrivateKeyObject sBaseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
