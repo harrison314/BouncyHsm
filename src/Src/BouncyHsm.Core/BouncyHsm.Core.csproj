@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
-    <PackageReference Include="Dunet" Version="1.16.1" />
+    <PackageReference Include="Dunet" Version="1.16.2" />
     <PackageReference Include="MessagePack" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7" />
     <PackageReference Include="System.IO.Hashing" Version="10.0.7" />
