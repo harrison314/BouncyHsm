@@ -7,6 +7,7 @@ using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Utilities;
 
 namespace BouncyHsm.Core.Services.Contracts.Encapsulators;
 
@@ -33,7 +34,7 @@ internal class EcDhCofactorEncapsulator : P11EncapsulatorBase<EcdsaPublicKeyObje
 
         agreement.Init(epheralPrivateKey);
         BigInteger sharedSecret = agreement.CalculateAgreement((ECPublicKeyParameters)publicKey.GetPublicKey());
-        this.SetSecretKeyPadded(secretKeyObject, sharedSecret.ToByteArrayUnsigned());
+        this.SetSecretKeyPadded(secretKeyObject, sharedSecret);
         encapsulatedData = EcdsaUtils.EncodeP11EcPoint(epheralPublicKey.Q);
     }
 
@@ -51,12 +52,62 @@ internal class EcDhCofactorEncapsulator : P11EncapsulatorBase<EcdsaPublicKeyObje
         agreement.Init(privateKey.GetPrivateKey());
 
         BigInteger sharedSecret = agreement.CalculateAgreement(publicKeyParams);
-        this.SetSecretKeyPadded(secretKeyObject, sharedSecret.ToByteArrayUnsigned());
+        this.SetSecretKeyPadded(secretKeyObject, sharedSecret);
     }
 
     protected override int GetEncapsulatedDataLengthInternal(EcdsaPublicKeyObject publicKey)
     {
         return publicKey.CkaEcPoint.Length;
+    }
+
+    protected void SetSecretKeyPadded(SecretKeyObject secretKeyObject, BigInteger sharedSecret)
+    {
+        this.logger.LogTrace("Entering to SetSecretKeyPadded.");
+
+        uint? requiredSecretkeyLen = secretKeyObject.GetRequiredSecretLen();
+        this.logger.LogTrace("Key type {keyType} required secret length {requiredSecretkeyLen}, template define secret length {templateSecretLength}.",
+            secretKeyObject.CkaKeyType,
+            requiredSecretkeyLen,
+            this.requestedKeyLenusingAttribute);
+
+        if (!requiredSecretkeyLen.HasValue)
+        {
+            requiredSecretkeyLen = this.requestedKeyLenusingAttribute;
+        }
+
+        byte[] secret = sharedSecret.ToByteArrayUnsigned();
+        if (requiredSecretkeyLen.HasValue)
+        {
+            if (secret.Length == requiredSecretkeyLen.Value)
+            {
+                secretKeyObject.SetSecret(secret);
+                return;
+            }
+
+            if (secret.Length > requiredSecretkeyLen.Value)
+            {
+                byte[] truncatedSecret = new byte[requiredSecretkeyLen.Value];
+                Array.Copy(secret, 0, truncatedSecret, 0, truncatedSecret.Length);
+                secretKeyObject.SetSecret(truncatedSecret);
+
+                this.logger.LogInformation("Derived secret key was truncated from {OriginalLen} to {TruncatedLen} for {KeyObject}.",
+                    secret.Length,
+                    truncatedSecret.Length,
+                    secretKeyObject.GetType().Name);
+                return;
+            }
+
+            secretKeyObject.SetSecret(BigIntegers.AsUnsignedByteArray((int)requiredSecretkeyLen.Value, sharedSecret));
+        }
+
+        uint minimalSecretLen = secretKeyObject.GetMinimalSecretLen();
+        if (secret.Length < minimalSecretLen)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_SIZE_RANGE,
+               $"The generated secret key length {secret.Length} is less than minmal length {minimalSecretLen} for key {secretKeyObject.GetType().Name} ({secretKeyObject.CkaKeyType}).");
+        }
+
+        secretKeyObject.SetSecret(secret);
     }
 
     private (ECPublicKeyParameters publicKey, ECPrivateKeyParameters privateKey) GenerateEpheral(SecureRandom secureRandom, EcdsaPublicKeyObject publicKey)

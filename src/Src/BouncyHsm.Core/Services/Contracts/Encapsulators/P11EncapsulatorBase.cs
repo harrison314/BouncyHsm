@@ -17,7 +17,7 @@ internal abstract class P11EncapsulatorBase<TPublicKey, TPrivateKey> : IP11Encap
     protected readonly ILogger logger;
     protected readonly CKM mechynismType;
     private SecretKeyObject? secretKeyObject;
-    private uint? requestedKeyLenusingAttribute;
+    protected uint? requestedKeyLenusingAttribute;
 
     protected P11EncapsulatorBase(ILogger logger, CKM mechynismType)
     {
