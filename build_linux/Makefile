@@ -17,11 +17,11 @@ all: build
 
 build64: ARCH_FLAGS = -m64
 build64: LIBNAME=BouncyHsm.Pkcs11Lib-x64.so
-build64: build cleao
+build64: build cleano
 
 build32: ARCH_FLAGS = -m32
 build32: LIBNAME=BouncyHsm.Pkcs11Lib-x86.so
-build32: build cleao
+build32: build cleano
 
 build: globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs11-utils.o bouncy-pkcs11.o platformHelper.o
 	$(CC) $(ARCH_FLAGS) -shared -o $(LIBNAME) \
