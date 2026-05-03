@@ -6,7 +6,7 @@ jobs:
   Build-linux-libs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build PKCS11 lib x64
         run: |
           cd build_linux
@@ -22,7 +22,7 @@ jobs:
       #     make build32
       #     rm -f *.o
       - name: Upload linux native artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: linux-native-libs
           path: |
@@ -33,11 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Cache Docker layers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -53,7 +53,7 @@ jobs:
         run: |
           mv -f build_linux/BouncyHsm.Pkcs11Lib-x64.so build_linux/BouncyHsm.Pkcs11Lib-x64-rhel.so
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: rhel-native-libs 
           path: |
@@ -68,19 +68,19 @@ jobs:
       - Build-linux-libs
       - Build-rhel-libs
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Cache .nuke/temp, ~/.nuget/packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: linux-native-libs
           path: build_linux
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: rhel-native-libs
           path: build_linux
@@ -88,7 +88,7 @@ jobs:
       - name: Run BouncyHsm main build script
         run: dotnet run -- --target BuildAll
         working-directory: ./Build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: Bouncy-Hsm-Artifacts
           path: |
@@ -102,14 +102,14 @@ jobs:
       - Build-Bouncy-Hsm
     steps: 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Get latest tag 
       id: varver 
       run: |
         git fetch --prune --unshallow
         TAG=$(git describe --tags --abbrev=0)
         echo "tag=$TAG" >> $GITHUB_OUTPUT
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v6
       with:
         name: Bouncy-Hsm-Artifacts
         path: artifacts
@@ -120,7 +120,7 @@ jobs:
         docker build -t bouncyhsm:latest -t bouncyhsm:${{ steps.varver.outputs.tag }} -f Build/DockerImage/Dockerfile . 
         docker save bouncyhsm -o docker-bouncyhsm.tar
     - name: Upload artifact
-      uses: actions/upload-artifact@v4 
+      uses: actions/upload-artifact@v6
       with:
         name: docker-image
         path: docker-bouncyhsm.tar
