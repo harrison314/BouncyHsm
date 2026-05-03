@@ -76,11 +76,11 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: linux-native-libs
           path: build_linux
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: rhel-native-libs
           path: build_linux
@@ -109,7 +109,7 @@ jobs:
         git fetch --prune --unshallow
         TAG=$(git describe --tags --abbrev=0)
         echo "tag=$TAG" >> $GITHUB_OUTPUT
-    - uses: actions/download-artifact@v6
+    - uses: actions/download-artifact@v8
       with:
         name: Bouncy-Hsm-Artifacts
         path: artifacts
@@ -120,7 +120,7 @@ jobs:
         docker build -t bouncyhsm:latest -t bouncyhsm:${{ steps.varver.outputs.tag }} -f Build/DockerImage/Dockerfile . 
         docker save bouncyhsm -o docker-bouncyhsm.tar
     - name: Upload artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v8
       with:
         name: docker-image
         path: docker-bouncyhsm.tar
