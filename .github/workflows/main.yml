@@ -120,7 +120,7 @@ jobs:
         docker build -t bouncyhsm:latest -t bouncyhsm:${{ steps.varver.outputs.tag }} -f Build/DockerImage/Dockerfile . 
         docker save bouncyhsm -o docker-bouncyhsm.tar
     - name: Upload artifact
-      uses: actions/upload-artifact@v8
+      uses: actions/upload-artifact@v6
       with:
         name: docker-image
         path: docker-bouncyhsm.tar
