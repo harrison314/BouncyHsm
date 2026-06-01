@@ -99,7 +99,7 @@ bool GetCurrentComputerName(char* buffer, size_t maxSize)
 
 #ifdef _WIN32
 
-#include <Windows.h>
+#include "includeWindows.h"
 
 bool GetCurrentComputerName(char* buffer, size_t maxSize)
 {

@@ -54,6 +54,9 @@
     <ClInclude Include="bouncy-pkcs11-utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="includeWindows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bouncy-pkcs11.c">

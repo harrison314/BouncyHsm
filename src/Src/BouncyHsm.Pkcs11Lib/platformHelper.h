@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #ifdef _WIN32
-#include <Windows.h>
+#include "includeWindows.h"
 
 
 #define NEW_LINE_STR "\r\n"
