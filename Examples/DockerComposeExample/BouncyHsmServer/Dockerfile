@@ -1,6 +1,6 @@
 FROM alpine:3.23
 
-ENV APP_VERSION=2.1.0
+ENV APP_VERSION=2.1.1
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .
