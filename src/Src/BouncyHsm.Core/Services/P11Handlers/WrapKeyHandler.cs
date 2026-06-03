@@ -112,7 +112,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         {
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter privateKeyParams = privateKeyObject.GetPrivateKey();
             PrivateKeyInfo info = PrivateKeyInfoFactory.CreatePrivateKeyInfo(privateKeyParams);
-            return info.ParsePrivateKey().GetEncoded();
+            return info.GetEncoded();
         }
 
         throw new RpcPkcs11Exception(CKR.CKR_KEY_NOT_WRAPPABLE,
