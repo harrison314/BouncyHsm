@@ -111,8 +111,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         }
         else if (storageObject is RsaPrivateKeyObject privateKeyObject)
         {
-            PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(PkcsObjectIdentifiers.RsaEncryption),
-                Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
             privateKeyObject.SetPrivateKey(asymmetricParams);
@@ -127,8 +126,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         {
             Asn1Object asn1EcParams = EcdsaUtils.ParseEcParamsToAsn1Object(ecPrivateKeyObject.CkaEcParams);
 
-            PrivateKeyInfo pki = new PrivateKeyInfo(new Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, asn1EcParams),
-                Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
             ecPrivateKeyObject.SetPrivateKey(asymmetricParams);
