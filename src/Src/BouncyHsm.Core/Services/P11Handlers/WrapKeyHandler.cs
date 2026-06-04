@@ -46,7 +46,9 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         Org.BouncyCastle.Crypto.IWrapper wrapper = cipherWrapper.IntoWrapping(wrappingKey);
 
         byte[] keyData = this.EncodeKey(key);
+        this.logger.LogTrace("Encode key has length {Length}.", keyData.Length);
         byte[] wrappedKey = wrapper.Wrap(keyData, 0, keyData.Length);
+        this.logger.LogTrace("Wrapped key has length {Length}.", keyData.Length);
 
         if (request.IsPtrWrappedKeySet)
         {
