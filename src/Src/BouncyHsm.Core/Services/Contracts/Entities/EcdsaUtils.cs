@@ -8,6 +8,7 @@ using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.TeleTrust;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,24 @@ internal static class EcdsaUtils
         {
             return new ECPublicKeyParameters(EcdsaUtils.DecodeP11EcPoint(ECNamedCurveTable.GetByOid(namedCurve.Oid), ecPoint),
                new ECNamedDomainParameters(namedCurve.Oid, ECNamedCurveTable.GetByOid(namedCurve.Oid)));
+        },
+        implicitCa => throw new System.Diagnostics.UnreachableException());
+    }
+
+    public static ECPrivateKeyParameters ParsePrivateKey(byte[] ecParams, byte[] ckaValue)
+    {
+        EcdsaUtilsInternalParams internalParams = ParseEcParamsInternal(ecParams);
+        CheckIsSupported(internalParams);
+
+        return internalParams.Match(ecParamsObj =>
+        {
+            BigInteger d = new BigInteger(1, ckaValue);
+            return new ECPrivateKeyParameters(d, new ECDomainParameters(ecParamsObj.Parameters));
+        },
+        namedCurve =>
+        {
+            BigInteger d = new BigInteger(1, ckaValue);
+            return new ECPrivateKeyParameters("EC", d, namedCurve.Oid);
         },
         implicitCa => throw new System.Diagnostics.UnreachableException());
     }

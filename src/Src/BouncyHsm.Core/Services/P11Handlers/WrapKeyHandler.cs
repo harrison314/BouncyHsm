@@ -1,11 +1,13 @@
 ﻿using BouncyHsm.Core.Rpc;
+using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
-using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Pkcs;
+using Org.BouncyCastle.Asn1.Sec;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
@@ -110,6 +112,15 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
             return secretKeyObject.GetSecret();
         }
 
+        if (key is EcdsaPrivateKeyObject ecdsaPrivateKeyObject)
+        {
+            Org.BouncyCastle.Crypto.AsymmetricKeyParameter privateKeyParams = ecdsaPrivateKeyObject.GetPrivateKey();
+            PrivateKeyInfo info = PrivateKeyInfoFactory.CreatePrivateKeyInfo(privateKeyParams);
+            PrivateKeyInfo newKeyInfo = this.ReEncodeEcPrivateKeyInfo(info);
+
+            return newKeyInfo.GetEncoded();
+        }
+
         if (key is PrivateKeyObject privateKeyObject)
         {
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter privateKeyParams = privateKeyObject.GetPrivateKey();
@@ -119,5 +130,22 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
 
         throw new RpcPkcs11Exception(CKR.CKR_KEY_NOT_WRAPPABLE,
             $"Can not wrap object {key}.");
+    }
+
+    private PrivateKeyInfo ReEncodeEcPrivateKeyInfo(PrivateKeyInfo standardBcPrivateKey)
+    {
+        ECPrivateKeyStructure originalKey = ECPrivateKeyStructure.GetInstance(standardBcPrivateKey.ParsePrivateKey());
+        BigInteger privateKeyValue = new BigInteger(1, originalKey.PrivateKey.GetOctets());
+
+        ECPrivateKeyStructure newKeyStructure = new ECPrivateKeyStructure(privateKeyValue.BitLength,
+            privateKeyValue,
+            null,
+            null);
+
+        PrivateKeyInfo newKeyInfo = new PrivateKeyInfo(standardBcPrivateKey.PrivateKeyAlgorithm,
+            newKeyStructure,
+            standardBcPrivateKey.Attributes);
+
+        return newKeyInfo;
     }
 }

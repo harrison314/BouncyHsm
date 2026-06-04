@@ -45,10 +45,7 @@ public sealed class EcdsaPrivateKeyObject : PrivateKeyObject
 
     public override AsymmetricKeyParameter GetPrivateKey()
     {
-        Org.BouncyCastle.Asn1.X9.X9ECParameters ecParams = EcdsaUtils.ParseEcParams(this.CkaEcParams);
-
-        BigInteger d = new BigInteger(1, this.CkaValue);
-        return new ECPrivateKeyParameters(d, new ECDomainParameters(ecParams));
+        return EcdsaUtils.ParsePrivateKey(this.CkaEcParams, this.CkaValue);
     }
 
     public override void Validate()
