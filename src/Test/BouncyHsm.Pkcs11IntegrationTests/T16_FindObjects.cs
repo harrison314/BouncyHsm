@@ -1,6 +1,5 @@
 ﻿using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 

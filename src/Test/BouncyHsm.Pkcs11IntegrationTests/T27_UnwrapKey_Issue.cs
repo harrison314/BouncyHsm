@@ -2,7 +2,6 @@
 using Net.Pkcs11Interop.HighLevelAPI;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Security.Cryptography;
 using System.Text;
 

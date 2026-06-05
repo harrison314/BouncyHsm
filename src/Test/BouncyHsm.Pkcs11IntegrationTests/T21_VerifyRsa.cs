@@ -1,7 +1,6 @@
 ﻿using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.Common;
 using System.Security.Cryptography;
-using System.Reflection.Emit;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 

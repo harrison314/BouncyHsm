@@ -1,7 +1,5 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
-using System.Data;
-using System.Drawing;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 

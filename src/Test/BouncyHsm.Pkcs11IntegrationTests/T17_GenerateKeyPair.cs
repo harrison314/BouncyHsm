@@ -1,8 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
-using Org.BouncyCastle.Asn1;
-using System.Reflection.Emit;
 using System.Security.Cryptography;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;

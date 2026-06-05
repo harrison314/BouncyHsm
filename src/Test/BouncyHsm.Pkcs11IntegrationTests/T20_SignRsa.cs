@@ -2,8 +2,6 @@
 using Net.Pkcs11Interop.Common;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Reflection.Emit;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 

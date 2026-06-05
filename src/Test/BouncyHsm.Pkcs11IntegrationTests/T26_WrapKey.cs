@@ -1,12 +1,7 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.HighLevelAPI.MechanismParams;
-using Newtonsoft.Json.Linq;
-using System.Drawing;
-using System.Reflection.Emit;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using static System.Security.Cryptography.ECCurve;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 

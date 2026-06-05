@@ -3,10 +3,6 @@ using Net.Pkcs11Interop.Common;
 using System.Text;
 using PkcsExtensions;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Org.BouncyCastle.Asn1.X9;
-using Org.BouncyCastle.Crypto.Parameters;
-using System.Security.Cryptography.X509Certificates;
 using Pkcs11Interop.Ext.Common;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;

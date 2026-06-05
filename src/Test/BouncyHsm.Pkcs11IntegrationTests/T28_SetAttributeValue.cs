@@ -1,6 +1,5 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
-using System.Drawing;
 using System.Security.Cryptography;
 using System.Text;
 
