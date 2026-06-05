@@ -118,7 +118,6 @@ public class T20_SignEddsa
 
     private static void CreateEcdsaKeyPair(Pkcs11InteropFactories factories, string curveName, byte[] ckId, string label, bool token, ISession session, out IObjectHandle publicKey, out IObjectHandle privateKey)
     {
-        //NIST P-256
         byte[] namedCurveOid = new Org.BouncyCastle.Asn1.DerPrintableString(curveName).GetEncoded();
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()

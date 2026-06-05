@@ -1,8 +1,11 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.HighLevelAPI.MechanismParams;
+using Newtonsoft.Json.Linq;
 using System.Drawing;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
 
@@ -306,6 +309,69 @@ public class T26_WrapKey
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_OAEP, mechanismParams);
         byte[] wrappedKey = session.WrapKey(mechanism, publicKey, aesKey);
+
+        Assert.IsNotNull(wrappedKey);
+    }
+
+    [TestMethod]
+    [DataRow(CKM.CKM_AES_CBC_PAD, "id-Ed25519")]
+    [DataRow(CKM.CKM_AES_CBC_PAD, "id-Ed448")]
+    public void Wrap_AesWithIvEdwards_Success(CKM mechanismType, string curveName)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        byte[] namedCurveOid = new Org.BouncyCastle.Asn1.DerPrintableString(curveName).GetEncoded();
+        string label = $"EdKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+        {
+             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, namedCurveOid),
+        };
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
+        };
+
+        using IMechanism generateMechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_EC_EDWARDS_KEY_PAIR_GEN);
+        session.GenerateKeyPair(generateMechanism,
+            publicKeyAttributes,
+            privateKeyAttributes,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] iv = session.GenerateRandom(16);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
+        byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
 
         Assert.IsNotNull(wrappedKey);
     }

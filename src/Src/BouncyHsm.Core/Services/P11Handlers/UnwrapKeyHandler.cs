@@ -137,6 +137,19 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
             this.logger.LogDebug("Unwrapped private key {privateKey}.", ecPrivateKeyObject);
         }
+        else if (storageObject is EdwardsPrivateKeyObject edwardsPrivateKeyObject)
+        {
+            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+
+            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
+            edwardsPrivateKeyObject.SetPrivateKey(asymmetricParams);
+
+            edwardsPrivateKeyObject.CkaLocal = false;
+            edwardsPrivateKeyObject.CkaNewerExtractable = false;
+            edwardsPrivateKeyObject.CkaAlwaysSensitive = false;
+
+            this.logger.LogDebug("Unwrapped private key {privateKey}.", edwardsPrivateKeyObject);
+        }
         else
         {
             throw new RpcPkcs11Exception(CKR.CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT,
