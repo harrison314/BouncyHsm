@@ -450,7 +450,7 @@ public class T27_UnwrapKey
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
 
-        List<IObjectAttribute> unwraPrivateKeyAttributes = new List<IObjectAttribute>()
+        List<IObjectAttribute> unwrapPrivateKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
             factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK_V3_0.CKK_EC_EDWARDS),
@@ -466,7 +466,86 @@ public class T27_UnwrapKey
             factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
         };
 
-        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, unwraPrivateKeyAttributes);
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, unwrapPrivateKeyAttributes);
+    }
+
+    [TestMethod]
+    [DataRow(CKM.CKM_AES_CBC_PAD, "06032B656E", DisplayName = "OID X25519")]
+    [DataRow(CKM.CKM_AES_CBC_PAD, "06032B656F", DisplayName = "OID X448")]
+    public void Unwrap_AesWithIvMontgomery_Success(CKM mechanismType, string ecParamsHex)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        byte[] namedCurve = PkcsExtensions.HexConvertor.GetBytes(ecParamsHex);
+        string label = $"X-KeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, namedCurve),
+        };
+
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
+        };
+
+        using IMechanism generateMechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_EC_MONTGOMERY_KEY_PAIR_GEN);
+        session.GenerateKeyPair(generateMechanism,
+            publicKeyAttributes,
+            privateKeyAttributes,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] iv = session.GenerateRandom(16);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
+        byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
+
+        List<IObjectAttribute> unwrapPrivateKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK_V3_0.CKK_EC_MONTGOMERY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
+        };
+
+        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, unwrapPrivateKeyAttributes);
     }
 
     private IObjectHandle GenerateAesKey(ISession session, int size)

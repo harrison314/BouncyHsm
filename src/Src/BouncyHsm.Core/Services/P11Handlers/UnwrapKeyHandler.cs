@@ -85,6 +85,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
         bool useExplicitPading = MechanismUtils.IsUnwrapMechanismWithExplicitPading(mechanism);
 
+        //TODO: refactor to visitor
         if (storageObject is SecretKeyObject secretKeyObject)
         {
             this.logger.LogTrace("Unwpraping secret of type {CkaKeyType}", secretKeyObject.CkaKeyType);
@@ -155,6 +156,21 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
             edwardsPrivateKeyObject.CkaAlwaysSensitive = false;
 
             this.logger.LogDebug("Unwrapped private key {privateKey}.", edwardsPrivateKeyObject);
+        }
+        else if (storageObject is MontgomeryPrivateKeyObject montgomeryPrivateKeyObject)
+        {
+            this.logger.LogTrace("Unwpraping Montgomery private key");
+
+            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+
+            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
+            montgomeryPrivateKeyObject.SetPrivateKey(asymmetricParams);
+
+            montgomeryPrivateKeyObject.CkaLocal = false;
+            montgomeryPrivateKeyObject.CkaNewerExtractable = false;
+            montgomeryPrivateKeyObject.CkaAlwaysSensitive = false;
+
+            this.logger.LogDebug("Unwrapped private key {privateKey}.", montgomeryPrivateKeyObject);
         }
         else
         {
