@@ -139,7 +139,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
 
         ECPrivateKeyStructure newKeyStructure = new ECPrivateKeyStructure(privateKeyValue.BitLength,
             privateKeyValue,
-            null,
+            originalKey.PublicKey, // Public key is optional by PKCS11 standard capther 6.7
             null);
 
         PrivateKeyInfo newKeyInfo = new PrivateKeyInfo(standardBcPrivateKey.PrivateKeyAlgorithm,
