@@ -70,7 +70,7 @@ namespace BouncyHsm.Pkcs11IntegrationTests
         public record EcdhData(X9ECParameters X9Parameters, ECPrivateKeyParameters EcPrivateKey, byte[] RawCertificate);
         public static EcdhData CreateEcdhParams()
         {
-            X500DistinguishedName subject = new X500DistinguishedName("CN=Test");
+            X500DistinguishedName subject = new X500DistinguishedName("CN=IssueTestConstants");
             using ECDsa ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
             CertificateRequest request = new CertificateRequest(subject, ecdsa, HashAlgorithmName.SHA256);
             using X509Certificate2 certificate = request.CreateSelfSigned(DateTime.Now, DateTime.Now.AddDays(2));
