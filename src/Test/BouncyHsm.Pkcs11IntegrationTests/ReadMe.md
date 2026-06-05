@@ -1,8 +1,8 @@
 ## How to run unit test
 
 1. Build native library
-  1.1 On WIndows using Vusial Studio
-  1.2 On Debian/Ubuntu use makefile
+    1. On Windows using Vusial Studio
+    2. On Debian/Ubuntu/AlmaLinux use makefile
 2. Run Bouncy Hsm on localhost.
 3. Create empty slot if not exists with following parameters:
 
@@ -28,8 +28,13 @@ or using BouncyHsm.Cli:
 dotnet BouncyHsm.Cli.dll slot create -d "TestDevice1" -l "TestToken1" -u 123456 -q 12345678 -e http://localhost:5291/ 
 ```
 
-3. Run tests using:
+4. Run tests using:
 ```
   dotnet clean
   dotnet test
+```
+
+Or run without issue tests:
+```
+dotnet test --filter "TestCategory!=IssueTest"
 ```
