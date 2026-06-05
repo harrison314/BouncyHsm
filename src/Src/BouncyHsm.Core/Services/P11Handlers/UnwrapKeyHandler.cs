@@ -3,13 +3,11 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.P11Handlers.Common;
-using Microsoft.Extensions.Logging;
+using BouncyHsm.Core.Services.Bc;
 using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X9;
-using BouncyHsm.Core.Services.Bc;
+using Microsoft.Extensions.Logging;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -89,6 +87,8 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
         if (storageObject is SecretKeyObject secretKeyObject)
         {
+            this.logger.LogTrace("Unwpraping secret of type {CkaKeyType}", secretKeyObject.CkaKeyType);
+
             if (useExplicitPading)
             {
                 uint? requiredLength = secretKeyObject.GetRequiredSecretLen();
@@ -111,6 +111,8 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         }
         else if (storageObject is RsaPrivateKeyObject privateKeyObject)
         {
+            this.logger.LogTrace("Unwpraping RSA private key");
+
             PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
@@ -124,6 +126,8 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         }
         else if (storageObject is EcdsaPrivateKeyObject ecPrivateKeyObject)
         {
+            this.logger.LogTrace("Unwpraping ECDSA private key");
+
             Asn1Object asn1EcParams = EcdsaUtils.ParseEcParamsToAsn1Object(ecPrivateKeyObject.CkaEcParams);
 
             PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
@@ -139,6 +143,8 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         }
         else if (storageObject is EdwardsPrivateKeyObject edwardsPrivateKeyObject)
         {
+            this.logger.LogTrace("Unwpraping Edwards private key");
+
             PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
