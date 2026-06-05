@@ -1,11 +1,13 @@
 ﻿using BouncyHsm.Core.Rpc;
+using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
-using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Pkcs;
+using Org.BouncyCastle.Asn1.Sec;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
@@ -46,7 +48,9 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         Org.BouncyCastle.Crypto.IWrapper wrapper = cipherWrapper.IntoWrapping(wrappingKey);
 
         byte[] keyData = this.EncodeKey(key);
+        this.logger.LogTrace("Encode key has length {Length}.", keyData.Length);
         byte[] wrappedKey = wrapper.Wrap(keyData, 0, keyData.Length);
+        this.logger.LogTrace("Wrapped key has length {Length}.", keyData.Length);
 
         if (request.IsPtrWrappedKeySet)
         {
@@ -108,6 +112,15 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
             return secretKeyObject.GetSecret();
         }
 
+        if (key is EcdsaPrivateKeyObject ecdsaPrivateKeyObject)
+        {
+            Org.BouncyCastle.Crypto.AsymmetricKeyParameter privateKeyParams = ecdsaPrivateKeyObject.GetPrivateKey();
+            PrivateKeyInfo info = PrivateKeyInfoFactory.CreatePrivateKeyInfo(privateKeyParams);
+            PrivateKeyInfo newKeyInfo = this.ReEncodeEcPrivateKeyInfo(info);
+
+            return newKeyInfo.GetEncoded();
+        }
+
         if (key is PrivateKeyObject privateKeyObject)
         {
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter privateKeyParams = privateKeyObject.GetPrivateKey();
@@ -117,5 +130,22 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
 
         throw new RpcPkcs11Exception(CKR.CKR_KEY_NOT_WRAPPABLE,
             $"Can not wrap object {key}.");
+    }
+
+    private PrivateKeyInfo ReEncodeEcPrivateKeyInfo(PrivateKeyInfo standardBcPrivateKey)
+    {
+        ECPrivateKeyStructure originalKey = ECPrivateKeyStructure.GetInstance(standardBcPrivateKey.ParsePrivateKey());
+        BigInteger privateKeyValue = new BigInteger(1, originalKey.PrivateKey.GetOctets());
+
+        ECPrivateKeyStructure newKeyStructure = new ECPrivateKeyStructure(privateKeyValue.BitLength,
+            privateKeyValue,
+            originalKey.PublicKey, // Public key is optional by PKCS11 standard capther 6.7
+            null);
+
+        PrivateKeyInfo newKeyInfo = new PrivateKeyInfo(standardBcPrivateKey.PrivateKeyAlgorithm,
+            newKeyStructure,
+            standardBcPrivateKey.Attributes);
+
+        return newKeyInfo;
     }
 }
