@@ -85,7 +85,6 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
         bool useExplicitPading = MechanismUtils.IsUnwrapMechanismWithExplicitPading(mechanism);
 
-        //TODO: refactor to visitor
         if (storageObject is SecretKeyObject secretKeyObject)
         {
             this.logger.LogTrace("Unwpraping secret of type {CkaKeyType}", secretKeyObject.CkaKeyType);
@@ -110,21 +109,6 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
             this.logger.LogDebug("Unwrapped secret {secret}.", secretKeyObject);
         }
-        else if (storageObject is RsaPrivateKeyObject privateKeyObject)
-        {
-            this.logger.LogTrace("Unwpraping RSA private key");
-
-            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
-
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            privateKeyObject.SetPrivateKey(asymmetricParams);
-
-            privateKeyObject.CkaLocal = false;
-            privateKeyObject.CkaNewerExtractable = false;
-            privateKeyObject.CkaAlwaysSensitive = false;
-
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", privateKeyObject);
-        }
         else if (storageObject is EcdsaPrivateKeyObject ecPrivateKeyObject)
         {
             this.logger.LogTrace("Unwpraping ECDSA private key");
@@ -142,80 +126,20 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
             this.logger.LogDebug("Unwrapped private key {privateKey}.", ecPrivateKeyObject);
         }
-        else if (storageObject is MlDsaPrivateKeyObject mldsaPrivateKeyObject)
+        else if (storageObject is PrivateKeyObject privateKeyObject)
         {
-            this.logger.LogTrace("Unwpraping ML-DSA private key");
+            this.logger.LogTrace("Unwpraping {KeyType} private key", privateKeyObject.CkaKeyType);
 
             PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            mldsaPrivateKeyObject.SetPrivateKey(asymmetricParams);
+            privateKeyObject.SetPrivateKey(asymmetricParams);
 
-            mldsaPrivateKeyObject.CkaLocal = false;
-            mldsaPrivateKeyObject.CkaNewerExtractable = false;
-            mldsaPrivateKeyObject.CkaAlwaysSensitive = false;
+            privateKeyObject.CkaLocal = false;
+            privateKeyObject.CkaNewerExtractable = false;
+            privateKeyObject.CkaAlwaysSensitive = false;
 
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", mldsaPrivateKeyObject);
-        }
-        else if (storageObject is SlhDsaPrivateKeyObject slhdsaPrivateKeyObject)
-        {
-            this.logger.LogTrace("Unwpraping SLH-DSA private key");
-
-            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
-
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            slhdsaPrivateKeyObject.SetPrivateKey(asymmetricParams);
-
-            slhdsaPrivateKeyObject.CkaLocal = false;
-            slhdsaPrivateKeyObject.CkaNewerExtractable = false;
-            slhdsaPrivateKeyObject.CkaAlwaysSensitive = false;
-
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", slhdsaPrivateKeyObject);
-        }
-        else if (storageObject is MlKemPrivateKeyObject mlKemPrivateKeyObject)
-        {
-            this.logger.LogTrace("Unwpraping ML-KEM private key");
-
-            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
-
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            mlKemPrivateKeyObject.SetPrivateKey(asymmetricParams);
-
-            mlKemPrivateKeyObject.CkaLocal = false;
-            mlKemPrivateKeyObject.CkaNewerExtractable = false;
-            mlKemPrivateKeyObject.CkaAlwaysSensitive = false;
-
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", mlKemPrivateKeyObject);
-        }
-        else if (storageObject is EdwardsPrivateKeyObject edwardsPrivateKeyObject)
-        {
-            this.logger.LogTrace("Unwpraping Edwards private key");
-
-            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
-
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            edwardsPrivateKeyObject.SetPrivateKey(asymmetricParams);
-
-            edwardsPrivateKeyObject.CkaLocal = false;
-            edwardsPrivateKeyObject.CkaNewerExtractable = false;
-            edwardsPrivateKeyObject.CkaAlwaysSensitive = false;
-
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", edwardsPrivateKeyObject);
-        }
-        else if (storageObject is MontgomeryPrivateKeyObject montgomeryPrivateKeyObject)
-        {
-            this.logger.LogTrace("Unwpraping Montgomery private key");
-
-            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
-
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            montgomeryPrivateKeyObject.SetPrivateKey(asymmetricParams);
-
-            montgomeryPrivateKeyObject.CkaLocal = false;
-            montgomeryPrivateKeyObject.CkaNewerExtractable = false;
-            montgomeryPrivateKeyObject.CkaAlwaysSensitive = false;
-
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", montgomeryPrivateKeyObject);
+            this.logger.LogDebug("Unwrapped private key {privateKey}.", privateKeyObject);
         }
         else
         {
