@@ -3,7 +3,6 @@ using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
-using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;

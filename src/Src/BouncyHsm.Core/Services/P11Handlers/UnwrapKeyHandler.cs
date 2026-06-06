@@ -142,6 +142,21 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
             this.logger.LogDebug("Unwrapped private key {privateKey}.", ecPrivateKeyObject);
         }
+        else if (storageObject is MlDsaPrivateKeyObject mldsaPrivateKeyObject)
+        {
+            this.logger.LogTrace("Unwpraping ML-DSA private key");
+
+            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+
+            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
+            mldsaPrivateKeyObject.SetPrivateKey(asymmetricParams);
+
+            mldsaPrivateKeyObject.CkaLocal = false;
+            mldsaPrivateKeyObject.CkaNewerExtractable = false;
+            mldsaPrivateKeyObject.CkaAlwaysSensitive = false;
+
+            this.logger.LogDebug("Unwrapped private key {privateKey}.", mldsaPrivateKeyObject);
+        }
         else if (storageObject is EdwardsPrivateKeyObject edwardsPrivateKeyObject)
         {
             this.logger.LogTrace("Unwpraping Edwards private key");
