@@ -85,67 +85,78 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
         bool useExplicitPading = MechanismUtils.IsUnwrapMechanismWithExplicitPading(mechanism);
 
-        if (storageObject is SecretKeyObject secretKeyObject)
+        _ = storageObject switch
         {
-            this.logger.LogTrace("Unwpraping secret of type {CkaKeyType}", secretKeyObject.CkaKeyType);
+            SecretKeyObject secretKeyObject => this.SetKeyValueForSecretKeyObject(unwrappedKey, mechanism, template, useExplicitPading, secretKeyObject),
+            MontgomeryPrivateKeyObject montgomeryPrivateKeyObject => this.SetKeyValueForPrivateKeyObject(unwrappedKey, useExplicitPading, montgomeryPrivateKeyObject),
+            EdwardsPrivateKeyObject edwardsPrivateKeyObject => this.SetKeyValueForPrivateKeyObject(unwrappedKey, useExplicitPading, edwardsPrivateKeyObject),
+            EcdsaPrivateKeyObject ecPrivateKeyObject => this.SetKeyvalueForEcdsaPrivateKeyObject(unwrappedKey, useExplicitPading, ecPrivateKeyObject),
+            PrivateKeyObject privateKeyObject => this.SetKeyValueForPrivateKeyObject(unwrappedKey, useExplicitPading, privateKeyObject),
+            _ => throw new RpcPkcs11Exception(CKR.CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT,
+                $"Can not crate key with invalid type {storageObject.GetType().Name}.")
+        };
+    }
 
-            if (useExplicitPading)
+    private StorageObject SetKeyValueForSecretKeyObject(byte[] unwrappedKey, CKM mechanism, Dictionary<CKA, IAttributeValue> template, bool useExplicitPading, SecretKeyObject secretKeyObject)
+    {
+        this.logger.LogTrace("Unwpraping secret of type {CkaKeyType}", secretKeyObject.CkaKeyType);
+
+        if (useExplicitPading)
+        {
+            uint? requiredLength = secretKeyObject.GetRequiredSecretLen();
+            if (requiredLength.HasValue)
             {
-                uint? requiredLength = secretKeyObject.GetRequiredSecretLen();
-                if (requiredLength.HasValue)
-                {
-                    unwrappedKey = unwrappedKey[..((int)requiredLength.Value)];
-                }
-                else
-                {
-                    unwrappedKey = this.PadSecretKeyByTemplate(unwrappedKey, mechanism, template);
-                }
+                unwrappedKey = unwrappedKey[..((int)requiredLength.Value)];
             }
-
-            secretKeyObject.SetSecret(unwrappedKey);
-            secretKeyObject.CkaLocal = false;
-            secretKeyObject.CkaNewerExtractable = false;
-            secretKeyObject.CkaAlwaysSensitive = false;
-
-            this.logger.LogDebug("Unwrapped secret {secret}.", secretKeyObject);
+            else
+            {
+                unwrappedKey = this.PadSecretKeyByTemplate(unwrappedKey, mechanism, template);
+            }
         }
-        else if (storageObject is EcdsaPrivateKeyObject ecPrivateKeyObject)
-        {
-            this.logger.LogTrace("Unwpraping ECDSA private key");
 
-            Asn1Object asn1EcParams = EcdsaUtils.ParseEcParamsToAsn1Object(ecPrivateKeyObject.CkaEcParams);
+        secretKeyObject.SetSecret(unwrappedKey);
+        secretKeyObject.CkaLocal = false;
+        secretKeyObject.CkaNewerExtractable = false;
+        secretKeyObject.CkaAlwaysSensitive = false;
 
-            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+        this.logger.LogDebug("Unwrapped secret {secret}.", secretKeyObject);
+        return secretKeyObject;
+    }
 
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            ecPrivateKeyObject.SetPrivateKey(asymmetricParams);
+    private StorageObject SetKeyvalueForEcdsaPrivateKeyObject(byte[] unwrappedKey, bool useExplicitPading, EcdsaPrivateKeyObject ecPrivateKeyObject)
+    {
+        this.logger.LogTrace("Unwpraping ECDSA private key");
 
-            ecPrivateKeyObject.CkaLocal = false;
-            ecPrivateKeyObject.CkaNewerExtractable = false;
-            ecPrivateKeyObject.CkaAlwaysSensitive = false;
+        Asn1Object asn1EcParams = EcdsaUtils.ParseEcParamsToAsn1Object(ecPrivateKeyObject.CkaEcParams);
 
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", ecPrivateKeyObject);
-        }
-        else if (storageObject is PrivateKeyObject privateKeyObject)
-        {
-            this.logger.LogTrace("Unwpraping {KeyType} private key", privateKeyObject.CkaKeyType);
+        PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
 
-            PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+        Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
+        ecPrivateKeyObject.SetPrivateKey(asymmetricParams);
 
-            Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
-            privateKeyObject.SetPrivateKey(asymmetricParams);
+        ecPrivateKeyObject.CkaLocal = false;
+        ecPrivateKeyObject.CkaNewerExtractable = false;
+        ecPrivateKeyObject.CkaAlwaysSensitive = false;
 
-            privateKeyObject.CkaLocal = false;
-            privateKeyObject.CkaNewerExtractable = false;
-            privateKeyObject.CkaAlwaysSensitive = false;
+        this.logger.LogDebug("Unwrapped private key {privateKey}.", ecPrivateKeyObject);
+        return ecPrivateKeyObject;
+    }
 
-            this.logger.LogDebug("Unwrapped private key {privateKey}.", privateKeyObject);
-        }
-        else
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT,
-                $"Can not crate key with invalid type {storageObject.GetType().Name}.");
-        }
+    private StorageObject SetKeyValueForPrivateKeyObject(byte[] unwrappedKey, bool useExplicitPading, PrivateKeyObject privateKeyObject)
+    {
+        this.logger.LogTrace("Unwpraping {KeyType} private key", privateKeyObject.CkaKeyType);
+
+        PrivateKeyInfo pki = PrivateKeyInfo.GetInstance(Asn1ObjectParser.FromByteArray(unwrappedKey, accetExtraData: useExplicitPading));
+
+        Org.BouncyCastle.Crypto.AsymmetricKeyParameter asymmetricParams = PrivateKeyFactory.CreateKey(pki);
+        privateKeyObject.SetPrivateKey(asymmetricParams);
+
+        privateKeyObject.CkaLocal = false;
+        privateKeyObject.CkaNewerExtractable = false;
+        privateKeyObject.CkaAlwaysSensitive = false;
+
+        this.logger.LogDebug("Unwrapped private key {privateKey}.", privateKeyObject);
+        return privateKeyObject;
     }
 
     private byte[] PadSecretKeyByTemplate(byte[] unwrappedKey, CKM mechanismType, Dictionary<CKA, IAttributeValue> template)
