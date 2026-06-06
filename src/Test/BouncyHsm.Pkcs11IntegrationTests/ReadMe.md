@@ -9,6 +9,7 @@
 ```json
 {
   "IsHwDevice": true,
+  "IsRemovableDevice": false,
   "Description": "TestDevice1",
   "Token": {
     "Label": "TestToken1",
@@ -16,6 +17,7 @@
     "SimulateHwRng": true,
     "SimulateHwMechanism": true,
     "SimulateQualifiedArea": false,
+    "SimulateProtectedAuthPath": false,
     "SpeedMode": "WithoutRestriction",
     "UserPin": "123456",
     "SoPin": "12345678",
