@@ -20,22 +20,22 @@ internal class CkDateAttributeValue : IAttributeValue
 
     public bool AsBool()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.DateTime);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.DateTime);
     }
 
     public byte[] AsByteArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.DateTime);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.DateTime);
     }
 
     public string AsString()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.DateTime);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.DateTime);
     }
 
     public uint AsUint()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.DateTime);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.DateTime);
     }
 
     public CkDate AsDate()
@@ -45,7 +45,7 @@ internal class CkDateAttributeValue : IAttributeValue
 
     public uint[] AsUintArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.DateTime);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.DateTime);
     }
 
     public bool Equals(IAttributeValue? other)

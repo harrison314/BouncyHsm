@@ -79,7 +79,7 @@ internal class NativeAttributeValue : IAttributeValue
         this.CheckValueType(AttrTypeTag.UintArray);
         if (this.value.ValueUintArray == null)
         {
-            throw new InvalidATtributeTypeCastException($"Property {nameof(this.value.ValueUintArray)} is null");
+            throw new InvalidAttributeTypeCastException($"Property {nameof(this.value.ValueUintArray)} is null");
         }
 
         return this.value.ValueUintArray.Array;
@@ -89,7 +89,7 @@ internal class NativeAttributeValue : IAttributeValue
     {
         if (this.TypeTag != tag)
         {
-            throw new InvalidATtributeTypeCastException(tag, fnName);
+            throw new InvalidAttributeTypeCastException(tag, fnName);
         }
     }
 
@@ -97,22 +97,22 @@ internal class NativeAttributeValue : IAttributeValue
     {
         if (typeTag == AttrTypeTag.CkBool && !((value.ValueTypeHint & AttrValueFromNativeTypeBool) == AttrValueFromNativeTypeBool))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type BOOL - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type BOOL - mishmash type.");
         }
 
         if (typeTag == AttrTypeTag.CkUint && !((value.ValueTypeHint & AttrValueFromNativeTypeCkUint) == AttrValueFromNativeTypeCkUint))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UINT - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UINT - mishmash type.");
         }
 
         if (typeTag == AttrTypeTag.DateTime && !((value.ValueTypeHint & AttrValueFromNativeTypeCkDate) == AttrValueFromNativeTypeCkDate))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type CkDate - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type CkDate - mishmash type.");
         }
 
         if (typeTag == AttrTypeTag.UintArray && !((value.ValueTypeHint & AttrValueFromNativeTypeUintArray) == AttrValueFromNativeTypeUintArray))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UintArray - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UintArray - mishmash type.");
         }
     }
 

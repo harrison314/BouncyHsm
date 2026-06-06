@@ -21,27 +21,27 @@ internal class UintArrayAttributeValue : IAttributeValue
 
     public bool AsBool()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.UintArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.UintArray);
     }
 
     public byte[] AsByteArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.UintArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.UintArray);
     }
 
     public CkDate AsDate()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.UintArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.UintArray);
     }
 
     public string AsString()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.UintArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.UintArray);
     }
 
     public uint AsUint()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.UintArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.UintArray);
     }
 
     public uint[] AsUintArray()

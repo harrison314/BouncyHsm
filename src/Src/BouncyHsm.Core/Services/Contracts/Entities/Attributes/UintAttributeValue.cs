@@ -18,17 +18,17 @@ internal class UintAttributeValue : IAttributeValue
 
     public bool AsBool()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkUint);
     }
 
     public byte[] AsByteArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkUint);
     }
 
     public string AsString()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkUint);
     }
 
     public uint AsUint()
@@ -38,12 +38,12 @@ internal class UintAttributeValue : IAttributeValue
 
     public CkDate AsDate()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkUint);
     }
 
     public uint[] AsUintArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkUint);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkUint);
     }
 
     public override string ToString()
