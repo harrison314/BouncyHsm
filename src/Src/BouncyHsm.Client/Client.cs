@@ -6252,9 +6252,6 @@ namespace BouncyHsm.Client
         [System.Runtime.Serialization.EnumMember(Value = @"UintArray")]
         UintArray = 6,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Template")]
-        Template = 7,
-
     }
 
 

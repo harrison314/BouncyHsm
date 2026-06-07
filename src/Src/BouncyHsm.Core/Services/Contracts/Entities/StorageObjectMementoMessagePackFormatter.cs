@@ -5,7 +5,6 @@ using System.Buffers;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
-//TODO: optimize cratetion a new instance of templates
 internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<StorageObjectMemento?>
 {
     public StorageObjectMementoMessagePackFormatter()
