@@ -5,6 +5,7 @@
 #include "bouncy-pkcs11.h"
 #include "rpc/rpc.h"
 #include "logger.h"
+#include "globalContext.h"
 
 #include "bouncy-pkcs11-utils.h"
 
@@ -76,10 +77,15 @@ static void CopyCkUlongArrayToUint32Array(ArrayOfuint32_t* destination, CK_ULONG
     }
 }
 
-//TODO: Add max recursion, log recursion
-AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    log_message(LOG_LEVEL_INFO, "Entering to function %s with recursionLevel %i", __FUNCTION__, recursionLevel);
+
+    if (recursionLevel > BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS)
+    {
+        log_message(LOG_LEVEL_ERROR, "The nested C_ATTRIBUTE[] arrays have reached the maximum allowed nesting depth of %i in the %s function.", BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS, __FUNCTION__);
+        return NULL;
+    }
 
     size_t allocCount = (ulCount > 0) ? sizeof(AttrValueFromNative) * ulCount : sizeof(AttrValueFromNative);
 
@@ -154,7 +160,7 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
 
             CK_ULONG arrayLen = pTemplate[i].ulValueLen / sizeof(CK_ATTRIBUTE);
             valueTemplate->Value.length = (int)arrayLen;
-            valueTemplate->Value.array = ConvertToAttrValueFromNative((CK_ATTRIBUTE_PTR)pTemplate[i].pValue, arrayLen);
+            valueTemplate->Value.array = ConvertToAttrValueFromNative((CK_ATTRIBUTE_PTR)pTemplate[i].pValue, arrayLen, recursionLevel + 1);
             if (valueTemplate->Value.array == NULL)
             {
                 log_message(LOG_LEVEL_ERROR, "Internal call ConvertToAttrValueFromNative returns NULL");

@@ -1201,7 +1201,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
     CreateObjectEnvelope envelope;
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
     if (NULL == attrTemplate)
     {
         return CKR_GENERAL_ERROR;
@@ -1271,7 +1271,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
 
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
     if (NULL == attrTemplate)
     {
         return CKR_GENERAL_ERROR;
@@ -1391,9 +1391,16 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetObjectSize)(CK_SESSION_HANDLE hSession, CK_OBJECT
     return (CK_RV)envelope.Rv;
 }
 
-// TODO: Add logging, recussion guards, add logs for nested enetering
-static CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+static CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel)
 {
+    log_message(LOG_LEVEL_INFO, "Entering to function %s with recursionLevel %i", __FUNCTION__, recursionLevel);
+
+    if (recursionLevel > BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS)
+    {
+        log_message(LOG_LEVEL_ERROR, "The nested C_ATTRIBUTE[] arrays have reached the maximum allowed nesting depth of %i in the %s function.", BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS, __FUNCTION__);
+        return CKR_TEMPLATE_INCONSISTENT;
+    }
+
     CK_ULONG i;
     CK_RV rvMethod = CKR_OK;
 
@@ -1502,13 +1509,15 @@ static CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_P
                         destinationTemplate[index].type = (CK_ATTRIBUTE_TYPE)(outAttrPtr->ValueTemplate->AttributeTypes.array[index]);
                     }
 
-                    CK_RV rvData = SetArributesToTemplate(outAttrPtr->ValueTemplate->Values.array, destinationTemplate, itemCount);
+                    CK_RV rvData = SetArributesToTemplate(outAttrPtr->ValueTemplate->Values.array,
+                        destinationTemplate,
+                        itemCount,
+                        recursionLevel + 1);
                     if (rvData != CKR_OK)
                     {
-                        //TODO: logging
+                        log_message(LOG_LEVEL_ERROR, "Nested function %s in recursion level %i returns error code %i (CKR).", __FUNCTION__, recursionLevel + 1, (int)rvData);
                         rvMethod = rvData;
                     }
-                    //TODO
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Void)
                 {
@@ -1587,10 +1596,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     if (rv == CKR_OK || rv == CKR_ATTRIBUTE_SENSITIVE || rv == CKR_ATTRIBUTE_TYPE_INVALID || rv == CKR_BUFFER_TOO_SMALL)
     {
-        CK_RV rvData = SetArributesToTemplate(envelope.Data->OutTemplate.array, pTemplate, ulCount);
+        CK_RV rvData = SetArributesToTemplate(envelope.Data->OutTemplate.array, pTemplate, ulCount, 0);
         if (rvData != CKR_OK)
         {
-            //TODO: logging
+            log_message(LOG_LEVEL_ERROR, "SetArributesToTemplate returms bad error code %i (CKR) in functions %s", (int)rvData, __FUNCTION__);
             rvMethod = rvData;
         }
     }
@@ -1623,7 +1632,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
     if (NULL == attrTemplate)
     {
         return CKR_GENERAL_ERROR;
@@ -1675,7 +1684,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
     FindObjectsInitEnvelope envelope;
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
     if (NULL == attrTemplate)
     {
         return CKR_GENERAL_ERROR;
@@ -3021,7 +3030,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANIS
         return CKR_MECHANISM_INVALID;
     }
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
     if (NULL == attrTemplate)
     {
         MechanismValue_Destroy(&request.Mechanism);
@@ -3102,14 +3111,14 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECH
         return CKR_GENERAL_ERROR;
     }
 
-    pubKeyAttrTemplate = ConvertToAttrValueFromNative(pPublicKeyTemplate, ulPublicKeyAttributeCount);
+    pubKeyAttrTemplate = ConvertToAttrValueFromNative(pPublicKeyTemplate, ulPublicKeyAttributeCount, 0);
     if (NULL == pubKeyAttrTemplate)
     {
         MechanismValue_Destroy(&request.Mechanism);
         return CKR_GENERAL_ERROR;
     }
 
-    privKeyAttrTemplate = ConvertToAttrValueFromNative(pPrivateKeyTemplate, ulPrivateKeyAttributeCount);
+    privKeyAttrTemplate = ConvertToAttrValueFromNative(pPrivateKeyTemplate, ulPrivateKeyAttributeCount, 0);
     if (NULL == privKeyAttrTemplate)
     {
         MechanismValue_Destroy(&request.Mechanism);
@@ -3243,7 +3252,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
         return CKR_MECHANISM_INVALID;
     }
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
     if (NULL == attrTemplate)
     {
         MechanismValue_Destroy(&request.Mechanism);
@@ -3316,7 +3325,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
 
     request.BaseKeyHandle = (uint32_t)hBaseKey;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
     if (NULL == attrTemplate)
     {
         MechanismValue_Destroy(&request.Mechanism);
@@ -3827,7 +3836,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
 
     request.PublicKeyHandle = (uint32_t)hPublicKey;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
     if (NULL == attrTemplate)
     {
         MechanismValue_Destroy(&request.Mechanism);
@@ -3929,7 +3938,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
 
     request.PrivateKeyHandle = (uint32_t)hPrivateKey;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount);
+    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
     if (NULL == attrTemplate)
     {
         MechanismValue_Destroy(&request.Mechanism);

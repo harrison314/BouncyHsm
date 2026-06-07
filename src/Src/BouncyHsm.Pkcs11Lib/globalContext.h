@@ -31,5 +31,7 @@ void GlobalContextInit();
 #define BOUNCY_HSM_LIBVERSION_MAJOR 2
 #define BOUNCY_HSM_LIBVERSION_MINOR 1
 
+// Constants for bounds/checks in the library
+#define BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS 10
 
 #endif //GLOBAL_CONTEXT

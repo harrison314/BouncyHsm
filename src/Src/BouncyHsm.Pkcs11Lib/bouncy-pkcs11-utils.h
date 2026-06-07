@@ -26,7 +26,8 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value);
 #define AttrValueToNative_TypeHint_UintArray 0x10
 #define AttrValueToNative_TypeHint_CkAttributeArray 0x20
 
-AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount);
+// Call with recursionLevel = 0
+AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel);
 
 void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount);
 
