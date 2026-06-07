@@ -48,7 +48,7 @@ internal class CkDateAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.DateTime);
     }
 
-    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
         throw new InvalidAttributeTypeCastException(AttrTypeTag.DateTime);
     }

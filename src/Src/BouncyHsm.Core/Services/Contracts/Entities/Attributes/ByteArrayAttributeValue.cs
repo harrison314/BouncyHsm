@@ -48,7 +48,7 @@ internal class ByteArrayAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
-    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
         throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }

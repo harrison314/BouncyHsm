@@ -49,7 +49,7 @@ internal class BoolAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }
 
-    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
         throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }

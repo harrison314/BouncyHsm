@@ -40,7 +40,7 @@ internal static class AttributeValueExtensions
             AttrTypeTag.String => attributeValue.AsString(),
             AttrTypeTag.DateTime => attributeValue.AsDate().ToString(),
             AttrTypeTag.UintArray => UintArrayToString(attributeType, attributeValue.AsUintArray()),
-            AttrTypeTag.CkAttributeArray => GetCkAttributeArrayString(attributeValue.AsTemplate()),
+            AttrTypeTag.CkAttributeArray => GetCkAttributeArrayString(attributeValue.AsCkAttributeArray()),
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
         };
     }
@@ -170,7 +170,7 @@ internal static class AttributeValueExtensions
             switch (value.TypeTag)
             {
                 case AttrTypeTag.CkAttributeArray:
-                    valueText = $"CK_ATTRIBUTE[{value.AsTemplate().Count}]";
+                    valueText = $"CK_ATTRIBUTE[{value.AsCkAttributeArray().Count}]";
                     break;
 
                 case AttrTypeTag.ByteArray:

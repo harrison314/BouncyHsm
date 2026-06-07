@@ -56,7 +56,7 @@ internal class CkAttributeArrayValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.CkAttributeArray);
     }
 
-    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
         return this.template;
     }
@@ -65,7 +65,7 @@ internal class CkAttributeArrayValue : IAttributeValue
     {
         if (other != null && other.TypeTag == AttrTypeTag.CkAttributeArray)
         {
-            return BouncyHsm.Core.Services.P11Handlers.Common.AttrTypeUtils.Equals(this.template, other.AsTemplate());
+            return BouncyHsm.Core.Services.P11Handlers.Common.AttrTypeUtils.Equals(this.template, other.AsCkAttributeArray());
         }
 
         return false;

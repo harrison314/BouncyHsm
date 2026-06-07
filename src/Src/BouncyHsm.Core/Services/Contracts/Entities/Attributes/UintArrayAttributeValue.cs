@@ -49,7 +49,7 @@ internal class UintArrayAttributeValue : IAttributeValue
         return this.value;
     }
 
-    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
         throw new InvalidAttributeTypeCastException(AttrTypeTag.UintArray);
     }

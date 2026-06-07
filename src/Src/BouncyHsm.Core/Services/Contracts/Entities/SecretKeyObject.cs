@@ -91,19 +91,19 @@ public abstract class SecretKeyObject : KeyObject
 
     public IReadOnlyDictionary<CKA, IAttributeValue> CkaWrapTemplate
     {
-        get => this.values[CKA.CKA_WRAP_TEMPLATE].AsTemplate();
+        get => this.values[CKA.CKA_WRAP_TEMPLATE].AsCkAttributeArray();
         set => this.values[CKA.CKA_WRAP_TEMPLATE] = AttributeValue.Create(value);
     }
 
     public IReadOnlyDictionary<CKA, IAttributeValue> CkaUnwrapTemplate
     {
-        get => this.values[CKA.CKA_UNWRAP_TEMPLATE].AsTemplate();
+        get => this.values[CKA.CKA_UNWRAP_TEMPLATE].AsCkAttributeArray();
         set => this.values[CKA.CKA_UNWRAP_TEMPLATE] = AttributeValue.Create(value);
     }
 
     public IReadOnlyDictionary<CKA, IAttributeValue> CkaDeriveTemplate
     {
-        get => this.values[CKA.CKA_DERIVE_TEMPLATE].AsTemplate();
+        get => this.values[CKA.CKA_DERIVE_TEMPLATE].AsCkAttributeArray();
         set => this.values[CKA.CKA_DERIVE_TEMPLATE] = AttributeValue.Create(value);
     }
 

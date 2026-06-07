@@ -87,7 +87,7 @@ internal class NativeAttributeValue : IAttributeValue
         return this.value.ValueUintArray.Array;
     }
 
-    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
         this.CheckValueType(AttrTypeTag.CkAttributeArray);
         if (this.value.ValueTemplate == null)
@@ -149,7 +149,7 @@ internal class NativeAttributeValue : IAttributeValue
             AttrTypeTag.String => string.Equals(this.AsString(), other.AsString(), StringComparison.OrdinalIgnoreCase),
             AttrTypeTag.DateTime => this.AsDate().Equals(other.AsDate()),
             AttrTypeTag.UintArray => this.AsUintArray().SequenceEqual(other.AsUintArray()),
-            AttrTypeTag.CkAttributeArray => AttrTypeUtils.Equals(this.AsTemplate(), other.AsTemplate()),
+            AttrTypeTag.CkAttributeArray => AttrTypeUtils.Equals(this.AsCkAttributeArray(), other.AsCkAttributeArray()),
             _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported.")
         };
     }
@@ -174,7 +174,7 @@ internal class NativeAttributeValue : IAttributeValue
             AttrTypeTag.DateTime => this.AsDate().HasValue ? 8U : 0U,
             AttrTypeTag.String => (uint)Encoding.UTF8.GetByteCount(this.AsString()),
             AttrTypeTag.UintArray => ((uint)this.AsUintArray().Length) * 4U,
-            AttrTypeTag.CkAttributeArray => AttrTypeUtils.GuessSize(this.AsTemplate()),
+            AttrTypeTag.CkAttributeArray => AttrTypeUtils.GuessSize(this.AsCkAttributeArray()),
             _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported.")
         };
     }

@@ -161,7 +161,7 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
                 break;
 
             case AttrTypeTag.CkAttributeArray:
-                IReadOnlyDictionary<CKA, IAttributeValue> templateValues = attributeValue.AsTemplate();
+                IReadOnlyDictionary<CKA, IAttributeValue> templateValues = attributeValue.AsCkAttributeArray();
                 outValue.ValueType = NativeAttributeValue.AttrValueToNativeTypeCkAttributeArray;
                 outValue.ValueTemplate = new GetAttributeOutTemplateValues()
                 {

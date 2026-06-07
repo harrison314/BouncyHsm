@@ -56,7 +56,7 @@ public abstract class PublicKeyObject : KeyObject
 
     public IReadOnlyDictionary<CKA, IAttributeValue> CkaWrapTemplate
     {
-        get => this.values[CKA.CKA_WRAP_TEMPLATE].AsTemplate();
+        get => this.values[CKA.CKA_WRAP_TEMPLATE].AsCkAttributeArray();
         set => this.values[CKA.CKA_WRAP_TEMPLATE] = AttributeValue.Create(value);
     }
 

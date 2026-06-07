@@ -47,7 +47,7 @@ internal class StringAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
     }
 
-    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
         throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
     }

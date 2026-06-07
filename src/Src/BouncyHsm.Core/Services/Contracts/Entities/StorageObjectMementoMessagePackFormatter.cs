@@ -168,7 +168,7 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
 
     private void WriteTemplate(ref MessagePackWriter writer, IAttributeValue attrVal)
     {
-        this.WriteValues(ref writer, attrVal.AsTemplate());
+        this.WriteValues(ref writer, attrVal.AsCkAttributeArray());
     }
 
     private IAttributeValue ReadTemplate(ref MessagePackReader reader)
