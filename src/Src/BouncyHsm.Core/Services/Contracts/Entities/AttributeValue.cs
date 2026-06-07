@@ -46,6 +46,6 @@ public static class AttributeValue
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IAttributeValue Create(IReadOnlyDictionary<CKA, IAttributeValue> value)
     {
-        return (value.Count > 0) ? new TemplateAttributeValue(value) : TemplateAttributeValue.Empty;
+        return (value.Count > 0) ? new CkAttributeArrayValue(value) : CkAttributeArrayValue.Empty;
     }
 }
