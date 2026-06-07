@@ -163,6 +163,5 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
             default:
                 throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.");
         }
-        ;
     }
 }
