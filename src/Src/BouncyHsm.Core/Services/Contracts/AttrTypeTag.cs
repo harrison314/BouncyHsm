@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BouncyHsm.Core.Services.Contracts;
 
+// Never change enum numbers, this will break database backward compatibility!
 public enum AttrTypeTag
 {
     ByteArray = 0,
