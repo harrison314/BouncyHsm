@@ -141,12 +141,38 @@ internal static class AttrTypeUtils
         };
     }
 
-    //TODO: Change error message for nested usages - add enum as parameter
     public static Dictionary<CKA, IAttributeValue> BuildDictionaryTemplate(AttrValueFromNative[] template)
     {
         CKA lastCka = CKA.CKA_CLASS;
         try
         {
+            return BuildDictionaryTemplateInternal(template, ref lastCka);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
+                $"Duplicate attribute type {lastCka} in template.",
+                ex);
+        }
+    }
+
+    public static Dictionary<CKA, IAttributeValue> BuildDictionaryCkAray(AttrValueFromNative[] template)
+    {
+        CKA lastCka = CKA.CKA_CLASS;
+        try
+        {
+            return BuildDictionaryTemplateInternal(template, ref lastCka);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                $"Duplicate attribute type {lastCka} in CK_ATTRIBUTE array.",
+                ex);
+        }
+    }
+
+    private static Dictionary<CKA, IAttributeValue> BuildDictionaryTemplateInternal(AttrValueFromNative[] template, ref CKA lastCka)
+    {
             Dictionary<CKA, IAttributeValue> dictTemplate = new Dictionary<CKA, IAttributeValue>();
             foreach (AttrValueFromNative attr in template)
             {
@@ -156,13 +182,6 @@ internal static class AttrTypeUtils
 
             return dictTemplate;
         }
-        catch (ArgumentException ex)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-                $"Duplicate attribute type {lastCka} in template.",
-                ex);
-        }
-    }
 
     public static bool Equals(IReadOnlyDictionary<CKA, IAttributeValue> a, IReadOnlyDictionary<CKA, IAttributeValue> b)
     {

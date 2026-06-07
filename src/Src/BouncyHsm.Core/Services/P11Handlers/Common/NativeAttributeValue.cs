@@ -95,7 +95,7 @@ internal class NativeAttributeValue : IAttributeValue
             throw new InvalidAttributeTypeCastException($"Property {nameof(this.value.ValueTemplate)} is null");
         }
 
-        return AttrTypeUtils.BuildDictionaryTemplate(this.value.ValueTemplate.Value);
+        return AttrTypeUtils.BuildDictionaryCkAray(this.value.ValueTemplate.Value);
     }
 
     private void CheckValueType(AttrTypeTag tag, [CallerMemberName] string fnName = "")
