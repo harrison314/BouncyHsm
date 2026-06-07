@@ -68,4 +68,9 @@ internal class UintArrayAttributeValue : IAttributeValue
     {
         return 4 * (uint)this.value.Length;
     }
+
+    public override string ToString()
+    {
+        return $"{this.GetType().Name}: [{string.Join(", ", this.value)}]";
+    }
 }

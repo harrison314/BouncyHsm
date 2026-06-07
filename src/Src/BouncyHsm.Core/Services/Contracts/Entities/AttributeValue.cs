@@ -18,6 +18,7 @@ public static class AttributeValue
         return new UintAttributeValue(value);
     }
 
+    //TODO: Optimize with empty string
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IAttributeValue Create(string value)
     {
