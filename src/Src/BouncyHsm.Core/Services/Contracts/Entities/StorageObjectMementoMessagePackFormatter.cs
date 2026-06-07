@@ -43,9 +43,6 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                     writer.Write(attrVal.AsByteArray());
                     break;
 
-                case AttrTypeTag.CkAttributeArray:
-                    throw new NotImplementedException();
-
                 case AttrTypeTag.CkBool:
                     writer.Write(attrVal.AsBool());
                     break;
@@ -66,7 +63,7 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                     this.WriteUintArray(ref writer, attrVal);
                     break;
 
-                case AttrTypeTag.Template:
+                case AttrTypeTag.CkAttributeArray:
                     this.WriteTemplate(ref writer, attrVal);
                     break;
 
@@ -113,13 +110,12 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
             IAttributeValue attrVal = typeTag switch
             {
                 AttrTypeTag.ByteArray => AttributeValue.Create(this.ReadByteArray(ref reader)),
-                AttrTypeTag.CkAttributeArray => throw new NotImplementedException(),
                 AttrTypeTag.CkBool => AttributeValue.Create(reader.ReadBoolean()),
                 AttrTypeTag.CkUint => AttributeValue.Create(reader.ReadUInt32()),
                 AttrTypeTag.DateTime => AttributeValue.Create(CkDate.Parse(reader.ReadString())),
                 AttrTypeTag.String => AttributeValue.Create(reader.ReadString() ?? string.Empty),
                 AttrTypeTag.UintArray => AttributeValue.Create(this.ReadUintArray(ref reader)),
-                AttrTypeTag.Template => this.ReadTemplate(ref reader),
+                AttrTypeTag.CkAttributeArray => this.ReadTemplate(ref reader),
                 _ => throw new InvalidProgramException($"Enum value {typeTag} is not supported.")
             };
 

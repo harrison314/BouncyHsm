@@ -18,7 +18,7 @@ internal static class AttributeValueExtensions
             AttrTypeTag.String => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsString())),
             AttrTypeTag.DateTime => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsDate().ToString())),
             AttrTypeTag.UintArray => UintArrayToHex(attributeValue.AsUintArray()),
-            AttrTypeTag.Template => string.Empty, //TODO: check is empty or not
+            AttrTypeTag.CkAttributeArray => string.Empty, //TODO: check is empty or not
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
         };
     }
@@ -40,7 +40,7 @@ internal static class AttributeValueExtensions
             AttrTypeTag.String => attributeValue.AsString(),
             AttrTypeTag.DateTime => attributeValue.AsDate().ToString(),
             AttrTypeTag.UintArray => UintArrayToString(attributeType, attributeValue.AsUintArray()),
-            AttrTypeTag.Template => GetTemplateString(attributeValue.AsTemplate()),
+            AttrTypeTag.CkAttributeArray => GetCkAttributeArrayString(attributeValue.AsTemplate()),
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
         };
     }
@@ -158,7 +158,7 @@ internal static class AttributeValueExtensions
             || (ch == '\n');
     }
 
-    private static string GetTemplateString(IReadOnlyDictionary<CKA, IAttributeValue> template)
+    private static string GetCkAttributeArrayString(IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
         const int maxSize = 64;
 
@@ -169,7 +169,7 @@ internal static class AttributeValueExtensions
 
             switch (value.TypeTag)
             {
-                case AttrTypeTag.Template:
+                case AttrTypeTag.CkAttributeArray:
                     valueText = $"CK_ATTRIBUTE[{value.AsTemplate().Count}]";
                     break;
 

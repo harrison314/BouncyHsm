@@ -1426,7 +1426,7 @@ static CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_P
             {
                 newValueLen = (outAttrPtr->ValueUintArray == NULL) ? 0 : (outAttrPtr->ValueUintArray->Array.length * sizeof(CK_ULONG));
             }
-            else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Template)
+            else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkAttributeArray)
             {
                 newValueLen = outAttrPtr->ValueTemplate->AttributeTypes.length * sizeof(CK_ATTRIBUTE);
             }
@@ -1485,11 +1485,11 @@ static CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_P
                         destinationUintArray[j] = (CK_ULONG)uintArray[j];
                     }
                 }
-                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Template)
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkAttributeArray)
                 {
                     if (outAttrPtr->ValueTemplate->AttributeTypes.length != outAttrPtr->ValueTemplate->Values.length)
                     {
-                        log_message(LOG_LEVEL_ERROR, "Invalid server response for AttrValueToNative_TypeHint_Template outAttrPtr->ValueTemplate->AttributeTypes.length != outAttrPtr->ValueTemplate->Values.length");
+                        log_message(LOG_LEVEL_ERROR, "Invalid server response for CkAttributeArray: outAttrPtr->ValueTemplate->AttributeTypes.length != outAttrPtr->ValueTemplate->Values.length");
                         return CKR_DEVICE_ERROR;
                     }
 

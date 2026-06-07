@@ -18,7 +18,7 @@ internal class TemplateAttributeValue : IAttributeValue
 
     public AttrTypeTag TypeTag
     {
-        get => AttrTypeTag.Template;
+        get => AttrTypeTag.CkAttributeArray;
     }
 
     public TemplateAttributeValue(IReadOnlyDictionary<CKA, IAttributeValue> template)
@@ -35,32 +35,32 @@ internal class TemplateAttributeValue : IAttributeValue
 
     public bool AsBool()
     {
-        throw new InvalidAttributeTypeCastException(AttrTypeTag.Template);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkAttributeArray);
     }
 
     public byte[] AsByteArray()
     {
-        throw new InvalidAttributeTypeCastException(AttrTypeTag.Template);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkAttributeArray);
     }
 
     public CkDate AsDate()
     {
-        throw new InvalidAttributeTypeCastException(AttrTypeTag.Template);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkAttributeArray);
     }
 
     public string AsString()
     {
-        throw new InvalidAttributeTypeCastException(AttrTypeTag.Template);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkAttributeArray);
     }
 
     public uint AsUint()
     {
-        throw new InvalidAttributeTypeCastException(AttrTypeTag.Template);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkAttributeArray);
     }
 
     public uint[] AsUintArray()
     {
-        throw new InvalidAttributeTypeCastException(AttrTypeTag.Template);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkAttributeArray);
     }
 
     public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
@@ -70,7 +70,7 @@ internal class TemplateAttributeValue : IAttributeValue
 
     public bool Equals(IAttributeValue? other)
     {
-        if (other != null && other.TypeTag == AttrTypeTag.Template)
+        if (other != null && other.TypeTag == AttrTypeTag.CkAttributeArray)
         {
             return BouncyHsm.Core.Services.P11Handlers.Common.AttrTypeUtils.Equals(this.template, other.AsTemplate());
         }

@@ -164,7 +164,7 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
 
             ptr[i].ValueTemplate = valueTemplate;
             ptr[i].ValueRawBytes.size = 0;
-            ptr[i].ValueTypeHint = AttrValueFromNative_TypeHint_Template;
+            ptr[i].ValueTypeHint = AttrValueFromNative_TypeHint_CkAttributeArray;
             continue;
         }
 
