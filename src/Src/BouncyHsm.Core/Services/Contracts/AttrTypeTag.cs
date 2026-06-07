@@ -14,6 +14,7 @@ public enum AttrTypeTag
     CkUint = 2,
     CkBool = 3,
     DateTime = 4,
-    CkAttributeArray = 5,
+    CkAttributeArray = 5, //TODO: is Template?
     UintArray = 6,
+    Template = 7,
 }

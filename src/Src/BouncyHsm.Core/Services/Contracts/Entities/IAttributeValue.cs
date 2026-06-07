@@ -22,5 +22,7 @@ public interface IAttributeValue : IEquatable<IAttributeValue>, IEquatable<uint>
 
     uint[] AsUintArray();
 
+    IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate();
+
     uint GuessSize();
 }

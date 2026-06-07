@@ -49,6 +49,11 @@ internal class BoolAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }
 
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    {
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {this.value}";

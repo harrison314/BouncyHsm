@@ -1,8 +1,8 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.HighLevelAPI.MechanismParams;
-using Pkcs11Interop.Ext.Common;
 using Pkcs11Interop.Ext;
+using Pkcs11Interop.Ext.Common;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -42,7 +42,8 @@ public static class Program
         //EncryptAndDecrypt();
         // CreateSesitiveData();
         //ChaCha20();
-        CreateAndReadRsa();
+        //CreateAndReadRsa();
+        AttributeTemplates();
     }
 
     private static void CrateObjectExample()
@@ -270,8 +271,8 @@ public static class Program
 
         List<IObjectAttribute> attributes = session.GetAttributeValue(publicKey, new List<CKA>()
         {
-            CKA.CKA_CLASS, CKA.CKA_TOKEN, CKA. CKA_PRIVATE, CKA.CKA_MODIFIABLE, CKA. CKA_LABEL, 
-            CKA.CKA_ID, CKA. CKA_START_DATE, CKA. CKA_END_DATE, CKA.CKA_DERIVE, CKA.CKA_LOCAL, 
+            CKA.CKA_CLASS, CKA.CKA_TOKEN, CKA. CKA_PRIVATE, CKA.CKA_MODIFIABLE, CKA. CKA_LABEL,
+            CKA.CKA_ID, CKA. CKA_START_DATE, CKA. CKA_END_DATE, CKA.CKA_DERIVE, CKA.CKA_LOCAL,
             CKA.CKA_ALLOWED_MECHANISMS, CKA.CKA_SUBJECT, CKA. CKA_ENCRYPT, CKA.CKA_VERIFY,
             CKA.CKA_VERIFY_RECOVER, CKA.CKA_WRAP, CKA.CKA_TRUSTED, CKA.CKA_WRAP_TEMPLATE,
             CKA.CKA_KEY_TYPE, CKA.CKA_KEY_GEN_MECHANISM, CKA.CKA_MODULUS, CKA.CKA_MODULUS_BITS,
@@ -280,5 +281,81 @@ public static class Program
 
         byte[] publicExponent = attributes.Last().GetValueAsByteArray();
         Console.WriteLine("Public exponent: {0}", Convert.ToHexString(publicExponent));
+    }
+
+    private static void AttributeTemplates()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.First();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, UserPin);
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+
+        List<IObjectAttribute> deriveTemplate = new List<IObjectAttribute>()
+        {
+             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, 16),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_COPYABLE, true),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
+             factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            //    CKA_ALLOWED_MECHANISMS(), att(arena, CK_MECHANISM_TYPE, CKM_CONCATENATE_BASE_AND_DATA()),
+            //    CKA_DERIVE_TEMPLATE(), concatTemplate,
+        };
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, session.GenerateRandom(32)),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE_TEMPLATE, deriveTemplate),
+        };
+
+        IObjectHandle secretKey = session.CreateObject(keyAttributes);
+
+        List<IObjectAttribute> result = session.GetAttributeValue(secretKey, new List<CKA>()
+        {
+            CKA.CKA_ID,
+            CKA.CKA_ENCRYPT,
+            CKA.CKA_DECRYPT,
+            CKA.CKA_DERIVE_TEMPLATE,
+            CKA.CKA_MODIFIABLE
+        });
+
+        List<IObjectAttribute> deriveTemplateReaded = result[3].GetValueAsObjectAttributeList();
+
+        foreach (IObjectAttribute attr in deriveTemplateReaded)
+        {
+            Console.WriteLine((CKA)attr.Type);
+        }
     }
 }

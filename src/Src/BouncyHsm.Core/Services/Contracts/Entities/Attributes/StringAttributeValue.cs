@@ -47,6 +47,11 @@ internal class StringAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
     }
 
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    {
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {this.value}";

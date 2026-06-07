@@ -84,9 +84,9 @@ internal static class AttrTypeUtils
             CKA.CKA_AUTH_PIN_FLAGS => AttrTypeTag.CkUint,
             CKA.CKA_ALWAYS_AUTHENTICATE => AttrTypeTag.CkBool,
             CKA.CKA_WRAP_WITH_TRUSTED => AttrTypeTag.CkBool,
-            CKA.CKA_WRAP_TEMPLATE => AttrTypeTag.CkAttributeArray,
-            CKA.CKA_UNWRAP_TEMPLATE => AttrTypeTag.CkAttributeArray,
-            CKA.CKA_DERIVE_TEMPLATE => AttrTypeTag.CkAttributeArray,
+            CKA.CKA_WRAP_TEMPLATE => AttrTypeTag.Template,
+            CKA.CKA_UNWRAP_TEMPLATE => AttrTypeTag.Template,
+            CKA.CKA_DERIVE_TEMPLATE => AttrTypeTag.Template,
             CKA.CKA_OTP_FORMAT => AttrTypeTag.CkUint,
             CKA.CKA_OTP_LENGTH => AttrTypeTag.CkUint,
             CKA.CKA_OTP_TIME_INTERVAL => AttrTypeTag.CkUint,
@@ -141,6 +141,7 @@ internal static class AttrTypeUtils
         };
     }
 
+    //TODO: Change error message for nested usages - add enum as parameter
     public static Dictionary<CKA, IAttributeValue> BuildDictionaryTemplate(AttrValueFromNative[] template)
     {
         CKA lastCka = CKA.CKA_CLASS;
@@ -161,5 +162,51 @@ internal static class AttrTypeUtils
                 $"Duplicate attribute type {lastCka} in template.",
                 ex);
         }
+    }
+
+    public static bool Equals(IReadOnlyDictionary<CKA, IAttributeValue> a, IReadOnlyDictionary<CKA, IAttributeValue> b)
+    {
+        if (object.ReferenceEquals(a, b))
+        {
+            return true;
+        }
+
+        if (a.Count != b.Count)
+        {
+            return false;
+        }
+
+        if (a.Count == 0)
+        {
+            return true;
+        }
+
+
+        foreach (KeyValuePair<CKA, IAttributeValue> kv in a)
+        {
+            if (!b.TryGetValue(kv.Key, out IAttributeValue? otherValue))
+            {
+                return false;
+            }
+
+            if (!kv.Value.Equals(otherValue))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static uint GuessSize(IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        uint valuesSize = 0;
+        foreach (IAttributeValue value in template.Values)
+        {
+            valuesSize += 4;
+            valuesSize += value.GuessSize();
+        }
+
+        return valuesSize;
     }
 }

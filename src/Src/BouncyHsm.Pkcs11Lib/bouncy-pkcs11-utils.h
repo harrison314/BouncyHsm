@@ -16,6 +16,7 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value);
 #define AttrValueFromNative_TypeHint_CkUlong 0x04
 #define AttrValueFromNative_TypeHint_CkDate 0x08
 #define AttrValueFromNative_TypeHint_UintArray 0x10
+#define AttrValueFromNative_TypeHint_Template 0x20
 
 #define AttrValueToNative_TypeHint_Void 0x00
 #define AttrValueToNative_TypeHint_Binary 0x01
@@ -23,6 +24,7 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value);
 #define AttrValueToNative_TypeHint_CkUlong 0x04
 #define AttrValueToNative_TypeHint_CkDate 0x08
 #define AttrValueToNative_TypeHint_UintArray 0x10
+#define AttrValueToNative_TypeHint_Template 0x20
 
 AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount);
 

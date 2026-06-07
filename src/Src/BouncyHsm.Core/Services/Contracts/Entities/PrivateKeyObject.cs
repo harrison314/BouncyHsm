@@ -1,4 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
+using Org.BouncyCastle.Asn1.Cms;
+using System.Collections.ObjectModel;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
@@ -75,17 +77,24 @@ public abstract class PrivateKeyObject : KeyObject
         set => this.values[CKA.CKA_WRAP_WITH_TRUSTED] = AttributeValue.Create(value);
     }
 
-    //TODO: list of attribute array
-    //public byte[] CkaUnwrapTemplate
-    //{
-    //    get => this.values[CKA.CKA_UNWRAP_TEMPLATE].AsByteArray();
-    //    set => this.values[CKA.CKA_UNWRAP_TEMPLATE] = AttributeValue.Create(value);
-    //}
+    public IReadOnlyDictionary<CKA, IAttributeValue> CkaUnwrapTemplate
+    {
+        get => this.values[CKA.CKA_UNWRAP_TEMPLATE].AsTemplate();
+        set => this.values[CKA.CKA_UNWRAP_TEMPLATE] = AttributeValue.Create(value);
+    }
 
     public bool CkaAlwaysAuthenticate
     {
         get => this.values[CKA.CKA_ALWAYS_AUTHENTICATE].AsBool();
         set => this.values[CKA.CKA_ALWAYS_AUTHENTICATE] = AttributeValue.Create(value);
+    }
+
+    //TODO: Implement CKA_PUBLIC_KEY_INFO as byte[]
+
+    public IReadOnlyDictionary<CKA, IAttributeValue> CkaDeriveTemplate
+    {
+        get => this.values[CKA.CKA_DERIVE_TEMPLATE].AsTemplate();
+        set => this.values[CKA.CKA_DERIVE_TEMPLATE] = AttributeValue.Create(value);
     }
 
     public byte[] CkaPublicCrc64Value
@@ -110,6 +119,8 @@ public abstract class PrivateKeyObject : KeyObject
         this.CkaWrapWithTrusted = false;
         this.CkaAlwaysAuthenticate = false;
         this.CkaPublicCrc64Value = Array.Empty<byte>();
+        this.CkaUnwrapTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
+        this.CkaDeriveTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
     }
 
     internal PrivateKeyObject(StorageObjectMemento memento)

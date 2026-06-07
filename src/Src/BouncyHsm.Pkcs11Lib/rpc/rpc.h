@@ -71,6 +71,7 @@ typedef struct _DigestFinalRequest DigestFinalRequest;
 typedef struct _DigestFinalEnvelope DigestFinalEnvelope;
 typedef struct _UintArrayData UintArrayData;
 typedef struct _AttrValueFromNative AttrValueFromNative;
+typedef struct _AttrTemplateValueFromNative AttrTemplateValueFromNative;
 typedef struct _CreateObjectRequest CreateObjectRequest;
 typedef struct _CreateObjectEnvelope CreateObjectEnvelope;
 typedef struct _DestroyObjectRequest DestroyObjectRequest;
@@ -87,6 +88,7 @@ typedef struct _GetObjectSizeEnvelope GetObjectSizeEnvelope;
 typedef struct _GetAttributeInputValues GetAttributeInputValues;
 typedef struct _GetAttributeValueRequest GetAttributeValueRequest;
 typedef struct _GetAttributeOutValue GetAttributeOutValue;
+typedef struct _GetAttributeOutTemplateValues GetAttributeOutTemplateValues;
 typedef struct _GetAttributeOutValues GetAttributeOutValues;
 typedef struct _GetAttributeValueEnvelope GetAttributeValueEnvelope;
 typedef struct _GenerateKeyPairRequest GenerateKeyPairRequest;
@@ -888,11 +890,21 @@ typedef struct _AttrValueFromNative
     uint32_t ValueCkUlong;
     const char* ValueCkDate;
     UintArrayData* ValueUintArray;
+    AttrTemplateValueFromNative* ValueTemplate;
 } AttrValueFromNative;
 
 int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value);
 int AttrValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, AttrValueFromNative* value);
 int AttrValueFromNative_Release(AttrValueFromNative* value);
+
+typedef struct _AttrTemplateValueFromNative
+{
+    ArrayOfAttrValueFromNative Value;
+} AttrTemplateValueFromNative;
+
+int AttrTemplateValueFromNative_Serialize(cmp_ctx_t* ctx, AttrTemplateValueFromNative* value);
+int AttrTemplateValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, AttrTemplateValueFromNative* value);
+int AttrTemplateValueFromNative_Release(AttrTemplateValueFromNative* value);
 
 typedef struct _CreateObjectRequest
 {
@@ -1058,11 +1070,22 @@ typedef struct _GetAttributeOutValue
     Binary ValueBytes;
     const char* ValueCkDate;
     UintArrayData* ValueUintArray;
+    GetAttributeOutTemplateValues* ValueTemplate;
 } GetAttributeOutValue;
 
 int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value);
 int GetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, GetAttributeOutValue* value);
 int GetAttributeOutValue_Release(GetAttributeOutValue* value);
+
+typedef struct _GetAttributeOutTemplateValues
+{
+    ArrayOfuint32_t AttributeTypes;
+    ArrayOfGetAttributeOutValue Values;
+} GetAttributeOutTemplateValues;
+
+int GetAttributeOutTemplateValues_Serialize(cmp_ctx_t* ctx, GetAttributeOutTemplateValues* value);
+int GetAttributeOutTemplateValues_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, GetAttributeOutTemplateValues* value);
+int GetAttributeOutTemplateValues_Release(GetAttributeOutTemplateValues* value);
 
 typedef struct _GetAttributeOutValues
 {

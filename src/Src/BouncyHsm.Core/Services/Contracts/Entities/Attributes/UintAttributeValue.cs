@@ -46,6 +46,11 @@ internal class UintAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.CkUint);
     }
 
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    {
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkUint);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {this.value}";

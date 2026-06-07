@@ -48,6 +48,11 @@ internal class ByteArrayAttributeValue : IAttributeValue
         throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsTemplate()
+    {
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name}: {Convert.ToHexString(this.value)}";

@@ -5,6 +5,7 @@ using System.Buffers;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
+//TODO: optimize cratetion a new instance of templates
 internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<StorageObjectMemento?>
 {
     public StorageObjectMementoMessagePackFormatter()
@@ -23,9 +24,14 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         writer.WriteArrayHeader(3);
         writer.Write(1); // Version
         writer.Write(value.Id.ToByteArray());
-        writer.WriteMapHeader(value.Values.Count);
+        this.WriteValues(ref writer, value.Values);
+    }
 
-        foreach ((CKA attrType, IAttributeValue attrVal) in value.Values)
+    private void WriteValues(ref MessagePackWriter writer, IReadOnlyDictionary<CKA, IAttributeValue> values)
+    {
+        writer.WriteMapHeader(values.Count);
+
+        foreach ((CKA attrType, IAttributeValue attrVal) in values)
         {
             writer.WriteArrayHeader(3);
             writer.Write((uint)attrType);
@@ -60,6 +66,10 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                     this.WriteUintArray(ref writer, attrVal);
                     break;
 
+                case AttrTypeTag.Template:
+                    this.WriteTemplate(ref writer, attrVal);
+                    break;
+
                 default:
                     throw new InvalidProgramException($"Enum value {attrVal.TypeTag} is not supported.");
             }
@@ -83,7 +93,13 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         }
 
         memento.Id = new Guid(this.ReadByteArray(ref reader));
+        this.ReadValues(ref reader, memento.Values);
 
+        return memento;
+    }
+
+    private void ReadValues(ref MessagePackReader reader, Dictionary<CKA, IAttributeValue> values)
+    {
         int attributesCount = reader.ReadMapHeader();
         for (int i = 0; i < attributesCount; i++)
         {
@@ -102,14 +118,13 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
                 AttrTypeTag.CkUint => AttributeValue.Create(reader.ReadUInt32()),
                 AttrTypeTag.DateTime => AttributeValue.Create(CkDate.Parse(reader.ReadString())),
                 AttrTypeTag.String => AttributeValue.Create(reader.ReadString() ?? string.Empty),
-                AttrTypeTag.UintArray => AttributeValue.Create(this.ReaduintArray(ref reader)),
+                AttrTypeTag.UintArray => AttributeValue.Create(this.ReadUintArray(ref reader)),
+                AttrTypeTag.Template => this.ReadTemplate(ref reader),
                 _ => throw new InvalidProgramException($"Enum value {typeTag} is not supported.")
             };
 
-            memento.Values.Add(attrType, attrVal);
+            values.Add(attrType, attrVal);
         }
-
-        return memento;
     }
 
     private byte[] ReadByteArray(ref MessagePackReader reader)
@@ -118,6 +133,11 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         if (!idBytes.HasValue)
         {
             throw new InvalidDataException("Can not read byte array.");
+        }
+
+        if (idBytes.Value.Length == 0)
+        {
+            return Array.Empty<byte>();
         }
 
         return idBytes.Value.ToArray();
@@ -133,7 +153,7 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         }
     }
 
-    private uint[] ReaduintArray(ref MessagePackReader reader)
+    private uint[] ReadUintArray(ref MessagePackReader reader)
     {
         int header = reader.ReadArrayHeader();
         if (header == 0)
@@ -148,5 +168,18 @@ internal class StorageObjectMementoMessagePackFormatter : IMessagePackFormatter<
         }
 
         return array;
+    }
+
+    private void WriteTemplate(ref MessagePackWriter writer, IAttributeValue attrVal)
+    {
+        this.WriteValues(ref writer, attrVal.AsTemplate());
+    }
+
+    private IAttributeValue ReadTemplate(ref MessagePackReader reader)
+    {
+        Dictionary<CKA, IAttributeValue> values = new Dictionary<CKA, IAttributeValue>();
+        this.ReadValues(ref reader, values);
+
+        return AttributeValue.Create(values);
     }
 }

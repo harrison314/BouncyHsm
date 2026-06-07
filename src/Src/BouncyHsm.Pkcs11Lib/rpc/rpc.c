@@ -4311,7 +4311,7 @@ int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value)
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 7);
+    result = cmp_write_array(ctx, 8);
    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_uinteger(ctx, value->AttributeType);
@@ -4343,6 +4343,17 @@ int AttrValueFromNative_Serialize(cmp_ctx_t* ctx, AttrValueFromNative* value)
     if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
   }
 
+  if (value->ValueTemplate != NULL)
+  {
+    result = AttrTemplateValueFromNative_Serialize(ctx, value->ValueTemplate);
+    if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+  }
+
     return NMRPC_OK;
 }
 
@@ -4363,7 +4374,7 @@ int AttrValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 7) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 8) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = cmp_read_uint(ctx, &value->AttributeType);
   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field AttributeType");
@@ -4397,6 +4408,20 @@ int AttrValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_ob
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueUintArray");
   }
 
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field ValueTemplate");
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->ValueTemplate = NULL;
+  }
+  else
+  {
+     value->ValueTemplate = (AttrTemplateValueFromNative*) malloc(sizeof(AttrTemplateValueFromNative));
+     if (value->ValueTemplate == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+     result = AttrTemplateValueFromNative_Deserialize(ctx, &tmp_obj, value->ValueTemplate);
+     if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueTemplate");
+  }
+
     return NMRPC_OK;
 }
 
@@ -4419,6 +4444,64 @@ int AttrValueFromNative_Release(AttrValueFromNative* value)
      free((void*) value->ValueUintArray);
      value->ValueUintArray = NULL;
  }
+ if (value->ValueTemplate != NULL) 
+ {
+     if (AttrTemplateValueFromNative_Release(value->ValueTemplate) != NMRPC_OK)
+     {
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+     }
+     free((void*) value->ValueTemplate);
+     value->ValueTemplate = NULL;
+ }
+    return NMRPC_OK;
+}
+int AttrTemplateValueFromNative_Serialize(cmp_ctx_t* ctx, AttrTemplateValueFromNative* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 1);
+   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = ArrayOfAttrValueFromNative_Serialize(ctx, &value->Value);
+   if (result != NMRPC_OK) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+    return NMRPC_OK;
+}
+
+int AttrTemplateValueFromNative_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, AttrTemplateValueFromNative* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 1) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = ArrayOfAttrValueFromNative_Deserialize(ctx, NULL, &value->Value);
+  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Value");
+
+    return NMRPC_OK;
+}
+
+int AttrTemplateValueFromNative_Release(AttrTemplateValueFromNative* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  if(ArrayOfAttrValueFromNative_Release(&value->Value) != NMRPC_OK)
+   {
+       return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+   }
     return NMRPC_OK;
 }
 int CreateObjectRequest_Serialize(cmp_ctx_t* ctx, CreateObjectRequest* value)
@@ -5293,7 +5376,7 @@ int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value)
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 7);
+    result = cmp_write_array(ctx, 8);
    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = CkSpecialUint_Serialize(ctx, &value->ValueLen);
@@ -5325,6 +5408,17 @@ int GetAttributeOutValue_Serialize(cmp_ctx_t* ctx, GetAttributeOutValue* value)
     if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
   }
 
+  if (value->ValueTemplate != NULL)
+  {
+    result = GetAttributeOutTemplateValues_Serialize(ctx, value->ValueTemplate);
+    if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
+  }
+  else
+  {
+    result = cmp_write_nil(ctx);
+    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+  }
+
     return NMRPC_OK;
 }
 
@@ -5345,7 +5439,7 @@ int GetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 7) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 8) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = CkSpecialUint_Deserialize(ctx, NULL, &value->ValueLen);
   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueLen");
@@ -5379,6 +5473,20 @@ int GetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_o
      if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueUintArray");
   }
 
+  result = cmp_read_object(ctx, &tmp_obj);
+  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field ValueTemplate");
+  if (cmp_object_is_nil(&tmp_obj))
+  {
+      value->ValueTemplate = NULL;
+  }
+  else
+  {
+     value->ValueTemplate = (GetAttributeOutTemplateValues*) malloc(sizeof(GetAttributeOutTemplateValues));
+     if (value->ValueTemplate == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+     result = GetAttributeOutTemplateValues_Deserialize(ctx, &tmp_obj, value->ValueTemplate);
+     if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ValueTemplate");
+  }
+
     return NMRPC_OK;
 }
 
@@ -5401,6 +5509,74 @@ int GetAttributeOutValue_Release(GetAttributeOutValue* value)
      free((void*) value->ValueUintArray);
      value->ValueUintArray = NULL;
  }
+ if (value->ValueTemplate != NULL) 
+ {
+     if (GetAttributeOutTemplateValues_Release(value->ValueTemplate) != NMRPC_OK)
+     {
+        return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+     }
+     free((void*) value->ValueTemplate);
+     value->ValueTemplate = NULL;
+ }
+    return NMRPC_OK;
+}
+int GetAttributeOutTemplateValues_Serialize(cmp_ctx_t* ctx, GetAttributeOutTemplateValues* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = ArrayOfuint32_t_Serialize(ctx, &value->AttributeTypes);
+   if (result != NMRPC_OK) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = ArrayOfGetAttributeOutValue_Serialize(ctx, &value->Values);
+   if (result != NMRPC_OK) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+    return NMRPC_OK;
+}
+
+int GetAttributeOutTemplateValues_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, GetAttributeOutTemplateValues* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = ArrayOfuint32_t_Deserialize(ctx, NULL, &value->AttributeTypes);
+  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field AttributeTypes");
+
+  result = ArrayOfGetAttributeOutValue_Deserialize(ctx, NULL, &value->Values);
+  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Values");
+
+    return NMRPC_OK;
+}
+
+int GetAttributeOutTemplateValues_Release(GetAttributeOutTemplateValues* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  if(ArrayOfuint32_t_Release(&value->AttributeTypes) != NMRPC_OK)
+   {
+       return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+   }
+  if(ArrayOfGetAttributeOutValue_Release(&value->Values) != NMRPC_OK)
+   {
+       return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+   }
     return NMRPC_OK;
 }
 int GetAttributeOutValues_Serialize(cmp_ctx_t* ctx, GetAttributeOutValues* value)

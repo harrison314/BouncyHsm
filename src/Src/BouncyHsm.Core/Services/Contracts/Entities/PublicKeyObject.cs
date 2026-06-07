@@ -1,6 +1,7 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.X509;
+using System.Collections.ObjectModel;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
@@ -53,12 +54,11 @@ public abstract class PublicKeyObject : KeyObject
         set => this.values[CKA.CKA_TRUSTED] = AttributeValue.Create(value);
     }
 
-    //TODO: list of attribute array
-    //public byte[] CkaWrapTemplate
-    //{
-    //    get => this.values[CKA.CKA_WRAP_TEMPLATE].AsByteArray();
-    //    set => this.values[CKA.CKA_WRAP_TEMPLATE] = AttributeValue.Create(value);
-    //}
+    public IReadOnlyDictionary<CKA, IAttributeValue> CkaWrapTemplate
+    {
+        get => this.values[CKA.CKA_WRAP_TEMPLATE].AsTemplate();
+        set => this.values[CKA.CKA_WRAP_TEMPLATE] = AttributeValue.Create(value);
+    }
 
     public byte[] CkaPublicKeyInfo
     {
@@ -84,6 +84,7 @@ public abstract class PublicKeyObject : KeyObject
         this.CkaTrusted = false;
         this.CkaPublicKeyInfo = Array.Empty<byte>();
         this.CkaPublicCrc64Value = Array.Empty<byte>();
+        this.CkaWrapTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
     }
 
     internal PublicKeyObject(StorageObjectMemento memento)
