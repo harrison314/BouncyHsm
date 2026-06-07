@@ -91,6 +91,9 @@ public class HighLevelAttributeValue
                 }
                 break;
 
+            case AttrTypeTag.Template:
+                throw new NotSupportedException("Template is not supported in high-level attribute values.");
+
             default:
                 throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.");
         }
@@ -113,6 +116,7 @@ public class HighLevelAttributeValue
                 ?? throw new InvalidDataException("Attribute is not string.")),
             AttrTypeTag.UintArray => AttributeValue.Create(this.ValueAttributeArray
                 ?? throw new InvalidDataException("Attribute is not attribute array.")),
+            AttrTypeTag.Template => throw new NotSupportedException("Template is not supported in high-level attribute values."),
             _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported."),
         };
     }

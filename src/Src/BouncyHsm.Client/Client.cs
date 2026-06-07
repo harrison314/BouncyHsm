@@ -6184,6 +6184,9 @@ namespace BouncyHsm.Client
         [System.Runtime.Serialization.EnumMember(Value = @"UintArray")]
         UintArray = 6,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"Template")]
+        Template = 7,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
