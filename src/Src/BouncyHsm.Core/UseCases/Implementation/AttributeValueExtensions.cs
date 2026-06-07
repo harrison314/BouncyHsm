@@ -175,13 +175,25 @@ internal static class AttributeValueExtensions
 
                 case AttrTypeTag.ByteArray:
                     ReadOnlySpan<byte> byteArrayValue = value.AsByteArray();
-                    if (byteArrayValue.Length > 32)
+                    if (byteArrayValue.Length > (maxSize / 2))
                     {
-                        valueText = string.Concat(Convert.ToHexString(byteArrayValue[..32]), "...");
+                        valueText = string.Concat(Convert.ToHexString(byteArrayValue[..(maxSize / 2)]), "...");
                     }
                     else
                     {
                         valueText = Convert.ToHexString(byteArrayValue);
+                    }
+                    break;
+
+                case AttrTypeTag.String:
+                    string stringValue = value.AsString();
+                    if (stringValue.Length > maxSize)
+                    {
+                        valueText = string.Concat("\"", stringValue[..32].Replace("\"", "\\\""), "...\"");
+                    }
+                    else
+                    {
+                        valueText = string.Concat("\"", stringValue.Replace("\"", "\\\""), "...");
                     }
                     break;
 
