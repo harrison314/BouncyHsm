@@ -45,7 +45,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "CreateObject requires read-write session");
         }
 
-        Dictionary<CKA, IAttributeValue> keyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
+        IReadOnlyDictionary<CKA, IAttributeValue> keyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 
         KeyObject baseKeyObject = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession,
             p11Session,
@@ -57,9 +57,23 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, "Object can not enable drive.");
         }
 
+        IReadOnlyDictionary<CKA, IAttributeValue> extendedKeyTemplate = baseKeyObject switch
+        {
+            SecretKeyObject secretKeyObject => AttrObjectTemplateUtils.MergeTemplates(baseKeyObject,
+                secretKeyObject.CkaDeriveTemplate,
+                keyTemplate,
+                this.logger),
+            PrivateKeyObject privateKeyObject => AttrObjectTemplateUtils.MergeTemplates(baseKeyObject,
+               privateKeyObject.CkaDeriveTemplate,
+               keyTemplate,
+               this.logger),
+
+            _ => keyTemplate
+        };
+
         IDeriveKeyGenerator generator = await this.CreateDeriveKeyGenerator(request.Mechanism, memorySession, p11Session, cancellationToken);
         baseKeyObject.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
-        generator.Init(keyTemplate);
+        generator.Init(extendedKeyTemplate);
         SecretKeyObject keyObject = generator.Generate(baseKeyObject);
 
         keyObject.ReComputeAttributes();
