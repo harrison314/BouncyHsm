@@ -57,19 +57,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, "Object can not enable drive.");
         }
 
-        IReadOnlyDictionary<CKA, IAttributeValue> extendedKeyTemplate = baseKeyObject switch
-        {
-            SecretKeyObject secretKeyObject => AttrObjectTemplateUtils.MergeTemplates(baseKeyObject,
-                secretKeyObject.CkaDeriveTemplate,
-                keyTemplate,
-                this.logger),
-            PrivateKeyObject privateKeyObject => AttrObjectTemplateUtils.MergeTemplates(baseKeyObject,
-               privateKeyObject.CkaDeriveTemplate,
-               keyTemplate,
-               this.logger),
-
-            _ => keyTemplate
-        };
+        IReadOnlyDictionary<CKA, IAttributeValue> extendedKeyTemplate = this.ApplyDeriveTemplate(keyTemplate, baseKeyObject);
 
         IDeriveKeyGenerator generator = await this.CreateDeriveKeyGenerator(request.Mechanism, memorySession, p11Session, cancellationToken);
         baseKeyObject.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
@@ -100,6 +88,25 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             {
                 KeyHandle = handle
             }
+        };
+    }
+
+    private IReadOnlyDictionary<CKA, IAttributeValue> ApplyDeriveTemplate(IReadOnlyDictionary<CKA, IAttributeValue> keyTemplate, KeyObject baseKeyObject)
+    {
+        this.logger.LogTrace("Entering to ApplyDeriveTemplate.");
+
+        return baseKeyObject switch
+        {
+            SecretKeyObject secretKeyObject => AttrObjectTemplateUtils.MergeTemplates(baseKeyObject,
+                secretKeyObject.CkaDeriveTemplate,
+                keyTemplate,
+                this.logger),
+            PrivateKeyObject privateKeyObject => AttrObjectTemplateUtils.MergeTemplates(baseKeyObject,
+               privateKeyObject.CkaDeriveTemplate,
+               keyTemplate,
+               this.logger),
+
+            _ => keyTemplate
         };
     }
 
