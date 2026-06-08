@@ -88,7 +88,11 @@ public abstract class PrivateKeyObject : KeyObject
         set => this.values[CKA.CKA_ALWAYS_AUTHENTICATE] = AttributeValue.Create(value);
     }
 
-    //TODO: Implement CKA_PUBLIC_KEY_INFO as byte[]
+    public byte[] CkaPublicKeyInfo
+    {
+        get => this.values[CKA.CKA_PUBLIC_KEY_INFO].AsByteArray();
+        set => this.values[CKA.CKA_PUBLIC_KEY_INFO] = AttributeValue.Create(value);
+    }
 
     public IReadOnlyDictionary<CKA, IAttributeValue> CkaDeriveTemplate
     {
@@ -118,6 +122,7 @@ public abstract class PrivateKeyObject : KeyObject
         this.CkaWrapWithTrusted = false;
         this.CkaAlwaysAuthenticate = false;
         this.CkaPublicCrc64Value = Array.Empty<byte>();
+        this.CkaPublicKeyInfo = Array.Empty<byte>();
         this.CkaUnwrapTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
         this.CkaDeriveTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
     }
@@ -133,6 +138,7 @@ public abstract class PrivateKeyObject : KeyObject
         base.Validate();
 
         CryptoObjectValueChecker.CheckX509Name(CKA.CKA_SUBJECT, this.CkaSubject, true);
+        CryptoObjectValueChecker.CheckPublicSubjectKeyInfo(CKA.CKA_PUBLIC_KEY_INFO, this.CkaPublicKeyInfo, true);
     }
 
     public abstract Org.BouncyCastle.Crypto.AsymmetricKeyParameter GetPrivateKey();
