@@ -589,7 +589,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
         body.AppendLine("  }");
         body.AppendLine();
         body.AppendLine("  result = cmp_object_as_array(start_obj_ptr, &array_size);");
-        body.AppendLine($"  if (!result || array_size != {value.Fields.Count}) {{ NMRPC_LOG_ERR_TEXT(\"Incorect field count.\"); return NMRPC_DESERIALIZE_ERR; }}");
+        body.AppendLine($"  if (!result || array_size != {value.Fields.Count}) {{ NMRPC_LOG_ERR_TEXT(\"Incorrect field count.\"); return NMRPC_DESERIALIZE_ERR; }}");
         body.AppendLine();
 
 
