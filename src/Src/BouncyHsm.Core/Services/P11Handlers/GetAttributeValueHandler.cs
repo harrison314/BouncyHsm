@@ -160,6 +160,29 @@ public partial class GetAttributeValueHandler : IRpcRequestHandler<GetAttributeV
                 };
                 break;
 
+            case AttrTypeTag.CkAttributeArray:
+                IReadOnlyDictionary<CKA, IAttributeValue> templateValues = attributeValue.AsCkAttributeArray();
+                outValue.ValueType = NativeAttributeValue.AttrValueToNativeTypeCkAttributeArray;
+                outValue.ValueTemplate = new GetAttributeOutTemplateValues()
+                {
+                    AttributeTypes = new uint[templateValues.Count],
+                    Values = new GetAttributeOutValue[templateValues.Count]
+                };
+
+                int index = 0;
+                foreach ((CKA attributeType, IAttributeValue attributeNestedValue) in templateValues)
+                {
+                    GetAttributeOutValue getAttributeOutValue = new GetAttributeOutValue();
+                    getAttributeOutValue.ValueLen = CkSpecialUint.Create(attributeNestedValue.GuessSize());
+                    this.SetOutValue(ref getAttributeOutValue, attributeNestedValue);
+
+                    outValue.ValueTemplate.AttributeTypes[index] = (uint)attributeType;
+                    outValue.ValueTemplate.Values[index] = getAttributeOutValue;
+
+                    index++;
+                }
+                break;
+
             default:
                 throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.");
         }

@@ -146,6 +146,33 @@ internal static class AttrTypeUtils
         CKA lastCka = CKA.CKA_CLASS;
         try
         {
+            return BuildDictionaryTemplateInternal(template, ref lastCka);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
+                $"Duplicate attribute type {lastCka} in template.",
+                ex);
+        }
+    }
+
+    public static Dictionary<CKA, IAttributeValue> BuildDictionaryCkAray(AttrValueFromNative[] template)
+    {
+        CKA lastCka = CKA.CKA_CLASS;
+        try
+        {
+            return BuildDictionaryTemplateInternal(template, ref lastCka);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                $"Duplicate attribute type {lastCka} in CK_ATTRIBUTE array.",
+                ex);
+        }
+    }
+
+    private static Dictionary<CKA, IAttributeValue> BuildDictionaryTemplateInternal(AttrValueFromNative[] template, ref CKA lastCka)
+    {
             Dictionary<CKA, IAttributeValue> dictTemplate = new Dictionary<CKA, IAttributeValue>();
             foreach (AttrValueFromNative attr in template)
             {
@@ -155,11 +182,50 @@ internal static class AttrTypeUtils
 
             return dictTemplate;
         }
-        catch (ArgumentException ex)
+
+    public static bool Equals(IReadOnlyDictionary<CKA, IAttributeValue> a, IReadOnlyDictionary<CKA, IAttributeValue> b)
+    {
+        if (object.ReferenceEquals(a, b))
         {
-            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-                $"Duplicate attribute type {lastCka} in template.",
-                ex);
+            return true;
         }
+
+        if (a.Count != b.Count)
+        {
+            return false;
+        }
+
+        if (a.Count == 0)
+        {
+            return true;
+        }
+
+
+        foreach (KeyValuePair<CKA, IAttributeValue> kv in a)
+        {
+            if (!b.TryGetValue(kv.Key, out IAttributeValue? otherValue))
+            {
+                return false;
+            }
+
+            if (!kv.Value.Equals(otherValue))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static uint GuessSize(IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        uint valuesSize = 0;
+        foreach (IAttributeValue value in template.Values)
+        {
+            valuesSize += 4;
+            valuesSize += value.GuessSize();
+        }
+
+        return valuesSize;
     }
 }

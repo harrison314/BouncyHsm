@@ -34,24 +34,26 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        KeyObject wrappingKey = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.UnwrappingKeyHandle, cancellationToken);
+        KeyObject unwrappingKey = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.UnwrappingKeyHandle, cancellationToken);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_UNWRAP);
-        wrappingKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
+        unwrappingKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
         ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
-        Org.BouncyCastle.Crypto.IWrapper unwrapper = cipherWrapper.IntoUnwrapping(wrappingKey);
+        Org.BouncyCastle.Crypto.IWrapper unwrapper = cipherWrapper.IntoUnwrapping(unwrappingKey);
 
-        Dictionary<CKA, IAttributeValue> template = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
-        StorageObject storageObject = StorageObjectFactory.CreateEmpty(template);
-        foreach ((CKA attrType, IAttributeValue attrValue) in template)
+        IReadOnlyDictionary<CKA, IAttributeValue> template = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
+        IReadOnlyDictionary<CKA, IAttributeValue> extendedKeyTemplate = this.ApplyUnwrapTemplate(template, unwrappingKey);
+
+        StorageObject storageObject = StorageObjectFactory.CreateEmpty(extendedKeyTemplate);
+        foreach ((CKA attrType, IAttributeValue attrValue) in extendedKeyTemplate)
         {
             storageObject.SetValue(attrType, attrValue, false);
         }
 
         byte[] unwrappedKey = unwrapper.Unwrap(request.WrappedKeyData, 0, request.WrappedKeyData.Length);
-        this.SetKeyValues(storageObject, unwrappedKey, (CKM)request.Mechanism.MechanismType, template);
+        this.SetKeyValues(storageObject, unwrappedKey, (CKM)request.Mechanism.MechanismType, extendedKeyTemplate);
 
         storageObject.ReComputeAttributes();
         storageObject.Validate();
@@ -79,7 +81,26 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         };
     }
 
-    private void SetKeyValues(StorageObject storageObject, byte[] unwrappedKey, CKM mechanism, Dictionary<CKA, IAttributeValue> template)
+    private IReadOnlyDictionary<CKA, IAttributeValue> ApplyUnwrapTemplate(IReadOnlyDictionary<CKA, IAttributeValue> template, KeyObject unwrappingKey)
+    {
+        this.logger.LogTrace("Entering to ApplyUnwrapTemplate.");
+
+        return unwrappingKey switch
+        {
+            SecretKeyObject secretKeyObject => AttrObjectTemplateUtils.MergeTemplates(unwrappingKey,
+                secretKeyObject.CkaUnwrapTemplate,
+                template,
+                this.logger),
+            PrivateKeyObject privateKeyObject => AttrObjectTemplateUtils.MergeTemplates(unwrappingKey,
+               privateKeyObject.CkaUnwrapTemplate,
+               template,
+               this.logger),
+
+            _ => template
+        };
+    }
+
+    private void SetKeyValues(StorageObject storageObject, byte[] unwrappedKey, CKM mechanism, IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
         this.logger.LogTrace("Entering to SetKeyValues.");
 
@@ -159,7 +180,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         return privateKeyObject;
     }
 
-    private byte[] PadSecretKeyByTemplate(byte[] unwrappedKey, CKM mechanismType, Dictionary<CKA, IAttributeValue> template)
+    private byte[] PadSecretKeyByTemplate(byte[] unwrappedKey, CKM mechanismType, IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
         this.logger.LogTrace("Entering to PadSecretKeyByTemplate.");
 

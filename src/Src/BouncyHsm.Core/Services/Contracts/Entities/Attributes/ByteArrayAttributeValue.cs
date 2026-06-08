@@ -20,7 +20,7 @@ internal class ByteArrayAttributeValue : IAttributeValue
 
     public bool AsBool()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.ByteArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
     public byte[] AsByteArray()
@@ -30,22 +30,27 @@ internal class ByteArrayAttributeValue : IAttributeValue
 
     public string AsString()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.ByteArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
     public uint AsUint()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.ByteArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
     public CkDate AsDate()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.ByteArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
     public uint[] AsUintArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.ByteArray);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
+    }
+
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
+    {
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.ByteArray);
     }
 
     public override string ToString()

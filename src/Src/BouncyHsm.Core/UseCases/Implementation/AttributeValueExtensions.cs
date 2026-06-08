@@ -18,11 +18,12 @@ internal static class AttributeValueExtensions
             AttrTypeTag.String => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsString())),
             AttrTypeTag.DateTime => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsDate().ToString())),
             AttrTypeTag.UintArray => UintArrayToHex(attributeValue.AsUintArray()),
+            AttrTypeTag.CkAttributeArray => string.Empty, //TODO: check is empty or not
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
         };
     }
 
-    public static string? ToPrintable(this IAttributeValue attributeValue, CKA attributeType, Dictionary<CKA, IAttributeValue> memenoto)
+    public static string? ToPrintable(this IAttributeValue attributeValue, CKA attributeType, IReadOnlyDictionary<CKA, IAttributeValue> memenoto)
     {
         if (attributeType == CKA.CKA_PARAMETER_SET)
         {
@@ -39,6 +40,7 @@ internal static class AttributeValueExtensions
             AttrTypeTag.String => attributeValue.AsString(),
             AttrTypeTag.DateTime => attributeValue.AsDate().ToString(),
             AttrTypeTag.UintArray => UintArrayToString(attributeType, attributeValue.AsUintArray()),
+            AttrTypeTag.CkAttributeArray => GetCkAttributeArrayString(attributeValue.AsCkAttributeArray()),
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
         };
     }
@@ -102,7 +104,7 @@ internal static class AttributeValueExtensions
         return sb.ToString();
     }
 
-    private static string ParameterSetToString(IAttributeValue attributeValue, Dictionary<CKA, IAttributeValue> memenoto)
+    private static string ParameterSetToString(IAttributeValue attributeValue, IReadOnlyDictionary<CKA, IAttributeValue> memenoto)
     {
         if (memenoto.TryGetValue(CKA.CKA_KEY_TYPE, out IAttributeValue? keyPyteAttr))
         {
@@ -154,5 +156,67 @@ internal static class AttributeValueExtensions
             || (ch == '\t')
             || (ch == '\r')
             || (ch == '\n');
+    }
+
+    private static string GetCkAttributeArrayString(IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        const int maxSize = 64;
+
+        StringBuilder sb = new StringBuilder();
+        foreach ((CKA cka, IAttributeValue value) in template)
+        {
+            string? valueText = null;
+
+            switch (value.TypeTag)
+            {
+                case AttrTypeTag.CkAttributeArray:
+                    valueText = $"CK_ATTRIBUTE[{value.AsCkAttributeArray().Count}]";
+                    break;
+
+                case AttrTypeTag.ByteArray:
+                    ReadOnlySpan<byte> byteArrayValue = value.AsByteArray();
+                    if (byteArrayValue.Length > (maxSize / 2))
+                    {
+                        valueText = string.Concat(Convert.ToHexString(byteArrayValue[..(maxSize / 2)]), "...");
+                    }
+                    else
+                    {
+                        valueText = Convert.ToHexString(byteArrayValue);
+                    }
+                    break;
+
+                case AttrTypeTag.String:
+                    string stringValue = value.AsString();
+                    if (stringValue.Length > maxSize)
+                    {
+                        valueText = string.Concat("\"", stringValue[..32].Replace("\"", "\\\""), "...\"");
+                    }
+                    else
+                    {
+                        valueText = string.Concat("\"", stringValue.Replace("\"", "\\\""), "...");
+                    }
+                    break;
+
+                default:
+                    valueText = value.ToPrintable(cka, template);
+                    if (valueText == null)
+                    {
+                        valueText = string.Empty;
+                    }
+                    else if (valueText.Length > maxSize)
+                    {
+                        valueText = valueText[..maxSize];
+                    }
+                    break;
+            }
+
+            if (sb.Length > 0)
+            {
+                sb.Append(", ");
+            }
+            sb.AppendFormat("{0}: {1}", cka, valueText);
+        }
+
+        return sb.ToString();
     }
 }

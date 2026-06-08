@@ -42,4 +42,10 @@ public static class AttributeValue
     {
         return new UintArrayAttributeValue(value);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IAttributeValue Create(IReadOnlyDictionary<CKA, IAttributeValue> value)
+    {
+        return (value.Count > 0) ? new CkAttributeArrayValue(value) : CkAttributeArrayValue.Empty;
+    }
 }

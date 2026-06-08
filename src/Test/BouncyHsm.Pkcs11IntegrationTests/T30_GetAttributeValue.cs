@@ -3,6 +3,7 @@ using Net.Pkcs11Interop.HighLevelAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -280,4 +281,177 @@ public class T30_GetAttributeValue
     //{
     //    throw new NotImplementedException();
     //}
+
+    [TestMethod]
+    public void GetAttributeValue_EcKeyEmptyTemplates_Success()
+    {
+        byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        IObjectHandle? publicKey = null;
+        IObjectHandle? privateKey = null;
+        try
+        {
+            List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+            {
+                factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, namedCurveOid),
+            };
+
+            List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+            {
+                factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            };
+
+            using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA_KEY_PAIR_GEN);
+
+            session.GenerateKeyPair(mechanism,
+                publicKeyAttributes,
+                privateKeyAttributes,
+                out publicKey,
+                out privateKey);
+
+            List<IObjectAttribute> returnedValues = session.GetAttributeValue(privateKey, new List<CKA>() { CKA.CKA_UNWRAP_TEMPLATE });
+            IObjectAttribute unwrapTemplate = returnedValues.Single();
+            List<IObjectAttribute> unwrapTemplateValues = unwrapTemplate.GetValueAsObjectAttributeList();
+            if (unwrapTemplateValues != null)
+            {
+                Assert.IsEmpty(unwrapTemplateValues);
+            }
+        }
+        finally
+        {
+            if (publicKey != null)
+            {
+                session.DestroyObject(publicKey);
+            }
+
+            if (privateKey != null)
+            {
+                session.DestroyObject(privateKey);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void GetAttributeValue_EcKeyTemplates_Success()
+    {
+        byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        IObjectHandle? publicKey = null;
+        IObjectHandle? privateKey = null;
+        try
+        {
+            List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+            {
+                factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_EC_PARAMS, namedCurveOid),
+            };
+
+            List<IObjectAttribute> newTemplate = new List<IObjectAttribute>()
+            {
+                factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_URL, "http://test.eu/"),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (ulong)13),
+            };
+
+            List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+            {
+                factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP_TEMPLATE, newTemplate)
+            };
+
+            using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA_KEY_PAIR_GEN);
+
+            session.GenerateKeyPair(mechanism,
+                publicKeyAttributes,
+                privateKeyAttributes,
+                out publicKey,
+                out privateKey);
+
+            List<IObjectAttribute> returnedValues = session.GetAttributeValue(privateKey, new List<CKA>() { CKA.CKA_UNWRAP_TEMPLATE });
+            IObjectAttribute unwrapTemplate = returnedValues.Single();
+            List<IObjectAttribute> unwrapTemplateValues = unwrapTemplate.GetValueAsObjectAttributeList();
+
+            Assert.AreEqual(newTemplate.Count, unwrapTemplateValues.Count);
+            Assert.AreEqual(true, unwrapTemplateValues.Single(t => t.Type == (ulong)CKA.CKA_SENSITIVE).GetValueAsBool(), "Bad value in CKA_SENSITIVE");
+            Assert.AreEqual(false, unwrapTemplateValues.Single(t => t.Type == (ulong)CKA.CKA_EXTRACTABLE).GetValueAsBool(), "Bad value in CKA_EXTRACTABLE");
+            Assert.AreEqual(13UL, unwrapTemplateValues.Single(t => t.Type == (ulong)CKA.CKA_VALUE_LEN).GetValueAsUlong(), "Bad value in CKA_VALUE_LEN");
+        }
+        finally
+        {
+            if (publicKey != null)
+            {
+                session.DestroyObject(publicKey);
+            }
+
+            if (privateKey != null)
+            {
+                session.DestroyObject(privateKey);
+            }
+        }
+    }
+
+
 }

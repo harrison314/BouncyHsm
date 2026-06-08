@@ -19,7 +19,7 @@ internal class StringAttributeValue : IAttributeValue
 
     public bool AsBool()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.String);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
     }
 
     public byte[] AsByteArray()
@@ -34,17 +34,22 @@ internal class StringAttributeValue : IAttributeValue
 
     public uint AsUint()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.String);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
     }
 
     public CkDate AsDate()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.String);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
     }
 
     public uint[] AsUintArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.String);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
+    }
+
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
+    {
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.String);
     }
 
     public override string ToString()

@@ -26,27 +26,32 @@ internal class BoolAttributeValue : IAttributeValue
 
     public byte[] AsByteArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }
 
     public string AsString()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }
 
     public uint AsUint()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }
 
     public CkDate AsDate()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }
 
     public uint[] AsUintArray()
     {
-        throw new InvalidATtributeTypeCastException(AttrTypeTag.CkBool);
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
+    }
+
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
+    {
+        throw new InvalidAttributeTypeCastException(AttrTypeTag.CkBool);
     }
 
     public override string ToString()

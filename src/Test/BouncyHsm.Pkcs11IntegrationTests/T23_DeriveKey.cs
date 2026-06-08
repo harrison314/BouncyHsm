@@ -419,6 +419,146 @@ public class T23_DeriveKey
         session.DestroyObject(handle);
     }
 
+    [TestMethod]
+    [DataRow(true, true)]
+    [DataRow(true, false)]
+    [DataRow(false, true)]
+    [DataRow(false, false)]
+    public void Derive_WithCorrectDeriveTemplate_Success(bool verify, bool modifiable)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+        List<IObjectAttribute> deriveTemplateAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, verify),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, modifiable),
+        };
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE_TEMPLATE, deriveTemplateAttributes),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 }),
+        };
+
+        IObjectHandle handle = session.CreateObject(keyAttributes);
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+        };
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_SHA256_KEY_DERIVATION);
+
+        IObjectHandle derivedHandle = session.DeriveKey(mechanism, handle, newKeyAttributes);
+
+        List<IObjectAttribute> storedAttributes = session.GetAttributeValue(derivedHandle, new List<CKA>()
+        {
+            CKA.CKA_VERIFY,
+            CKA.CKA_MODIFIABLE
+        });
+
+        Assert.AreEqual(verify, storedAttributes[0].GetValueAsBool(), "Mismatch CKA_VERIFY");
+        Assert.AreEqual(modifiable, storedAttributes[1].GetValueAsBool(), "Mismatch CKA_MODIFIABLE");
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
+    [TestMethod]
+    public void Derive_WithCorrectDeriveTemplate_Throws()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+        List<IObjectAttribute> deriveTemplateAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, false),
+        };
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE_TEMPLATE, deriveTemplateAttributes),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 }),
+        };
+
+        IObjectHandle handle = session.CreateObject(keyAttributes);
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+        };
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_SHA256_KEY_DERIVATION);
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.DeriveKey(mechanism, handle, newKeyAttributes));
+        Assert.AreEqual(CKR.CKR_TEMPLATE_INCONSISTENT, ex.RV);
+    }
+
     private IObjectHandle CreateSecret(ISession session, byte[] data)
     {
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

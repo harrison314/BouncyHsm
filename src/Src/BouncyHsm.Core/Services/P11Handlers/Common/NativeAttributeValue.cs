@@ -20,6 +20,7 @@ internal class NativeAttributeValue : IAttributeValue
     public const int AttrValueFromNativeTypeCkUint = 0x04;
     public const int AttrValueFromNativeTypeCkDate = 0x08;
     public const int AttrValueFromNativeTypeUintArray = 0x10;
+    public const int AttrValueFromNativeTypeCkAttributeArray = 0x20;
 
     public const int AttrValueToNativeTypeVoid = 0x00;
     public const int AttrValueToNativeTypeByteArray = 0x01;
@@ -27,6 +28,7 @@ internal class NativeAttributeValue : IAttributeValue
     public const int AttrValueToNativeTypeCkUint = 0x04;
     public const int AttrValueToNativeTypeCkDate = 0x08;
     public const int AttrValueToNativeTypeUintArray = 0x10;
+    public const int AttrValueToNativeTypeCkAttributeArray = 0x20;
 
     public AttrTypeTag TypeTag
     {
@@ -79,17 +81,28 @@ internal class NativeAttributeValue : IAttributeValue
         this.CheckValueType(AttrTypeTag.UintArray);
         if (this.value.ValueUintArray == null)
         {
-            throw new InvalidATtributeTypeCastException($"Property {nameof(this.value.ValueUintArray)} is null");
+            throw new InvalidAttributeTypeCastException($"Property {nameof(this.value.ValueUintArray)} is null");
         }
 
         return this.value.ValueUintArray.Array;
+    }
+
+    public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
+    {
+        this.CheckValueType(AttrTypeTag.CkAttributeArray);
+        if (this.value.ValueTemplate == null)
+        {
+            throw new InvalidAttributeTypeCastException($"Property {nameof(this.value.ValueTemplate)} is null");
+        }
+
+        return AttrTypeUtils.BuildDictionaryCkAray(this.value.ValueTemplate.Value);
     }
 
     private void CheckValueType(AttrTypeTag tag, [CallerMemberName] string fnName = "")
     {
         if (this.TypeTag != tag)
         {
-            throw new InvalidATtributeTypeCastException(tag, fnName);
+            throw new InvalidAttributeTypeCastException(tag, fnName);
         }
     }
 
@@ -97,22 +110,27 @@ internal class NativeAttributeValue : IAttributeValue
     {
         if (typeTag == AttrTypeTag.CkBool && !((value.ValueTypeHint & AttrValueFromNativeTypeBool) == AttrValueFromNativeTypeBool))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type BOOL - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type BOOL - mishmash type.");
         }
 
         if (typeTag == AttrTypeTag.CkUint && !((value.ValueTypeHint & AttrValueFromNativeTypeCkUint) == AttrValueFromNativeTypeCkUint))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UINT - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UINT - mishmash type.");
         }
 
         if (typeTag == AttrTypeTag.DateTime && !((value.ValueTypeHint & AttrValueFromNativeTypeCkDate) == AttrValueFromNativeTypeCkDate))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type CkDate - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type CkDate - mishmash type.");
         }
 
         if (typeTag == AttrTypeTag.UintArray && !((value.ValueTypeHint & AttrValueFromNativeTypeUintArray) == AttrValueFromNativeTypeUintArray))
         {
-            throw new InvalidATtributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UintArray - mishmash type.");
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type UintArray - mishmash type.");
+        }
+
+        if (typeTag == AttrTypeTag.CkAttributeArray && !((value.ValueTypeHint & AttrValueFromNativeTypeCkAttributeArray) == AttrValueFromNativeTypeCkAttributeArray))
+        {
+            throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type Template - mishmash type.");
         }
     }
 
@@ -131,6 +149,7 @@ internal class NativeAttributeValue : IAttributeValue
             AttrTypeTag.String => string.Equals(this.AsString(), other.AsString(), StringComparison.OrdinalIgnoreCase),
             AttrTypeTag.DateTime => this.AsDate().Equals(other.AsDate()),
             AttrTypeTag.UintArray => this.AsUintArray().SequenceEqual(other.AsUintArray()),
+            AttrTypeTag.CkAttributeArray => AttrTypeUtils.Equals(this.AsCkAttributeArray(), other.AsCkAttributeArray()),
             _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported.")
         };
     }
@@ -155,6 +174,7 @@ internal class NativeAttributeValue : IAttributeValue
             AttrTypeTag.DateTime => this.AsDate().HasValue ? 8U : 0U,
             AttrTypeTag.String => (uint)Encoding.UTF8.GetByteCount(this.AsString()),
             AttrTypeTag.UintArray => ((uint)this.AsUintArray().Length) * 4U,
+            AttrTypeTag.CkAttributeArray => AttrTypeUtils.GuessSize(this.AsCkAttributeArray()),
             _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported.")
         };
     }
@@ -169,6 +189,7 @@ internal class NativeAttributeValue : IAttributeValue
             AttrTypeTag.String => $"`{this.AsString()}`",
             AttrTypeTag.DateTime => this.AsDate().ToString(),
             AttrTypeTag.UintArray => $"[{string.Join(", ", this.AsUintArray())}]",
+            AttrTypeTag.CkAttributeArray => $"Template with {this.value.ValueTemplate!.Value.Length} items",
             _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported.")
         };
         return $"NativeAttributeValue: {this.TypeTag} - {value}";

@@ -2,20 +2,20 @@
 
 namespace BouncyHsm.Core.Services.Contracts;
 
-public class InvalidATtributeTypeCastException : ApplicationException
+public class InvalidAttributeTypeCastException : ApplicationException
 {
-    public InvalidATtributeTypeCastException()
+    public InvalidAttributeTypeCastException()
     {
 
     }
 
-    public InvalidATtributeTypeCastException(AttrTypeTag exceptedType, [CallerMemberName] string fnName = "")
+    public InvalidAttributeTypeCastException(AttrTypeTag exceptedType, [CallerMemberName] string fnName = "")
         : base($"Cannot call convert value type {exceptedType} using method {fnName}.")
     {
 
     }
 
-    public InvalidATtributeTypeCastException(string message)
+    public InvalidAttributeTypeCastException(string message)
         : base(message)
     {
 

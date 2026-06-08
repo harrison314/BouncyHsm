@@ -1,5 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts.P11;
 using System;
+using System.Collections.ObjectModel;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
@@ -88,19 +89,23 @@ public abstract class SecretKeyObject : KeyObject
         set => this.values[CKA.CKA_TRUSTED] = AttributeValue.Create(value);
     }
 
-    //TODO: list of attribute array
-    //public byte[] CkaWrapTemplate
-    //{
-    //    get => this.values[CKA.CKA_WRAP_TEMPLATE].AsByteArray();
-    //    set => this.values[CKA.CKA_WRAP_TEMPLATE] = AttributeValue.Create(value);
-    //}
+    public IReadOnlyDictionary<CKA, IAttributeValue> CkaWrapTemplate
+    {
+        get => this.values[CKA.CKA_WRAP_TEMPLATE].AsCkAttributeArray();
+        set => this.values[CKA.CKA_WRAP_TEMPLATE] = AttributeValue.Create(value);
+    }
 
-    //TODO: Implement uint array attribute
-    //public byte[] CkaUnwrapTemplate
-    //{
-    //    get => this.values[CKA.CKA_UNWRAP_TEMPLATE].AsByteArray();
-    //    set => this.values[CKA.CKA_UNWRAP_TEMPLATE] = AttributeValue.Create(value);
-    //}
+    public IReadOnlyDictionary<CKA, IAttributeValue> CkaUnwrapTemplate
+    {
+        get => this.values[CKA.CKA_UNWRAP_TEMPLATE].AsCkAttributeArray();
+        set => this.values[CKA.CKA_UNWRAP_TEMPLATE] = AttributeValue.Create(value);
+    }
+
+    public IReadOnlyDictionary<CKA, IAttributeValue> CkaDeriveTemplate
+    {
+        get => this.values[CKA.CKA_DERIVE_TEMPLATE].AsCkAttributeArray();
+        set => this.values[CKA.CKA_DERIVE_TEMPLATE] = AttributeValue.Create(value);
+    }
 
     protected SecretKeyObject(CKK keyType, CKM genMechanism)
         : base(keyType, genMechanism)
@@ -118,6 +123,9 @@ public abstract class SecretKeyObject : KeyObject
         this.CkaCheckValue = Array.Empty<byte>();
         this.CkaWrapWithTrusted = false;
         this.CkaTrusted = false;
+        this.CkaWrapTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
+        this.CkaUnwrapTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
+        this.CkaDeriveTemplate = ReadOnlyDictionary<CKA, IAttributeValue>.Empty;
     }
 
     protected SecretKeyObject(StorageObjectMemento memento)

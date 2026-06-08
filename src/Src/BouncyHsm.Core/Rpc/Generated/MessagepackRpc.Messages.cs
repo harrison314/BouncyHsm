@@ -1530,6 +1530,26 @@ public partial class AttrValueFromNative
         set;
     }
 
+    [Key(7)]
+    public AttrTemplateValueFromNative? ValueTemplate
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+public partial class AttrTemplateValueFromNative
+{
+    [Key(0)]
+    public AttrValueFromNative[] Value
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<AttrValueFromNative>();
+
 }
 
 [MessagePackObject]
@@ -1919,6 +1939,33 @@ public partial class GetAttributeOutValue
         get;
         set;
     }
+
+    [Key(7)]
+    public GetAttributeOutTemplateValues? ValueTemplate
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+public partial class GetAttributeOutTemplateValues
+{
+    [Key(0)]
+    public uint[] AttributeTypes
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<uint>();
+
+    [Key(1)]
+    public GetAttributeOutValue[] Values
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<GetAttributeOutValue>();
 
 }
 
