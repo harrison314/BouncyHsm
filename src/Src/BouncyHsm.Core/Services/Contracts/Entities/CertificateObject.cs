@@ -90,7 +90,7 @@ public abstract class CertificateObject : StorageObject
 
         CryptoObjectValueChecker.CheckIsCheckValue(CKA.CKA_CHECK_VALUE, this.CkaCheckValue);
         CryptoObjectValueChecker.CheckPublicSubjectKeyInfo(CKA.CKA_PUBLIC_KEY_INFO, this.CkaPublicKeyInfo, true);
-        CryptoObjectValueChecker.CheckX509Name(CKA.CKA_PUBLIC_KEY_INFO, this.CkaPublicKeyInfo, true);
+        CryptoObjectValueChecker.CheckX509Name(CKA.CKA_SUBJECT, this.CkaPublicKeyInfo, true);
         CryptoObjectValueChecker.CheckStartEndDate(this.CkaStartDate, this.CkaEndDate);
     }
 }
