@@ -67,7 +67,7 @@ public class T21_VerifyRsa
 
         session.Verify(mechanism, pubKey, dataToSign, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(isValid, "Signature must be valid");
 
         unchecked
         {
@@ -111,7 +111,7 @@ public class T21_VerifyRsa
 
     //    session.Verify(mechanism, pubKey, dataToSign, signature, out bool isValid);
 
-    //    Assert.IsTrue(isValid, "Signature must by valid");
+    //    Assert.IsTrue(isValid, "Signature must be valid");
 
     //    unchecked
     //    {
@@ -155,7 +155,7 @@ public class T21_VerifyRsa
 
         session.Verify(mechanism, pubKey, dataToSign, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(isValid, "Signature must be valid");
 
         unchecked
         {
@@ -197,7 +197,7 @@ public class T21_VerifyRsa
 
         session.Verify(mechanism, publicKey, dataToSign, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(isValid, "Signature must be valid");
 
         unchecked
         {
@@ -241,7 +241,7 @@ public class T21_VerifyRsa
 
         session.Verify(mechanism, publicKey, hash, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(isValid, "Signature must be valid");
 
         unchecked
         {
@@ -283,7 +283,7 @@ public class T21_VerifyRsa
 
         session.Verify(mechanism, publicKey, dataToSign, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(isValid, "Signature must be valid");
 
         unchecked
         {
@@ -325,7 +325,7 @@ public class T21_VerifyRsa
 
         session.Verify(mechanism, publicKey, dataToSign, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must by valid");
+        Assert.IsTrue(isValid, "Signature must be valid");
 
         unchecked
         {

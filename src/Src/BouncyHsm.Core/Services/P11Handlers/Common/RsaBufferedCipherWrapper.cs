@@ -30,7 +30,7 @@ internal class RsaBufferedCipherWrapper : ICipherWrapper
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_DECRYPT to true.", keyObject.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The decryption operation is not allowed because object is not authorized to decrypt (CKA_DECRYPT must by true).");
+                    "The decryption operation is not allowed because object is not authorized to decrypt (CKA_DECRYPT must be true).");
             }
 
             this.bufferedCipher.Init(false, rsaPrivateKeyObject.GetPrivateKey());
@@ -53,7 +53,7 @@ internal class RsaBufferedCipherWrapper : ICipherWrapper
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_ENCRYPT to true.", keyObject.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The encryption operation is not allowed because object is not authorized to encrypt (CKA_ENCRYPT must by true).");
+                    "The encryption operation is not allowed because object is not authorized to encrypt (CKA_ENCRYPT must be true).");
             }
 
             this.bufferedCipher.Init(true, rsaPublicKeyObject.GetPublicKey());
@@ -76,7 +76,7 @@ internal class RsaBufferedCipherWrapper : ICipherWrapper
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_UNWRAP to true.", keyObject.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The operation is not allowed because object is not authorized to decrypt (CKA_UNWRAP must by true).");
+                    "The operation is not allowed because object is not authorized to decrypt (CKA_UNWRAP must be true).");
             }
 
             BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, false);
@@ -100,7 +100,7 @@ internal class RsaBufferedCipherWrapper : ICipherWrapper
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_WRAP to true.", keyObject.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The operation is not allowed because object is not authorized to encrypt (CKA_WRAP must by true).");
+                    "The operation is not allowed because object is not authorized to encrypt (CKA_WRAP must be true).");
             }
 
             BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, false);

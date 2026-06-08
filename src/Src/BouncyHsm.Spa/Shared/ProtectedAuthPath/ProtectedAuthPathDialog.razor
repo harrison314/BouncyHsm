@@ -103,7 +103,7 @@
     private async Task SendPin()
     {
         if (this.activeLogSession == null) throw new InvalidOperationException("Log session must be set.");
-        if (this.hubConnection == null) throw new InvalidProgramException("Hub must by connected.");
+        if (this.hubConnection == null) throw new InvalidProgramException("Hub must be connected.");
 
         await this.hubConnection.InvokeAsync("SetLogin", this.activeLogSession, this.pin);
     }
@@ -119,7 +119,7 @@
     private async Task SendCancel()
     {
         if (this.activeLogSession == null) throw new InvalidOperationException("Log session must be set.");
-        if (this.hubConnection == null) throw new InvalidProgramException("Hub must by connected.");
+        if (this.hubConnection == null) throw new InvalidProgramException("Hub must be connected.");
 
         await this.hubConnection.InvokeAsync("CancellLogin", this.activeLogSession);
     }

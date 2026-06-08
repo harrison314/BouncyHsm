@@ -104,7 +104,7 @@ internal abstract class BufferedCipherDeriveKeyGenerator<TKeyObject> : IDeriveKe
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_DERVIVE to true.", keyObject.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The derive operation is not allowed because object is not authorized to derive key (CKA_DERVIVE must by true).");
+                    "The derive operation is not allowed because object is not authorized to derive key (CKA_DERVIVE must be true).");
             }
 
             if (this.iv == null)
@@ -139,7 +139,7 @@ internal abstract class BufferedCipherDeriveKeyGenerator<TKeyObject> : IDeriveKe
         if ((CKO)template.GetAttributeUint(CKA.CKA_CLASS, (uint)CKO.CKO_SECRET_KEY) != CKO.CKO_SECRET_KEY)
         {
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-              $"Attribute {CKA.CKA_CLASS} must by {CKO.CKO_SECRET_KEY}.");
+              $"Attribute {CKA.CKA_CLASS} must be {CKO.CKO_SECRET_KEY}.");
         }
     }
 

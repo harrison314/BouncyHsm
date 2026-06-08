@@ -16,7 +16,7 @@ internal static class TemplateExtensions
         {
             if (value.TypeTag != AttrTypeTag.CkUint)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must by CK_UINT.");
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must be CK_UINT.");
             }
 
             return value.AsUint();
@@ -31,7 +31,7 @@ internal static class TemplateExtensions
         {
             if (value.TypeTag != AttrTypeTag.ByteArray)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must by byte array.");
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must be byte array.");
             }
 
             return value.AsByteArray();
@@ -46,7 +46,7 @@ internal static class TemplateExtensions
         {
             if (value.TypeTag != AttrTypeTag.ByteArray)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must by byte array.");
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must be byte array.");
             }
 
             return value.AsByteArray();
@@ -61,7 +61,7 @@ internal static class TemplateExtensions
         {
             if (value.TypeTag != AttrTypeTag.CkUint)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must by CK_UINT.");
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Attribute {attributeType} must be CK_UINT.");
             }
 
             return value.AsUint();

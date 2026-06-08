@@ -142,7 +142,7 @@ internal static class CryptoObjectValueChecker
             if (start.Value > end.Value)
             {
                 throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                  $"Attribute {CKA.CKA_START_DATE} must by less than {CKA.CKA_END_DATE}.");
+                  $"Attribute {CKA.CKA_START_DATE} must be less than {CKA.CKA_END_DATE}.");
             }
         }
     }
@@ -154,7 +154,7 @@ internal static class CryptoObjectValueChecker
         if (data.Length != 0 && data.Length != 3)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                  $"Attribute {attributeType} must by empty or 3 byte length. (Value: {EscapeBytes(data)})");
+                  $"Attribute {attributeType} must be empty or 3 byte length. (Value: {EscapeBytes(data)})");
         }
     }
 
@@ -209,7 +209,7 @@ internal static class CryptoObjectValueChecker
             if (mustByPositive && value.Value.SignValue < 0)
             {
                 throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                   $"Attribute {attributeType} must by positive DER integer. (Value: {EscapeBytes(data)})");
+                   $"Attribute {attributeType} must be positive DER integer. (Value: {EscapeBytes(data)})");
             }
         }
         catch (RpcPkcs11Exception)

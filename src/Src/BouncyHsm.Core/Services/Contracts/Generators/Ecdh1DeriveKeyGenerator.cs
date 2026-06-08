@@ -214,7 +214,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         if ((CKO)template.GetAttributeUint(CKA.CKA_CLASS, (uint)CKO.CKO_SECRET_KEY) != CKO.CKO_SECRET_KEY)
         {
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-              $"Attribute {CKA.CKA_CLASS} must by {CKO.CKO_SECRET_KEY}.");
+              $"Attribute {CKA.CKA_CLASS} must be {CKO.CKO_SECRET_KEY}.");
         }
 
         if (!template.ContainsKey(CKA.CKA_KEY_TYPE) && !template.ContainsKey(CKA.CKA_VALUE_LEN))

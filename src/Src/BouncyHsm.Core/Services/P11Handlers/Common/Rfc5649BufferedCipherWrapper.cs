@@ -74,7 +74,7 @@ internal class Rfc5649BufferedCipherWrapper : ICipherWrapper
             {
                 this.logger.LogError("Object with id {ObjectId} can not set {operation} to true.", keyObject.Id, operation);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    $"The operation is not allowed because object is not authorized to encrypt ({operation} must by true).");
+                    $"The operation is not allowed because object is not authorized to encrypt ({operation} must be true).");
             }
 
             return new KeyParameter(aesKeyObject.GetSecret());

@@ -15,7 +15,7 @@ public static class HeadEncoder
 
         if (input[1] != 0)
         {
-            throw new ArgumentException("Protocol version must by 0.", nameof(input));
+            throw new ArgumentException("Protocol version must be 0.", nameof(input));
         }
 
 

@@ -30,7 +30,7 @@ internal class RsaWrapperSignWithRecover : IWrapperSignWithRecover
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_SIGN_RECOVER to true.", rsaPrivateKeyObject.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The signature operation is not allowed because object is not authorized to sign (CKA_SIGN_RECOVER must by true).");
+                    "The signature operation is not allowed because object is not authorized to sign (CKA_SIGN_RECOVER must be true).");
             }
 
             this.signer.Init(true, rsaPrivateKeyObject.GetPrivateKey());
@@ -53,7 +53,7 @@ internal class RsaWrapperSignWithRecover : IWrapperSignWithRecover
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_VERIFY_RECOVER to true.", rsaPublicKeyObject.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The verification signature with recover operation is not allowed because object is not authorized to verify (CKA_VERIFY_RECOVER must by true).");
+                    "The verification signature with recover operation is not allowed because object is not authorized to verify (CKA_VERIFY_RECOVER must be true).");
             }
 
             this.signer.Init(false, rsaPublicKeyObject.GetPublicKey());

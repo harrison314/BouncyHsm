@@ -118,7 +118,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
         };
     }
 
-    private StorageObject SetKeyValueForSecretKeyObject(byte[] unwrappedKey, CKM mechanism, Dictionary<CKA, IAttributeValue> template, bool useExplicitPading, SecretKeyObject secretKeyObject)
+    private StorageObject SetKeyValueForSecretKeyObject(byte[] unwrappedKey, CKM mechanism, IReadOnlyDictionary<CKA, IAttributeValue> template, bool useExplicitPading, SecretKeyObject secretKeyObject)
     {
         this.logger.LogTrace("Unwpraping secret of type {CkaKeyType}", secretKeyObject.CkaKeyType);
 

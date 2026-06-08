@@ -77,13 +77,13 @@ internal class ChaCha20KeyGenerator : IKeyGenerator
         if ((CKO)template.GetAttributeUint(CKA.CKA_CLASS, (uint)CKO.CKO_SECRET_KEY) != CKO.CKO_SECRET_KEY)
         {
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-              $"Attribute {CKA.CKA_CLASS} must by {CKO.CKO_SECRET_KEY}.");
+              $"Attribute {CKA.CKA_CLASS} must be {CKO.CKO_SECRET_KEY}.");
         }
 
         if ((CKK)template.GetAttributeUint(CKA.CKA_KEY_TYPE, (uint)CKK.CKK_CHACHA20) != CKK.CKK_CHACHA20)
         {
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-              $"Attribute {CKA.CKA_KEY_TYPE} must by {CKK.CKK_CHACHA20}.");
+              $"Attribute {CKA.CKA_KEY_TYPE} must be {CKK.CKK_CHACHA20}.");
         }
     }
 }

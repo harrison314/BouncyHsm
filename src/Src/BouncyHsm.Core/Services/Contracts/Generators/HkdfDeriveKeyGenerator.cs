@@ -39,7 +39,7 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
         if (!this.hkdfParams.Expand && !this.hkdfParams.Extract)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
-                $"Parameters pExpand or pExtract or both must by set to true in CK_HKDF_PARAMS.");
+                $"Parameters pExpand or pExtract or both must be set to true in CK_HKDF_PARAMS.");
         }
 
         HkdfParameters bcParams;

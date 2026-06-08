@@ -42,7 +42,7 @@ public partial class SetPinHandler : IRpcRequestHandler<SetPinRequest, SetPinEnv
 
         if (!p11Session.IsRwSession)
         {
-            this.logger.LogError("Session {sessionId} must by read-write session for change PIN.", request.SessionId);
+            this.logger.LogError("Session {sessionId} must be read-write session for change PIN.", request.SessionId);
             return new SetPinEnvelope()
             {
                 Rv = (uint)CKR.CKR_SESSION_READ_ONLY
