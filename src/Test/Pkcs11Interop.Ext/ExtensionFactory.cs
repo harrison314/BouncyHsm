@@ -33,25 +33,25 @@ internal static class ExtensionFactory
         System.Reflection.FieldInfo? pkcs11FiledInfo = library.GetType().GetField("_pkcs11Library", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         if (pkcs11FiledInfo == null)
         {
-            throw new InvalidOperationException("Cannot get _pkcs11Library field info");
+            throw new InvalidOperationException("Can not get _pkcs11Library field info");
         }
 
         object? pkcs11 = pkcs11FiledInfo.GetValue(library);
         if (pkcs11 == null)
         {
-            throw new InvalidOperationException("Cannot get _pkcs11Library value");
+            throw new InvalidOperationException("Can not get _pkcs11Library value");
         }
 
         System.Reflection.FieldInfo? libHandleFieldInfo = pkcs11.GetType().GetField("_libraryHandle", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         if (libHandleFieldInfo == null)
         {
-            throw new InvalidOperationException("Cannot get _libraryHandle field info");
+            throw new InvalidOperationException("Can not get _libraryHandle field info");
         }
 
         object? libHandle = libHandleFieldInfo.GetValue(pkcs11);
         if (libHandle == null)
         {
-            throw new InvalidOperationException("Cannot get _libraryHandle value");
+            throw new InvalidOperationException("Can not get _libraryHandle value");
         }
 
         IntPtr nativeLibHandle = (IntPtr)libHandle;

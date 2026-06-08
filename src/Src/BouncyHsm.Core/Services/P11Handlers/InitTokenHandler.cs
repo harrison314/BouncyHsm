@@ -36,7 +36,7 @@ public partial class InitTokenHandler : IRpcRequestHandler<InitTokenRequest, Ini
         if (string.IsNullOrWhiteSpace(request.Label))
         {
             this.logger.LogError("Label cannot be null or empty for InitToken request.");
-            throw new RpcPkcs11Exception(CKR.CKR_ARGUMENTS_BAD, "Label cannot be null or empty for InitToken request.");
+            throw new RpcPkcs11Exception(CKR.CKR_ARGUMENTS_BAD, "Label can not be null or empty for InitToken request.");
         }
 
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);

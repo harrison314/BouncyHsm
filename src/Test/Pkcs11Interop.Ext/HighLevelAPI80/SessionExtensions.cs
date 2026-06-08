@@ -215,7 +215,7 @@ internal class SessionExtensions : ISessionExtensions
         IntPtr procAddress = NativeLibrary.GetExport(lirarayhandle, functionName);
         if (procAddress == IntPtr.Zero)
         {
-            throw new InvalidOperationException($"Cannot get address of {functionName} function");
+            throw new InvalidOperationException($"Can not get address of {functionName} function");
         }
         return Marshal.GetDelegateForFunctionPointer<TDelegate>(procAddress);
     }

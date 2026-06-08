@@ -366,7 +366,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 return NMRPC_OK;
             }
 
-            static int log_serilization_error(int rc, const char* functionName, int line, const char* context)
+            static int log_serialization_error(int rc, const char* functionName, int line, const char* context)
             { 
                 char unknownBuffer[32]; 
                 const char* codeStr = "Unknown";
@@ -445,7 +445,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
         body.AppendLine();
 
         body.AppendLine($"    result = cmp_write_array(ctx, {value.Fields.Count});");
-        body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+        body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
         body.AppendLine(); 
 
         foreach (KeyValuePair<string, string> fieldDef in value.Fields)
@@ -460,19 +460,19 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     body.AppendLine($"  if (value->{name} != NULL)");
                     body.AppendLine("  {");
                     body.AppendLine($"    result = {type.CType.TrimEnd('*')}_Serialize(ctx, value->{name});");
-                    body.AppendLine("    if (result != NMRPC_OK) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine("    if (result != NMRPC_OK) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                     body.AppendLine("  }");
                     body.AppendLine("  else");
                     body.AppendLine("  {");
                     body.AppendLine("    result = cmp_write_nil(ctx);");
-                    body.AppendLine("    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine("    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                     body.AppendLine("  }");
                     body.AppendLine();
                 }
                 else
                 {
                     body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Serialize(ctx, &value->{name});");
-                    body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine("   if (result != NMRPC_OK) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                     body.AppendLine();
                 }
 
@@ -486,13 +486,13 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     if (type.IsNullable)
                     {
                         body.AppendLine($"  result = (value->{name} != NULL)? cmp_write_str(ctx, value->{name}, (uint32_t)strlen(value->{name})) : cmp_write_nil(ctx);");
-                        body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                         body.AppendLine();
                     }
                     else
                     {
                         body.AppendLine($"  result = cmp_write_str(ctx, value->{name}, (uint32_t)strlen(value->{name}));");
-                        body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                         body.AppendLine();
                     }
                 }
@@ -502,13 +502,13 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     if (type.IsNullable)
                     {
                         body.AppendLine($"  result = (value->{name} != NULL)? cmp_write_bin(ctx, value->{name}->data, (uint32_t)value->{name}->size) : cmp_write_nil(ctx);");
-                        body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                         body.AppendLine();
                     }
                     else
                     {
                         body.AppendLine($"  result = cmp_write_bin(ctx, value->{name}.data, (uint32_t)value->{name}.size);");
-                        body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                        body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                         body.AppendLine();
                     }
                 }
@@ -516,21 +516,21 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 if (type.BaseDefinition is CDeclaredType.Int32Name or CDeclaredType.Int64Name)
                 {
                     body.AppendLine($"  result = cmp_write_integer(ctx, value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition is CDeclaredType.UInt32Name or CDeclaredType.UInt64Name)
                 {
                     body.AppendLine($"  result = cmp_write_uinteger(ctx, value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition == CDeclaredType.BoolName)
                 {
                     body.AppendLine($"  result = cmp_write_bool(ctx, value->{name});");
-                    body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                    body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                     body.AppendLine();
                 }
 
@@ -544,19 +544,19 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 body.AppendLine($"  if (value->{name} != NULL)");
                 body.AppendLine("  {");
                 body.AppendLine($"    result = {writeFnName}(ctx, value->{name});");
-                body.AppendLine("    if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine("  }");
                 body.AppendLine("  else");
                 body.AppendLine("  {");
                 body.AppendLine("    result = cmp_write_nil(ctx);");
-                body.AppendLine("    if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine("  }");
                 body.AppendLine();
             }
             else
             {
                 body.AppendLine($"  result = {writeFnName}(ctx, &value->{name});");
-                body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine();
             }
         }
@@ -601,7 +601,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             if (type.IsArray)
             {
                 body.AppendLine($"  result = {type.CType.TrimEnd('*')}_Deserialize(ctx, NULL, &value->{name});");
-                body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                body.AppendLine($"  if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine();
 
                 continue;
@@ -614,14 +614,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     if (type.IsNullable)
                     {
                         body.AppendLine($"  result = cmph_read_nullable_str(ctx, &value->{name});");
-                        body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                        body.AppendLine($"  if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                         body.AppendLine();
                     }
                     else
                     {
                         body.AppendLine($"  result = cmph_read_nullable_str(ctx, &value->{name});");
-                        body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
-                        body.AppendLine($"  if (value->{name} == NULL) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, \"field {name} is NULL\");");
+                        body.AppendLine($"  if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                        body.AppendLine($"  if (value->{name} == NULL) return log_serialization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, \"field {name} is NULL\");");
                         body.AppendLine();
                     }
                 }
@@ -631,13 +631,13 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     if (type.IsNullable)
                     {
                         body.AppendLine($"  result = cmph_read_nullable_binary(ctx, &value->{name});");
-                        body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                        body.AppendLine($"  if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                         body.AppendLine();
                     }
                     else
                     {
                         body.AppendLine($"  result = cmph_read_binary(ctx, &value->{name});");
-                        body.AppendLine($"   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                        body.AppendLine($"   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                         body.AppendLine();
                     }
                 }
@@ -645,34 +645,34 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 if (type.BaseDefinition == CDeclaredType.Int32Name)
                 {
                     body.AppendLine($"  result = cmp_read_int(ctx, &value->{name});");
-                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                    body.AppendLine($"  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
                 if (type.BaseDefinition == CDeclaredType.Int64Name)
                 {
                     body.AppendLine($"  result = cmp_read_long(ctx, &value->{name});");
-                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                    body.AppendLine($"  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition == CDeclaredType.UInt32Name)
                 {
                     body.AppendLine($"  result = cmp_read_uint(ctx, &value->{name});");
-                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                    body.AppendLine($"  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition == CDeclaredType.UInt64Name)
                 {
                     body.AppendLine($"  result = cmp_read_ulong(ctx, &value->{name});");
-                    body.AppendLine($"   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                    body.AppendLine($"   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
                 if (type.BaseDefinition == CDeclaredType.BoolName)
                 {
                     body.AppendLine($"  result = cmp_read_bool(ctx, &value->{name});");
-                    body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                    body.AppendLine($"  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                     body.AppendLine();
                 }
 
@@ -684,7 +684,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             if (type.IsNullable)
             {
                 body.AppendLine("  result = cmp_read_object(ctx, &tmp_obj);");
-                body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                body.AppendLine($"  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine("  if (cmp_object_is_nil(&tmp_obj))");
                 body.AppendLine("  {");
                 body.AppendLine($"      value->{name} = NULL;");
@@ -694,14 +694,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 body.AppendLine($"     value->{name} = ({type.BaseDefinition}*) malloc(sizeof({type.BaseDefinition}));");
                 body.AppendLine($"     if (value->{name} == NULL) return log_malloc_error(__FUNCTION__, __LINE__ - 1);");
                 body.AppendLine($"     result = {readFnName}(ctx, &tmp_obj, value->{name});");
-                body.AppendLine($"     if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                body.AppendLine($"     if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine("  }");
                 body.AppendLine();
             }
             else
             {
                 body.AppendLine($"  result = {readFnName}(ctx, NULL, &value->{name});");
-                body.AppendLine($"  if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
+                body.AppendLine($"  if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, \"deserialize field {name}\");");
                 body.AppendLine();
             }
         }
@@ -733,7 +733,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
         body.AppendLine();
 
         body.AppendLine($"    result = cmp_write_array(ctx, value->length);");
-        body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+        body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
         body.AppendLine();
 
         body.AppendLine("  for (i = 0; i < value->length; i++)");
@@ -747,12 +747,12 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 body.AppendLine("    if (strValue != NULL)");
                 body.AppendLine("    {");
                 body.AppendLine("      result = cmp_write_str(ctx, strValue, (uint32_t)strlen(strValue));");
-                body.AppendLine("      if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("      if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine("    }");
                 body.AppendLine("    else");
                 body.AppendLine("    {");
                 body.AppendLine("      result = cmp_write_nil(ctx);");
-                body.AppendLine("      if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("      if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine("    }");
             }
 
@@ -760,28 +760,28 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             {
 
                 body.AppendLine($"  result = cmp_write_bin(ctx, value->array[i].data, (uint32_t)value->array[i].size);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine();
             }
 
             if (type.BaseDefinition is CDeclaredType.Int32Name or CDeclaredType.Int64Name)
             {
                 body.AppendLine($"  result = cmp_write_integer(ctx, value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine();
             }
 
             if (type.BaseDefinition is CDeclaredType.UInt32Name or CDeclaredType.UInt64Name)
             {
                 body.AppendLine($"  result = cmp_write_uinteger(ctx, value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine();
             }
 
             if (type.BaseDefinition == CDeclaredType.BoolName)
             {
                 body.AppendLine($"  result = cmp_write_bool(ctx, value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
                 body.AppendLine();
             }
         }
@@ -791,7 +791,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             string writeFnName = this.GetSerializeFnName(type);
 
             body.AppendLine($"  result = {writeFnName}(ctx, &value->array[i]);");
-            body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+            body.AppendLine("   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
             body.AppendLine();
 
         }
@@ -820,12 +820,12 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
         body.AppendLine("  if (start_obj_ptr == NULL)");
         body.AppendLine("  {");
         body.AppendLine("    result = cmp_read_object(ctx, &start_obj);");
-        body.AppendLine("    if (!result) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);");
+        body.AppendLine("    if (!result) return log_serialization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);");
         body.AppendLine("    start_obj_ptr = &start_obj;");
         body.AppendLine("  }");
         body.AppendLine();
         body.AppendLine("  result = cmp_object_as_array(start_obj_ptr, &array_size);");
-        body.AppendLine($"  if (!result) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);");
+        body.AppendLine($"  if (!result) return log_serialization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);");
         body.AppendLine();
 
         body.AppendLine("  value->length = (int)array_size;");
@@ -840,44 +840,44 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             if (type.BaseDefinition == CDeclaredType.StringName)
             {
                 body.AppendLine($"   result = cmph_read_nullable_str(ctx, &value->array[i]);");
-                body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
-                body.AppendLine($"   if (value->array[i] == NULL) return log_serilization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine($"   if (value->array[i] == NULL) return log_serialization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);");
             }
 
             if (type.BaseDefinition == CDeclaredType.BinaryName)
             {
 
                 body.AppendLine($"   result = cmph_read_binary(ctx, &value->array[i]);");
-                body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
             }
 
             if (type.BaseDefinition == CDeclaredType.Int32Name)
             {
                 body.AppendLine($"   result = cmp_read_int(ctx, &value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
             }
             if (type.BaseDefinition == CDeclaredType.Int64Name)
             {
                 body.AppendLine($"   result = cmp_read_long(ctx, &value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
             }
 
             if (type.BaseDefinition == CDeclaredType.UInt32Name)
             {
                 body.AppendLine($"   result = cmp_read_uint(ctx, &value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
             }
 
             if (type.BaseDefinition == CDeclaredType.UInt64Name)
             {
                 body.AppendLine($"   result = cmp_read_ulong(ctx, &value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
             }
 
             if (type.BaseDefinition == CDeclaredType.BoolName)
             {
                 body.AppendLine($"   result = cmp_read_bool(ctx, &value->array[i]);");
-                body.AppendLine("   if (!result) return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
+                body.AppendLine("   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);");
             }
         }
         else
@@ -885,7 +885,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
             string readFnName = this.GetDeserializeFnName(type);
 
             body.AppendLine($"   result = {readFnName}(ctx, NULL, &value->array[i]);");
-            body.AppendLine("   if (result != NMRPC_OK) return log_serilization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
+            body.AppendLine("   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);");
         }
 
         body.AppendLine("  }");
@@ -940,13 +940,13 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = InternalBuffer_init(&write_head_buffer, 256);
              if (result != NMRPC_OK)
              {
-                 return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+                 return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
              }
 
              result = InternalBuffer_init(&write_body_buffer, 256);
              if (result != NMRPC_OK)
              {
-                 return log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+                 return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
              }
 
              cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
@@ -954,12 +954,12 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
              if (!cmp_write_array(&write_head_ctx, 2)) 
              {
-               result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+               result = log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
                goto err;
              }
              if (!cmp_write_str(&write_head_ctx, "{{rpcName}}", {{rpcName.Length}}))
              {
-               result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+               result = log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
                goto err;
              }
 
@@ -967,7 +967,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              {
                   if (!cmp_write_str(&write_head_ctx, ctx->tag, (uint32_t)strlen(ctx->tag)))
                   {
-                    result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+                    result = log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
                     goto err;
                   }
              }
@@ -975,7 +975,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              {
                   if (!cmp_write_nil(&write_head_ctx))
                   {
-                    result = log_serilization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+                    result = log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
                     goto err;
                   }
              }
@@ -983,7 +983,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = {{this.GetSerializeFnName(crequestType)}}(&write_body_ctx, request);
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -1005,7 +1005,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = ctx->write(ctx->user_ctx, (void*)size_header, sizeof(size_header));
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -1014,21 +1014,21 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = ctx->write(ctx->user_ctx, (void*)write_head_buffer.buffer, write_head_buffer.size);
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
              result = ctx->write(ctx->user_ctx, (void*)write_body_buffer.buffer, write_body_buffer.size);
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
              result = ctx->flush(ctx->user_ctx);
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -1038,7 +1038,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = ctx->read(ctx->user_ctx, (void*)size_header, sizeof(size_header)) == sizeof(size_header);
              if (!result)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 
@@ -1054,14 +1054,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = InternalBuffer_init(&read_head_buffer, response_header_size + 16);
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  return result;
              }
 
              result = InternalBuffer_init(&read_body_buffer, response_body_size + 16);
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  return result;
              }
 
@@ -1089,7 +1089,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              result = {{this.GetDeserializeFnName(cresponseType)}}(&read_body_ctx, NULL, response);
              if (result != NMRPC_OK)
              {
-                 log_serilization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
                  goto err;
              }
 

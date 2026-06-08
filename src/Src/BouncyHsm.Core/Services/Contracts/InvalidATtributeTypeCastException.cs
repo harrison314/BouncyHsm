@@ -10,7 +10,7 @@ public class InvalidAttributeTypeCastException : ApplicationException
     }
 
     public InvalidAttributeTypeCastException(AttrTypeTag exceptedType, [CallerMemberName] string fnName = "")
-        : base($"Cannot call convert value type {exceptedType} using method {fnName}.")
+        : base($"Can not convert value of type {exceptedType} using method {fnName}.")
     {
 
     }

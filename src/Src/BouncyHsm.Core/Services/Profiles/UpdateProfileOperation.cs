@@ -49,7 +49,7 @@ public sealed class UpdateProfileOperation : ProfileOperation
 
         if (!originalMechanisms.ContainsKey(this.Mechanism))
         {
-            throw new BouncyHsmConfigurationException($"The mechanism {this.Mechanism} cannot be added because it is not supported by BouncyHsm.");
+            throw new BouncyHsmConfigurationException($"The mechanism {this.Mechanism} can not be added because it is not supported by BouncyHsm.");
         }
 
         MechanismInfo originalInfo = originalMechanisms[this.Mechanism];

@@ -33,7 +33,7 @@ internal class CkChaCha20ParamsGuard
     {
         if (nonceBits == null)
         {
-            throw new ArgumentNullException(nameof(nonceBits), "Nonce bits cannot be null.");
+            throw new ArgumentNullException(nameof(nonceBits), "Nonce bits can not be null.");
         }
 
         int bits = nonceBits.Length * 8;

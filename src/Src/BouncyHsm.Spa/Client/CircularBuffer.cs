@@ -35,11 +35,11 @@ public class CircularBuffer<T> : IEnumerable<T>
         {
             if (this.IsEmpty)
             {
-                throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer is empty", index));
+                throw new IndexOutOfRangeException(string.Format("Can not access index {0}. Buffer is empty", index));
             }
             if (index >= this.size)
             {
-                throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer size is {1}", index, this.size));
+                throw new IndexOutOfRangeException(string.Format("Can not access index {0}. Buffer size is {1}", index, this.size));
             }
 
             int actualIndex = this.InternalIndex(index);
@@ -49,11 +49,11 @@ public class CircularBuffer<T> : IEnumerable<T>
         {
             if (this.IsEmpty)
             {
-                throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer is empty", index));
+                throw new IndexOutOfRangeException(string.Format("Can not access index {0}. Buffer is empty", index));
             }
             if (index >= this.size)
             {
-                throw new IndexOutOfRangeException(string.Format("Cannot access index {0}. Buffer size is {1}", index, this.size));
+                throw new IndexOutOfRangeException(string.Format("Can not access index {0}. Buffer size is {1}", index, this.size));
             }
 
             int actualIndex = this.InternalIndex(index);
@@ -72,7 +72,7 @@ public class CircularBuffer<T> : IEnumerable<T>
         if (capacity < 1)
         {
             throw new ArgumentException(
-                "Circular buffer cannot have negative or zero capacity.", nameof(capacity));
+                "Circular buffer can not have negative or zero capacity.", nameof(capacity));
         }
 
         if (items.Length > capacity)
@@ -135,7 +135,7 @@ public class CircularBuffer<T> : IEnumerable<T>
 
     public void PopBack()
     {
-        this.ThrowIfEmpty("Cannot take elements from an empty buffer.");
+        this.ThrowIfEmpty("Can not take elements from an empty buffer.");
         this.Decrement(ref this.end);
         this.buffer[this.end] = default!;
         --this.size;
@@ -143,7 +143,7 @@ public class CircularBuffer<T> : IEnumerable<T>
 
     public void PopFront()
     {
-        this.ThrowIfEmpty("Cannot take elements from an empty buffer.");
+        this.ThrowIfEmpty("Can not take elements from an empty buffer.");
         this.buffer[this.start] = default!;
         this.Increment(ref this.start);
         --this.size;
@@ -206,7 +206,7 @@ public class CircularBuffer<T> : IEnumerable<T>
     {
         if (this.IsEmpty)
         {
-            throw new InvalidOperationException("Cannot access an empty buffer.");
+            throw new InvalidOperationException("Can not access an empty buffer.");
         }
     }
 

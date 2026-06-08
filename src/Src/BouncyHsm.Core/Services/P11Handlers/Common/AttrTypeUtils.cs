@@ -156,7 +156,7 @@ internal static class AttrTypeUtils
         }
     }
 
-    public static Dictionary<CKA, IAttributeValue> BuildDictionaryCkAray(AttrValueFromNative[] template)
+    public static Dictionary<CKA, IAttributeValue> BuildDictionaryCkArray(AttrValueFromNative[] template)
     {
         CKA lastCka = CKA.CKA_CLASS;
         try

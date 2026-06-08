@@ -49,7 +49,7 @@ public class T34_VerifyWithRecover
 
         byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must be valid);
+        Assert.IsTrue(isValid, "Signature must be valid");
         Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
     }
 
@@ -88,7 +88,7 @@ public class T34_VerifyWithRecover
 
         byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must be valid);
+        Assert.IsTrue(isValid, "Signature must be valid");
         Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
     }
 
@@ -126,7 +126,7 @@ public class T34_VerifyWithRecover
 
         byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must be valid);
+        Assert.IsTrue(isValid, "Signature must be valid");
         Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
     }
 
@@ -163,7 +163,7 @@ public class T34_VerifyWithRecover
 
         byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
 
-        Assert.IsTrue(isValid, "Signature must be valid);
+        Assert.IsTrue(isValid, "Signature must be valid");
         Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
     }
 

@@ -42,7 +42,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         wrappingKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         this.CheckExtractable(key);
-        this.CheckWrapTemplate(wrappingKey, key);
+        this.CheckKeyByWrapTemplate(wrappingKey, key);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
         ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
@@ -84,9 +84,9 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         }
     }
 
-    private void CheckWrapTemplate(KeyObject wrappingKey, KeyObject key)
+    private void CheckKeyByWrapTemplate(KeyObject wrappingKey, KeyObject key)
     {
-        this.logger.LogTrace("Entering to CheckWrapTemplate");
+        this.logger.LogTrace("Entering to CheckKeyByWrapTemplate");
 
         IReadOnlyDictionary<CKA, IAttributeValue> wrapingTemplate = wrappingKey switch
         {
@@ -102,9 +102,9 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
 
         if (!key.IsMatch(wrapingTemplate))
         {
-            this.logger.LogError("The wrapping key {WrappingKey} cannot wrap the key {Key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.", wrappingKey, key);
+            this.logger.LogError("The wrapping key {WrappingKey} can not wrap the key {Key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.", wrappingKey, key);
             throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
-                $"The wrapping key {wrappingKey} cannot wrap the key DEF because the {key} does not match the requirements in the CKA_WRAP_TEMPLATE template.");
+                $"The wrapping key {wrappingKey} can not wrap the key {key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.");
         }
     }
 

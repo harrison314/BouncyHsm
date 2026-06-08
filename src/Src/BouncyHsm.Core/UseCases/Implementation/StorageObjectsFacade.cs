@@ -152,8 +152,8 @@ public class StorageObjectsFacade : IStorageObjectsFacade
 
         if (attributeType is CKA.CKA_CLASS or CKA.CKA_TOKEN or CKA.CKA_KEY_TYPE)
         {
-            this.logger.LogError("Attribute {attributeName} cannot be set.", attributeName);
-            return new VoidDomainResult.InvalidInput($"Attribute {attributeName} cannot be set.");
+            this.logger.LogError("Attribute {attributeName} can not be set.", attributeName);
+            return new VoidDomainResult.InvalidInput($"Attribute {attributeName} can not be set.");
         }
 
         // Transform value for special CKA

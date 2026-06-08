@@ -79,7 +79,7 @@ public sealed class MonotonicCounterObject : IHardwareFeature
             CKA.CKA_RESET_ON_INIT => new AttributeValueResult.Ok(AttributeValue.Create(this.ResetOnInit)),
             CKA.CKA_HAS_RESET => new AttributeValueResult.Ok(AttributeValue.Create(this.HasReset)),
             CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.SkipComputing => new AttributeValueResult.Ok(AttributeValue.Create(this.Value)),
-            CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.Default => new AttributeValueResult.Computed(this.IncerementValue(), true),
+            CKA.CKA_VALUE when mode == CryptoApiObjectGetValueMode.Default => new AttributeValueResult.Computed(this.IncrementValue(), true),
             _ => new AttributeValueResult.InvalidAttribute()
         };
     }
@@ -124,7 +124,7 @@ public sealed class MonotonicCounterObject : IHardwareFeature
         return sizeof(ulong) + sizeof(int);
     }
 
-    private async Task<IAttributeValue> IncerementValue()
+    private async Task<IAttributeValue> IncrementValue()
     {
         UpdateSlotCommand command = new UpdateSlotCommand();
 

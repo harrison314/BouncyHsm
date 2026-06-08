@@ -33,7 +33,7 @@ internal static class Asn1ObjectParser
         }
         catch (InvalidCastException)
         {
-            throw new IOException("cannot recognise object in byte array");
+            throw new IOException("can not recognise object in byte array");
         }
     }
 }

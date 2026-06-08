@@ -15,7 +15,7 @@ public abstract class CertificateObject : StorageObject
         get;
     }
 
-    // Trusted certificates cannot be modified.
+    // Trusted certificates can not be modified.
     public bool CkaTrusted
     {
         get => this.values[CKA.CKA_TRUSTED].AsBool();
