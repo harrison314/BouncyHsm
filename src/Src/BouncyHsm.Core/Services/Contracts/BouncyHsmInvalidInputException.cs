@@ -1,6 +1,6 @@
 ﻿namespace BouncyHsm.Core.Services.Contracts;
 
-public class BouncyHsmInvalidInputException : ApplicationException
+public class BouncyHsmInvalidInputException : Exception
 {
     public BouncyHsmInvalidInputException()
     {

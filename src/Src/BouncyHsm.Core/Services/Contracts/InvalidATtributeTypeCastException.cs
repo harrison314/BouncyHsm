@@ -2,7 +2,7 @@
 
 namespace BouncyHsm.Core.Services.Contracts;
 
-public class InvalidAttributeTypeCastException : ApplicationException
+public class InvalidAttributeTypeCastException : Exception
 {
     public InvalidAttributeTypeCastException()
     {

@@ -1,6 +1,6 @@
 ﻿namespace BouncyHsm.Core.Services.Contracts;
 
-public class BouncyHsmException : ApplicationException
+public class BouncyHsmException : Exception
 {
     public BouncyHsmException()
     {

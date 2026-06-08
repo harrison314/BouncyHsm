@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BouncyHsm.Core.Services.Contracts;
 
 [Serializable]
-public class RpcPkcs11Exception : ApplicationException
+public class RpcPkcs11Exception : Exception
 {
     public CKR ReturnValue
     {
