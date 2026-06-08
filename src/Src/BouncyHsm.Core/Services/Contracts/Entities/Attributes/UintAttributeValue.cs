@@ -11,6 +11,11 @@ internal class UintAttributeValue : IAttributeValue
         get => AttrTypeTag.CkUint;
     }
 
+    public bool IsEmpty
+    {
+        get => false;
+    }
+
     public UintAttributeValue(uint value)
     {
         this.value = value;

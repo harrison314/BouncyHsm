@@ -9,7 +9,7 @@ namespace BouncyHsm.Core.Services.Contracts.Entities.Attributes;
 
 internal class CkAttributeArrayValue : IAttributeValue
 {
-    private readonly IReadOnlyDictionary<CKA, IAttributeValue> template;
+    private readonly IReadOnlyDictionary<CKA, IAttributeValue> value;
 
     public static CkAttributeArrayValue Empty
     {
@@ -21,9 +21,14 @@ internal class CkAttributeArrayValue : IAttributeValue
         get => AttrTypeTag.CkAttributeArray;
     }
 
+    public bool IsEmpty
+    {
+        get => this.value.Count != 0;
+    }
+
     public CkAttributeArrayValue(IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
-        this.template = template;
+        this.value = template;
     }
 
     public bool AsBool()
@@ -58,14 +63,14 @@ internal class CkAttributeArrayValue : IAttributeValue
 
     public IReadOnlyDictionary<CKA, IAttributeValue> AsCkAttributeArray()
     {
-        return this.template;
+        return this.value;
     }
 
     public bool Equals(IAttributeValue? other)
     {
         if (other != null && other.TypeTag == AttrTypeTag.CkAttributeArray)
         {
-            return BouncyHsm.Core.Services.P11Handlers.Common.AttrTypeUtils.Equals(this.template, other.AsCkAttributeArray());
+            return BouncyHsm.Core.Services.P11Handlers.Common.AttrTypeUtils.Equals(this.value, other.AsCkAttributeArray());
         }
 
         return false;
@@ -78,11 +83,11 @@ internal class CkAttributeArrayValue : IAttributeValue
 
     public uint GuessSize()
     {
-        return AttrTypeUtils.GuessSize(this.template);
+        return AttrTypeUtils.GuessSize(this.value);
     }
 
     public override string ToString()
     {
-        return $"{this.GetType().Name}: Items count {this.template.Count}";
+        return $"{this.GetType().Name}: Items count {this.value.Count}";
     }
 }

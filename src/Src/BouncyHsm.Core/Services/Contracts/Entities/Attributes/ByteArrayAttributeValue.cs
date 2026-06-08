@@ -13,6 +13,11 @@ internal class ByteArrayAttributeValue : IAttributeValue
         get => AttrTypeTag.ByteArray;
     }
 
+    public bool IsEmpty
+    {
+        get => this.value.Length != 0;
+    }
+
     public ByteArrayAttributeValue(byte[] value)
     {
         this.value = value;

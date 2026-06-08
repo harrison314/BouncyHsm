@@ -13,6 +13,11 @@ internal class CkDateAttributeValue : IAttributeValue
         get => AttrTypeTag.DateTime;
     }
 
+    public bool IsEmpty
+    {
+        get => !this.date.HasValue;
+    }
+
     public CkDateAttributeValue(CkDate date)
     {
         this.date = date;

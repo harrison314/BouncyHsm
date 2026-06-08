@@ -35,6 +35,24 @@ internal class NativeAttributeValue : IAttributeValue
         get;
     }
 
+    public bool IsEmpty
+    {
+        get
+        {
+            return this.TypeTag switch
+            {
+                AttrTypeTag.ByteArray => this.value.ValueRawBytes.Length != 0,
+                AttrTypeTag.CkBool => false,
+                AttrTypeTag.CkUint => false,
+                AttrTypeTag.DateTime => !this.AsDate().HasValue,
+                AttrTypeTag.String => this.value.ValueRawBytes.Length != 0,
+                AttrTypeTag.UintArray => this.value.ValueUintArray?.Array.Length != 0,
+                AttrTypeTag.CkAttributeArray => this.value.ValueTemplate?.Value.Length != 0,
+                _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported.")
+            };
+        }
+    }
+
     public NativeAttributeValue(AttrValueFromNative value)
     {
         this.TypeTag = AttrTypeUtils.GetTypeTag((CKA)value.AttributeType);

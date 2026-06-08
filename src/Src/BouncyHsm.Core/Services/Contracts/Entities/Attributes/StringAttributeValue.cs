@@ -12,6 +12,11 @@ internal class StringAttributeValue : IAttributeValue
         get => AttrTypeTag.String;
     }
 
+    public bool IsEmpty
+    {
+        get => string.IsNullOrEmpty(this.value);
+    }
+
     public StringAttributeValue(string value)
     {
         this.value = value;

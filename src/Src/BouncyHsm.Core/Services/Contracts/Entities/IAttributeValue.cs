@@ -9,6 +9,11 @@ public interface IAttributeValue : IEquatable<IAttributeValue>, IEquatable<uint>
         get;
     }
 
+    bool IsEmpty
+    {
+        get;
+    }
+
     bool AsBool();
 
     string AsString();

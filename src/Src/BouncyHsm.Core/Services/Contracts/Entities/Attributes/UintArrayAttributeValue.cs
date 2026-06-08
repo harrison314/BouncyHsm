@@ -14,6 +14,11 @@ internal class UintArrayAttributeValue : IAttributeValue
         get => AttrTypeTag.UintArray;
     }
 
+    public bool IsEmpty
+    {
+        get => this.value.Length != 0;
+    }
+
     public UintArrayAttributeValue(uint[] value)
     {
         this.value = value;

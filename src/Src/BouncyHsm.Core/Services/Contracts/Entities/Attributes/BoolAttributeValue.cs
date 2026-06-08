@@ -14,6 +14,11 @@ internal class BoolAttributeValue : IAttributeValue
         get => AttrTypeTag.CkBool;
     }
 
+    public bool IsEmpty
+    {
+        get => false;
+    }
+
     public BoolAttributeValue(bool value)
     {
         this.value = value;
