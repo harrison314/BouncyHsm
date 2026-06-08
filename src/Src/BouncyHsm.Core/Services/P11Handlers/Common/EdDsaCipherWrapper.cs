@@ -35,7 +35,7 @@ internal class EdDsaCipherWrapper : IWrapperSigner
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_SIGN to true.", edwardsKey.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The signature operation is not allowed because objet is not authorized to sign (CKA_SIGN must by true).");
+                    "The signature operation is not allowed because object is not authorized to sign (CKA_SIGN must by true).");
             }
             AsymmetricKeyParameter privateKey = edwardsKey.GetPrivateKey();
             ISigner signer = privateKey switch
@@ -65,7 +65,7 @@ internal class EdDsaCipherWrapper : IWrapperSigner
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_VERIFY to true.", edwardsKey.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The verification signature operation is not allowed because objet is not authorized to verify (CKA_VERIFY must by true).");
+                    "The verification signature operation is not allowed because object is not authorized to verify (CKA_VERIFY must by true).");
             }
 
             AsymmetricKeyParameter publicKey = edwardsKey.GetPublicKey();

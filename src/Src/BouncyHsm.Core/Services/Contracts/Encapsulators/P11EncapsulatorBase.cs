@@ -64,7 +64,7 @@ internal abstract class P11EncapsulatorBase<TPublicKey, TPrivateKey> : IP11Encap
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_ENCAPSULATE to true.", typedPublicKey.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The encapsulate operation is not allowed because objet is not authorized to sign (CKA_ENCAPSULATE must by true).");
+                    "The encapsulate operation is not allowed because object is not authorized to sign (CKA_ENCAPSULATE must by true).");
             }
 
             this.EncapsulateInternal(typedPublicKey, this.secretKeyObject, secureRandom, out byte[] encapsulatedData);
@@ -89,7 +89,7 @@ internal abstract class P11EncapsulatorBase<TPublicKey, TPrivateKey> : IP11Encap
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_ENCAPSULATE to true.", typedPublicKey.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The encapsulate operation is not allowed because objet is not authorized to sign (CKA_ENCAPSULATE must by true).");
+                    "The encapsulate operation is not allowed because object is not authorized to sign (CKA_ENCAPSULATE must by true).");
             }
 
             return (uint)this.GetEncapsulatedDataLengthInternal(typedPublicKey);
@@ -113,7 +113,7 @@ internal abstract class P11EncapsulatorBase<TPublicKey, TPrivateKey> : IP11Encap
             {
                 this.logger.LogError("Object with id {ObjectId} can not set CKA_DECAPSULATE to true.", typedPrivateKey.Id);
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED,
-                    "The encapsulate operation is not allowed because objet is not authorized to sign (CKA_DECAPSULATE must by true).");
+                    "The encapsulate operation is not allowed because object is not authorized to sign (CKA_DECAPSULATE must by true).");
             }
 
             this.DecapsulateInternal(typedPrivateKey, encapsulatedData, this.secretKeyObject);
