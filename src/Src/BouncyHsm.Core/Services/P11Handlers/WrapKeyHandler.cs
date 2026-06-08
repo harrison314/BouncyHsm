@@ -8,6 +8,7 @@ using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
+using System.Collections.ObjectModel;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -41,6 +42,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         wrappingKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);
 
         this.CheckExtractable(key);
+        this.CheckWrapTemplate(wrappingKey, key);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
         ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
@@ -79,6 +81,30 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
                     WrappedKeyData = Array.Empty<byte>()
                 }
             };
+        }
+    }
+
+    private void CheckWrapTemplate(KeyObject wrappingKey, KeyObject key)
+    {
+        this.logger.LogTrace("Entering to CheckWrapTemplate");
+
+        IReadOnlyDictionary<CKA, IAttributeValue> wrapingTemplate = wrappingKey switch
+        {
+            PublicKeyObject publicKeyObject => publicKeyObject.CkaWrapTemplate,
+            SecretKeyObject secretKeyObject => secretKeyObject.CkaWrapTemplate,
+            _ => ReadOnlyDictionary<CKA, IAttributeValue>.Empty,
+        };
+
+        if (wrapingTemplate.Count == 0)
+        {
+            return;
+        }
+
+        if (!key.IsMatch(wrapingTemplate))
+        {
+            this.logger.LogError("The wrapping key {WrappingKey} cannot wrap the key {Key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.", wrappingKey, key);
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
+                $"The wrapping key {wrappingKey} cannot wrap the key DEF because the {key} does not match the requirements in the CKA_WRAP_TEMPLATE template.");
         }
     }
 
