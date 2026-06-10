@@ -9,9 +9,9 @@ namespace Pkcs11Interop.Ext.Common;
 [Union]
 public partial record KdfDataParam
 {
-    partial record IterationVariable(int WidthInBits, bool LittleEndian);
-    partial record Counter(int WidthInBits, bool LittleEndian);
-    partial record DkmLength(int WidthInBits, bool LittleEndian, uint DkmLengthMethod);
+    partial record IterationVariable(bool LittleEndian, int WidthInBits);
+    partial record Counter(bool LittleEndian, int WidthInBits);
+    partial record DkmLength(bool LittleEndian, int WidthInBits, uint DkmLengthMethod);
     partial record KeyHandle(IObjectHandle ObjectHandle);
     partial record ByteArray(byte[] Bytes);
 }

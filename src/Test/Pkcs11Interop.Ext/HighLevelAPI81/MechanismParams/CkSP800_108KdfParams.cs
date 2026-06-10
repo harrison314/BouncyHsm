@@ -1,4 +1,5 @@
-﻿using Net.Pkcs11Interop.HighLevelAPI;
+﻿using Net.Pkcs11Interop.Common;
+using Net.Pkcs11Interop.HighLevelAPI;
 using Pkcs11Interop.Ext.Common;
 using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
 
@@ -11,12 +12,12 @@ internal class CkSP800_108KdfParams : ICkSP800_108KdfParams
     private CK_SP800_108_KDF_PARAMS lowLevelStruct = new CK_SP800_108_KDF_PARAMS();
     private List<CK_PRF_DATA_PARAM> dataParsms = new List<CK_PRF_DATA_PARAM>();
 
-    public CkSP800_108KdfParams(uint pdfType, KdfDataParam[] additionalParams)
+    public CkSP800_108KdfParams(CKM pdfType, KdfDataParam[] additionalParams)
     {
         this.lowLevelStruct.pAdditionalDerivedKeys = IntPtr.Zero;
         this.lowLevelStruct.ulAdditionalDerivedKeys = 0;
 
-        this.lowLevelStruct.prfType = pdfType;
+        this.lowLevelStruct.prfType = (ulong)pdfType;
 
         foreach (KdfDataParam kdfParam in additionalParams)
         {

@@ -53,7 +53,7 @@ internal class MechanismParamsV3Factory : IMechanismParamsV3Factory
         return new CkHkdfParams(extract, expand, hashMechanism, saltType, saltKey, salt, info);
     }
 
-    public ICkSP800_108KdfParams CreateSp800_108KdfParams(uint pdfType, List<List<IObjectAttribute>>? additionalTemplates, params KdfDataParam[] additionalParams)
+    public ICkSP800_108KdfParams CreateSp800_108KdfParams(CKM pdfType, List<List<IObjectAttribute>>? additionalTemplates, params KdfDataParam[] additionalParams)
     {
         if (additionalTemplates != null)
         {
