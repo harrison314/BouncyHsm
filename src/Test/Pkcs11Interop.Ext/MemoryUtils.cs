@@ -56,6 +56,22 @@ internal static unsafe class MemoryUtils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IntPtr MemDup<T>(List<T> values)
+        where T : unmanaged
+    {
+        void* ptr = NativeMemory.AllocZeroed((nuint)(sizeof(T) * values.Count));
+        System.Diagnostics.Debug.Assert(ptr != null, "Memory allocation failed");
+
+        for (int i = 0; i < values.Count; i++)
+        {
+            T value = values[i];
+            NativeMemory.Copy(Unsafe.AsPointer(ref value), Unsafe.Add<T>(ptr, i), (nuint)sizeof(T));
+        }
+
+        return (IntPtr)ptr;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CopyBack<T>(IntPtr ptr, ref T value)
         where T : unmanaged
     {

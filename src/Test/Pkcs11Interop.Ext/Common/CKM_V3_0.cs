@@ -96,4 +96,8 @@ public static class CKM_V3_0
     public const CKM CKM_HKDF_DERIVE = (CKM)0x0000402a;
     public const CKM CKM_HKDF_DATA = (CKM)0x0000402b;
     public const CKM CKM_HKDF_KEY_GEN = (CKM)0x0000402c;
+
+    public const CKM CKM_SP800_108_COUNTER_KDF = (CKM)0x000003ac;
+    public const CKM CKM_SP800_108_FEEDBACK_KDF = (CKM)0x000003ad;
+    public const CKM CKM_SP800_108_DOUBLE_PIPELINE_KDF = (CKM)0x000003ae;
 }

@@ -1,5 +1,6 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
+using Pkcs11Interop.Ext.Common;
 using Pkcs11Interop.Ext.HighLevelAPI.Factories;
 using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
 using System;
@@ -56,5 +57,15 @@ internal class MechanismParamsV3Factory : IMechanismParamsV3Factory
         byte[]? info)
     {
         return new CkHkdfParams(extract, expand, hashMechanism, saltType, saltKey, salt, info);
+    }
+
+    public ICkSP800_108KdfParams CreateSp800_108KdfParams(uint pdfType, List<List<IObjectAttribute>>? additionalTemplates, params KdfDataParam[] additionalParams)
+    {
+        if (additionalTemplates != null)
+        {
+            throw new NotSupportedException("Additional keys generation is not supported yet.");
+        }
+
+        return new CkSP800_108KdfParams(pdfType, additionalParams);
     }
 }
