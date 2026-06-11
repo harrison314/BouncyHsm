@@ -132,6 +132,7 @@ internal static class AllovedMechanismLookup
         CKM.CKM_CONCATENATE_BASE_AND_KEY,
         CKM.CKM_EXTRACT_KEY_FROM_KEY,
         CKM.CKM_POLY1305,
+        CKM.CKM_SP800_108_COUNTER_KDF,
     };
 
     public static readonly CKM[] MlDsaKeyObject = new CKM[]

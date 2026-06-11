@@ -240,6 +240,8 @@ internal static class MechanismUtils
             {CKM.CKM_AES_ECB_ENCRYPT_DATA,  new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE, false, Pkcs11SpecVersion.V2_40) },
             {CKM.CKM_AES_CBC_ENCRYPT_DATA,  new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE, false, Pkcs11SpecVersion.V2_40) },
             
+            // Derive using SP800-108
+            {CKM.CKM_SP800_108_COUNTER_KDF,  new MechanismInfo(1, SecretMaxKeySize, MechanismCkf.CKF_DERIVE, MechanismCkf.CKF_DERIVE, false, Pkcs11SpecVersion.V3_1) },
 
             // AES
             {CKM.CKM_AES_KEY_GEN, new MechanismInfo(AesMinKeySize, AesMaxKeySize, MechanismCkf.CKF_GENERATE, MechanismCkf.NONE, false, Pkcs11SpecVersion.V2_40)},

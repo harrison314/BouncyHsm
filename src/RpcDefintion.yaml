@@ -608,7 +608,7 @@ Messages:
       PulDigestLen: uint32
 
   DigestValue:
-    Summary: Representes digest returnet value.
+    Summary: Represents digest returnet value.
     Fields:
       PulDigestLen: uint32
       Data: binary?
@@ -1363,47 +1363,47 @@ Messages:
 
   # CK_parsms DTO's
   CkP_MacGeneralParams:
-    Summary: Representes CK_MAC_GENERAL_PARAMS
+    Summary: Represents CK_MAC_GENERAL_PARAMS
     Fields:
       Value: uint32
 
   CkP_ExtractParams:
-    Summary: Representes CK_EXTRACT_PARAMS
+    Summary: Represents CK_EXTRACT_PARAMS
     Fields:
       Value: uint32
 
   CkP_RsaPkcsPssParams:
-    Summary: Representes CK_RSA_PKCS_PSS_PARAMS
+    Summary: Represents CK_RSA_PKCS_PSS_PARAMS
     Fields:
       HashAlg: uint32 # CK_MECHANISM_TYPE
       Mgf: uint32
       SLen: uint32
   
   CkP_RawDataParams:
-    Summary: Representes raw data parameters
+    Summary: Represents raw data parameters
     Fields:
       Value: binary
 
   CkP_KeyDerivationStringData:
-    Summary: Representes CK_KEY_DERIVATION_STRING_DATA
+    Summary: Represents CK_KEY_DERIVATION_STRING_DATA
     Fields:
       Data: binary
       Len: uint32
 
   CkP_CkObjectHandle:
-    Summary: Representes CK_OBJECT_HANDLE as parameter
+    Summary: Represents CK_OBJECT_HANDLE as parameter
     Fields:
       Handle: uint32
 
   Ckp_CkEcdh1DeriveParams:
-    Summary: Representes CK_ECDH1_DERIVE_PARAMS
+    Summary: Represents CK_ECDH1_DERIVE_PARAMS
     Fields:
       Kdf: uint32
       SharedData: binary?
       PublicData: binary?
 
   Ckp_CkGcmParams:
-    Summary: Representes CK_GCM_PARAMS
+    Summary: Represents CK_GCM_PARAMS
     Fields:
       Iv: binary?
       IvBits: uint32
@@ -1411,7 +1411,7 @@ Messages:
       TagBits: uint32
 
   Ckp_CkCcmParams:
-    Summary: Representes CK_CCM_PARAMS
+    Summary: Represents CK_CCM_PARAMS
     Fields:
       DataLen: uint32
       Nonce: binary?
@@ -1419,7 +1419,7 @@ Messages:
       MacLen: uint32
 
   Ckp_CkRsaPkcsOaepParams:
-    Summary: Representes CK_RSA_PKCS_OAEP_PARAMS
+    Summary: Represents CK_RSA_PKCS_OAEP_PARAMS
     Fields:
       HashAlg: uint32
       Mgf: uint32
@@ -1427,13 +1427,13 @@ Messages:
       SourceData: binary?
 
   Ckp_CkAesCbcEnryptDataParams:
-    Summary: Representes CK_AES_CBC_ENCRYPT_DATA_PARAMS
+    Summary: Represents CK_AES_CBC_ENCRYPT_DATA_PARAMS
     Fields:
       Iv: binary
       Data: binary
 
   Ckp_CkChaCha20Params:
-    Summary: Representes CK_CHACHA20_PARAMS
+    Summary: Represents CK_CHACHA20_PARAMS
     Fields:
       BlockCounterLower: uint32
       BlockCounterUpper: uint32
@@ -1442,39 +1442,39 @@ Messages:
       Nonce: binary
 
   Ckp_CkSalsa20Params:
-    Summary: Representes CK_SALSA20_PARAMS
+    Summary: Represents CK_SALSA20_PARAMS
     Fields:
       BlockCounter: uint64
       BlockCounterIsSet: bool
       Nonce: binary
   
   Ckp_CkSalsa20ChaCha20Poly1305Params:
-    Summary: Representes CK_SALSA20_CHACHA20_POLY1305_PARAMS
+    Summary: Represents CK_SALSA20_CHACHA20_POLY1305_PARAMS
     Fields:
       Nonce: binary
       AadData: binary?
 
   Ckp_CkEddsaParams:
-    Summary: Representes CK_EDDSA_PARAMS
+    Summary: Represents CK_EDDSA_PARAMS
     Fields:
       PhFlag: bool
       ContextData: binary?
 
   Ckp_CkSignAdditionalContext:
-    Summary: Representes CK_SIGN_ADDITIONAL_CONTEXT for ML-DSA
+    Summary: Represents CK_SIGN_ADDITIONAL_CONTEXT for ML-DSA
     Fields:
       HedgeVariant: uint32
       Context: binary?
 
   Ckp_CkHashSignAdditionalContext:
-    Summary: Representes CK_HASH_SIGN_ADDITIONAL_CONTEXT for ML-DSA
+    Summary: Represents CK_HASH_SIGN_ADDITIONAL_CONTEXT for ML-DSA
     Fields:
       HedgeVariant: uint32
       Context: binary?
       Hash: uint32
 
   Ckp_CkHkdfParams:
-    Summary: Representes CK_HKDF_PARAMS
+    Summary: Represents CK_HKDF_PARAMS
     Fields:
       Extract: bool
       Expand: bool
@@ -1485,9 +1485,33 @@ Messages:
       Info: binary?
 
   Ckp_CkCamelliaCbcEncryptDataParams:
-    Summary: Representes CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS
+    Summary: Represents CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS
     Fields:
       Iv: binary
       Data: binary
+
+  Ckp_CkSp800_108PrfDataParsms:
+    Summary: > 
+      Represents CK_PRF_DATA_PARAM, 
+      CK_SP800_108_ITERATION_VARIABLE uses LittleEndian, WidthInBits;
+      CK_SP800_108_COUNTER uses LittleEndian, WidthInBits;
+      CK_SP800_108_BYTE_ARRAY uses Value;
+      CK_SP800_108_KEY_HANDLE use KeyHandle;
+      CK_SP800_108_DKM_LENGTH use LittleEndian, WidthInBits, LengthMethod
+    Fields:
+      Type: uint32
+      Value: binary
+      KeyHandle: uint32
+      LittleEndian: bool
+      WidthInBits: uint32
+      LengthMethod: uint32
+
+  Ckp_CkSp800_108KdfParams:
+    Summary: Represents CK_SP800_108_KDF_PARAMS
+    Fields:
+      PrfType: uint32
+      DataParams: Ckp_CkSp800_108PrfDataParsms[]
+      # AdditionalDerivedKeys: AttrValueFromNative[] - is not support in current version
+      AdditionalDerivedKeysCount: uint32
 
 

@@ -364,7 +364,9 @@ public static class Program
 
     private static void SampleCounterModeSp800_108()
     {
-        // PRF (K_I, [i]_4 || Label || 0x00 || Context || [L]_4) 
+        // PRF (KI, [i]2 || Label || 0x00 || Context || [L]2)
+        // https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.sp800108hmaccounterkdf?view=net-10.0
+        // https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html#_Toc195693562
         string keyValue = "26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d";
         string labelValue = "99c3d79cb978724e1e2f09dc90e3b694";
         string contextValue = "18582cd847d60455fb88924c9fd8fb63";
@@ -398,7 +400,6 @@ public static class Program
             factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Convert.FromHexString(keyValue)),
         };
 
@@ -419,7 +420,6 @@ public static class Program
             factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)64),
         };
 
