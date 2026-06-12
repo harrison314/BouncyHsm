@@ -978,9 +978,10 @@ static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pM
     //TODO AdditionalDerivedKeys implementation
     ckSp800_108KdfParams.AdditionalDerivedKeysCount = (uint32_t)kdfparams->ulAdditionalDerivedKeys;
 
+    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
     if (kdfparams->ulNumberOfDataParams > 0)
     {
-        Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = (Ckp_CkSp800_108PrfDataParsms*)malloc(kdfparams->ulNumberOfDataParams * sizeof(Ckp_CkSp800_108PrfDataParsms));
+        paramArrayPtr = (Ckp_CkSp800_108PrfDataParsms*)malloc(kdfparams->ulNumberOfDataParams * sizeof(Ckp_CkSp800_108PrfDataParsms));
         if (paramArrayPtr == NULL)
         {
             log_message(LOG_LEVEL_ERROR, "Malloc return null in " __FUNCTION__);
@@ -1074,6 +1075,11 @@ static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pM
     if (result != NMRPC_OK)
     {
         log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+    }
+
+    if (paramArrayPtr != NULL)
+    {
+        free(paramArrayPtr);
     }
 
     return result;

@@ -36,7 +36,7 @@ internal class DkmLengthPrfDataParam : IPrfDataParam
         ulong value = this.lengthMethod switch
         {
             CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS => Convert.ToUInt64(context.DkmLenghth * 8),
-            CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS => Convert.ToUInt64(context.BlockCount),
+            CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS => Convert.ToUInt64(context.BlockTotalLength * 8),
             _ => throw new InvalidProgramException($"Enum value CK_SP800_108_DKM_LENGTH_METHOD is not supported.")
         };
 

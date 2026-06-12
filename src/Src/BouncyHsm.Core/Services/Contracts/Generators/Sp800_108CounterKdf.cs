@@ -29,7 +29,7 @@ internal class Sp800_108CounterKdf
 
         for (int i = 1; i <= n; i++)
         {
-            PrfDataContext ctx = new PrfDataContext(i, outputLengthBytes, n);
+            PrfDataContext ctx = new PrfDataContext(i, null, outputLengthBytes, n * hLen);
             IMac mac = this.macFactory();
             mac.Init(new KeyParameter(this.key));
 
