@@ -28,6 +28,8 @@ internal class Sp800_108DoublePipelineKdf
 
         for (int i = 1; i <= n; i++)
         {
+            this.PrfNextValue(acc);
+
             PrfDataContext ctx = new PrfDataContext(i, acc, outputLengthBytes, n * hLen);
             IMac mac = this.macFactory();
             mac.Init(new KeyParameter(this.key));
@@ -38,9 +40,7 @@ internal class Sp800_108DoublePipelineKdf
             }
 
             mac.DoFinal(buffer.AsSpan());
-
             result.Write(buffer.AsSpan());
-            acc = buffer;
         }
 
         byte[] resultArray = result.ToArray();
@@ -68,5 +68,14 @@ internal class Sp800_108DoublePipelineKdf
         mac.DoFinal(buffer.AsSpan());
 
         return buffer;
+    }
+
+    private void PrfNextValue(byte[] acc)
+    {
+        IMac mac = this.macFactory();
+        mac.Init(new KeyParameter(this.key));
+        mac.BlockUpdate(acc.AsSpan());
+
+        mac.DoFinal(acc.AsSpan());
     }
 }
