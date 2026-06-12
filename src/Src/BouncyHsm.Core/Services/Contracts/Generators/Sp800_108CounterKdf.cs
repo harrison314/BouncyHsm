@@ -7,6 +7,7 @@ using System.Text;
 
 namespace BouncyHsm.Core.Services.Contracts.Generators;
 
+// https://csrc.nist.gov/files/pubs/sp/800/108/final/docs/sp800-108-nov2008.pdf
 internal class Sp800_108CounterKdf
 {
     private readonly Func<IMac> macFactory;
