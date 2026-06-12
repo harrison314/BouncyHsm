@@ -559,6 +559,273 @@ public class T23_DeriveKey
         Assert.AreEqual(CKR.CKR_TEMPLATE_INCONSISTENT, ex.RV);
     }
 
+
+    [TestMethod]
+    [DataRow(CKM.CKM_SHA_1_HMAC)]
+    [DataRow(CKM.CKM_SHA224_HMAC)]
+    [DataRow(CKM.CKM_SHA256_HMAC)]
+    [DataRow(CKM.CKM_SHA384_HMAC)]
+    [DataRow(CKM.CKM_SHA512_HMAC)]
+    [DataRow(CKM_V3_0.CKM_SHA3_224_HMAC)]
+    [DataRow(CKM_V3_0.CKM_SHA3_256_HMAC)]
+    [DataRow(CKM_V3_0.CKM_SHA3_384_HMAC)]
+    [DataRow(CKM_V3_0.CKM_SHA3_512_HMAC)]
+    [DataRow(CKM.CKM_AES_CMAC)]
+    public void Derive_Sp800108CounterKdf_Success(CKM prfType)
+    {
+        string labelValue = "99c3d79cb978724e1e2f09dc90e3b694";
+        string contextValue = "18582cd847d60455fb88924c9fd8fb63";
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, session.GenerateRandom(32));
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, 32U),
+        };
+
+        using ICkSP800_108KdfParams derivationMechanismParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateSp800_108KdfParams(prfType,
+             null,
+             new List<KdfDataParam>()
+             {
+                new KdfDataParam.IterationVariable(false, 32),
+                new KdfDataParam.ByteArray(Convert.FromHexString(labelValue)),
+                new KdfDataParam.ByteArray(new byte[] { 0x00 }),
+                new KdfDataParam.ByteArray(Convert.FromHexString(contextValue)),
+                new KdfDataParam.DkmLength(false, 32, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)
+             });
+
+        using IMechanism derivationMechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_SP800_108_COUNTER_KDF, derivationMechanismParams);
+
+        IObjectHandle derivedHandle = session.DeriveKey(derivationMechanism, handle, newKeyAttributes);
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
+    [TestMethod]
+    public void Derive_Sp800108CounterKdf_Data()
+    {
+        string key = "26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d";
+        string labelValue = "99c3d79cb978724e1e2f09dc90e3b694";
+        string contextValue = "18582cd847d60455fb88924c9fd8fb63";
+        string result = "16C6704DF3F2C2E49169DBE902";
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, Convert.FromHexString(key));
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, 13U),
+        };
+
+        using ICkSP800_108KdfParams derivationMechanismParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateSp800_108KdfParams(CKM.CKM_SHA256_HMAC,
+             null,
+             new List<KdfDataParam>()
+             {
+                new KdfDataParam.IterationVariable(false, 32),
+                new KdfDataParam.ByteArray(Convert.FromHexString(labelValue)),
+                new KdfDataParam.ByteArray(new byte[] { 0x00 }),
+                new KdfDataParam.ByteArray(Convert.FromHexString(contextValue)),
+                new KdfDataParam.DkmLength(false, 32, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)
+             });
+
+        using IMechanism derivationMechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_SP800_108_COUNTER_KDF, derivationMechanismParams);
+
+        IObjectHandle derivedHandle = session.DeriveKey(derivationMechanism, handle, newKeyAttributes);
+        byte[] derivedSecret = session.GetAttributeValue(derivedHandle, new List<CKA>() { CKA.CKA_VALUE }).Single().GetValueAsByteArray();
+
+        Assert.AreEqual(result, Convert.ToHexString(derivedSecret), true);
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
+    [TestMethod]
+    [DataRow(8, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(16, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(24, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(32, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(40, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(48, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(56, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(64, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(8, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(16, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(24, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(32, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(40, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(48, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(56, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(64, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(64, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS)]
+    [DataRow(64, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS)]
+    public void Derive_Sp800108CounterKdfMoreData_Success(int variableSize, bool littleEndian, uint lengthMethod)
+    {
+        string key = "26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d";
+        string labelValue = "99c3d79cb978724e1e2f09dc90e3b694";
+        string contextValue = "18582cd847d60455fb88924c9fd8fb63";
+        
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, Convert.FromHexString(key));
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, 13U),
+        };
+
+        using ICkSP800_108KdfParams derivationMechanismParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateSp800_108KdfParams(CKM.CKM_SHA256_HMAC,
+             null,
+             new List<KdfDataParam>()
+             {
+                 new KdfDataParam.IterationVariable(littleEndian, variableSize),
+                 new KdfDataParam.ByteArray(Convert.FromHexString(labelValue)),
+                 new KdfDataParam.ByteArray(new byte[] { 0x00 }),
+                 new KdfDataParam.ByteArray(Convert.FromHexString(contextValue)),
+                 new KdfDataParam.DkmLength(littleEndian, variableSize, lengthMethod)
+             });
+
+        using IMechanism derivationMechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_SP800_108_COUNTER_KDF, derivationMechanismParams);
+
+        IObjectHandle derivedHandle = session.DeriveKey(derivationMechanism, handle, newKeyAttributes);
+        byte[] derivedSecret = session.GetAttributeValue(derivedHandle, new List<CKA>() { CKA.CKA_VALUE }).Single().GetValueAsByteArray();
+
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
+    [TestMethod]
+    public void Derive_Sp800108CounterKdfWithKeyData_Data()
+    {
+        string key = "26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d";
+        string contextValue = "18582cd847d60455fb88924c9fd8fb63";
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, Convert.FromHexString(key));
+        IObjectHandle otherKey = this.CreateSecret(session, session.GenerateRandom(32));
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = session.GenerateRandom(32);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_GENERIC_SECRET),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, 13U),
+        };
+
+        using ICkSP800_108KdfParams derivationMechanismParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateSp800_108KdfParams(CKM.CKM_SHA256_HMAC,
+             null,
+             new List<KdfDataParam>()
+             {
+                 new KdfDataParam.IterationVariable(false, 32),
+                 new KdfDataParam.ByteArray(Convert.FromHexString(contextValue)),
+                 new KdfDataParam.KeyHandle(otherKey),
+                 new KdfDataParam.DkmLength(false, 32, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)
+             });
+
+        using IMechanism derivationMechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_SP800_108_COUNTER_KDF, derivationMechanismParams);
+
+        IObjectHandle derivedHandle = session.DeriveKey(derivationMechanism, handle, newKeyAttributes);
+        byte[] derivedSecret = session.GetAttributeValue(derivedHandle, new List<CKA>() { CKA.CKA_VALUE }).Single().GetValueAsByteArray();
+
+        session.DestroyObject(otherKey);
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
     private IObjectHandle CreateSecret(ISession session, byte[] data)
     {
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

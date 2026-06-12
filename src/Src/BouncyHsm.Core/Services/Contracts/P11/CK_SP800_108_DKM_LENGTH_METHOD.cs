@@ -1,0 +1,7 @@
+﻿namespace BouncyHsm.Core.Services.Contracts.P11;
+
+public enum CK_SP800_108_DKM_LENGTH_METHOD : uint
+{
+    CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS = 0x00000001,
+    CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS = 0x00000002,
+}

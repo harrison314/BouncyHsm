@@ -4574,3 +4574,78 @@ public partial class Ckp_CkCamelliaCbcEncryptDataParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+public partial class Ckp_CkSp800_108PrfDataParsms
+{
+    [Key(0)]
+    public uint Type
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public byte[] Value
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<byte>();
+
+    [Key(2)]
+    public uint KeyHandle
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
+    public bool LittleEndian
+    {
+        get;
+        set;
+    }
+
+    [Key(4)]
+    public uint WidthInBits
+    {
+        get;
+        set;
+    }
+
+    [Key(5)]
+    public uint LengthMethod
+    {
+        get;
+        set;
+    }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+public partial class Ckp_CkSp800_108KdfParams
+{
+    [Key(0)]
+    public uint PrfType
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public Ckp_CkSp800_108PrfDataParsms[] DataParams
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<Ckp_CkSp800_108PrfDataParsms>();
+
+    [Key(2)]
+    public uint AdditionalDerivedKeysCount
+    {
+        get;
+        set;
+    }
+
+}
+

@@ -761,6 +761,77 @@ int ArrayOfGetAttributeOutValue_Release(ArrayOfGetAttributeOutValue* value)
   value->length = 0;
     return NMRPC_OK;
 }
+int ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, ArrayOfCkp_CkSp800_108PrfDataParsms* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  int i = 0;
+
+    result = cmp_write_array(ctx, value->length);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  for (i = 0; i < value->length; i++)
+  {
+  result = Ckp_CkSp800_108PrfDataParsms_Serialize(ctx, &value->array[i]);
+   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
+
+  }
+
+    return NMRPC_OK;
+}
+
+int ArrayOfCkp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfCkp_CkSp800_108PrfDataParsms* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  uint32_t array_size;
+  uint32_t i;
+
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result) return log_serialization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result) return log_serialization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  value->length = (int)array_size;
+  value->array = (Ckp_CkSp800_108PrfDataParsms*) malloc(sizeof(Ckp_CkSp800_108PrfDataParsms) * array_size);
+  if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
+  for (i = 0; i < array_size; i++)
+  {
+   result = Ckp_CkSp800_108PrfDataParsms_Deserialize(ctx, NULL, &value->array[i]);
+   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
+  }
+
+    return NMRPC_OK;
+}
+
+int ArrayOfCkp_CkSp800_108PrfDataParsms_Release(ArrayOfCkp_CkSp800_108PrfDataParsms* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  int i;
+  for (i = 0; i < value->length; i++)
+  {
+      if (Ckp_CkSp800_108PrfDataParsms_Release(&value->array[i]) != NMRPC_OK)
+     {
+        return NMRPC_FATAL_ERROR;
+     }
+  }
+
+  if (value->array != NULL)
+  {
+    free((void*) value->array);
+    value->array = NULL;
+  }
+
+  value->length = 0;
+    return NMRPC_OK;
+}
 int AppIdentification_Serialize(cmp_ctx_t* ctx, AppIdentification* value)
 {
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
@@ -12090,6 +12161,143 @@ int Ckp_CkCamelliaCbcEncryptDataParams_Release(Ckp_CkCamelliaCbcEncryptDataParam
 
   Binary_Release(&value->Iv);
   Binary_Release(&value->Data);
+    return NMRPC_OK;
+}
+int Ckp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108PrfDataParsms* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 6);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->Type);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_bin(ctx, value->Value.data, (uint32_t)value->Value.size);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->KeyHandle);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_bool(ctx, value->LittleEndian);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->WidthInBits);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->LengthMethod);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkSp800_108PrfDataParsms* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 6) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->Type);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Type");
+
+  result = cmph_read_binary(ctx, &value->Value);
+   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Value");
+
+  result = cmp_read_uint(ctx, &value->KeyHandle);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field KeyHandle");
+
+  result = cmp_read_bool(ctx, &value->LittleEndian);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field LittleEndian");
+
+  result = cmp_read_uint(ctx, &value->WidthInBits);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field WidthInBits");
+
+  result = cmp_read_uint(ctx, &value->LengthMethod);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field LengthMethod");
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkSp800_108PrfDataParsms_Release(Ckp_CkSp800_108PrfDataParsms* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->Value);
+    return NMRPC_OK;
+}
+int Ckp_CkSp800_108KdfParams_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108KdfParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 3);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->PrfType);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(ctx, &value->DataParams);
+   if (result != NMRPC_OK) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->AdditionalDerivedKeysCount);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkSp800_108KdfParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkSp800_108KdfParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 3) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->PrfType);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field PrfType");
+
+  result = ArrayOfCkp_CkSp800_108PrfDataParsms_Deserialize(ctx, NULL, &value->DataParams);
+  if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field DataParams");
+
+  result = cmp_read_uint(ctx, &value->AdditionalDerivedKeysCount);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field AdditionalDerivedKeysCount");
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkSp800_108KdfParams_Release(Ckp_CkSp800_108KdfParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  if(ArrayOfCkp_CkSp800_108PrfDataParsms_Release(&value->DataParams) != NMRPC_OK)
+   {
+       return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
+   }
     return NMRPC_OK;
 }
 int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvelope* response)

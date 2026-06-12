@@ -958,6 +958,133 @@ static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     return result;
 }
 
+static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    int result = NMRPC_FATAL_ERROR;
+
+    if (pMechanism->ulParameterLen != sizeof(CK_SP800_108_KDF_PARAMS))
+    {
+        log_message(LOG_LEVEL_ERROR, "Excepted CK_SP800_108_KDF_PARAMS in mechanism.");
+        return NMRPC_FATAL_ERROR;
+    }
+
+    CK_SP800_108_KDF_PARAMS* kdfparams = (CK_SP800_108_KDF_PARAMS*)pMechanism->pParameter;
+    Ckp_CkSp800_108KdfParams ckSp800_108KdfParams = { 0 };
+
+    ckSp800_108KdfParams.PrfType = (uint32_t)kdfparams->prfType;
+
+    //TODO AdditionalDerivedKeys implementation
+    ckSp800_108KdfParams.AdditionalDerivedKeysCount = (uint32_t)kdfparams->ulAdditionalDerivedKeys;
+
+    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
+    if (kdfparams->ulNumberOfDataParams > 0)
+    {
+        paramArrayPtr = (Ckp_CkSp800_108PrfDataParsms*)malloc(kdfparams->ulNumberOfDataParams * sizeof(Ckp_CkSp800_108PrfDataParsms));
+        if (paramArrayPtr == NULL)
+        {
+            log_message(LOG_LEVEL_ERROR, "Malloc return null in " __FUNCTION__);
+            return NMRPC_FATAL_ERROR;
+        }
+
+        memset(paramArrayPtr, 0, kdfparams->ulNumberOfDataParams * sizeof(Ckp_CkSp800_108PrfDataParsms));
+
+        CK_ULONG i;
+        for (i = 0; i < kdfparams->ulNumberOfDataParams; i++)
+        {
+            Ckp_CkSp800_108PrfDataParsms* ptr = &paramArrayPtr[i];
+            CK_PRF_DATA_PARAM* ptrData = &(kdfparams->pDataParams[i]);
+
+            switch (ptrData->type)
+            {
+            case CK_SP800_108_ITERATION_VARIABLE:
+                ptr->Type = CK_SP800_108_ITERATION_VARIABLE;
+                if (ptrData->ulValueLen != sizeof(CK_SP800_108_COUNTER_FORMAT))
+                {
+                    free(paramArrayPtr);
+                    log_message(LOG_LEVEL_ERROR, "Invalid ulValueLen for data param %s in %s", "CK_SP800_108_ITERATION_VARIABLE", __FUNCTION__);
+                    return NMRPC_BAD_ARGUMENT;
+                }
+
+                CK_SP800_108_COUNTER_FORMAT* icf = (CK_SP800_108_COUNTER_FORMAT*)ptrData->pValue;
+                ptr->LittleEndian = (bool)icf->bLittleEndian;
+                ptr->WidthInBits = (uint32_t)icf->ulWidthInBits;
+                break;
+
+            case CK_SP800_108_COUNTER:
+                ptr->Type = CK_SP800_108_COUNTER;
+                if (ptrData->ulValueLen != sizeof(CK_SP800_108_COUNTER_FORMAT))
+                {
+                    free(paramArrayPtr);
+                    log_message(LOG_LEVEL_ERROR, "Invalid ulValueLen for data param %s in %s", "CK_SP800_108_COUNTER", __FUNCTION__);
+                    return NMRPC_BAD_ARGUMENT;
+                }
+
+                CK_SP800_108_COUNTER_FORMAT* cf = (CK_SP800_108_COUNTER_FORMAT*)ptrData->pValue;
+                ptr->LittleEndian = (bool)cf->bLittleEndian;
+                ptr->WidthInBits = (uint32_t)cf->ulWidthInBits;
+                break;
+
+            case CK_SP800_108_BYTE_ARRAY:
+                ptr->Type = CK_SP800_108_BYTE_ARRAY;
+                ptr->Value.data = ptrData->pValue;
+                ptr->Value.size = (size_t)ptrData->ulValueLen;
+                break;
+
+            case CK_SP800_108_KEY_HANDLE:
+                ptr->Type = CK_SP800_108_KEY_HANDLE;
+                if (ptrData->ulValueLen != sizeof(CK_OBJECT_HANDLE))
+                {
+                    free(paramArrayPtr);
+                    log_message(LOG_LEVEL_ERROR, "Invalid ulValueLen for data param %s in %s", "CK_SP800_108_KEY_HANDLE", __FUNCTION__);
+                    return NMRPC_BAD_ARGUMENT;
+                }
+
+                ptr->KeyHandle = (uint32_t)(*((uint32_t*)ptrData->pValue));
+                break;
+
+            case CK_SP800_108_DKM_LENGTH:
+                ptr->Type = CK_SP800_108_DKM_LENGTH;
+                if (ptrData->ulValueLen != sizeof(CK_SP800_108_DKM_LENGTH_FORMAT))
+                {
+                    free(paramArrayPtr);
+                    log_message(LOG_LEVEL_ERROR, "Invalid ulValueLen for data param %s in %s", "CK_SP800_108_DKM_LENGTH", __FUNCTION__);
+                    return NMRPC_BAD_ARGUMENT;
+                }
+
+                CK_SP800_108_DKM_LENGTH_FORMAT* lmf = (CK_SP800_108_DKM_LENGTH_FORMAT*)ptrData->pValue;
+                ptr->LittleEndian = (bool)lmf->bLittleEndian;
+                ptr->WidthInBits = (uint32_t)lmf->ulWidthInBits;
+                ptr->LengthMethod = (uint32_t)lmf->dkmLengthMethod;
+                break;
+
+            default:
+
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid type for data param on index %i (value %i) in function %s", (int)i, (int)ptrData->type, __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+        }
+
+        ckSp800_108KdfParams.DataParams.array = paramArrayPtr;
+        ckSp800_108KdfParams.DataParams.length = (size_t)kdfparams->ulNumberOfDataParams;
+    }
+
+    result = nmrpc_writeAsBinary(&ckSp800_108KdfParams, (SerializeFnPtr_t)Ckp_CkSp800_108KdfParams_Serialize, &value->MechanismParamMp);
+    if (result != NMRPC_OK)
+    {
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+    }
+
+    if (paramArrayPtr != NULL)
+    {
+        free(paramArrayPtr);
+    }
+
+    return result;
+}
+
 int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
     LOG_ENTERING_TO_FUNCTION();
@@ -1114,6 +1241,10 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
     case CKM_HKDF_DERIVE:
         return CreateHkdfParams(value, pMechanism);
+        break;
+
+    case CKM_SP800_108_COUNTER_KDF:
+        return CreateCkSp800_108KdfParams(value, pMechanism);
         break;
 
     default:

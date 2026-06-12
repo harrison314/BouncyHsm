@@ -1,5 +1,6 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
+using Pkcs11Interop.Ext.Common;
 using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
 using System;
 using System.Collections.Generic;
@@ -33,4 +34,7 @@ public interface IMechanismParamsV3Factory
         byte[]? salt,
         byte[]? info);
 
+    ICkSP800_108KdfParams CreateSp800_108KdfParams(CKM pdfType,
+        List<List<IObjectAttribute>>? additionalTemplates,
+        List<KdfDataParam> additionalParams);
 }

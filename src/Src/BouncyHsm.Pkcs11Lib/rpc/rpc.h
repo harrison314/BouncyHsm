@@ -193,6 +193,8 @@ typedef struct _Ckp_CkSignAdditionalContext Ckp_CkSignAdditionalContext;
 typedef struct _Ckp_CkHashSignAdditionalContext Ckp_CkHashSignAdditionalContext;
 typedef struct _Ckp_CkHkdfParams Ckp_CkHkdfParams;
 typedef struct _Ckp_CkCamelliaCbcEncryptDataParams Ckp_CkCamelliaCbcEncryptDataParams;
+typedef struct _Ckp_CkSp800_108PrfDataParsms Ckp_CkSp800_108PrfDataParsms;
+typedef struct _Ckp_CkSp800_108KdfParams Ckp_CkSp800_108KdfParams;
 
 typedef struct _Binary Binary;
 
@@ -201,6 +203,7 @@ typedef struct _ArrayOfuint32_t ArrayOfuint32_t;
 typedef struct _ArrayOfAttrValueFromNative ArrayOfAttrValueFromNative;
 typedef struct _ArrayOfGetAttributeInputValues ArrayOfGetAttributeInputValues;
 typedef struct _ArrayOfGetAttributeOutValue ArrayOfGetAttributeOutValue;
+typedef struct _ArrayOfCkp_CkSp800_108PrfDataParsms ArrayOfCkp_CkSp800_108PrfDataParsms;
 
 typedef struct _Binary {
   uint8_t* data;
@@ -256,6 +259,15 @@ typedef struct _ArrayOfGetAttributeOutValue
 int ArrayOfGetAttributeOutValue_Serialize(cmp_ctx_t* ctx, ArrayOfGetAttributeOutValue* value);
 int ArrayOfGetAttributeOutValue_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfGetAttributeOutValue* value);
 int ArrayOfGetAttributeOutValue_Release(ArrayOfGetAttributeOutValue* value);
+
+typedef struct _ArrayOfCkp_CkSp800_108PrfDataParsms 
+{
+    Ckp_CkSp800_108PrfDataParsms* array;
+    int length;
+} ArrayOfCkp_CkSp800_108PrfDataParsms;
+int ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, ArrayOfCkp_CkSp800_108PrfDataParsms* value);
+int ArrayOfCkp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfCkp_CkSp800_108PrfDataParsms* value);
+int ArrayOfCkp_CkSp800_108PrfDataParsms_Release(ArrayOfCkp_CkSp800_108PrfDataParsms* value);
 
 
 typedef struct _AppIdentification
@@ -2201,6 +2213,31 @@ typedef struct _Ckp_CkCamelliaCbcEncryptDataParams
 int Ckp_CkCamelliaCbcEncryptDataParams_Serialize(cmp_ctx_t* ctx, Ckp_CkCamelliaCbcEncryptDataParams* value);
 int Ckp_CkCamelliaCbcEncryptDataParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkCamelliaCbcEncryptDataParams* value);
 int Ckp_CkCamelliaCbcEncryptDataParams_Release(Ckp_CkCamelliaCbcEncryptDataParams* value);
+
+typedef struct _Ckp_CkSp800_108PrfDataParsms
+{
+    uint32_t Type;
+    Binary Value;
+    uint32_t KeyHandle;
+    bool LittleEndian;
+    uint32_t WidthInBits;
+    uint32_t LengthMethod;
+} Ckp_CkSp800_108PrfDataParsms;
+
+int Ckp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108PrfDataParsms* value);
+int Ckp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkSp800_108PrfDataParsms* value);
+int Ckp_CkSp800_108PrfDataParsms_Release(Ckp_CkSp800_108PrfDataParsms* value);
+
+typedef struct _Ckp_CkSp800_108KdfParams
+{
+    uint32_t PrfType;
+    ArrayOfCkp_CkSp800_108PrfDataParsms DataParams;
+    uint32_t AdditionalDerivedKeysCount;
+} Ckp_CkSp800_108KdfParams;
+
+int Ckp_CkSp800_108KdfParams_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108KdfParams* value);
+int Ckp_CkSp800_108KdfParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkSp800_108KdfParams* value);
+int Ckp_CkSp800_108KdfParams_Release(Ckp_CkSp800_108KdfParams* value);
 
 
 typedef void* (*nmrpc_malloc_fn_t)(size_t size);
