@@ -62,9 +62,9 @@ public class Sp800_108CounterKdfTests
     }
 
     [TestMethod]
-    [DataRow("26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d", 
-        "99c3d79cb978724e1e2f09dc90e3b694", 
-        "18582cd847d60455fb88924c9fd8fb63", 
+    [DataRow("26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d",
+        "99c3d79cb978724e1e2f09dc90e3b694",
+        "18582cd847d60455fb88924c9fd8fb63",
         13)]
     [DataRow("26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d",
         "99c3d79cb978724e1e2f09dc90e3b694",

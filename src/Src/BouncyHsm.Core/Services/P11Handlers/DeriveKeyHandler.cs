@@ -7,7 +7,6 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using MessagePack;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Security;
@@ -156,7 +155,9 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
             CKM.CKM_CAMELLIA_ECB_ENCRYPT_DATA => new CamelliaDeriveKeyGenerator(CipherUtilities.GetCipher("CAMELLIA/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<CamelliaDeriveKeyGenerator>()),
             CKM.CKM_CAMELLIA_CBC_ENCRYPT_DATA => this.CreateCamelliaCbcEncryptionGenerator(mechanism),
+
             CKM.CKM_SP800_108_COUNTER_KDF => await this.CreateS800_108CounterKdf(mechanism, memorySession, p11Session, cancellationToken),
+            CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF => await this.CreateS800_108DoublePipelineKdf(mechanism, memorySession, p11Session, cancellationToken),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for derive key.")
         };
@@ -409,6 +410,51 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         catch (Exception ex)
         {
             this.logger.LogError(ex, "Error during decode CreateS800_108CounterKdf.");
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private async Task<Sp800_108DoublePipelineDeriveKeyGenerator> CreateS800_108DoublePipelineKdf(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to CreateS800_108DoublePipelineKdf.");
+
+        try
+        {
+            Ckp_CkSp800_108KdfParams sp800KdfParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkSp800_108KdfParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            if (sp800KdfParams.AdditionalDerivedKeysCount > 0)
+            {
+                this.logger.LogError("Additional derived params is not supported for CKM_SP800_108_DOUBLE_PIPELINE_KDF mechanism.");
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR,
+                    $"Additional derived params is not supported for CKM_SP800_108_DOUBLE_PIPELINE_KDF mechanism.");
+            }
+
+            CKM prfType = (CKM)sp800KdfParams.PrfType;
+            if (MacUtils.TryGetPrf(prfType) == null)
+            {
+                this.logger.LogError("Invalid mechanism for prfType {PrfType} in CKM_SP800_108_DOUBLE_PIPELINE_KDF mechanism.", prfType);
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
+                        $"Invalid mechanism for prfType {prfType} in CKM_SP800_108_DOUBLE_PIPELINE_KDF mechanism.");
+            }
+
+            IPrfDataParam[] prfParams = await PrfDataParamFactory.Create(sp800KdfParams.DataParams,
+                this.hwServices,
+                memorySession,
+                p11Session,
+                CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF,
+                cancellationToken);
+
+            return new Sp800_108DoublePipelineDeriveKeyGenerator(prfType,
+                prfParams,
+                this.loggerFactory.CreateLogger<Sp800_108DoublePipelineDeriveKeyGenerator>());
+        }
+        catch (RpcPkcs11Exception)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error during decode CreateS800_108DoublePipelineKdf.");
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
         }
     }

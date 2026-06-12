@@ -1244,6 +1244,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         break;
 
     case CKM_SP800_108_COUNTER_KDF:
+    case CKM_SP800_108_DOUBLE_PIPELINE_KDF:
         return CreateCkSp800_108KdfParams(value, pMechanism);
         break;
 
