@@ -58,13 +58,13 @@ internal class MechanismParamsV3Factory : IMechanismParamsV3Factory
         return new CkHkdfParams(extract, expand, hashMechanism, saltType, saltKey, salt, info);
     }
 
-    public ICkSP800_108KdfParams CreateSp800_108KdfParams(CKM pdfType, List<List<IObjectAttribute>>? additionalTemplates, params KdfDataParam[] additionalParams)
+    public ICkSP800_108KdfParams CreateSp800_108KdfParams(CKM pdfType, List<List<IObjectAttribute>>? additionalTemplates, List<KdfDataParam> additionalParams)
     {
         if (additionalTemplates != null)
         {
             throw new NotSupportedException("Additional keys generation is not supported yet.");
         }
 
-        return new CkSP800_108KdfParams(pdfType, additionalParams);
+        return new CkSP800_108KdfParams(pdfType, additionalParams.ToArray());
     }
 }

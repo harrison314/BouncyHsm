@@ -425,11 +425,14 @@ public static class Program
 
         using ICkSP800_108KdfParams derivationMechanismParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateSp800_108KdfParams(CKM.CKM_SHA256_HMAC,
              null,
-            new KdfDataParam.IterationVariable(false, 32),
-            new KdfDataParam.ByteArray(Convert.FromHexString(labelValue)),
-            new KdfDataParam.ByteArray(new byte[] { 0x00 }),
-            new KdfDataParam.ByteArray(Convert.FromHexString(contextValue)),
-            new KdfDataParam.DkmLength(false, 32, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS));
+             new List<KdfDataParam>()
+             {
+                 new KdfDataParam.IterationVariable(false, 32),
+                 new KdfDataParam.ByteArray(Convert.FromHexString(labelValue)),
+                 new KdfDataParam.ByteArray(new byte[] { 0x00 }),
+                 new KdfDataParam.ByteArray(Convert.FromHexString(contextValue)),
+                 new KdfDataParam.DkmLength(false, 32, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)
+            });
 
         using IMechanism derivationMechanism = factories.MechanismFactory.Create(CKM_V3_0.CKM_SP800_108_COUNTER_KDF, derivationMechanismParams);
 

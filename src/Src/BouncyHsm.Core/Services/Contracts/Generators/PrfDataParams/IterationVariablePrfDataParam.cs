@@ -86,7 +86,7 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         if (this.width < 1 || this.width > 8)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
-                $"Invalid filed widthInBits for CK_SP800_108_ITERATION_VARIABLE, supported value has 8, 16, 32, 40, 48, 56, 64 actual is {widthInBits}.");
+                $"Invalid filed widthInBits for CK_SP800_108_ITERATION_VARIABLE, supported value has 8, 16, 32, 40, 48, 56, 64 actual is {this.width * 8}.");
         }
 
         Span<byte> buffer = stackalloc byte[sizeof(ulong)];
