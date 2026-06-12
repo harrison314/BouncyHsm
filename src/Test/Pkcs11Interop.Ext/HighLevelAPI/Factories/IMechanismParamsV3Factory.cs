@@ -37,4 +37,9 @@ public interface IMechanismParamsV3Factory
     ICkSP800_108KdfParams CreateSp800_108KdfParams(CKM pdfType,
         List<List<IObjectAttribute>>? additionalTemplates,
         List<KdfDataParam> additionalParams);
+
+    ICkSP800_108FeedbackKdfParams CreateCkSP800_108FeedbackKdfParams(CKM pdfType,
+        List<List<IObjectAttribute>>? additionalTemplates,
+        byte[] iv,
+        List<KdfDataParam> additionalParams);
 }

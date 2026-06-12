@@ -63,4 +63,17 @@ internal class MechanismParamsV3Factory : IMechanismParamsV3Factory
 
         return new CkSP800_108KdfParams(pdfType, additionalParams.ToArray());
     }
+
+    public ICkSP800_108FeedbackKdfParams CreateCkSP800_108FeedbackKdfParams(CKM pdfType,
+        List<List<IObjectAttribute>>? additionalTemplates,
+        byte[] iv,
+        List<KdfDataParam> additionalParams)
+    {
+        if (additionalTemplates != null)
+        {
+            throw new NotSupportedException("Additional keys generation is not supported yet.");
+        }
+
+        return new CkSP800_108FeedbackKdfParams(pdfType, iv, additionalParams.ToArray());
+    }
 }
