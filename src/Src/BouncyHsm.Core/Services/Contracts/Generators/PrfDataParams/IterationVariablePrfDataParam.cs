@@ -19,7 +19,7 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         if (widthInBits % 8 != 0)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
-                $"Invalid filed widthInBits for CK_SP800_108_ITERATION_VARIABLE, supported value has asas TODO actual is {widthInBits}.");
+                $"Invalid filed widthInBits for CK_SP800_108_ITERATION_VARIABLE, widthInBits in BouncyHsm must be equal to 8, actual value is {widthInBits}.");
         }
 
         this.littleEndian = littleEndian;

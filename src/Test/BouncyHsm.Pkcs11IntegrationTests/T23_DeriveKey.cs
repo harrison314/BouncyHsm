@@ -696,7 +696,7 @@ public class T23_DeriveKey
     [DataRow(32, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(40, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(48, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
-    [DataRow(54, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(56, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(64, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(8, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(16, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
@@ -704,7 +704,7 @@ public class T23_DeriveKey
     [DataRow(32, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(40, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(48, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
-    [DataRow(54, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
+    [DataRow(56, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(64, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS)]
     [DataRow(64, true, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS)]
     [DataRow(64, false, CK_SP800_108_DKM_LENGTH_METHOD.CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS)]
@@ -713,7 +713,7 @@ public class T23_DeriveKey
         string key = "26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d";
         string labelValue = "99c3d79cb978724e1e2f09dc90e3b694";
         string contextValue = "18582cd847d60455fb88924c9fd8fb63";
-
+        
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
             AssemblyTestConstants.P11LibPath,
@@ -821,6 +821,7 @@ public class T23_DeriveKey
         IObjectHandle derivedHandle = session.DeriveKey(derivationMechanism, handle, newKeyAttributes);
         byte[] derivedSecret = session.GetAttributeValue(derivedHandle, new List<CKA>() { CKA.CKA_VALUE }).Single().GetValueAsByteArray();
 
+        session.DestroyObject(otherKey);
         session.DestroyObject(handle);
         session.DestroyObject(derivedHandle);
     }
