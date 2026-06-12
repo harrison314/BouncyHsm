@@ -17,8 +17,8 @@ internal class ByteArrayPrfDataParam : IPrfDataParam
         this.data = data;
     }
 
-    public void Apply(IMac dataWriter, ref PrfDataContext context)
+    public void Apply(IMac prfFunction, ref PrfDataContext context)
     {
-        dataWriter.BlockUpdate(this.data, 0, this.data.Length);
+        prfFunction.BlockUpdate(this.data, 0, this.data.Length);
     }
 }

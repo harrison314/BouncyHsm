@@ -26,23 +26,23 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         this.width = widthInBits / 8;
     }
 
-    public void Apply(IMac dataWriter, ref PrfDataContext context)
+    public void Apply(IMac prfFunction, ref PrfDataContext context)
     {
         if (context.AlternativeIteration != null)
         {
-            this.ApplyAlternativeIteration(dataWriter, context.AlternativeIteration);
+            this.ApplyAlternativeIteration(prfFunction, context.AlternativeIteration);
         }
         else
         {
-            this.ApplyCounterIteration(dataWriter, context.Counter);
+            this.ApplyCounterIteration(prfFunction, context.Counter);
         }
     }
 
-    private void ApplyAlternativeIteration(IMac dataWriter, byte[] bytes)
+    private void ApplyAlternativeIteration(IMac prfFunction, byte[] bytes)
     {
         if (bytes.Length == this.width)
         {
-            dataWriter.BlockUpdate(bytes, 0, bytes.Length);
+            prfFunction.BlockUpdate(bytes, 0, bytes.Length);
             return;
         }
 
@@ -50,15 +50,15 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         {
             if (bytes.Length > this.width)
             {
-                dataWriter.BlockUpdate(bytes[this.width..]);
+                prfFunction.BlockUpdate(bytes[this.width..]);
             }
             else
             {
-                dataWriter.BlockUpdate(bytes, 0, bytes.Length);
+                prfFunction.BlockUpdate(bytes, 0, bytes.Length);
                 int count = this.width - bytes.Length;
                 for (int i = 0; i < count; i++)
                 {
-                    dataWriter.Update(0x00);
+                    prfFunction.Update(0x00);
                 }
             }
         }
@@ -66,22 +66,22 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         {
             if (bytes.Length > this.width)
             {
-                dataWriter.BlockUpdate(bytes[^this.width..]);
+                prfFunction.BlockUpdate(bytes[^this.width..]);
             }
             else
             {
                 int count = this.width - bytes.Length;
                 for (int i = 0; i < count; i++)
                 {
-                    dataWriter.Update(0x00);
+                    prfFunction.Update(0x00);
                 }
 
-                dataWriter.BlockUpdate(bytes, 0, bytes.Length);
+                prfFunction.BlockUpdate(bytes, 0, bytes.Length);
             }
         }
     }
 
-    private void ApplyCounterIteration(IMac dataWriter, int counter)
+    private void ApplyCounterIteration(IMac prfFunction, int counter)
     {
         if (this.width < 1 || this.width > 8)
         {
@@ -95,12 +95,12 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         if (this.littleEndian)
         {
             BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
-            dataWriter.BlockUpdate(buffer[this.width..]);
+            prfFunction.BlockUpdate(buffer[this.width..]);
         }
         else
         {
             BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
-            dataWriter.BlockUpdate(buffer[^this.width..]);
+            prfFunction.BlockUpdate(buffer[^this.width..]);
         }
     }
 }

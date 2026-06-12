@@ -30,7 +30,7 @@ internal class DkmLengthPrfDataParam : IPrfDataParam
         this.width = widthInBits / 8;
     }
 
-    public void Apply(IMac dataWriter, ref PrfDataContext context)
+    public void Apply(IMac prfFunction, ref PrfDataContext context)
     {
         Span<byte> buffer = stackalloc byte[sizeof(ulong)];
         ulong value = this.lengthMethod switch
@@ -43,12 +43,12 @@ internal class DkmLengthPrfDataParam : IPrfDataParam
         if (this.littleEndian)
         {
             BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
-            dataWriter.BlockUpdate(buffer[this.width..]);
+            prfFunction.BlockUpdate(buffer[this.width..]);
         }
         else
         {
             BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
-            dataWriter.BlockUpdate(buffer[^this.width..]);
+            prfFunction.BlockUpdate(buffer[^this.width..]);
         }
     }
 }

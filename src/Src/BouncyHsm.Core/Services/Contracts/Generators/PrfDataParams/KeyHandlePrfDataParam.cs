@@ -18,9 +18,9 @@ internal class KeyHandlePrfDataParam : IPrfDataParam
         this.secretKey = secretKey;
     }
 
-    public void Apply(IMac dataWriter, ref PrfDataContext context)
+    public void Apply(IMac prfFunction, ref PrfDataContext context)
     {
         byte[] data = this.secretKey.GetSecret();
-        dataWriter.BlockUpdate(data, 0, data.Length);
+        prfFunction.BlockUpdate(data, 0, data.Length);
     }
 }

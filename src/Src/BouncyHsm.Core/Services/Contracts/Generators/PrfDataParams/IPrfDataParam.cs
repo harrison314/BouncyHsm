@@ -13,5 +13,5 @@ internal interface IPrfDataParam
         get;
     }
 
-    void Apply(IMac dataWriter, ref PrfDataContext context); //TODO: replace stream to other data writer
+    void Apply(IMac prfFunction, ref PrfDataContext context);
 }

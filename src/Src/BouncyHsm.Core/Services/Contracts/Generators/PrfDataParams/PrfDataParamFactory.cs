@@ -33,7 +33,7 @@ internal static class PrfDataParamFactory
                 CK_PRF_DATA_TYPE.CK_SP800_108_COUNTER => new CounterPrfDataParam(dataParam.LittleEndian, (int)dataParam.WidthInBits),
                 CK_PRF_DATA_TYPE.CK_SP800_108_BYTE_ARRAY => new ByteArrayPrfDataParam(dataParam.Value ?? throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, "pValue is null for CK_SP800_108_BYTE_ARRAY")),
                 CK_PRF_DATA_TYPE.CK_SP800_108_DKM_LENGTH => new DkmLengthPrfDataParam(dataParam.LittleEndian, (int)dataParam.WidthInBits, ConvertLengthMethod(dataParam.LengthMethod)),
-                CK_PRF_DATA_TYPE.CK_SP800_108_KEY_HANDLE => new KeyHandlePrfDataParam(await NewMethod(hwServices, memorySession, p11Session, alowedMechanism, dataParam, cancellationToken)),
+                CK_PRF_DATA_TYPE.CK_SP800_108_KEY_HANDLE => new KeyHandlePrfDataParam(await FindDeriveKey(hwServices, memorySession, p11Session, alowedMechanism, dataParam, cancellationToken)),
                 _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"type has invalid value ")
             };
         }
@@ -41,7 +41,7 @@ internal static class PrfDataParamFactory
         return result;
     }
 
-    private static async Task<SecretKeyObject> NewMethod(IP11HwServices hwServices, IMemorySession memorySession, IP11Session p11Session, CKM alowedMechanism, Ckp_CkSp800_108PrfDataParsms dataParam, CancellationToken cancellationToken)
+    private static async Task<SecretKeyObject> FindDeriveKey(IP11HwServices hwServices, IMemorySession memorySession, IP11Session p11Session, CKM alowedMechanism, Ckp_CkSp800_108PrfDataParsms dataParam, CancellationToken cancellationToken)
     {
         SecretKeyObject keyObject = await hwServices.FindObjectByHandle<SecretKeyObject>(memorySession, p11Session, dataParam.KeyHandle, cancellationToken);
 
