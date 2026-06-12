@@ -395,6 +395,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
                 this.hwServices,
                 memorySession,
                 p11Session,
+                CKM.CKM_SP800_108_COUNTER_KDF,
                 cancellationToken);
 
             return new Sp800_108CounterDeriveKeyGenerator(prfType,
