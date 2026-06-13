@@ -149,7 +149,7 @@ public class T15_Digest
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[156];
         Random.Shared.NextBytes(secret);

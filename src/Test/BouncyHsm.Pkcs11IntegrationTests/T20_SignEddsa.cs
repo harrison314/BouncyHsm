@@ -33,7 +33,7 @@ public class T20_SignEddsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EdKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         CreateEcdsaKeyPair(factories,
             "id-Ed25519",
@@ -81,7 +81,7 @@ public class T20_SignEddsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EdKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         CreateEcdsaKeyPair(factories,
             curveName,

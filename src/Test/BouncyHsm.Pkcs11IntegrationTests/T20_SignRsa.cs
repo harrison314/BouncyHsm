@@ -53,7 +53,7 @@ public class T20_SignRsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         this.CreateRsaKeyPair(factories, slot, ckId, label);
 
@@ -84,7 +84,7 @@ public class T20_SignRsa
     //    session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
     //    string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-    //    byte[] ckId = session.GenerateRandom(32);
+    //    byte[] ckId = Utils.GetRandomArray(32);
 
     //    this.CreateRsaKeyPair(factories, slot, ckId, label);
 
@@ -118,7 +118,7 @@ public class T20_SignRsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         CreateRsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -152,7 +152,7 @@ public class T20_SignRsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         CreateRsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -188,7 +188,7 @@ public class T20_SignRsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         CreateRsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -224,7 +224,7 @@ public class T20_SignRsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         CreateRsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -260,7 +260,7 @@ public class T20_SignRsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         this.CreateRsaKeyPair(factories, slot, ckId, label);
 

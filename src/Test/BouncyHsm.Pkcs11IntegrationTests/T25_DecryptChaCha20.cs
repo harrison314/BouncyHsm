@@ -256,7 +256,7 @@ public class T25_DecryptChaCha20
     private IObjectHandle GenerateChaCha20Key(ISession session)
     {
         string label = $"ChaCha20-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

@@ -36,7 +36,7 @@ public class T39_DecapsulateKeyRsa
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -104,7 +104,7 @@ public class T39_DecapsulateKeyRsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -161,7 +161,7 @@ public class T39_DecapsulateKeyRsa
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

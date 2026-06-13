@@ -12,6 +12,11 @@ namespace BouncyHsm.Pkcs11IntegrationTests
 {
     internal static class Utils
     {
+        public static byte[] GetRandomBytes(int count)
+        {
+            return RandomNumberGenerator.GetBytes(count);
+        }
+
         public static byte[] CreatePkcs1DigestInfo(byte[] hash, HashAlgorithmName hashAlgorithm)
         {
             if (hash == null || hash.Length == 0)

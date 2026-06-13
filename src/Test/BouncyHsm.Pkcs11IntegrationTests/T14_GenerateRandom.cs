@@ -18,7 +18,7 @@ public class T14_GenerateRandom
         ISlot slot = slots.SelectTestSlot();
 
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
-        byte[] data = session.GenerateRandom(14);
+        byte[] data = Utils.GetRandomBytes(14);
 
         Assert.IsNotNull(data);
         Assert.HasCount(14, data);

@@ -32,7 +32,7 @@ public class T23_DeriveKeyAes
         IObjectHandle handle = this.GenerateAesKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -73,7 +73,7 @@ public class T23_DeriveKeyAes
         IObjectHandle handle = this.GenerateAesKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -89,7 +89,7 @@ public class T23_DeriveKeyAes
             factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true)
         };
 
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkAesCbcEncryptDataParams mechanismParam = factories.MechanismParamsFactory.CreateCkAesCbcEncryptDataParams(iv, data);
         using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_AES_CBC_ENCRYPT_DATA, mechanismParam);
@@ -99,7 +99,7 @@ public class T23_DeriveKeyAes
     private IObjectHandle GenerateAesKey(ISession session)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

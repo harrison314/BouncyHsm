@@ -35,7 +35,7 @@ public class T21_VerifyPoly1305
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
         this.GenerateSeecret(type, 32, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);

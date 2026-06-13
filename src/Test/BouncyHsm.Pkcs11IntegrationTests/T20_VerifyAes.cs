@@ -129,7 +129,7 @@ public class T20_VerifyAes
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

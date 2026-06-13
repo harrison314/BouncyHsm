@@ -32,7 +32,7 @@ public class T23_DeriveKeyCamellia
         IObjectHandle handle = this.GenerateCamelliaKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -73,7 +73,7 @@ public class T23_DeriveKeyCamellia
         IObjectHandle handle = this.GenerateCamelliaKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -89,7 +89,7 @@ public class T23_DeriveKeyCamellia
             factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true)
         };
 
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkCamelliaCbcEncryptDataParams mechanismParam = factories.MechanismParamsFactory.CreateCkCamelliaCbcEncryptDataParams(iv, data);
         using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_CAMELLIA_CBC_ENCRYPT_DATA, mechanismParam);
@@ -100,7 +100,7 @@ public class T23_DeriveKeyCamellia
     private IObjectHandle GenerateCamelliaKey(ISession session)
     {
         string label = $"CAMELLIA-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

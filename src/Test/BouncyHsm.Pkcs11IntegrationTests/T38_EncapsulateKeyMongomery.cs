@@ -88,7 +88,7 @@ public class T38_EncapsulateKeyMongomery
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GeneareMongomeryKeyPair(session, curveName);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -110,7 +110,7 @@ public class T38_EncapsulateKeyMongomery
         byte[]? sharedData = null;
         if (sharedDataLength > 0)
         {
-            sharedData = session.GenerateRandom(sharedDataLength);
+            sharedData = Utils.GetRandomBytes(sharedDataLength);
         }
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkEcdh1DeriveParams mp = factories.MechanismParamsFactory.CreateCkEcdh1DeriveParams((ulong)mgfFunction,
@@ -135,7 +135,7 @@ public class T38_EncapsulateKeyMongomery
        string curveName)
     {
         string label = $"X-KeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
         byte[] namedCurve = new DerPrintableString(curveName).GetEncoded();
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()

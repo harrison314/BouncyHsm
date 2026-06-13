@@ -167,7 +167,7 @@ public class T25_DecryptErrorStates
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(16);
+        byte[] nonce = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
             (ulong)0,
@@ -212,7 +212,7 @@ public class T25_DecryptErrorStates
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(16);
+        byte[] nonce = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
             (ulong)0,
@@ -242,7 +242,7 @@ public class T25_DecryptErrorStates
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -286,7 +286,7 @@ public class T25_DecryptErrorStates
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

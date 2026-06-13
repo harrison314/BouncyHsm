@@ -116,7 +116,7 @@ public class T18_CreateObject
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"CertTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] certificate = Convert.FromBase64String(@"MIIDaDCCAlCgAwIBAgIUHy7xGvpt1K/QwF/t5Un+95MtJjIwDQYJKoZIhvcNAQEL
 BQAwNzELMAkGA1UEBhMCU0sxEzARBgNVBAgMCkJyYXRpc2xhdmExEzARBgNVBAcM
@@ -180,7 +180,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"CertTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] certificate = Convert.FromBase64String(@"MIIDaDCCAlCgAwIBAgIUHy7xGvpt1K/QwF/t5Un+95MtJjIwDQYJKoZIhvcNAQEL
 BQAwNzELMAkGA1UEBhMCU0sxEzARBgNVBAgMCkJyYXRpc2xhdmExEzARBgNVBAcM
@@ -247,7 +247,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"CertTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] certificate = Convert.FromBase64String(@"MIIDaDCCAlCgAwIBAgIUHy7xGvpt1K/QwF/t5Un+95MtJjIwDQYJKoZIhvcNAQEL
 BQAwNzELMAkGA1UEBhMCU0sxEzARBgNVBAgMCkJyYXRpc2xhdmExEzARBgNVBAcM
@@ -318,7 +318,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[size];
         Random.Shared.NextBytes(secret);
@@ -366,7 +366,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[size];
         Random.Shared.NextBytes(secret);
@@ -411,7 +411,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Ec-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         Utils.EcdhData ecdhData = Utils.CreateEcdhParams();
 
@@ -450,7 +450,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Poly1305-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[32];
         Random.Shared.NextBytes(secret);
@@ -497,7 +497,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"ChaCha20-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[32];
         Random.Shared.NextBytes(secret);
@@ -544,7 +544,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Salsa20-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[32];
         Random.Shared.NextBytes(secret);
@@ -591,7 +591,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Ed-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
 
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
@@ -631,7 +631,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Ed-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
@@ -671,7 +671,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"X-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
 
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
@@ -711,7 +711,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"X-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
@@ -793,7 +793,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Camellia-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[size];
         Random.Shared.NextBytes(secret);
@@ -838,7 +838,7 @@ TnCoPhVFsVeDjQwg");
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         byte[] secret = new byte[32];
         Random.Shared.NextBytes(secret);

@@ -30,7 +30,7 @@ public class T27_UnwrapKeyCamellia
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
-        byte[] secretValue = session.GenerateRandom(32);
+        byte[] secretValue = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> secretAttribute = new List<IObjectAttribute>()
         {
@@ -39,7 +39,7 @@ public class T27_UnwrapKeyCamellia
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"GSecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32)),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
@@ -55,7 +55,7 @@ public class T27_UnwrapKeyCamellia
 
         IObjectHandle key = this.GenerateCamelliaKey(session, 32);
         byte[] iv = (ivLen > 0)
-            ? session.GenerateRandom(ivLen)
+            ? Utils.GetRandomBytes(ivLen)
             : Array.Empty<byte>();
 
         using IMechanism mechanism = (ivLen > 0)
@@ -88,7 +88,7 @@ public class T27_UnwrapKeyCamellia
 
         IObjectHandle key = this.GenerateCamelliaKey(session, 32);
         byte[] iv = (ivLen > 0)
-            ? session.GenerateRandom(ivLen)
+            ? Utils.GetRandomBytes(ivLen)
             : Array.Empty<byte>();
 
         using IMechanism mechanism = (ivLen > 0)
@@ -102,7 +102,7 @@ public class T27_UnwrapKeyCamellia
     public IObjectHandle GenerateCamelliaKey(ISession session, int size)
     {
         string label = $"Camellia-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -128,7 +128,7 @@ public class T27_UnwrapKeyCamellia
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -174,7 +174,7 @@ public class T27_UnwrapKeyCamellia
         byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -217,7 +217,7 @@ public class T27_UnwrapKeyCamellia
     private List<IObjectAttribute> GetPrivateRsaKeyTemplate(ISession session)
     {
         string label = $"RSAKeyUn-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
         {
@@ -241,7 +241,7 @@ public class T27_UnwrapKeyCamellia
     private List<IObjectAttribute> GetAesKeytamplate(ISession session)
     {
         string label = $"AESUn-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

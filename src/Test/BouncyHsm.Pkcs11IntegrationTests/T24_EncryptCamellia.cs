@@ -82,7 +82,7 @@ public class T24_EncryptCamellia
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         IObjectHandle key = this.GenerateCamelliaKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
         byte[] cipherText = session.Encrypt(mechanism, key, plainText);
@@ -93,7 +93,7 @@ public class T24_EncryptCamellia
     public IObjectHandle GenerateCamelliaKey(ISession session, int size)
     {
         string label = $"Camellia-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

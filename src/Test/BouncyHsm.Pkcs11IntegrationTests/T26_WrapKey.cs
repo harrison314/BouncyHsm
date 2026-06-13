@@ -32,7 +32,7 @@ public class T26_WrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
@@ -57,7 +57,7 @@ public class T26_WrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(16);
+        byte[] nonce = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
             (ulong)0,
@@ -87,7 +87,7 @@ public class T26_WrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateNistP256(session);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(16);
+        byte[] nonce = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
             (ulong)0,
@@ -117,7 +117,7 @@ public class T26_WrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(8);
+        byte[] nonce = Utils.GetRandomBytes(8);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkCcmParams ccmParams = session.Factories.MechanismParamsFactory.CreateCkCcmParams((ulong)16,
             nonce,
@@ -147,7 +147,7 @@ public class T26_WrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(8);
+        byte[] nonce = Utils.GetRandomBytes(8);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_WRAP_PAD);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
@@ -176,7 +176,7 @@ public class T26_WrapKey
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
-        byte[] secretValue = session.GenerateRandom(21);
+        byte[] secretValue = Utils.GetRandomBytes(21);
 
         List<IObjectAttribute> secretAttribute = new List<IObjectAttribute>()
         {
@@ -185,7 +185,7 @@ public class T26_WrapKey
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"GSecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32)),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
@@ -201,7 +201,7 @@ public class T26_WrapKey
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
         byte[] iv = (ivLen > 0)
-            ? session.GenerateRandom(ivLen)
+            ? Utils.GetRandomBytes(ivLen)
             : Array.Empty<byte>();
 
         using IMechanism mechanism = (ivLen > 0)
@@ -238,7 +238,7 @@ public class T26_WrapKey
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
         byte[] iv = (ivLen > 0)
-            ? session.GenerateRandom(ivLen)
+            ? Utils.GetRandomBytes(ivLen)
             : Array.Empty<byte>();
 
         using IMechanism mechanism = (ivLen > 0)
@@ -327,7 +327,7 @@ public class T26_WrapKey
 
         byte[] namedCurveOid = new Org.BouncyCastle.Asn1.DerPrintableString(curveName).GetEncoded();
         string label = $"EdKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -364,7 +364,7 @@ public class T26_WrapKey
             out IObjectHandle privateKey);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
@@ -390,7 +390,7 @@ public class T26_WrapKey
 
         byte[] namedCurve = PkcsExtensions.HexConvertor.GetBytes(ecParamsHex);
         string label = $"X-KeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -427,7 +427,7 @@ public class T26_WrapKey
             out IObjectHandle privateKey);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
@@ -452,7 +452,7 @@ public class T26_WrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -476,7 +476,7 @@ public class T26_WrapKey
 
         IObjectHandle key = session.GenerateKey(generationMechanism, keyAttributes);
 
-        byte[] nonce = session.GenerateRandom(16);
+        byte[] nonce = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
             (ulong)0,
@@ -506,7 +506,7 @@ public class T26_WrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -543,7 +543,7 @@ public class T26_WrapKey
             out IObjectHandle privateKey);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
@@ -575,7 +575,7 @@ public class T26_WrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"SlhDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -612,7 +612,7 @@ public class T26_WrapKey
             out IObjectHandle privateKey);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
@@ -638,7 +638,7 @@ public class T26_WrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -675,7 +675,7 @@ public class T26_WrapKey
             out IObjectHandle privateKey);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
@@ -713,7 +713,7 @@ public class T26_WrapKey
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32)),
             factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
@@ -731,7 +731,7 @@ public class T26_WrapKey
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32)),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
@@ -746,7 +746,7 @@ public class T26_WrapKey
 
         using IMechanism aesKeygenerationMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
         IObjectHandle key = session.GenerateKey(aesKeygenerationMechanism, aesKeyAttributes);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
         byte[] wrappedKey = session.WrapKey(mechanism, key, handle);
@@ -784,7 +784,7 @@ public class T26_WrapKey
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32)),
             factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
@@ -802,7 +802,7 @@ public class T26_WrapKey
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, session.GenerateRandom(32)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32)),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
@@ -817,7 +817,7 @@ public class T26_WrapKey
 
         using IMechanism aesKeygenerationMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
         IObjectHandle key = session.GenerateKey(aesKeygenerationMechanism, aesKeyAttributes);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
 
@@ -828,7 +828,7 @@ public class T26_WrapKey
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -855,7 +855,7 @@ public class T26_WrapKey
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -901,7 +901,7 @@ public class T26_WrapKey
         byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

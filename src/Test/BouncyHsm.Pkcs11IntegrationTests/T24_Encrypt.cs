@@ -93,7 +93,7 @@ public class T24_Encrypt
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] iv = session.GenerateRandom(16);
+        byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
         byte[] cipherText = session.Encrypt(mechanism, key, plainText);
@@ -119,7 +119,7 @@ public class T24_Encrypt
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(16);
+        byte[] nonce = Utils.GetRandomBytes(16);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkGcmParams gcmParams = session.Factories.MechanismParamsFactory.CreateCkGcmParams(nonce,
             (ulong)0,
@@ -151,7 +151,7 @@ public class T24_Encrypt
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         IObjectHandle key = this.GenerateAesKey(session, 32);
-        byte[] nonce = session.GenerateRandom(8);
+        byte[] nonce = Utils.GetRandomBytes(8);
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkCcmParams ccmParams = session.Factories.MechanismParamsFactory.CreateCkCcmParams((ulong)plainText.Length,
             nonce,
@@ -242,7 +242,7 @@ public class T24_Encrypt
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -271,7 +271,7 @@ public class T24_Encrypt
     public IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -295,7 +295,7 @@ public class T24_Encrypt
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

@@ -59,7 +59,7 @@ public class T38_EncapsulateKeyEcdsa
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateNistP521(session);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -81,7 +81,7 @@ public class T38_EncapsulateKeyEcdsa
         byte[]? sharedData = null;
         if (sharedDataLength > 0)
         {
-            sharedData = session.GenerateRandom(sharedDataLength);
+            sharedData = Utils.GetRandomBytes(sharedDataLength);
         }
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkEcdh1DeriveParams mp = factories.MechanismParamsFactory.CreateCkEcdh1DeriveParams((ulong)mgfFunction,
@@ -147,7 +147,7 @@ public class T38_EncapsulateKeyEcdsa
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateNistP521(session);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -169,7 +169,7 @@ public class T38_EncapsulateKeyEcdsa
         byte[]? sharedData = null;
         if (sharedDataLength > 0)
         {
-            sharedData = session.GenerateRandom(sharedDataLength);
+            sharedData = Utils.GetRandomBytes(sharedDataLength);
         }
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkEcdh1DeriveParams mp = factories.MechanismParamsFactory.CreateCkEcdh1DeriveParams((ulong)mgfFunction,
@@ -195,7 +195,7 @@ public class T38_EncapsulateKeyEcdsa
         byte[] namedCurveOid = (new Org.BouncyCastle.Asn1.DerObjectIdentifier("1.3.132.0.35").GetDerEncoded());
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

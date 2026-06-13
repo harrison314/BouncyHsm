@@ -57,8 +57,7 @@ public sealed class T99_UnwrapKey_Issue
     private IObjectHandle CreateAesKey(ISession session, byte[] secret)
     {
         string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
-
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
         {
@@ -88,7 +87,7 @@ public sealed class T99_UnwrapKey_Issue
     private List<IObjectAttribute> GetPrivateRsaKeyTemplate(ISession session)
     {
         string label = $"RSAKeyUn-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
         {

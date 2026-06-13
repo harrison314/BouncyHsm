@@ -31,7 +31,7 @@ public class T26_WrapKeyChaCha20
         IObjectHandle aesKey = this.GenerateAesKey(session, 32);
         IObjectHandle chaChaKey = this.GenerateChaCha20Key(session);
 
-        byte[] nonce = session.GenerateRandom(8);
+        byte[] nonce = Utils.GetRandomBytes(8);
 
         using IMechanismParams chachaParams = Pkcs11V3_0Factory.Instance.MechanismParamsFactory.CreateCkChaCha20Params((uint)0, nonce);
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM_V3_0.CKM_CHACHA20, chachaParams);
@@ -44,7 +44,7 @@ public class T26_WrapKeyChaCha20
     public IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -71,7 +71,7 @@ public class T26_WrapKeyChaCha20
     private IObjectHandle GenerateChaCha20Key(ISession session)
     {
         string label = $"ChaCha20-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = session.GenerateRandom(32);
+        byte[] ckId = Utils.GetRandomBytes(32);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
