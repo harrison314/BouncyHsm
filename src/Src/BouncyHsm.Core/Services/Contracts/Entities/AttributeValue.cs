@@ -18,11 +18,10 @@ public static class AttributeValue
         return new UintAttributeValue(value);
     }
 
-    //TODO: Optimize with empty string
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IAttributeValue Create(string value)
     {
-        return new StringAttributeValue(value);
+        return string.IsNullOrEmpty(value) ? StringAttributeValue.Empty : new StringAttributeValue(value);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

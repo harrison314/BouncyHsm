@@ -7,6 +7,11 @@ internal class StringAttributeValue : IAttributeValue
 {
     private readonly string value;
 
+    public static StringAttributeValue Empty
+    {
+        get;
+    } = new StringAttributeValue(string.Empty);
+
     public AttrTypeTag TypeTag
     {
         get => AttrTypeTag.String;
