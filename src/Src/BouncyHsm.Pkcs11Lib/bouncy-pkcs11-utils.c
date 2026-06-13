@@ -965,7 +965,7 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
     paramArrayPtr = (Ckp_CkSp800_108PrfDataParsms*)malloc(ukDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParsms));
     if (paramArrayPtr == NULL)
     {
-        log_message(LOG_LEVEL_ERROR, "Malloc return null in " __FUNCTION__);
+        log_message(LOG_LEVEL_ERROR, "Malloc return null in FillPrfDataParams");
         return NMRPC_FATAL_ERROR;
     }
 
