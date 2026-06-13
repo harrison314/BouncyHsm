@@ -49,11 +49,12 @@ public class MigrationFacade : IMigrationFacade
 
                 try
                 {
-                    storageObject.MigrateObject(migrationFlags);
-                    storageObject.ReComputeAttributes();
-                    storageObject.Validate();
+                    StorageObject newStorageObject = this.AddMissingAttributes(storageObject);
+                    newStorageObject.MigrateObject(migrationFlags);
+                    newStorageObject.ReComputeAttributes();
+                    newStorageObject.Validate();
 
-                    await this.hwServices.Persistence.UpdateObject(slot.SlotId, storageObject, cancellationToken);
+                    await this.hwServices.Persistence.UpdateObject(slot.SlotId, newStorageObject, cancellationToken);
                     successed++;
                 }
                 catch (Exception ex)
@@ -75,7 +76,7 @@ public class MigrationFacade : IMigrationFacade
     private MigrateObjectFlags CreateMigrationFlags(MigrationRequest request)
     {
         MigrateObjectFlags flags = MigrateObjectFlags.None;
-        if(request.ResetAllowedMechanism)
+        if (request.ResetAllowedMechanism)
         {
             flags |= MigrateObjectFlags.ResetAlowedMechanism;
         }
@@ -93,6 +94,37 @@ public class MigrationFacade : IMigrationFacade
         catch
         {
             return "-";
+        }
+    }
+
+    private StorageObject AddMissingAttributes(StorageObject storageObject)
+    {
+        this.logger.LogTrace("Entering to AddMissingAttributes");
+
+        StorageObjectMemento memento = storageObject.ToMemento();
+        StorageObject prototype = StorageObjectFactory.CreateEmpty(memento.Values);
+
+        bool attributesAdded = false;
+        foreach ((CKA attrType, IAttributeValue attrValue) in prototype.ToMemento().Values)
+        {
+            if (!memento.Values.ContainsKey(attrType))
+            {
+                memento.Values.Add(attrType, attrValue);
+                attributesAdded = true;
+
+                this.logger.LogDebug("Add default attribute {Attribute} into object {StorageObjectId}.",
+                    attrType,
+                    memento.Id);
+            }
+        }
+
+        if (attributesAdded)
+        {
+            return StorageObjectFactory.CreateFromMemento(memento, false);
+        }
+        else
+        {
+            return storageObject;
         }
     }
 }
