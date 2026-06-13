@@ -14,6 +14,8 @@ internal class Sp800_108CounterDeriveKeyGenerator : Sp800_108DeriveKeyGenerator
 
     protected override void CheckDataParams(IPrfDataParam[] dataParams)
     {
+        this.logger.LogTrace("Entering to CheckDataParams with dataParams count {DataParamsCount}", dataParams.Length);
+
         if (!dataParams.Any(t => t.Type == CK_PRF_DATA_TYPE.CK_SP800_108_ITERATION_VARIABLE))
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
@@ -29,6 +31,8 @@ internal class Sp800_108CounterDeriveKeyGenerator : Sp800_108DeriveKeyGenerator
 
     protected override byte[] DriveKey(byte[] keyValue, int requestedValueLen)
     {
+        this.logger.LogTrace("Entering to DriveKey with requestedValueLen {RequestedValueLen}", requestedValueLen);
+
         Sp800_108CounterKdf kdf = new Sp800_108CounterKdf(() => MacUtils.TryGetPrf(this.KdfMechanism)!, keyValue);
         return kdf.Derive(requestedValueLen, this.DataParams);
     }
