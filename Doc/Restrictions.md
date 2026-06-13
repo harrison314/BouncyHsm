@@ -22,6 +22,8 @@ List of known restrictions and known issues regarding the PKCS#11 standard for i
 - `CK_SP800_108_COUNTER_FORMAT` for `CKM_SP800_108_FEEDBACK_KDF` and `CK_SP800_108_COUNTER` only accepts values 8, 16, 24, 32, 40, 48, 56, 64.
 - `CK_SP800_108_COUNTER_FORMAT` for `CKM_SP800_108_FEEDBACK_KDF` and `CK_SP800_108_ITERATION_VARIABLE` only accepts multiples of octal.
 
+---
+
 ### v2.1.1
 #### CK_CHACHA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
@@ -29,6 +31,8 @@ List of known restrictions and known issues regarding the PKCS#11 standard for i
 #### CK_SALSA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
 - Accept only 64 and 192 bits nonce length.
+
+---
 
 ### v2.1.0
 #### CK_CHACHA20_PARAMS 
@@ -38,6 +42,8 @@ List of known restrictions and known issues regarding the PKCS#11 standard for i
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
 - Accept only 64 and 192 bits nonce length.
 
+---
+
 ### v2.0.1
 #### CK_CHACHA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
@@ -45,6 +51,8 @@ List of known restrictions and known issues regarding the PKCS#11 standard for i
 #### CK_SALSA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
 - Accept only 64 and 192 bits nonce length.
+
+---
 
 ### v2.0.0
 #### CK_CHACHA20_PARAMS 
@@ -54,6 +62,8 @@ List of known restrictions and known issues regarding the PKCS#11 standard for i
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
 - Accept only 64 and 192 bits nonce length.
 
+---
+
 ### v1.6.1
 #### CK_CHACHA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
@@ -62,6 +72,8 @@ List of known restrictions and known issues regarding the PKCS#11 standard for i
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
 - Accept only 64 and 192 bits nonce length.
 
+---
+
 ### v1.6.0
 #### CK_CHACHA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
@@ -69,6 +81,8 @@ List of known restrictions and known issues regarding the PKCS#11 standard for i
 #### CK_SALSA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
 - Accept only 64 and 192 bits nonce length.
+
+---
 
 ### v1.5.0
 
