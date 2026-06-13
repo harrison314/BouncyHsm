@@ -2,6 +2,7 @@
 using Net.Pkcs11Interop.HighLevelAPI;
 using Pkcs11Interop.Ext.Common;
 using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
+using NativeULong = System.UInt64;
 
 namespace Pkcs11Interop.Ext.HighLevelAPI80.MechanismParams;
 
@@ -111,7 +112,7 @@ internal class CkSP800_108FeedbackKdfParams : ICkSP800_108FeedbackKdfParams
         {
             type = CK_PRF_DATA_TYPE.CK_SP800_108_KEY_HANDLE,
             pValue = MemoryUtils.MemDup(ref handle),
-            ulValueLen = sizeof(uint)
+            ulValueLen = sizeof(NativeULong)
         };
 
         dataParsms.Add(prfDataValue);

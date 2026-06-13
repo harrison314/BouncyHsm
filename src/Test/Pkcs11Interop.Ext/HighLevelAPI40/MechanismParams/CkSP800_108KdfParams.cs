@@ -1,13 +1,11 @@
-﻿using Microsoft.VisualBasic;
-using Net.Pkcs11Interop.Common;
+﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
 using Pkcs11Interop.Ext.Common;
 using Pkcs11Interop.Ext.HighLevelAPI.MechanismParams;
 using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
 using System.Text;
+using NativeULong = System.UInt32;
 
 namespace Pkcs11Interop.Ext.HighLevelAPI40.MechanismParams;
 
@@ -104,7 +102,7 @@ internal class CkSP800_108KdfParams : ICkSP800_108KdfParams
         {
             type = CK_PRF_DATA_TYPE.CK_SP800_108_KEY_HANDLE,
             pValue = MemoryUtils.MemDup(ref handle),
-            ulValueLen = sizeof(uint)
+            ulValueLen = sizeof(NativeULong)
         };
 
         dataParsms.Add(prfDataValue);
