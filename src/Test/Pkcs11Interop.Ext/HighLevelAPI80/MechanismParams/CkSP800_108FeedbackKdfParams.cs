@@ -12,7 +12,7 @@ internal class CkSP800_108FeedbackKdfParams : ICkSP800_108FeedbackKdfParams
     private CK_SP800_108_FEEDBACK_KDF_PARAMS lowLevelStruct = new CK_SP800_108_FEEDBACK_KDF_PARAMS();
     private List<CK_PRF_DATA_PARAM> dataParsms = new List<CK_PRF_DATA_PARAM>();
 
-    public CkSP800_108FeedbackKdfParams(CKM pdfType, byte[] iv, KdfDataParam[] additionalParams)
+    public CkSP800_108FeedbackKdfParams(CKM pdfType, byte[]? iv, KdfDataParam[] additionalParams)
     {
         this.lowLevelStruct.pAdditionalDerivedKeys = IntPtr.Zero;
         this.lowLevelStruct.ulAdditionalDerivedKeys = 0;
@@ -21,8 +21,16 @@ internal class CkSP800_108FeedbackKdfParams : ICkSP800_108FeedbackKdfParams
 
         this.lowLevelStruct.prfType = (uint)pdfType;
 
-        this.lowLevelStruct.ulIVLen = (uint)iv.Length;
-        this.lowLevelStruct.pIV = MemoryUtils.MemDup(iv);
+        if (iv == null || iv.Length == 0)
+        {
+            this.lowLevelStruct.ulIVLen = 0;
+            this.lowLevelStruct.pIV = IntPtr.Zero;
+        }
+        else
+        {
+            this.lowLevelStruct.ulIVLen = (uint)iv.Length;
+            this.lowLevelStruct.pIV = MemoryUtils.MemDup(iv);
+        }
 
         foreach (KdfDataParam kdfParam in additionalParams)
         {

@@ -4649,3 +4649,37 @@ public partial class Ckp_CkSp800_108KdfParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+public partial class Ckp_Ck800_108FeedbackKdfParams
+{
+    [Key(0)]
+    public uint PrfType
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public Ckp_CkSp800_108PrfDataParsms[] DataParams
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<Ckp_CkSp800_108PrfDataParsms>();
+
+    [Key(2)]
+    public byte[] Iv
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<byte>();
+
+    [Key(3)]
+    public uint AdditionalDerivedKeysCount
+    {
+        get;
+        set;
+    }
+
+}
+

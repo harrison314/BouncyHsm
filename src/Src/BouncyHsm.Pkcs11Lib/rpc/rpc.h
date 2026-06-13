@@ -195,6 +195,7 @@ typedef struct _Ckp_CkHkdfParams Ckp_CkHkdfParams;
 typedef struct _Ckp_CkCamelliaCbcEncryptDataParams Ckp_CkCamelliaCbcEncryptDataParams;
 typedef struct _Ckp_CkSp800_108PrfDataParsms Ckp_CkSp800_108PrfDataParsms;
 typedef struct _Ckp_CkSp800_108KdfParams Ckp_CkSp800_108KdfParams;
+typedef struct _Ckp_Ck800_108FeedbackKdfParams Ckp_Ck800_108FeedbackKdfParams;
 
 typedef struct _Binary Binary;
 
@@ -2238,6 +2239,18 @@ typedef struct _Ckp_CkSp800_108KdfParams
 int Ckp_CkSp800_108KdfParams_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108KdfParams* value);
 int Ckp_CkSp800_108KdfParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_CkSp800_108KdfParams* value);
 int Ckp_CkSp800_108KdfParams_Release(Ckp_CkSp800_108KdfParams* value);
+
+typedef struct _Ckp_Ck800_108FeedbackKdfParams
+{
+    uint32_t PrfType;
+    ArrayOfCkp_CkSp800_108PrfDataParsms DataParams;
+    Binary Iv;
+    uint32_t AdditionalDerivedKeysCount;
+} Ckp_Ck800_108FeedbackKdfParams;
+
+int Ckp_Ck800_108FeedbackKdfParams_Serialize(cmp_ctx_t* ctx, Ckp_Ck800_108FeedbackKdfParams* value);
+int Ckp_Ck800_108FeedbackKdfParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj, Ckp_Ck800_108FeedbackKdfParams* value);
+int Ckp_Ck800_108FeedbackKdfParams_Release(Ckp_Ck800_108FeedbackKdfParams* value);
 
 
 typedef void* (*nmrpc_malloc_fn_t)(size_t size);

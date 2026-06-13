@@ -1514,4 +1514,11 @@ Messages:
       # AdditionalDerivedKeys: AttrValueFromNative[] - is not support in current version
       AdditionalDerivedKeysCount: uint32
 
-
+  Ckp_Ck800_108FeedbackKdfParams:
+    Summary: Represents CK_SP800_108_FEEDBACK_KDF_PARAMS
+    Fields:
+      PrfType: uint32
+      DataParams: Ckp_CkSp800_108PrfDataParsms[]
+      Iv: binary
+      # AdditionalDerivedKeys: AttrValueFromNative[] - is not support in current version
+      AdditionalDerivedKeysCount: uint32

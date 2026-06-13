@@ -29,6 +29,7 @@ internal static class AllovedMechanismLookup
         CKM.CKM_AES_KEY_WRAP_PAD,
         CKM.CKM_SP800_108_COUNTER_KDF,
         CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF,
+        CKM.CKM_SP800_108_FEEDBACK_KDF,
     };
 
     public static readonly CKM[] CamelliaKeyObject = new CKM[]
@@ -136,6 +137,7 @@ internal static class AllovedMechanismLookup
         CKM.CKM_POLY1305,
         CKM.CKM_SP800_108_COUNTER_KDF,
         CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF,
+        CKM.CKM_SP800_108_FEEDBACK_KDF,
     };
 
     public static readonly CKM[] MlDsaKeyObject = new CKM[]

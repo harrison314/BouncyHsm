@@ -158,6 +158,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
             CKM.CKM_SP800_108_COUNTER_KDF => await this.CreateS800_108CounterKdf(mechanism, memorySession, p11Session, cancellationToken),
             CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF => await this.CreateS800_108DoublePipelineKdf(mechanism, memorySession, p11Session, cancellationToken),
+            CKM.CKM_SP800_108_FEEDBACK_KDF => await this.CreateSp800_108FeedbackKdf(mechanism, memorySession, p11Session, cancellationToken),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for derive key.")
         };
@@ -447,6 +448,52 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             return new Sp800_108DoublePipelineDeriveKeyGenerator(prfType,
                 prfParams,
                 this.loggerFactory.CreateLogger<Sp800_108DoublePipelineDeriveKeyGenerator>());
+        }
+        catch (RpcPkcs11Exception)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error during decode CreateS800_108DoublePipelineKdf.");
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private async Task<Sp800_108FeedbackDeriveKeyGenerator> CreateSp800_108FeedbackKdf(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to CreateSp800_108FeedbackKdf.");
+
+        try
+        {
+            Ckp_Ck800_108FeedbackKdfParams sp800FallbackKdfParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_Ck800_108FeedbackKdfParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            if (sp800FallbackKdfParams.AdditionalDerivedKeysCount > 0)
+            {
+                this.logger.LogError("Additional derived params is not supported for CKM_SP800_108_FEEDBACK_KDF mechanism.");
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR,
+                    $"Additional derived params is not supported for CKM_SP800_108_FEEDBACK_KDF mechanism.");
+            }
+
+            CKM prfType = (CKM)sp800FallbackKdfParams.PrfType;
+            if (MacUtils.TryGetPrf(prfType) == null)
+            {
+                this.logger.LogError("Invalid mechanism for prfType {PrfType} in CKM_SP800_108_FEEDBACK_KDF mechanism.", prfType);
+                throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
+                        $"Invalid mechanism for prfType {prfType} in CKM_SP800_108_FEEDBACK_KDF mechanism.");
+            }
+
+            IPrfDataParam[] prfParams = await PrfDataParamFactory.Create(sp800FallbackKdfParams.DataParams,
+                this.hwServices,
+                memorySession,
+                p11Session,
+                CKM.CKM_SP800_108_FEEDBACK_KDF,
+                cancellationToken);
+
+            return new Sp800_108FeedbackDeriveKeyGenerator(prfType,
+                prfParams,
+                sp800FallbackKdfParams.Iv,
+                this.loggerFactory.CreateLogger<Sp800_108FeedbackDeriveKeyGenerator>());
         }
         catch (RpcPkcs11Exception)
         {
