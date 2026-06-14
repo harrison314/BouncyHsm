@@ -27,6 +27,8 @@ internal abstract class P11EncapsulatorBase<TPublicKey, TPrivateKey> : IP11Encap
 
     public void Init(Dictionary<CKA, IAttributeValue> template)
     {
+        this.logger.LogTrace("Entering to Init");
+
         this.secretKeyObject = StorageObjectFactory.CreateSecret(template);
         foreach (KeyValuePair<CKA, IAttributeValue> kvp in template)
         {

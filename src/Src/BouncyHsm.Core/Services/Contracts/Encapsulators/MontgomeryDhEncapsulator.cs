@@ -23,6 +23,8 @@ internal class MontgomeryDhEncapsulator : P11EncapsulatorBase<MontgomeryPublicKe
 
     protected override void EncapsulateInternal(MontgomeryPublicKeyObject publicKey, SecretKeyObject secretKeyObject, SecureRandom secureRandom, out byte[] encapsulatedData)
     {
+        this.logger.LogTrace("Entering to EncapsulateInternal.");
+
         this.CheckEcdh1DeriveParams();
 
         (AsymmetricKeyParameter epheralPublicKey, AsymmetricKeyParameter epheralPrivateKey) = this.GenerateEpheral(secureRandom, publicKey);
@@ -70,6 +72,8 @@ internal class MontgomeryDhEncapsulator : P11EncapsulatorBase<MontgomeryPublicKe
 
     protected override void DecapsulateInternal(MontgomeryPrivateKeyObject privateKey, byte[] encapsulatedData, SecretKeyObject secretKeyObject)
     {
+        this.logger.LogTrace("Entering to DecapsulateInternal.");
+
         this.CheckEcdh1DeriveParams();
 
         AsymmetricKeyParameter publicKeyParams = this.GetPublicKeyFromData(privateKey, encapsulatedData);
@@ -106,6 +110,8 @@ internal class MontgomeryDhEncapsulator : P11EncapsulatorBase<MontgomeryPublicKe
 
     private (AsymmetricKeyParameter publicKey, AsymmetricKeyParameter privateKey) GenerateEpheral(SecureRandom secureRandom, MontgomeryPublicKeyObject publicKey)
     {
+        this.logger.LogTrace("Entering to GenerateEpheral.");
+
         DerObjectIdentifier oid = MontgomeryEcUtils.GetOidFromParams(publicKey.CkaEcParams);
 
         IAsymmetricCipherKeyPairGenerator generator;

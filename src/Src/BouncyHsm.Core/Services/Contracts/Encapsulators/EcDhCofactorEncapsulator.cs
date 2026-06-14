@@ -23,6 +23,8 @@ internal class EcDhCofactorEncapsulator : P11EncapsulatorBase<EcdsaPublicKeyObje
 
     protected override void EncapsulateInternal(EcdsaPublicKeyObject publicKey, SecretKeyObject secretKeyObject, SecureRandom secureRandom, out byte[] encapsulatedData)
     {
+        this.logger.LogTrace("Entering to EncapsulateInternal.");
+
         this.CheckEcdh1DeriveParams();
 
         (ECPublicKeyParameters epheralPublicKey, ECPrivateKeyParameters epheralPrivateKey) = this.GenerateEpheral(secureRandom, publicKey);
@@ -40,6 +42,8 @@ internal class EcDhCofactorEncapsulator : P11EncapsulatorBase<EcdsaPublicKeyObje
 
     protected override void DecapsulateInternal(EcdsaPrivateKeyObject privateKey, byte[] encapsulatedData, SecretKeyObject secretKeyObject)
     {
+        this.logger.LogTrace("Entering to DecapsulateInternal.");
+
         this.CheckEcdh1DeriveParams();
 
         ECPublicKeyParameters publicKeyParams = this.GetPublicKeyFromData(privateKey, encapsulatedData);

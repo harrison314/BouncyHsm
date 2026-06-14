@@ -34,7 +34,7 @@ internal abstract class Sp800_108DeriveKeyGenerator : IDeriveKeyGenerator
 
     public void Init(IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
-        this.logger.LogTrace("Entering to init");
+        this.logger.LogTrace("Entering to Init");
 
         this.CheckTemplate(template);
         this.template = template;
@@ -91,6 +91,8 @@ internal abstract class Sp800_108DeriveKeyGenerator : IDeriveKeyGenerator
 
     private int GetValueLen(SecretKeyObject generalSecretKeyObject)
     {
+        this.logger.LogTrace("Entering to GetValueLen.");
+
         System.Diagnostics.Debug.Assert(this.template != null);
 
         uint? requiredValueLen = generalSecretKeyObject.GetRequiredSecretLen();

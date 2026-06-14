@@ -22,6 +22,8 @@ internal class RsaP11Encapsulator : P11EncapsulatorBase<RsaPublicKeyObject, RsaP
 
     protected override void EncapsulateInternal(RsaPublicKeyObject publicKey, SecretKeyObject secretKeyObject, SecureRandom secureRandom, out byte[] encapsulatedData)
     {
+        this.logger.LogTrace("Entering to EncapsulateInternal.");
+
         int minSize = this.GetMinimalSecretLength();
         byte[] secret = new byte[minSize];
         secureRandom.NextBytes(secret);
@@ -35,6 +37,8 @@ internal class RsaP11Encapsulator : P11EncapsulatorBase<RsaPublicKeyObject, RsaP
 
     protected override void DecapsulateInternal(RsaPrivateKeyObject privateKey, byte[] encapsulatedData, SecretKeyObject secretKeyObject)
     {
+        this.logger.LogTrace("Entering to DecapsulateInternal.");
+
         BufferedCipherWrapper wrapper = new BufferedCipherWrapper(this.bufferedCipher, false);
         wrapper.Init(false, privateKey.GetPrivateKey());
 
