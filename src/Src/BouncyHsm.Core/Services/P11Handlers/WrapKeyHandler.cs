@@ -43,6 +43,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
 
         this.CheckExtractable(key);
         this.CheckKeyByWrapTemplate(wrappingKey, key);
+        this.CheckWrapWithTrusted(wrappingKey, key);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
         ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
@@ -88,19 +89,19 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
     {
         this.logger.LogTrace("Entering to CheckKeyByWrapTemplate");
 
-        IReadOnlyDictionary<CKA, IAttributeValue> wrapingTemplate = wrappingKey switch
+        IReadOnlyDictionary<CKA, IAttributeValue> wrappingTemplate = wrappingKey switch
         {
             PublicKeyObject publicKeyObject => publicKeyObject.CkaWrapTemplate,
             SecretKeyObject secretKeyObject => secretKeyObject.CkaWrapTemplate,
             _ => ReadOnlyDictionary<CKA, IAttributeValue>.Empty,
         };
 
-        if (wrapingTemplate.Count == 0)
+        if (wrappingTemplate.Count == 0)
         {
             return;
         }
 
-        if (!key.IsMatch(wrapingTemplate))
+        if (!key.IsMatch(wrappingTemplate))
         {
             this.logger.LogError("The wrapping key {WrappingKey} can not wrap the key {Key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.", wrappingKey, key);
             throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
@@ -125,6 +126,37 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         if (key is SecretKeyObject genericSecret && genericSecret.CkaKeyType == CKK.CKK_GENERIC_SECRET)
         {
             this.logger.LogWarning("Secret key object CKO_SECRET_KEY of type CKK_GENERIC_SECRET many HSMs do not allow unwrap.");
+        }
+    }
+
+    private void CheckWrapWithTrusted(KeyObject wrappingKey, KeyObject key)
+    {
+        this.logger.LogTrace("Entering to CheckKeyByWrapTemplate");
+
+        bool keyRequiresTrustedWrapper = key switch
+        {
+            SecretKeyObject sk => sk.CkaWrapWithTrusted,
+            PrivateKeyObject pk => pk.CkaWrapWithTrusted,
+            _ => false
+        };
+
+        if (keyRequiresTrustedWrapper)
+        {
+            bool wrappingKeyIsTrusted = wrappingKey switch
+            {
+                SecretKeyObject sk => sk.CkaTrusted,
+                PublicKeyObject pk => pk.CkaTrusted,
+                _ => false
+            };
+
+            if (!wrappingKeyIsTrusted)
+            {
+                this.logger.LogError("The wrapping key {WrappingKey} must have CKA_TRUSTED set to true, because the key {Key} it wraps has CKA_WRAP_WITH_TRUSTED set to true.",
+                    wrappingKey,
+                    key);
+                throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
+                    $"The wrapping key {wrappingKey} must have CKA_TRUSTED set to true, because the key {key} it wraps has CKA_WRAP_WITH_TRUSTED set to true.");
+            }
         }
     }
 

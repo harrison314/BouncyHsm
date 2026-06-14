@@ -59,12 +59,12 @@ internal class ChaCha20Poly1305CipherWrapper : ICipherWrapper
 
     public IWrapper IntoUnwrapping(KeyObject keyObject)
     {
-        throw new NotSupportedException("In ChaCha20Poly1305CipherWrapper is not supported unwraping.");
+        throw new NotSupportedException("In ChaCha20Poly1305CipherWrapper is not supported unwrapping.");
     }
 
     public IWrapper IntoWrapping(KeyObject keyObject)
     {
-        throw new NotSupportedException("In ChaCha20Poly1305CipherWrapper is not supported wraping.");
+        throw new NotSupportedException("In ChaCha20Poly1305CipherWrapper is not supported wrapping.");
     }
 
     private ICipherParameters CreateCipherParams(BufferedCipherWrapperOperation operation, KeyObject keyObject)
