@@ -34,7 +34,7 @@ internal class CounterPrfDataParam : IPrfDataParam
         if (this.littleEndian)
         {
             BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
-            prfFunction.BlockUpdate(buffer[this.width..]);
+            prfFunction.BlockUpdate(buffer[..this.width]);
         }
         else
         {
