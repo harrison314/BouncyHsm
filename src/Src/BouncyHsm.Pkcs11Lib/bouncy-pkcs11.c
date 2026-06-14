@@ -1201,10 +1201,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
     CreateObjectEnvelope envelope;
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     nmrpc_global_context_t ctx;
@@ -1271,10 +1271,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
 
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
@@ -1632,10 +1632,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
@@ -1684,10 +1684,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
     FindObjectsInitEnvelope envelope;
     AttrValueFromNative* attrTemplate = NULL;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     nmrpc_global_context_t ctx;
@@ -3030,11 +3030,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANIS
         return CKR_MECHANISM_INVALID;
     }
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3111,23 +3111,22 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECH
         return CKR_GENERAL_ERROR;
     }
 
-    pubKeyAttrTemplate = ConvertToAttrValueFromNative(pPublicKeyTemplate, ulPublicKeyAttributeCount, 0);
-    if (NULL == pubKeyAttrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pPublicKeyTemplate, ulPublicKeyAttributeCount, 0, &pubKeyAttrTemplate);
+    if (converAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
-    privKeyAttrTemplate = ConvertToAttrValueFromNative(pPrivateKeyTemplate, ulPrivateKeyAttributeCount, 0);
-    if (NULL == privKeyAttrTemplate)
+    converAttrRv = ConvertToAttrValueFromNative(pPrivateKeyTemplate, ulPrivateKeyAttributeCount, 0, &privKeyAttrTemplate);
+    if (converAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
         if (pubKeyAttrTemplate != NULL)
         {
             AttrValueFromNative_Destroy(pubKeyAttrTemplate, ulPublicKeyAttributeCount);
         }
-
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     request.PublicKeyTemplate.array = pubKeyAttrTemplate;
@@ -3252,11 +3251,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
         return CKR_MECHANISM_INVALID;
     }
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3325,11 +3324,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
 
     request.BaseKeyHandle = (uint32_t)hBaseKey;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3836,11 +3835,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
 
     request.PublicKeyHandle = (uint32_t)hPublicKey;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3938,11 +3937,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
 
     request.PrivateKeyHandle = (uint32_t)hPrivateKey;
 
-    attrTemplate = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0);
-    if (NULL == attrTemplate)
+    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (converAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return CKR_GENERAL_ERROR;
+        return converAttrRv;
     }
 
     request.Template.array = attrTemplate;

@@ -77,14 +77,15 @@ static void CopyCkUlongArrayToUint32Array(ArrayOfuint32_t* destination, CK_ULONG
     }
 }
 
-AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel)
+CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel, AttrValueFromNative** outPtr)
 {
     log_message(LOG_LEVEL_INFO, "Entering to function %s with recursionLevel %i", __FUNCTION__, recursionLevel);
 
+    *outPtr = NULL;
     if (recursionLevel > BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS)
     {
         log_message(LOG_LEVEL_ERROR, "The nested C_ATTRIBUTE[] arrays have reached the maximum allowed nesting depth of %i in the %s function.", BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS, __FUNCTION__);
-        return NULL;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     size_t allocCount = (ulCount > 0) ? sizeof(AttrValueFromNative) * ulCount : sizeof(AttrValueFromNative);
@@ -93,7 +94,7 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
     if (NULL == ptr)
     {
         log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
-        return NULL;
+        return CKR_GENERAL_ERROR;
     }
 
     memset(ptr, 0, allocCount);
@@ -122,7 +123,7 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
                 log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
                 AttrValueFromNative_Destroy(ptr, ulCount);
 
-                return NULL;
+                return CKR_GENERAL_ERROR;
             }
 
             uintArrayData->Array.length = (int)(pTemplate[i].ulValueLen / sizeof(CK_ULONG));
@@ -133,7 +134,7 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
                 free((void*)uintArrayData);
                 AttrValueFromNative_Destroy(ptr, ulCount);
 
-                return NULL;
+                return CKR_GENERAL_ERROR;
             }
 
             CopyCkUlongArrayToUint32Array(&uintArrayData->Array, (CK_ULONG_PTR)pTemplate[i].pValue);
@@ -155,18 +156,21 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
                 log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
                 AttrValueFromNative_Destroy(ptr, ulCount);
 
-                return NULL;
+                return CKR_GENERAL_ERROR;
             }
 
             CK_ULONG arrayLen = pTemplate[i].ulValueLen / sizeof(CK_ATTRIBUTE);
             valueTemplate->Value.length = (int)arrayLen;
-            valueTemplate->Value.array = ConvertToAttrValueFromNative((CK_ATTRIBUTE_PTR)pTemplate[i].pValue, arrayLen, recursionLevel + 1);
-            if (valueTemplate->Value.array == NULL)
+            AttrValueFromNative* nestedAttributes = NULL;
+            CK_RV nestedRv = ConvertToAttrValueFromNative((CK_ATTRIBUTE_PTR)pTemplate[i].pValue, arrayLen, recursionLevel + 1, &nestedAttributes);
+
+            if (nestedRv != CKR_OK)
             {
                 log_message(LOG_LEVEL_ERROR, "Internal call ConvertToAttrValueFromNative returns NULL");
                 AttrValueFromNative_Destroy(ptr, ulCount);
-                return NULL;
+                return nestedRv;
             }
+            valueTemplate->Value.array = nestedAttributes;
 
             ptr[i].ValueTemplate = valueTemplate;
             ptr[i].ValueRawBytes.size = 0;
@@ -216,7 +220,7 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
                     log_message(LOG_LEVEL_ERROR, "Allocation error malloc returns NULL in ConvertToAttrValueFromNative");
                     AttrValueFromNative_Destroy(ptr, ulCount);
 
-                    return NULL;
+                    return CKR_GENERAL_ERROR;
                 }
 
                 date[0] = dateValue->day[0];
@@ -236,7 +240,8 @@ AttrValueFromNative* ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK
         }
     }
 
-    return ptr;
+    *outPtr = ptr;
+    return CKR_OK;
 }
 
 void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)

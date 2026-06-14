@@ -52,7 +52,7 @@ _Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40, 3.1 and v
 * _BouncyHsm_ runs on all platform supported [.Net 10.0](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md). Moreover, it can be run as a _Windows service_ and also works on  _Raspberry Pi Zero 2 W_. Native lib _BouncyHsm.Pkcs11Lib_ is awaitable for Windows x86 and x64, Linux x64, RHEL like x64 ([it can also be compiled for other platforms](/Doc/BuildPkcs11Lib.md)).
 * CLI tool for management.
 * Nuget ([BouncyHsm.Client](https://www.nuget.org/packages/BouncyHsm.Client)) with REST API client and native PKCS#11 libraries for unit testing. (See [example project](/Examples/BouncyHsmTestExample).)
-* [BouncyHsm Restrictions](/Doc/Restrictions.md)
+* [Bouncy Hsm Restrictions](/Doc/Restrictions.md)
 
 ## Quick start and deployment  guide
 * [Quick start guide](/Doc/QuickstartGuide.md)
