@@ -30,13 +30,13 @@ internal static class ExtensionFactory
 
     private static ISessionExtensions Create(IPkcs11Library library)
     {
-        System.Reflection.FieldInfo? pkcs11FiledInfo = library.GetType().GetField("_pkcs11Library", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (pkcs11FiledInfo == null)
+        System.Reflection.FieldInfo? pkcs11FieldInfo = library.GetType().GetField("_pkcs11Library", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (pkcs11FieldInfo == null)
         {
             throw new InvalidOperationException("Can not get _pkcs11Library field info");
         }
 
-        object? pkcs11 = pkcs11FiledInfo.GetValue(library);
+        object? pkcs11 = pkcs11FieldInfo.GetValue(library);
         if (pkcs11 == null)
         {
             throw new InvalidOperationException("Can not get _pkcs11Library value");

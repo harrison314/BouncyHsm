@@ -21,7 +21,7 @@ internal class DkmLengthPrfDataParam : IPrfDataParam
         if (widthInBits % 8 != 0 || widthInBits < 8 || widthInBits > 64)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
-                $"Invalid filed widthInBits for CK_SP800_108_DKM_LENGTH, supported value has 8, 16, 32, 40, 48, 56, 64 actual is {widthInBits}.");
+                $"Invalid field widthInBits for CK_SP800_108_DKM_LENGTH, supported value has 8, 16, 32, 40, 48, 56, 64 actual is {widthInBits}.");
         }
 
         this.littleEndian = littleEndian;
@@ -43,7 +43,7 @@ internal class DkmLengthPrfDataParam : IPrfDataParam
         if (this.littleEndian)
         {
             BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
-            prfFunction.BlockUpdate(buffer[this.width..]);
+            prfFunction.BlockUpdate(buffer[..this.width]);
         }
         else
         {

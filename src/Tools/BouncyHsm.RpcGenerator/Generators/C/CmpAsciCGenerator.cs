@@ -44,7 +44,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
 
             #define USE_VARIABLE(x) (void)(x)
             #define NAMEOF_MACRO(x) #x
-            #define NMRPC_LOG_ERR_FIELD(field) log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with filed: %s", __FUNCTION__, __LINE__, field)
+            #define NMRPC_LOG_ERR_FIELD(field) log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with field: %s", __FUNCTION__, __LINE__, field)
             #define NMRPC_LOG_ERR_TEXT(msg) log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) %s", __FUNCTION__, __LINE__, msg)
             #define NMRPC_LOG_FAILED_CLOSE_SOCKET() log_message(LOG_LEVEL_INFO, "Closing socket failed in function %s (line %i)",__FUNCTION__, __LINE__)
 

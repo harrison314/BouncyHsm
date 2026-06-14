@@ -19,7 +19,7 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         if (widthInBits % 8 != 0)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
-                $"Invalid filed widthInBits for CK_SP800_108_ITERATION_VARIABLE, widthInBits in BouncyHsm must be equal to 8, actual value is {widthInBits}.");
+                $"Invalid field widthInBits for CK_SP800_108_ITERATION_VARIABLE, widthInBits in BouncyHsm must be a multiple of eight bits, actual value is {widthInBits}.");
         }
 
         this.littleEndian = littleEndian;
@@ -50,7 +50,7 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         {
             if (bytes.Length > this.width)
             {
-                prfFunction.BlockUpdate(bytes[this.width..]);
+                prfFunction.BlockUpdate(bytes[..this.width]);
             }
             else
             {
@@ -86,7 +86,7 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         if (this.width < 1 || this.width > 8)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
-                $"Invalid filed widthInBits for CK_SP800_108_ITERATION_VARIABLE, supported value has 8, 16, 32, 40, 48, 56, 64 actual is {this.width * 8}.");
+                $"Invalid field widthInBits for CK_SP800_108_ITERATION_VARIABLE, supported value has 8, 16, 32, 40, 48, 56, 64 actual is {this.width * 8}.");
         }
 
         Span<byte> buffer = stackalloc byte[sizeof(ulong)];
@@ -95,7 +95,7 @@ internal class IterationVariablePrfDataParam : IPrfDataParam
         if (this.littleEndian)
         {
             BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
-            prfFunction.BlockUpdate(buffer[this.width..]);
+            prfFunction.BlockUpdate(buffer[..this.width]);
         }
         else
         {
