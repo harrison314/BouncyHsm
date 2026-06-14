@@ -152,7 +152,7 @@ bool logger_init(const char* level, const char* target)
 	}
 	else
 	{
-		fprintf(stderr, "Error in function logger_init level is not valid." NEW_LINE_STR);
+		fprintf(stderr, "Error - the level is not valid in function logger_init." NEW_LINE_STR);
 		fflush(stderr);
 
 		return false;
@@ -180,7 +180,7 @@ bool logger_init(const char* level, const char* target)
 	}
 	else
 	{
-		fprintf(stderr, "Error in function logger_init target is not valid." NEW_LINE_STR);
+		fprintf(stderr, "Error - The target is not valid in function logger_init." NEW_LINE_STR);
 		fflush(stderr);
 
 		return false;

@@ -218,7 +218,7 @@ static bool envVariableDup(const char* name, char** variableValuePtr)
 #endif
 }
 
-// "Server=127.0.0.1; Port=8765; LogTarget=ErrorCosnole; LogLevel=Error; Tag=45695;"
+// "Server=127.0.0.1; Port=8765; LogTarget=ErrorConsole; LogLevel=Error; Tag=45695;"
 static bool parseConnectionString(const char* connectionString, const char* name, char* outValue, int* sizePtr)
 {
     if (connectionString == NULL || name == NULL || sizePtr == NULL)
