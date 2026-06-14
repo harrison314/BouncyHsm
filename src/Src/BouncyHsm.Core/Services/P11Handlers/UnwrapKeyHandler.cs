@@ -189,12 +189,12 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
             int prefedLength = (int)attributeValue.AsUint();
             if (unwrappedKey.Length < prefedLength)
             {
-                this.logger.LogError("Invalid lenrth of CKA_VALUE_LEN ({actualValueLength}) but unwraped key has length {unwrapedKeyLen} for {mecyhnismType}.",
+                this.logger.LogError("Invalid length of CKA_VALUE_LEN ({actualValueLength}) but unwraped key has length {unwrapedKeyLen} for {mecyhnismType}.",
                     prefedLength,
                     unwrappedKey.Length,
                     mechanismType);
                 throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-                    $"Invalid lenrth of CKA_VALUE_LEN ({prefedLength}) but unwraped key has length {unwrappedKey.Length} for {mechanismType}.");
+                    $"Invalid length of CKA_VALUE_LEN ({prefedLength}) but unwraped key has length {unwrappedKey.Length} for {mechanismType}.");
             }
 
             return unwrappedKey[..prefedLength];
