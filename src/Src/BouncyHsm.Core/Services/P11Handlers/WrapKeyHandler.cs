@@ -89,19 +89,19 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
     {
         this.logger.LogTrace("Entering to CheckKeyByWrapTemplate");
 
-        IReadOnlyDictionary<CKA, IAttributeValue> wrapingTemplate = wrappingKey switch
+        IReadOnlyDictionary<CKA, IAttributeValue> wrappingTemplate = wrappingKey switch
         {
             PublicKeyObject publicKeyObject => publicKeyObject.CkaWrapTemplate,
             SecretKeyObject secretKeyObject => secretKeyObject.CkaWrapTemplate,
             _ => ReadOnlyDictionary<CKA, IAttributeValue>.Empty,
         };
 
-        if (wrapingTemplate.Count == 0)
+        if (wrappingTemplate.Count == 0)
         {
             return;
         }
 
-        if (!key.IsMatch(wrapingTemplate))
+        if (!key.IsMatch(wrappingTemplate))
         {
             this.logger.LogError("The wrapping key {WrappingKey} can not wrap the key {Key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.", wrappingKey, key);
             throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
