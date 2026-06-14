@@ -72,12 +72,15 @@ static void send_log_message_debug(int level, const char* levelText, const char*
 	char* buffer = (char*)malloc(size);
 	if (buffer == NULL)
 	{
+        OutputDebugStringA("ERROR Failed log in send_log_message_debug");
 		return;
 	}
 
 	int rc = sprintf_s(buffer, size, "%s: %s", levelText, message);
 	if (rc == -1)
 	{
+        OutputDebugStringA("ERROR Failed log in send_log_message_debug");
+        free(buffer);
 		return;
 	}
 
