@@ -80,7 +80,7 @@ internal abstract class Sp800_108DeriveKeyGenerator : IDeriveKeyGenerator
 
         generalSecretKeyObject.CkaAlwaysSensitive = sBaseKey.CkaAlwaysSensitive;
         generalSecretKeyObject.CkaNewerExtractable = sBaseKey.CkaNewerExtractable;
-        generalSecretKeyObject.CkaLocal = false; //TODO: Check withspecification
+        generalSecretKeyObject.CkaLocal = false;
 
         return generalSecretKeyObject;
     }

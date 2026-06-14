@@ -79,7 +79,7 @@ internal abstract class BufferedCipherDeriveKeyGenerator<TKeyObject> : IDeriveKe
 
         generalSecretKeyObject.CkaAlwaysSensitive = sBaseKey.CkaAlwaysSensitive;
         generalSecretKeyObject.CkaNewerExtractable = sBaseKey.CkaNewerExtractable;
-        generalSecretKeyObject.CkaLocal = false; //TODO: Check withspecification
+        generalSecretKeyObject.CkaLocal = false;
 
         return generalSecretKeyObject;
     }
