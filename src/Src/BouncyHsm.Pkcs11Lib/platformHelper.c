@@ -57,11 +57,11 @@ int strncpy_s(char* destination, size_t destsz, const char* _Source, size_t coun
         return _GCC_ERANGE;
     }
 
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
 #pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(destination, _Source, srcSize);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic push
+#pragma GCC diagnostic pop
 
     return 0;
 }
@@ -189,7 +189,20 @@ bool getProgramArgs(const char*** args, int* argc)
 
     for (int i = 0; i < argCount; i++)
     {
-        arguments[i] = LPWSTRtoUtf8(szArgList[i], NULL);
+        const char* utf8Chars = LPWSTRtoUtf8(szArgList[i], NULL);
+        if (utf8Chars == NULL)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                free(arguments[j]);
+            }
+
+            free(arguments);
+            LocalFree(szArgList);
+            return false;
+        }
+
+        arguments[i] = utf8Chars;
     }
 
     if (szArgList != NULL)
