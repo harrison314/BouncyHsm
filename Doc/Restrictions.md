@@ -2,6 +2,9 @@
 List of known restrictions and known issues regarding the PKCS#11 standard for individual versions.
 
 ## Restrictions
+Here is a list of general restrictions and deviations of BouncyHsm that were architectural decisions:
+- PKCS#11 functions return `CKR_DEVICE_ERROR` when there is a communication error between the native library and the server (for example, unavailability, or an error in the TCP stack).
+- When using template attributes (`CK_ATTRIBUTE[]`), only nesting at level 10 is supported (via `CKA_DERIVE_TEMPLATE`, `CKA_WRAP_TEMPLATE` and `CKA_UNWRAP_TEMPLATE`).
 
 ### v2.2.0
 #### CK_CHACHA20_PARAMS 
