@@ -43,6 +43,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
 
         this.CheckExtractable(key);
         this.CheckKeyByWrapTemplate(wrappingKey, key);
+        this.CheckWrapWithTrusted(wrappingKey, key);
 
         BufferedCipherWrapperFactory cipherFactory = new BufferedCipherWrapperFactory(this.loggerFactory);
         ICipherWrapper cipherWrapper = cipherFactory.CreateCipherAlgorithm(request.Mechanism);
@@ -125,6 +126,37 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         if (key is SecretKeyObject genericSecret && genericSecret.CkaKeyType == CKK.CKK_GENERIC_SECRET)
         {
             this.logger.LogWarning("Secret key object CKO_SECRET_KEY of type CKK_GENERIC_SECRET many HSMs do not allow unwrap.");
+        }
+    }
+
+    private void CheckWrapWithTrusted(KeyObject wrappingKey, KeyObject key)
+    {
+        this.logger.LogTrace("Entering to CheckKeyByWrapTemplate");
+
+        bool keyRequiresTrustedWrapper = key switch
+        {
+            SecretKeyObject sk => sk.CkaWrapWithTrusted,
+            PrivateKeyObject pk => pk.CkaWrapWithTrusted,
+            _ => false
+        };
+
+        if (keyRequiresTrustedWrapper)
+        {
+            bool wrappingKeyIsTrusted = wrappingKey switch
+            {
+                SecretKeyObject sk => sk.CkaTrusted,
+                PublicKeyObject pk => pk.CkaTrusted,
+                _ => false
+            };
+
+            if (!wrappingKeyIsTrusted)
+            {
+                this.logger.LogError("The wrapping key {WrappingKey} must have CKA_TRUSTED set to true, because the key {Key} it wraps has CKA_WRAP_WITH_TRUSTED set to true.",
+                    wrappingKey,
+                    key);
+                throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
+                    $"The wrapping key {wrappingKey} must have CKA_TRUSTED set to true, because the key {key} it wraps has CKA_WRAP_WITH_TRUSTED set to true.");
+            }
         }
     }
 
