@@ -51,4 +51,9 @@ internal class DkmLengthPrfDataParam : IPrfDataParam
             prfFunction.BlockUpdate(buffer[^this.width..]);
         }
     }
+
+    public override string ToString()
+    {
+        return $"Prf data: {this.Type} with littleEndian {this.littleEndian}, width: {this.width}B, lengthMethod {this.lengthMethod}";
+    }
 }

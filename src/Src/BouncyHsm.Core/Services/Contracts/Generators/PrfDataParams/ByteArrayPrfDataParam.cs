@@ -21,4 +21,9 @@ internal class ByteArrayPrfDataParam : IPrfDataParam
     {
         prfFunction.BlockUpdate(this.data, 0, this.data.Length);
     }
+
+    public override string ToString()
+    {
+        return $"Prf data: {this.Type} with array length {this.data.Length}";
+    }
 }

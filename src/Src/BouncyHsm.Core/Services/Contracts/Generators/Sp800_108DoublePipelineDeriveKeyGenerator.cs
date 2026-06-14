@@ -30,4 +30,9 @@ internal class Sp800_108DoublePipelineDeriveKeyGenerator : Sp800_108DeriveKeyGen
         Sp800_108DoublePipelineKdf kdf = new Sp800_108DoublePipelineKdf(() => MacUtils.TryGetPrf(this.KdfMechanism)!, keyValue);
         return kdf.Derive(requestedValueLen, this.DataParams);
     }
+
+    public override string ToString()
+    {
+        return $"Sp800_108DoublePipelineDeriveKeyGenerator with KDF {this.KdfMechanism}";
+    }
 }

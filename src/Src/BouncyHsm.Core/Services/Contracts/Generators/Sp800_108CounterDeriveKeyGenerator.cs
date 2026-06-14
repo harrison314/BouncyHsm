@@ -36,4 +36,9 @@ internal class Sp800_108CounterDeriveKeyGenerator : Sp800_108DeriveKeyGenerator
         Sp800_108CounterKdf kdf = new Sp800_108CounterKdf(() => MacUtils.TryGetPrf(this.KdfMechanism)!, keyValue);
         return kdf.Derive(requestedValueLen, this.DataParams);
     }
+
+    public override string ToString()
+    {
+        return $"Sp800_108CounterDeriveKeyGenerator with KDF {this.KdfMechanism}";
+    }
 }

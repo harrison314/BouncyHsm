@@ -23,4 +23,9 @@ internal class KeyHandlePrfDataParam : IPrfDataParam
         byte[] data = this.secretKey.GetSecret();
         prfFunction.BlockUpdate(data, 0, data.Length);
     }
+
+    public override string ToString()
+    {
+        return $"Prf data: {this.Type} with secretKey {this.secretKey}";
+    }
 }
