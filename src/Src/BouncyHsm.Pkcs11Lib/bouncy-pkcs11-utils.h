@@ -35,4 +35,6 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount);
 int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism);
 void MechanismValue_Destroy(MechanismValue* value);
 
+CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel);
+
 #endif //BOUNCY_PKCS11_UTILS_H

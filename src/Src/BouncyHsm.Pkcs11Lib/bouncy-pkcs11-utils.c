@@ -1371,3 +1371,159 @@ void MechanismValue_Destroy(MechanismValue* value)
         value->MechanismParamMp = NULL;
     }
 }
+
+CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel)
+{
+    log_message(LOG_LEVEL_INFO, "Entering to function %s with recursionLevel %i", __FUNCTION__, recursionLevel);
+
+    if (recursionLevel > BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS)
+    {
+        log_message(LOG_LEVEL_ERROR, "The nested C_ATTRIBUTE[] arrays have reached the maximum allowed nesting depth of %i in the %s function.", BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS, __FUNCTION__);
+        return CKR_TEMPLATE_INCONSISTENT;
+    }
+
+    CK_ULONG i;
+    CK_RV rvMethod = CKR_OK;
+
+    for (i = 0; i < ulCount; i++)
+    {
+        GetAttributeOutValue* outAttrPtr = &values[i];
+        CK_ULONG newValueLen = 0;
+
+        if (!outAttrPtr->ValueLen.EffectivelyInfinite
+            && !outAttrPtr->ValueLen.InformationSensitive
+            && !outAttrPtr->ValueLen.UnavailableInformation)
+        {
+            if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Binary)
+            {
+                newValueLen = ConvertCkSpecialUint(outAttrPtr->ValueLen);
+            }
+            else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
+            {
+                newValueLen = sizeof(CK_BBOOL);
+            }
+            else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkUlong)
+            {
+                newValueLen = sizeof(CK_ULONG);
+            }
+            else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkDate)
+            {
+                newValueLen = (outAttrPtr->ValueCkDate == NULL) ? 0 : sizeof(CK_DATE);
+            }
+            else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_UintArray)
+            {
+                newValueLen = (outAttrPtr->ValueUintArray == NULL) ? 0 : (outAttrPtr->ValueUintArray->Array.length * sizeof(CK_ULONG));
+            }
+            else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkAttributeArray)
+            {
+                newValueLen = outAttrPtr->ValueTemplate->AttributeTypes.length * sizeof(CK_ATTRIBUTE);
+            }
+            else
+            {
+                log_message(LOG_LEVEL_ERROR, "Invalid ValueType %i on line %i in function %s.", (int)outAttrPtr->ValueType, __LINE__, __FUNCTION__);
+                return CKR_DEVICE_ERROR;
+            }
+
+            if (pTemplate[i].pValue != NULL)
+            {
+                if (newValueLen > pTemplate[i].ulValueLen)
+                {
+                    log_message(LOG_LEVEL_TRACE, "Invalid value length for attribute %i (excepted len %i actual %i) on line %i in function %s", (int)pTemplate[i].type, (int)newValueLen, (int)pTemplate[i].ulValueLen, __LINE__, __FUNCTION__);
+                    rvMethod = CKR_BUFFER_TOO_SMALL;
+                    pTemplate[i].ulValueLen = newValueLen;
+                    continue;
+                }
+
+                if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Binary)
+                {
+                    memcpy_s(pTemplate[i].pValue, pTemplate[i].ulValueLen, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
+                }
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
+                {
+                    *((CK_BBOOL*)pTemplate[i].pValue) = (CK_BBOOL)(outAttrPtr->ValueBool ? CK_TRUE : CK_FALSE);
+                }
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkUlong)
+                {
+                    *((CK_ULONG*)pTemplate[i].pValue) = (CK_ULONG)outAttrPtr->ValueUint;
+                }
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkDate)
+                {
+                    if (outAttrPtr->ValueCkDate != NULL)
+                    {
+                        if (strnlen_s(outAttrPtr->ValueCkDate, 10) < 10)
+                        {
+                            log_message(LOG_LEVEL_ERROR, "The ValueCkDate value is too short for CK_DATE.");
+                            return CKR_DEVICE_ERROR;
+                        }
+
+                        CK_DATE* date = (CK_DATE*)pTemplate[i].pValue;
+
+                        date->day[0] = (CK_CHAR)outAttrPtr->ValueCkDate[0];
+                        date->day[1] = (CK_CHAR)outAttrPtr->ValueCkDate[1];
+                        date->month[0] = (CK_CHAR)outAttrPtr->ValueCkDate[3];
+                        date->month[1] = (CK_CHAR)outAttrPtr->ValueCkDate[4];
+                        date->year[0] = (CK_CHAR)outAttrPtr->ValueCkDate[6];
+                        date->year[1] = (CK_CHAR)outAttrPtr->ValueCkDate[7];
+                        date->year[2] = (CK_CHAR)outAttrPtr->ValueCkDate[8];
+                        date->year[3] = (CK_CHAR)outAttrPtr->ValueCkDate[9];
+                    }
+                }
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_UintArray)
+                {
+                    CK_ULONG* destinationUintArray = (CK_ULONG*)pTemplate[i].pValue;
+                    size_t j;
+                    size_t arrayLength = (size_t)outAttrPtr->ValueUintArray->Array.length;
+                    uint32_t* uintArray = outAttrPtr->ValueUintArray->Array.array;
+                    for (j = 0; j < arrayLength; j++)
+                    {
+                        destinationUintArray[j] = (CK_ULONG)uintArray[j];
+                    }
+                }
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_CkAttributeArray)
+                {
+                    if (outAttrPtr->ValueTemplate->AttributeTypes.length != outAttrPtr->ValueTemplate->Values.length)
+                    {
+                        log_message(LOG_LEVEL_ERROR, "Invalid server response for CkAttributeArray: outAttrPtr->ValueTemplate->AttributeTypes.length != outAttrPtr->ValueTemplate->Values.length");
+                        return CKR_DEVICE_ERROR;
+                    }
+
+                    CK_ATTRIBUTE* destinationTemplate = (CK_ATTRIBUTE*)pTemplate[i].pValue;
+
+                    CK_ULONG itemCount = (CK_ULONG)outAttrPtr->ValueTemplate->Values.length;
+                    CK_ULONG index;
+                    for (index = 0; index < itemCount; index++)
+                    {
+                        destinationTemplate[index].type = (CK_ATTRIBUTE_TYPE)(outAttrPtr->ValueTemplate->AttributeTypes.array[index]);
+                    }
+
+                    CK_RV rvData = SetArributesToTemplate(outAttrPtr->ValueTemplate->Values.array,
+                        destinationTemplate,
+                        itemCount,
+                        recursionLevel + 1);
+                    if (rvData != CKR_OK)
+                    {
+                        log_message(LOG_LEVEL_ERROR, "Nested function %s in recursion level %i returns error code %i (CKR).", __FUNCTION__, recursionLevel + 1, (int)rvData);
+                        rvMethod = rvData;
+                    }
+                }
+                else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Void)
+                {
+                    log_message(LOG_LEVEL_TRACE, "Void ValueType, skip processing, on line %i in function %s.", __LINE__, __FUNCTION__);
+                }
+                else
+                {
+                    log_message(LOG_LEVEL_ERROR, "Invalid ValueType %i on line %i in function %s.", (int)outAttrPtr->ValueType, __LINE__, __FUNCTION__);
+                    return CKR_DEVICE_ERROR;
+                }
+            }
+        }
+        else
+        {
+            newValueLen = ConvertCkSpecialUint(outAttrPtr->ValueLen);
+        }
+
+        pTemplate[i].ulValueLen = newValueLen;
+    }
+
+    return rvMethod;
+}
