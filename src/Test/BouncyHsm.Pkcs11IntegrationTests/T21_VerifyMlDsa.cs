@@ -41,7 +41,7 @@ public class T21_VerifyMlDsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsaTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         CreateMlDsaKeyPair(ckp, factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -97,7 +97,7 @@ public class T21_VerifyMlDsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsaTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         CreateMlDsaKeyPair(ckp, factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -167,7 +167,7 @@ public class T21_VerifyMlDsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsaTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         CreateMlDsaKeyPair(ckp, factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -237,7 +237,7 @@ public class T21_VerifyMlDsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsaTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         CreateMlDsaKeyPair(ckp, factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
@@ -293,7 +293,7 @@ public class T21_VerifyMlDsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsaTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         CreateMlDsaKeyPair(ckp, factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 

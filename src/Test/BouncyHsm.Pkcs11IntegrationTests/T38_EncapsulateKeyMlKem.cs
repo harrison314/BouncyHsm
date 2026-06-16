@@ -40,7 +40,7 @@ public class T38_EncapsulateKeyMlKem
         this.GenerateKeyPair(parameterSet, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
         string label = $"Aes-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -87,7 +87,7 @@ public class T38_EncapsulateKeyMlKem
         this.GenerateKeyPair(parameterSet, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
         string label = $"Aes-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -135,7 +135,7 @@ public class T38_EncapsulateKeyMlKem
         this.GenerateKeyPair(parameterSet, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
         string label = $"Aes-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -184,7 +184,7 @@ public class T38_EncapsulateKeyMlKem
         this.GenerateKeyPair(parameterSet, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
         string label = $"Aes-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -227,7 +227,7 @@ public class T38_EncapsulateKeyMlKem
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -296,7 +296,7 @@ public class T38_EncapsulateKeyMlKem
         out IObjectHandle privateKey)
     {
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

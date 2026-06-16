@@ -23,7 +23,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -79,7 +79,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -139,7 +139,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -198,7 +198,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -257,7 +257,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -315,7 +315,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"ECKeyParamTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -376,7 +376,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EDKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -437,7 +437,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"X-KeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -495,7 +495,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -559,7 +559,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"SlhDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -617,7 +617,7 @@ public class T17_GenerateKeyPair
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

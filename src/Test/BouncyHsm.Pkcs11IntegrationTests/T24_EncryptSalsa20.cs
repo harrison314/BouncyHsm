@@ -126,7 +126,7 @@ public class T24_EncryptSalsa20
     private IObjectHandle GenerateSalsa20Key(ISession session)
     {
         string label = $"Salsa20-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

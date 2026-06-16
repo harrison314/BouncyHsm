@@ -32,7 +32,7 @@ public class T23_DeriveKeyAes
         IObjectHandle handle = this.GenerateAesKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -73,7 +73,7 @@ public class T23_DeriveKeyAes
         IObjectHandle handle = this.GenerateAesKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -99,7 +99,7 @@ public class T23_DeriveKeyAes
     private IObjectHandle GenerateAesKey(ISession session)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

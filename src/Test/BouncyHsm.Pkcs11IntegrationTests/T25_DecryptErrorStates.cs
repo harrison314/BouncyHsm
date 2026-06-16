@@ -242,7 +242,7 @@ public class T25_DecryptErrorStates
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -286,7 +286,7 @@ public class T25_DecryptErrorStates
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

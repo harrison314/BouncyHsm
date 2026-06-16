@@ -35,7 +35,7 @@ public class T21_VerifyHmac
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         this.GenerateSeecret(type, size, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
@@ -79,7 +79,7 @@ public class T21_VerifyHmac
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         this.GenerateSeecret(type, size, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
@@ -123,7 +123,7 @@ public class T21_VerifyHmac
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         this.GenerateSeecret(type, size, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
@@ -166,7 +166,7 @@ public class T21_VerifyHmac
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         this.GenerateSeecret(type, size, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
@@ -209,7 +209,7 @@ public class T21_VerifyHmac
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         this.GenerateSeecret(type, size, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
@@ -252,7 +252,7 @@ public class T21_VerifyHmac
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         this.GenerateSeecret(type, size, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);
@@ -294,7 +294,7 @@ public class T21_VerifyHmac
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         this.GenerateSeecret(type, size, factories, session, label, ckId);
 
         IObjectHandle handle = this.FindSeecretKey(session, ckId, label);

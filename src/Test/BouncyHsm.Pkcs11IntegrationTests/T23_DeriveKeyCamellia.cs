@@ -32,7 +32,7 @@ public class T23_DeriveKeyCamellia
         IObjectHandle handle = this.GenerateCamelliaKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -73,7 +73,7 @@ public class T23_DeriveKeyCamellia
         IObjectHandle handle = this.GenerateCamelliaKey(session);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
@@ -100,7 +100,7 @@ public class T23_DeriveKeyCamellia
     private IObjectHandle GenerateCamelliaKey(ISession session)
     {
         string label = $"CAMELLIA-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

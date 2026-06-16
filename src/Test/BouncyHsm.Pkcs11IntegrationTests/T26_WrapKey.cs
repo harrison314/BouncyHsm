@@ -327,7 +327,7 @@ public class T26_WrapKey
 
         byte[] namedCurveOid = new Org.BouncyCastle.Asn1.DerPrintableString(curveName).GetEncoded();
         string label = $"EdKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -390,7 +390,7 @@ public class T26_WrapKey
 
         byte[] namedCurve = PkcsExtensions.HexConvertor.GetBytes(ecParamsHex);
         string label = $"X-KeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -452,7 +452,7 @@ public class T26_WrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -506,7 +506,7 @@ public class T26_WrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -575,7 +575,7 @@ public class T26_WrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"SlhDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -638,7 +638,7 @@ public class T26_WrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -828,7 +828,7 @@ public class T26_WrapKey
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -855,7 +855,7 @@ public class T26_WrapKey
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -901,7 +901,7 @@ public class T26_WrapKey
         byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

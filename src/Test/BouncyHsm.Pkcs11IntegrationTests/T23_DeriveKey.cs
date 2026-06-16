@@ -43,7 +43,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -85,7 +85,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, HexConvertor.GetBytes(baseHex));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -187,7 +187,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, HexConvertor.GetBytes(baseHex));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -236,7 +236,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -279,7 +279,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -333,7 +333,7 @@ public class T23_DeriveKey
         IObjectHandle saltKey = this.CreateSecret(session, new byte[] { 1, 4, 5, 9, 7, 5, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 47, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -397,7 +397,7 @@ public class T23_DeriveKey
         IObjectHandle handle = session.CreateObject(keyAttributes);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -466,7 +466,7 @@ public class T23_DeriveKey
         IObjectHandle handle = session.CreateObject(keyAttributes);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -540,7 +540,7 @@ public class T23_DeriveKey
         IObjectHandle handle = session.CreateObject(keyAttributes);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
@@ -590,7 +590,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, Utils.GetRandomBytes(32));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
@@ -649,7 +649,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, Convert.FromHexString(key));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
@@ -728,7 +728,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, Convert.FromHexString(key));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
@@ -788,7 +788,7 @@ public class T23_DeriveKey
         IObjectHandle otherKey = this.CreateSecret(session, Utils.GetRandomBytes(32));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
@@ -874,7 +874,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, Convert.FromHexString(key));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
@@ -963,7 +963,7 @@ public class T23_DeriveKey
         IObjectHandle handle = this.CreateSecret(session, Convert.FromHexString(key));
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
@@ -1003,7 +1003,7 @@ public class T23_DeriveKey
     private IObjectHandle CreateSecret(ISession session, byte[] data)
     {
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         Pkcs11InteropFactories factories = session.Factories;
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()

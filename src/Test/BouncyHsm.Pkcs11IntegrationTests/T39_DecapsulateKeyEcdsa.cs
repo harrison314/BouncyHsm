@@ -59,7 +59,7 @@ public class T39_DecapsulateKeyEcdsa
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateNistP521(session);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -152,7 +152,7 @@ public class T39_DecapsulateKeyEcdsa
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateNistP521(session);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -205,7 +205,7 @@ public class T39_DecapsulateKeyEcdsa
         byte[] namedCurveOid = (new Org.BouncyCastle.Asn1.DerObjectIdentifier("1.3.132.0.35").GetDerEncoded());
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

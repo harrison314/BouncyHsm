@@ -101,7 +101,7 @@ public class T25_DecryptCamellia
     public IObjectHandle GenerateCamelliaKey(ISession session, int size)
     {
         string label = $"Camellia-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

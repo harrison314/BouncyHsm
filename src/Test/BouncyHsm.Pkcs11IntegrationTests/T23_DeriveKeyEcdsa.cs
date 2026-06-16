@@ -87,7 +87,7 @@ public class T23_DeriveKeyEcdsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EcPrivKey-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> privateAttrs = new List<IObjectAttribute>()
         {
@@ -150,7 +150,7 @@ public class T23_DeriveKeyEcdsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EcPrivKey-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> privateAttrs = new List<IObjectAttribute>()
         {
@@ -221,7 +221,7 @@ public class T23_DeriveKeyEcdsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EcPrivKey-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> privateAttrs = new List<IObjectAttribute>()
         {
@@ -289,7 +289,7 @@ public class T23_DeriveKeyEcdsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EcPrivKey-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> privateAttrs = new List<IObjectAttribute>()
         {
@@ -349,7 +349,7 @@ public class T23_DeriveKeyEcdsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EcPrivKey-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> privateAttrs = new List<IObjectAttribute>()
         {
@@ -411,7 +411,7 @@ public class T23_DeriveKeyEcdsa
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"EcPrivKey-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> privateAttrs = new List<IObjectAttribute>()
         {
@@ -466,7 +466,7 @@ public class T23_DeriveKeyEcdsa
     private (IObjectHandle publicKey, IObjectHandle privateKey) GenerateEcKeypair(ISession session, byte[] ecParams)
     {
         string label = $"EcKeyPari-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         Pkcs11InteropFactories factories = session.Factories;
         List<IObjectAttribute> publicAttrs = new List<IObjectAttribute>()

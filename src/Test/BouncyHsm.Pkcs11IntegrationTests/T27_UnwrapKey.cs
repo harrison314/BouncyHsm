@@ -350,7 +350,7 @@ public class T27_UnwrapKey
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
 
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -406,7 +406,7 @@ public class T27_UnwrapKey
 
         byte[] namedCurveOid = new Org.BouncyCastle.Asn1.DerPrintableString(curveName).GetEncoded();
         string label = $"EdKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -485,7 +485,7 @@ public class T27_UnwrapKey
 
         byte[] namedCurve = PkcsExtensions.HexConvertor.GetBytes(ecParamsHex);
         string label = $"X-KeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -564,7 +564,7 @@ public class T27_UnwrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -649,7 +649,7 @@ public class T27_UnwrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"SlhDsa-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -728,7 +728,7 @@ public class T27_UnwrapKey
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -977,7 +977,7 @@ public class T27_UnwrapKey
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -1004,7 +1004,7 @@ public class T27_UnwrapKey
     private List<IObjectAttribute> GetAesKeytamplate(ISession session)
     {
         string label = $"AESUn-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -1030,7 +1030,7 @@ public class T27_UnwrapKey
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -1074,7 +1074,7 @@ public class T27_UnwrapKey
     private List<IObjectAttribute> GetPrivateRsaKeyTemplate(ISession session)
     {
         string label = $"RSAKeyUn-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
         {
@@ -1100,7 +1100,7 @@ public class T27_UnwrapKey
         byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -1143,7 +1143,7 @@ public class T27_UnwrapKey
     private List<IObjectAttribute> GetPrivateEcKeyTemplate(ISession session)
     {
         string label = $"ECKeyUn-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         byte[] namedCurveOid = PkcsExtensions.HexConvertor.GetBytes("06082A8648CE3D030107");
 
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()

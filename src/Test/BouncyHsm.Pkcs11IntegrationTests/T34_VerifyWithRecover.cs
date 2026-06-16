@@ -35,7 +35,7 @@ public class T34_VerifyWithRecover
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         this.CreateRsaKeyPair(factories, slot, ckId, label, false);
 
@@ -74,7 +74,7 @@ public class T34_VerifyWithRecover
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         this.CreateRsaKeyPair(factories, slot, ckId, label, true);
 
@@ -111,7 +111,7 @@ public class T34_VerifyWithRecover
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         this.CreateRsaKeyPair(factories, slot, ckId, label, false);
 
@@ -148,7 +148,7 @@ public class T34_VerifyWithRecover
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         this.CreateRsaKeyPair(factories, slot, ckId, label, true);
 

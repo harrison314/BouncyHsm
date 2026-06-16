@@ -88,7 +88,7 @@ public class T38_EncapsulateKeyMongomery
         (IObjectHandle privateKey, IObjectHandle publicKey) = this.GeneareMongomeryKeyPair(session, curveName);
 
         string label = $"Secret-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -135,7 +135,7 @@ public class T38_EncapsulateKeyMongomery
        string curveName)
     {
         string label = $"X-KeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
         byte[] namedCurve = new DerPrintableString(curveName).GetEncoded();
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()

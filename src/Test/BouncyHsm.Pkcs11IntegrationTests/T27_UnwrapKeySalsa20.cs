@@ -47,7 +47,7 @@ public class T27_UnwrapKeySalsa20
     public IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -74,7 +74,7 @@ public class T27_UnwrapKeySalsa20
     private IObjectHandle GenerateSalsa20Key(ISession session)
     {
         string label = $"Salsa20-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -100,7 +100,7 @@ public class T27_UnwrapKeySalsa20
     private List<IObjectAttribute> GetAesKeytamplate(ISession session)
     {
         string label = $"AESUn-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {

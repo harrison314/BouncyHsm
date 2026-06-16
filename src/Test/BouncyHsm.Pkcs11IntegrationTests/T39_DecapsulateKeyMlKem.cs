@@ -34,7 +34,7 @@ public class T39_DecapsulateKeyMlKem
         this.GenerateKeyPair(parameterSet, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
         string label = $"Aes-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -92,7 +92,7 @@ public class T39_DecapsulateKeyMlKem
         this.GenerateKeyPair(parameterSet, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
         string label = $"Aes-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
@@ -147,7 +147,7 @@ public class T39_DecapsulateKeyMlKem
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -226,7 +226,7 @@ public class T39_DecapsulateKeyMlKem
         out IObjectHandle privateKey)
     {
         string label = $"MlKem-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

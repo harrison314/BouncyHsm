@@ -134,7 +134,7 @@ public class T28_SetAttributeValue
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         byte[] secret = new byte[32];
         Random.Shared.NextBytes(secret);
@@ -194,7 +194,7 @@ public class T28_SetAttributeValue
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -265,7 +265,7 @@ public class T28_SetAttributeValue
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
@@ -337,7 +337,7 @@ public class T28_SetAttributeValue
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-        byte[] ckId = Utils.GetRandomBytes(32);
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {

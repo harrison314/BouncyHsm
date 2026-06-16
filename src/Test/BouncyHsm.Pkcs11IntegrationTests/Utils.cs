@@ -3,6 +3,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -12,8 +13,16 @@ namespace BouncyHsm.Pkcs11IntegrationTests
 {
     internal static class Utils
     {
-        public static byte[] GetRandomBytes(int count)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte[] GetRandomBytes(int count, bool useWak = false)
         {
+            if (useWak)
+            {
+                byte[] buffer = GC.AllocateUninitializedArray<byte>(count);
+                Random.Shared.NextBytes(buffer);
+                return buffer;
+            }
+
             return RandomNumberGenerator.GetBytes(count);
         }
 
