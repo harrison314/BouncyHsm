@@ -248,7 +248,6 @@ public sealed class FilterFipsProfileOperation : ProfileOperation
             CKM.CKM_HASH_ML_DSA_SHAKE128,
             CKM.CKM_HASH_ML_DSA_SHAKE256,
 
-
             CKM.CKM_SLH_DSA_KEY_PAIR_GEN,
             CKM.CKM_SLH_DSA,
             CKM.CKM_HASH_SLH_DSA,
@@ -265,6 +264,10 @@ public sealed class FilterFipsProfileOperation : ProfileOperation
 
             CKM.CKM_ML_KEM_KEY_PAIR_GEN,
             CKM.CKM_ML_KEM,
+
+            CKM.CKM_SP800_108_COUNTER_KDF,
+            CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF,
+            CKM.CKM_SP800_108_FEEDBACK_KDF,
         };
 
         return fips;
