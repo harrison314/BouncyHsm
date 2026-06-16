@@ -84,9 +84,12 @@ internal static class SlhDsaUtils
     public static string GetParametersName(CK_SLH_DSA_PARAMETER_SET parametersSet)
     {
         System.Diagnostics.Debug.Assert(Enum.IsDefined<CK_SLH_DSA_PARAMETER_SET>(parametersSet));
-
-        //TODO: Use span
-        return parametersSet.ToString()[4..].Replace('_', '-');
+       
+        ReadOnlySpan<char> output = parametersSet.ToString().AsSpan().Slice(4);
+        Span<char> buffer = (output.Length<64)? stackalloc char[output.Length]:new char[output.Length];
+        output.CopyTo(buffer);
+        buffer.Replace('_', '-');
+        return buffer.ToString();
     }
 
     public static string GetSignatureAlgorithmName(CK_SLH_DSA_PARAMETER_SET ckp)
@@ -96,6 +99,6 @@ internal static class SlhDsaUtils
 
     public static List<string> GetSupportedKeys()
     {
-        return Enum.GetNames<CK_SLH_DSA_PARAMETER_SET>().Select(t=>t[4..].Replace('_', '-')).ToList();
+        return Enum.GetValues<CK_SLH_DSA_PARAMETER_SET>().Select(GetParametersName).ToList();
     }
 }

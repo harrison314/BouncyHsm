@@ -59,6 +59,6 @@ internal static class MlDsaUtils
 
     public static List<string> GetSupportedKeys()
     {
-        return Enum.GetNames<CK_ML_DSA_PARAMETER_SET>().Select(t => t[4..].Replace('_', '-')).ToList();
+        return Enum.GetValues<CK_ML_DSA_PARAMETER_SET>().Select(GetParametersName).ToList();
     }
 }
