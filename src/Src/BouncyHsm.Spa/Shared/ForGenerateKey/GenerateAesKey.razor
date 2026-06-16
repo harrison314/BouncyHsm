@@ -70,6 +70,11 @@ else
             <ValidationMessage For="() => this.model.ForWrap" />
         </div>
         <div class="mb-1 form-check">
+            <InputCheckbox class="form-check-input" id="i-derivation" @bind-Value="this.model.ForDerivation" />
+            <label class="form-check-label" for="i-derivation">Key can use for derivation</label>
+            <ValidationMessage For="() => this.model.ForDerivation" />
+        </div>
+        <div class="mb-1 form-check">
             <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.Sensitive" />
             <label class="form-check-label" for="i-wrap">Key is sensitive</label>
             <ValidationMessage For="() => this.model.Sensitive" />
