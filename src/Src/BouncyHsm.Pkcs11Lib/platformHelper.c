@@ -179,11 +179,7 @@ bool getProgramArgs(const char*** args, int* argc)
     const char** arguments = (const char**)malloc(argCount * sizeof(char*));
     if (arguments == NULL)
     {
-        if (szArgList != NULL)
-        {
-            LocalFree(szArgList);
-        }
-
+        LocalFree(szArgList);
         return false;
     }
 

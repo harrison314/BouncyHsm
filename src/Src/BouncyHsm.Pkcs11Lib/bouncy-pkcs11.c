@@ -340,33 +340,6 @@ CK_INTERFACE bouncyHsm_pkcs11_3_2_interface =
 #define P11SocketInit(tcpPtr) SockContext_init((tcpPtr), globalContext.server, globalContext.port)
 #define ValueHasFlag(value, flag) (((value) & (flag)) == (flag))
 
-void ExecutePing(void* pUserData)
-{
-    PingRequest request;
-    PingEnvelope envelope;
-
-    nmrpc_global_context_t ctx;
-    SockContext_t tcp;
-
-    if (P11SocketInit(&tcp) != NMRPC_OK)
-    {
-        log_message(LOG_LEVEL_ERROR, "P11SocketInit failed in line %i in function %s.", __LINE__, __FUNCTION__);
-        return;
-    }
-
-    nmrpc_global_context_tcp_init(&ctx, &tcp);
-
-    request.AppId = globalContext.appId;
-
-    int rv = nmrpc_call_Ping(&ctx, &request, &envelope);
-    if (rv != NMRPC_OK)
-    {
-        return;
-    }
-
-    PingEnvelope_Release(&envelope);
-}
-
 CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
 {
     LOG_ENTERING_TO_FUNCTION();
