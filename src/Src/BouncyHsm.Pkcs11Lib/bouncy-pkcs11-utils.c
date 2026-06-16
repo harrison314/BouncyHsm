@@ -1436,7 +1436,7 @@ CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTem
 
                 if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Binary)
                 {
-                    memcpy_s(pTemplate[i].pValue, pTemplate[i].ulValueLen, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
+                    memcpy(pTemplate[i].pValue, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
                 {
@@ -1450,12 +1450,6 @@ CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTem
                 {
                     if (outAttrPtr->ValueCkDate != NULL)
                     {
-                        if (strnlen_s(outAttrPtr->ValueCkDate, 10) < 10)
-                        {
-                            log_message(LOG_LEVEL_ERROR, "The ValueCkDate value is too short for CK_DATE.");
-                            return CKR_DEVICE_ERROR;
-                        }
-
                         CK_DATE* date = (CK_DATE*)pTemplate[i].pValue;
 
                         date->day[0] = (CK_CHAR)outAttrPtr->ValueCkDate[0];
