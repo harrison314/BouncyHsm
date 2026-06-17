@@ -1,9 +1,8 @@
 SRC_DIR     := ../src/Src/BouncyHsm.Pkcs11Lib
 BUILD_DIR   := build
 CC          := clang
-CFLAGS_BASE := -Wall -Wextra -O2 -fPIC \
-               -I$(SRC_DIR) \
-               -include $(CURDIR)/shim.h
+CFLAGS_BASE := -Wall -Wextra -Wno-unused-parameter -O2 -fPIC \
+               -I$(SRC_DIR)
 
 ARCH_FLAGS_x64   := -arch x86_64
 ARCH_FLAGS_arm64 := -arch arm64

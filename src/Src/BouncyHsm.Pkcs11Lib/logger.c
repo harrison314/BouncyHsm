@@ -3,7 +3,7 @@
 #include <stdio.h>
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 #define __STDC_WANT_LIB_EXT2__ 1
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -92,7 +92,7 @@ static void send_log_message_debug(int level, const char* levelText, const char*
 
 static void send_log_message_syslog(int level, const char* levelText, const char* message)
 {
-#ifdef __linux__
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
     USE_VARIABLE(levelText);
 
 	int syslogLevel = LOG_DEBUG;
