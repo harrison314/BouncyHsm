@@ -27,9 +27,9 @@ void GlobalContextInit();
 #define BOUNCY_HSM_DEFAULT_PORT 8765
 #define PKCS11_LIB_DESCRIPTION "BouncyHsm.Pkcs11 library"
 
-#define BOUNCY_HSM_LIBVERSION "2.1.1.0"
+#define BOUNCY_HSM_LIBVERSION "2.2.0.0"
 #define BOUNCY_HSM_LIBVERSION_MAJOR 2
-#define BOUNCY_HSM_LIBVERSION_MINOR 1
+#define BOUNCY_HSM_LIBVERSION_MINOR 2
 
 // Constants for bounds/checks in the library
 #define BOUNCY_HSM_LIB_MAX_NESTED_CKARRAYS 10
