@@ -1,0 +1,21 @@
+name: Build BouncyHsm.Pkcs11Lib.dylib
+on:
+  workflow_dispatch
+  
+jobs:
+  Build-macos-libs:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build PKCS11 lib
+        run: |
+          cd build_macos
+          make
+          rm -f *.o
+      - name: Upload macos native artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: macos-native-libs
+          path: |
+            build_macos/*.dylib
+          retention-days: 1
