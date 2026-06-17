@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#ifdef __linux__ || (defined(__APPLE__) && defined(__MACH__))
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -233,7 +233,7 @@ bool freeProgramArgs(const char*** args, int* argc)
 
 #endif
 
-#ifdef __linux__ || (defined(__APPLE__) && defined(__MACH__))
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 
 bool getProgramArgs(const char*** args, int* argc)
 {

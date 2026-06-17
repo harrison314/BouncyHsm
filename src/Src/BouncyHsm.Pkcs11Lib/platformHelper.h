@@ -14,7 +14,7 @@
 
 #endif
 
-#ifdef __linux__ || (defined(__APPLE__) && defined(__MACH__))
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 #include <sys/types.h>
 #include <unistd.h>
 
