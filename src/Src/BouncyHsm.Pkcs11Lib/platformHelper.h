@@ -14,7 +14,7 @@
 
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -23,7 +23,7 @@
 #define GetCurrentPid() ((uint64_t)getpid())
 #define _InsertBreakpoint() __asm__("int3")
 
-#ifdef __GNUC__
+#ifdef __GNUC__ || (defined(__APPLE__) && defined(__MACH__))
 int strcpy_s(char* destination, size_t SizeInBytes, const char* _Source);
 int strncpy_s(char* destination, size_t destsz, const char* _Source, size_t count);
 int memcpy_s(void* restrictDest, size_t destsz, const void* restrictSrc, size_t count);
