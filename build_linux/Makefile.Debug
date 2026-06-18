@@ -1,5 +1,6 @@
-# Run program with debug version: LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so dotnet run
+# Run program with debug version: LD_PRELOAD=/usr/lib64/libasan.so.6.0.0 dotnet run
 # Note: libasan.so may be located on a different path
+# on almalinux - dnf install libsan
 # Run make `make -f Makefile.Debug`
 
 SRC_DIR=../src/Src/BouncyHsm.Pkcs11Lib
@@ -7,7 +8,7 @@ SRC_DIR=../src/Src/BouncyHsm.Pkcs11Lib
 EXTRA_FLAGS=
 CC=clang
 ARCH_FLAGS=
-CFLAGS= $(ARCH_FLAGS) -Wall -Wextra -O0 -fsanitize=address -g -I$(SRC_DIR) $(EXTRA_FLAGS)
+CFLAGS= $(ARCH_FLAGS) -Wall -Wextra -O0 -fsanitize=address -static-libasan -g -I$(SRC_DIR) $(EXTRA_FLAGS)
 
 HEADERFILES=$(SRC_DIR)/*.h $(SRC_DIR)/rpc/*.h $(SRC_DIR)/utils/*.h
 
@@ -24,7 +25,7 @@ build: globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs
 	-Wl,-soname,$(LIBNAME) \
 	-Wl,--version-script,bouncyhsm.pkcs11.version \
 	globalContext.o logger.o dllMain.o cmp.o rpc.o tcpTransport.o bouncy-pkcs11-utils.o bouncy-pkcs11.o platformHelper.o \
-	-lc -ldl -lresolv
+	-lc -ldl -lresolv -fsanitize=address -static-libasan
 
 platformHelper.o: $(SRC_DIR)/platformHelper.c $(HEADERFILES)
 	$(CC) $(CFLAGS) -fPIC -c $(SRC_DIR)/platformHelper.c
