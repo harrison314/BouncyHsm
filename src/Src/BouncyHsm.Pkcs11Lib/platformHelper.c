@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#ifdef __GNUC__
+#if defined(__linux__)
 
 #define _GCC_EINVAL 22
 #define _GCC_ERANGE 34
