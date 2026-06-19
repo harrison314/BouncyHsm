@@ -9,8 +9,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#if defined(__linux__)
-
 #define _GCC_EINVAL 22
 #define _GCC_ERANGE 34
 
@@ -86,8 +84,6 @@ int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...)
 
 #undef _GCC_EINVAL
 #undef _GCC_ERANGE
-
-#endif
 
 bool GetCurrentComputerName(char* buffer, size_t maxSize)
 {
