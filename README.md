@@ -80,7 +80,7 @@ See more rules in [CONTRIBUTING](/.github/CONTRIBUTING.md).
 ### Other links
 * [PKCS #11 Cryptographic Token Interface Base Specification Version 2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf)
 * [PKCS #11 Cryptographic Token Interface Base Specification Version 3.1](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf)
-* [PKCS #11 Cryptographic Token Interface Base Specification Version 3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.pdf) ad [markdawn](/Doc/Pkcs11_Spec_3.2.md)
+* [PKCS #11 Cryptographic Token Interface Base Specification Version 3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.pdf) as [markdawn](/Doc/Pkcs11_Spec_3.2.md)
 * [Software Ideas Modeler](https://www.softwareideas.net/) - tool in which the diagrams in the documentation were drawn
 * [NSwag studio](https://github.com/RicoSuter/NSwag/wiki/NSwagStudio) - tool for generate OpenApi client
 * [Ako som robil BouncyHsm](https://harrison314.github.io/BouncyHsm.html) - My blog post about BouncyHsm development, technological decisions and reasons for development - in Slovak language
