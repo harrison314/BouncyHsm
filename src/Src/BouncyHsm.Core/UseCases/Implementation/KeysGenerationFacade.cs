@@ -359,7 +359,7 @@ public class KeysGenerationFacade : IKeysGenerationFacade
             { CKA.CKA_PARAMETER_SET, AttributeValue.Create((uint)request.MlDsaParameter) },
         };
 
-        MlKemKeyPairGenerator mlDsaKeyPairGenerator = new MlKemKeyPairGenerator(this.loggerFactory.CreateLogger<MlKemKeyPairGenerator>());
+        MlDsaKeyPairGenerator mlDsaKeyPairGenerator = new MlDsaKeyPairGenerator(this.loggerFactory.CreateLogger<MlDsaKeyPairGenerator>());
         mlDsaKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
         (PublicKeyObject publicKey, PrivateKeyObject privateKey) = mlDsaKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
 
