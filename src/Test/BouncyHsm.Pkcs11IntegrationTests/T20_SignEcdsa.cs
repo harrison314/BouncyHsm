@@ -285,6 +285,8 @@ public class T20_SignEcdsa
         Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
     }
 
+    //TODO #104 SignEcdsa_ReadonlySession_Success
+
     private ECDsa ExportPublicKey(ISession session, IObjectHandle pubKeyHandle)
     {
         List<CKA> attributes = new List<CKA>()

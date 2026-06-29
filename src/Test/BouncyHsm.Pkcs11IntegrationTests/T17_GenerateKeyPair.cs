@@ -657,6 +657,8 @@ public class T17_GenerateKeyPair
         this.PrivateKeyCheckValues(session, privateKey, alwaisSesitive: true, neverExtractable: true);
     }
 
+    //TODO: #104 GenerateKeyPair_ReadOnlySession_Success
+
     private void PrivateKeyCheckValues(ISession session,
         IObjectHandle privateKeyHandle,
         bool alwaisSesitive,

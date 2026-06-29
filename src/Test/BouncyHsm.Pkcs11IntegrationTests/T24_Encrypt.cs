@@ -268,6 +268,8 @@ public class T24_Encrypt
         Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
     }
 
+    //TODO #104 Encrypt_ReadonlySession_Success
+
     public IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

@@ -310,4 +310,6 @@ public class T29_CopyObject
 
         _ = session.CopyObject(privateKey, template);
     }
+
+    //TODO #104CopyObject_ReadonlySession_Success
 }

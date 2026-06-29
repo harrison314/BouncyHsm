@@ -135,4 +135,6 @@ public class T19_DestroyObject
 
         session.DestroyObject(handle);
     }
+
+    //TODO #104 DestroyObject_ReadonlySession_Success
 }

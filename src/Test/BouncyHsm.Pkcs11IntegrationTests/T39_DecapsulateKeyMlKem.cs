@@ -212,6 +212,8 @@ public class T39_DecapsulateKeyMlKem
         Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
     }
 
+    //TODO #104 DecapsulateKey_ReadonlySession_Success
+
     private void AssertEqualSecret(IObjectHandle excepted, IObjectHandle actual, ISession session)
     {
         byte[] exceptedValue = session.GetAttributeValue(excepted, new List<CKA>() { CKA.CKA_VALUE })[0].GetValueAsByteArray();

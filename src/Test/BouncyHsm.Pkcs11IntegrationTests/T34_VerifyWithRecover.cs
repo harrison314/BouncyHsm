@@ -167,6 +167,8 @@ public class T34_VerifyWithRecover
         Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
     }
 
+    //TODO #104 VerifyWithRecover_ReadonlySession_Success
+
     private IObjectHandle FindPublicKey(ISession session, byte[] ckaId, string ckaLabel)
     {
         List<IObjectAttribute> searchTemplate = new List<IObjectAttribute>()
