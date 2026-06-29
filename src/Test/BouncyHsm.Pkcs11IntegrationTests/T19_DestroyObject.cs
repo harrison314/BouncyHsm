@@ -15,7 +15,7 @@ public class T19_DestroyObject
     }
 
     [TestMethod]
-    public void CreateObject_DataObject_Success()
+    public void DestroyObject_DataObject_Success()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
@@ -44,7 +44,7 @@ public class T19_DestroyObject
     }
 
     [TestMethod]
-    public void CreateObject_SessionObject_Success()
+    public void DestroyObject_SessionObject_Success()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
@@ -73,7 +73,7 @@ public class T19_DestroyObject
     }
 
     [TestMethod]
-    public void CreateObject_HwFeature_Success()
+    public void DestroyObject_HwFeature_Success()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
