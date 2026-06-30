@@ -291,6 +291,45 @@ public class T22_GenerateKey
         session.DestroyObject(handle);
     }
 
+    [TestMethod]
+    public void GenerateKey_ReadonlySession_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)32),
+        };
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+
+        IObjectHandle handle = session.GenerateKey(mechanism, keyAttributes);
+        this.TestContext?.WriteLine("Object created");
+
+        session.DestroyObject(handle);
+    }
+
     private void PrivateKeyCheckValues(ISession session,
         IObjectHandle privateKeyHandle,
         bool alwaisSesitive,

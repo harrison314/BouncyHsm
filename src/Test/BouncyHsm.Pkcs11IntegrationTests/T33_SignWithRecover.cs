@@ -32,7 +32,7 @@ public class T33_SignWithRecover
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
@@ -51,6 +51,37 @@ public class T33_SignWithRecover
 
     [TestMethod]
     public void SignRecover_Rsa9796_Success()
+    {
+        byte[] dataToSign = new byte[32];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        this.CreateRsaKeyPair(factories, slot, ckId, label, false);
+
+        IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
+
+        byte[] signature = session.SignRecover(mechanism, handle, dataToSign);
+
+        Assert.IsNotNull(signature);
+    }
+
+    [TestMethod]
+    public void SignWithRecover_ReadonlySession_Success()
     {
         byte[] dataToSign = new byte[32];
         Random.Shared.NextBytes(dataToSign);

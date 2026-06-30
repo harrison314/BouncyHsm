@@ -35,7 +35,7 @@ public class T28_SetAttributeValue
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"DataObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
 
@@ -70,7 +70,7 @@ public class T28_SetAttributeValue
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"DataObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
 
@@ -105,7 +105,7 @@ public class T28_SetAttributeValue
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, false),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"DataObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
 
@@ -390,6 +390,41 @@ public class T28_SetAttributeValue
             session.DestroyObject(publicKey);
             session.DestroyObject(privateKey);
         }
+    }
+
+    [TestMethod]
+    public void SetAttributeValue_ReadOnlySession_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"DataObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
+        };
+
+        IObjectHandle dataObject = session.CreateObject(objectAttributes);
+
+        List<IObjectAttribute> template = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Foo Bar")),
+        };
+
+        session.SetAttributeValue(dataObject, template);
     }
 
     private List<IObjectAttribute> CreateTemplate(Pkcs11InteropFactories factories, int depth)
