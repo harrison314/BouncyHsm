@@ -7,7 +7,9 @@ namespace BouncyHsm.Pkcs11IntegrationTests;
 public class T10_GetSessionInfo
 {
     [TestMethod]
-    public void GetSessionInfo_Call_Success()
+    [DataRow(SessionType.ReadOnly, false)]
+    [DataRow(SessionType.ReadWrite, true)]
+    public void GetSessionInfo_Call_Success(SessionType sessionType, bool rwSession)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
@@ -17,11 +19,11 @@ public class T10_GetSessionInfo
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        using ISession session = slot.OpenSession(sessionType);
 
         ISessionInfo sessionInfo = session.GetSessionInfo();
 
-        Assert.IsFalse(sessionInfo.SessionFlags.RwSession);
+        Assert.AreEqual(rwSession, sessionInfo.SessionFlags.RwSession, "Not match flag RwSession");
         Assert.IsTrue(sessionInfo.SessionFlags.SerialSession);
         Assert.AreEqual((ulong)0, sessionInfo.DeviceError);
         Assert.AreEqual(slot.SlotId, sessionInfo.SlotId);
