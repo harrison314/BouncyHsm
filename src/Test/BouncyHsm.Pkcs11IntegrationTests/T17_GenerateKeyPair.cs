@@ -657,59 +657,59 @@ public class T17_GenerateKeyPair
         this.PrivateKeyCheckValues(session, privateKey, alwaisSesitive: true, neverExtractable: true);
     }
 
-    //[TestMethod]
-    //public void GenerateKeyPair_ReadOnlySession_Success()
-    //{
-    //    Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
-    //    using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
-    //        AssemblyTestConstants.P11LibPath,
-    //        AppType.SingleThreaded);
+    [TestMethod]
+    public void GenerateKeyPair_ReadOnlySession_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
 
-    //    List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
-    //    ISlot slot = slots.SelectTestSlot();
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
 
-    //    using ISession session = slot.OpenSession(SessionType.ReadOnly);
-    //    session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
-    //    string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
-    //    byte[] ckId = Utils.GetRandomBytes(32, true);
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
 
-    //    List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
-    //    {
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_MODULUS_BITS, 2048),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_PUBLIC_EXPONENT, new byte[] { 0x01, 0x00, 0x01 })
-    //    };
+        List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_MODULUS_BITS, 2048),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PUBLIC_EXPONENT, new byte[] { 0x01, 0x00, 0x01 })
+        };
 
-    //    List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
-    //    {
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
-    //        factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
-    //    };
+        List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true)
+        };
 
-    //    using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN);
 
-    //    session.GenerateKeyPair(mechanism,
-    //        publicKeyAttributes,
-    //        privateKeyAttributes,
-    //        out IObjectHandle publicKey,
-    //        out IObjectHandle privateKey);
-    //}
+        session.GenerateKeyPair(mechanism,
+            publicKeyAttributes,
+            privateKeyAttributes,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+    }
 
     private void PrivateKeyCheckValues(ISession session,
         IObjectHandle privateKeyHandle,

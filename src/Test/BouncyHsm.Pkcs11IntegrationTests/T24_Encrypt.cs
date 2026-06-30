@@ -1,8 +1,6 @@
 ﻿using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
 using Net.Pkcs11Interop.HighLevelAPI.MechanismParams;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Drawing;
 using System.Security.Cryptography;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
@@ -266,6 +264,49 @@ public class T24_Encrypt
 
         Pkcs11Exception ex = Assert.ThrowsExactly<Pkcs11Exception>(() => session.Encrypt(encryptMechanism, key, plainText));
         Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
+    }
+
+    [TestMethod]
+    public void Encrypt_ReadonlySession_Success()
+    {
+        byte[] plainText = new byte[16];
+        Random.Shared.NextBytes(plainText);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)32),
+        };
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+        IObjectHandle key = session.GenerateKey(mechanism, keyAttributes);
+
+        using IMechanism encryptMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_ECB);
+        byte[] cipherText = session.Encrypt(encryptMechanism, key, plainText);
+
+        Assert.IsNotNull(cipherText);
     }
 
     public IObjectHandle GenerateAesKey(ISession session, int size)
