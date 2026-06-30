@@ -291,8 +291,6 @@ public class T22_GenerateKey
         session.DestroyObject(handle);
     }
 
-    //TODO #104 GenerateKey_ReadonlySession_Success
-
     private void PrivateKeyCheckValues(ISession session,
         IObjectHandle privateKeyHandle,
         bool alwaisSesitive,

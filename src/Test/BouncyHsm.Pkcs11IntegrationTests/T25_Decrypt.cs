@@ -308,8 +308,6 @@ public class T25_Decrypt
         return session.GenerateKey(mechanism, keyAttributes);
     }
 
-    //TODO #104 Decrypt_ReadonlySession_Success
-
     private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";

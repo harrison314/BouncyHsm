@@ -210,8 +210,6 @@ public class T21_VerifyEcdsa
         Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
     }
 
-    //TODO #104 VerifyEcdsa_ReadonlySession_Success
-
     private IObjectHandle FindPrivateKey(ISession session, byte[] ckaId, string ckaLabel)
     {
         List<IObjectAttribute> searchTemplate = new List<IObjectAttribute>()

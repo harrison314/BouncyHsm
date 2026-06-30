@@ -290,8 +290,6 @@ public class T38_EncapsulateKeyMlKem
         Assert.AreEqual(CKR.CKR_KEY_FUNCTION_NOT_PERMITTED, ex.RV);
     }
 
-    //TODO #104 EncapsulateKey_ReadonlySession_Success
-
     private void GenerateKeyPair(uint parameterSet,
         ISession session,
         out IObjectHandle publicKey,

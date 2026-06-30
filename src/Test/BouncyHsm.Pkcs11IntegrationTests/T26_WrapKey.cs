@@ -825,8 +825,6 @@ public class T26_WrapKey
         Assert.AreEqual(CKR.CKR_KEY_HANDLE_INVALID, ex.RV);
     }
 
-    //TODO #104 WrapKey_ReadonlySession_Success
-
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

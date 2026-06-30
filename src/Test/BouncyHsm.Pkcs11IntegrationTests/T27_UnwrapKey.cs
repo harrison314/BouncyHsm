@@ -974,8 +974,6 @@ public class T27_UnwrapKey
         Assert.AreEqual(CKR.CKR_TEMPLATE_INCONSISTENT, ex.RV);
     }
 
-    //TODO #104 UnwrapKey_ReadonlySession_Success
-
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

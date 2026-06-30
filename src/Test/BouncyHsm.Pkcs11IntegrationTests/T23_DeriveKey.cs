@@ -1000,8 +1000,6 @@ public class T23_DeriveKey
         session.DestroyObject(derivedHandle);
     }
 
-    //TODO #104 DeriveKey_ReadonlySession_Success
-
     private IObjectHandle CreateSecret(ISession session, byte[] data)
     {
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";

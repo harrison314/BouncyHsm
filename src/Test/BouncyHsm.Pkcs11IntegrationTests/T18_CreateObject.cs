@@ -36,7 +36,7 @@ public class T18_CreateObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"DataObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
 
@@ -63,7 +63,7 @@ public class T18_CreateObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"DataObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
 
