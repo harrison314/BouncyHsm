@@ -1015,7 +1015,7 @@ public class T27_UnwrapKey
         using IMechanism wrapMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
         byte[] wrappedKey = session.WrapKey(wrapMechanism, key, privateKey);
 
-        IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session));
+        IObjectHandle unwrappedKey = session.UnwrapKey(wrapMechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session, ckaToken: false));
     }
 
     private IObjectHandle GenerateAesKey(ISession session, int size)
