@@ -278,10 +278,15 @@ public class T39_DecapsulateKeyMlKem
             factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
         };
 
-        byte[] cipherText = new byte[126];
-        Random.Shared.NextBytes(cipherText);
-
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM_V3_2.CKM_ML_KEM);
+
+        session.EncapsulateKey(library,
+           mechanism,
+           publicKey,
+           template,
+           out byte[] cipherText,
+           out IObjectHandle secretKey);
+
         session.DecapsulateKey(library,
            mechanism,
            privateKey,
