@@ -28,11 +28,6 @@ public partial class CopyObjectHandler : IRpcRequestHandler<CopyObjectRequest, C
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "CreateObject requires readwrite session");
-        }
-
         StorageObject originStorageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession, p11Session, request.ObjectHandle, cancellationToken);
         if (!originStorageObject.CkaCopyable)
         {
