@@ -86,6 +86,11 @@ internal static class P11HwServicesExtensions
         uint handle;
         if (storageObject.CkaToken)
         {
+            if (!p11Session.IsRwSession)
+            {
+                throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_SESSION_READ_ONLY, "A read-write session is required to write to the token.");
+            }
+
             await hwServices.Persistence.StoreObject(p11Session.SlotId, storageObject, cancellationToken);
             handle = memorySession.CreateHandle(storageObject);
         }
