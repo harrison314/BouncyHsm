@@ -28,11 +28,6 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "CreateObject requires readwrite session");
-        }
-
         StorageObject storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession, p11Session, request.ObjectHandle, cancellationToken);
         if (!storageObject.CkaModifiable)
         {
@@ -66,6 +61,11 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
 
         if (storageObject.CkaToken)
         {
+            if (!p11Session.IsRwSession)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "A read-write session is required to write to the token.");
+            }
+
             await this.hwServices.Persistence.UpdateObject(p11Session.SlotId, storageObject, cancellationToken);
             this.logger.LogInformation("Update object with id {objectId} on token.", storageObject.Id);
         }
