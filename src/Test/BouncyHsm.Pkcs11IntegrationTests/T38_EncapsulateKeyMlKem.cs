@@ -334,7 +334,6 @@ public class T38_EncapsulateKeyMlKem
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN_RECOVER, false),
             session.Factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_DECAPSULATE, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, false),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ALLOWED_MECHANISMS, new List<CKM>(){ }),
         };
 
         using IMechanism generationMechanism = session.Factories.MechanismFactory.Create(CKM_V3_2.CKM_ML_KEM_KEY_PAIR_GEN);
