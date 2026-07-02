@@ -310,6 +310,7 @@ public class T25_Decrypt
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),

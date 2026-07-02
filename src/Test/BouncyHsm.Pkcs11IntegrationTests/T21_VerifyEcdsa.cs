@@ -270,9 +270,9 @@ public class T21_VerifyEcdsa
         using IMechanism signMechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA);
         byte[] signature = session.Sign(signMechanism, privateKey, hash);
 
-        IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);
+        IObjectHandle pubKey = this.FindPublicKey(session, ckId, label, ckaToken: false);
 
-        session.Verify(mechanism, pubKey, dataToSign, signature, out bool isValid);
+        session.Verify(signMechanism, pubKey, hash, signature, out bool isValid);
 
         Assert.IsTrue(isValid, "Signature must be valid");
     }
@@ -291,13 +291,13 @@ public class T21_VerifyEcdsa
         return session.FindAllObjects(searchTemplate).Single();
     }
 
-    private IObjectHandle FindPublicKey(ISession session, byte[] ckaId, string ckaLabel)
+    private IObjectHandle FindPublicKey(ISession session, byte[] ckaId, string ckaLabel, bool ckaToken = true)
     {
         List<IObjectAttribute> searchTemplate = new List<IObjectAttribute>()
         {
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PUBLIC_KEY),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_EC),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, ckaToken),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckaId),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, ckaLabel)
         };
