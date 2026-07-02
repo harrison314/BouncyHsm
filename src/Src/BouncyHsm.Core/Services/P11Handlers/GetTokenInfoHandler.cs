@@ -91,6 +91,10 @@ public partial class GetTokenInfoHandler : IRpcRequestHandler<GetTokenInfoReques
         {
             flags |= CKF.CKF_RNG;
         }
+        else
+        {
+            flags |= CKF.CKF_SEED_RANDOM_REQUIRED;
+        }
 
         if (token.SimulateQualifiedArea)
         {
