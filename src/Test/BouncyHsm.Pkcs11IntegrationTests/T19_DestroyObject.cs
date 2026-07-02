@@ -33,7 +33,7 @@ public class T19_DestroyObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject To delete"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Data-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_APPLICATION, "Tests"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
@@ -62,7 +62,7 @@ public class T19_DestroyObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject To delete"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Data-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_APPLICATION, "Tests"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
@@ -155,7 +155,7 @@ public class T19_DestroyObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject To delete"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Data-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_APPLICATION, "Tests"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
@@ -183,7 +183,7 @@ public class T19_DestroyObject
             factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, "MyObject To delete"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"Data-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_APPLICATION, "Tests"),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
         };
@@ -191,5 +191,52 @@ public class T19_DestroyObject
         IObjectHandle handle = session.CreateObject(objectAttributes);
 
         session.DestroyObject(handle);
+    }
+
+    [TestMethod]
+    public void DestroyObject_NotLoggedIn_Failed()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        string ckaLabel = $"Data-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+
+        {
+            using ISession session = slot.OpenSession(SessionType.ReadWrite);
+            session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+            List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>
+            {
+                factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, ckaLabel),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_APPLICATION, "Tests"),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
+            };
+
+            _ = session.CreateObject(objectAttributes);
+        }
+
+        {
+            using ISession session = slot.OpenSession(SessionType.ReadWrite);
+            Assert.IsTrue(session.GetSessionInfo().State.HasFlag(CKS.CKS_RW_PUBLIC_SESSION), "Test error session is not CKS_RW_PUBLIC_SESSION");
+
+            List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>
+            {
+                factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
+                factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, ckaLabel),
+            };
+
+            IObjectHandle handle = session.FindAllObjects(objectAttributes).Single();
+
+            Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.DestroyObject(handle));
+            Assert.AreEqual(CKR.CKR_USER_NOT_LOGGED_IN, ex.RV);
+        }
     }
 }
