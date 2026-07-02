@@ -5,7 +5,6 @@ using BouncyHsm.Core.Services.Contracts.Generators;
 using BouncyHsm.Core.Services.Contracts.Generators.PrfDataParams;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
-using MessagePack;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
@@ -38,11 +37,6 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         if (!memorySession.IsUserLogged(p11Session.SlotId))
         {
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "CreateObject requires login");
-        }
-
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "CreateObject requires read-write session");
         }
 
         IReadOnlyDictionary<CKA, IAttributeValue> keyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
