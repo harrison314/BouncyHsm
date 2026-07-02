@@ -290,4 +290,14 @@ public static class CKF
     /// operation.Any other use of this flag is outside the scope of this standard.
     /// </summary>
     public const uint CKF_FIND_OBJECTS = 0x00000040;
+
+    /// <summary>
+    /// CKF_SEED_RANDOM_REQUIRED. If this is true  the token’s random number generator must be seeded or re-seeded using C_SeedRandom.
+    /// </summary>
+    public const uint CKF_SEED_RANDOM_REQUIRED = 0x02000000;
+
+    /// <summary>
+    /// CKF_ASYNC_SESSION_SUPPORTED. If this is true the token supports asynchronous sessions.
+    /// </summary>
+    public const uint CKF_ASYNC_SESSION_SUPPORTED = 0x04000000;
 }
