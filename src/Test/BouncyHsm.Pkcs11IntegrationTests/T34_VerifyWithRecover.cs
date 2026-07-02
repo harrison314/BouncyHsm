@@ -31,7 +31,7 @@ public class T34_VerifyWithRecover
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
@@ -70,7 +70,7 @@ public class T34_VerifyWithRecover
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
@@ -107,7 +107,7 @@ public class T34_VerifyWithRecover
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
@@ -144,7 +144,7 @@ public class T34_VerifyWithRecover
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
@@ -157,6 +157,43 @@ public class T34_VerifyWithRecover
         using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
 
         byte[] signature = session.Sign(mechanism, handle, dataToSign);
+
+
+        IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);
+
+        byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
+
+        Assert.IsTrue(isValid, "Signature must be valid");
+        Assert.IsTrue(recoveredData.SequenceEqual(dataToSign), $"Recovered data {HexConvertor.GetString(recoveredData)} does not match with data to sign {HexConvertor.GetString(dataToSign)}.");
+    }
+
+    [TestMethod]
+    public void VerifyRecover_ReadOnlySession_Success()
+    {
+        byte[] dataToSign = new byte[32];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        this.CreateRsaKeyPair(factories, slot, ckId, label, false);
+
+        IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
+
+        byte[] signature = session.SignRecover(mechanism, handle, dataToSign);
 
 
         IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);

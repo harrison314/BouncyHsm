@@ -5,8 +5,6 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Utilities.IO.Pem;
-using System.Reflection.Emit;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -32,10 +30,6 @@ public partial class EncapsulateKeyHandler : IRpcRequestHandler<EncapsulateKeyRe
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "EncapsulateKey requires readwrite session");
-        }
 
         PublicKeyObject publicKey = await this.hwServices.FindObjectByHandle<PublicKeyObject>(memorySession, p11Session, request.PublicKeyHandle, cancellationToken);
 

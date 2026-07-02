@@ -4,7 +4,6 @@ using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Utilities.IO.Pem;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -37,11 +36,6 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "DestroyObject requires login");
         }
 
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "DestroyObject requires read-write session");
-        }
-
         StorageObject storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession,
             p11Session,
             request.ObjectHandle,
@@ -54,6 +48,11 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
 
         if (storageObject.CkaToken)
         {
+            if (!p11Session.IsRwSession)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "A read-write session is required to destroy object from the token.");
+            }
+
             memorySession.DestroyObjectHandle(storageObject.Id);
             await this.hwServices.Persistence.DestroyObject(p11Session.SlotId, storageObject, cancellationToken);
 

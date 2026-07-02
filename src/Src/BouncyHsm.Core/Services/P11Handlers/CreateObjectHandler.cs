@@ -31,11 +31,6 @@ public partial class CreateObjectHandler : IRpcRequestHandler<CreateObjectReques
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "CreateObject requires login");
         }
 
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "CreateObject requires readwrite session");
-        }
-
         Dictionary<CKA, IAttributeValue> dictionaryTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 
         StorageObject storageObject = StorageObjectFactory.CreateEmpty(dictionaryTemplate);

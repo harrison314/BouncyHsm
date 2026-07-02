@@ -30,10 +30,6 @@ public partial class DecapsulateKeyHandler : IRpcRequestHandler<DecapsulateKeyRe
         IMemorySession memorySession = this.hwServices.ClientAppCtx.EnsureMemorySession(request.AppId);
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "DecapsulateKey requires readwrite session");
-        }
 
         PrivateKeyObject privateKeyObject = await this.hwServices.FindObjectByHandle<PrivateKeyObject>(memorySession, p11Session, request.PrivateKeyHandle, cancellationToken);
 

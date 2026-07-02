@@ -35,11 +35,6 @@ public partial class GenerateKeyHandler : IRpcRequestHandler<GenerateKeyRequest,
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "CreateObject requires login");
         }
 
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "CreateObject requires read-write session");
-        }
-
         Dictionary<CKA, IAttributeValue> publicKeyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 
         IKeyGenerator generator = this.CreateKeyGenerator(request.Mechanism);

@@ -5,7 +5,6 @@ using BouncyHsm.Core.Services.Contracts.Generators;
 using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
@@ -37,11 +36,6 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "CreateObject requires login");
         }
 
-        if (!p11Session.IsRwSession)
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "CreateObject requires read-write session");
-        }
-
         Dictionary<CKA, IAttributeValue> publicKeyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.PublicKeyTemplate);
         Dictionary<CKA, IAttributeValue> privateKeyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.PrivateKeyTemplate);
 
@@ -54,6 +48,15 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
 
         publicKeyObject.ReComputeAttributes();
         privateKeyObject.ReComputeAttributes();
+
+        if (!p11Session.IsRwSession && (publicKeyObject.CkaToken || privateKeyObject.CkaToken))
+        {
+            this.logger.LogError("Session {SessionId} is read-only, but generated public key CKA_TOKEN = {PublicKeyCkaToken}, private key CKA_TOKEN = {PrivateKeyCkaToken}.",
+                p11Session.SessionId,
+                publicKeyObject.CkaToken,
+                privateKeyObject.CkaToken);
+            throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "A read-write session is required to write to the token.");
+        }
 
         publicKeyObject.Validate();
         privateKeyObject.Validate();
