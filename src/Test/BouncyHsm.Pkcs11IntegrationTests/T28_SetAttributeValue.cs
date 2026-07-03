@@ -427,6 +427,40 @@ public class T28_SetAttributeValue
         session.SetAttributeValue(dataObject, template);
     }
 
+    [TestMethod]
+    public void SetAttributeValue_NotLoggedIn_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
+
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"DataObject-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Hello wold!")),
+        };
+
+        IObjectHandle dataObject = session.CreateObject(objectAttributes);
+
+        List<IObjectAttribute> template = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, Encoding.UTF8.GetBytes("Foo Bar")),
+        };
+
+        session.SetAttributeValue(dataObject, template);
+    }
+
     private List<IObjectAttribute> CreateTemplate(Pkcs11InteropFactories factories, int depth)
     {
         if (depth == 0)

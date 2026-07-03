@@ -177,6 +177,7 @@ public class T19_DestroyObject
         ISlot slot = slots.SelectTestSlot();
 
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
 
         List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>
         {
@@ -225,7 +226,7 @@ public class T19_DestroyObject
 
         {
             using ISession session = slot.OpenSession(SessionType.ReadWrite);
-            Assert.IsTrue(session.GetSessionInfo().State.HasFlag(CKS.CKS_RW_PUBLIC_SESSION), "Test error session is not CKS_RW_PUBLIC_SESSION");
+            Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
 
             List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>
             {

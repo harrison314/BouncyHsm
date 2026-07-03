@@ -384,6 +384,7 @@ public class T29_CopyObject
         ISlot slot = slots.SelectTestSlot();
 
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
 
         string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);

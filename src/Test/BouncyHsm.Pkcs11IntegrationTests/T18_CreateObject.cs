@@ -988,7 +988,8 @@ TnCoPhVFsVeDjQwg");
         List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
         ISlot slot = slots.SelectTestSlot();
 
-        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
 
         string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);
@@ -1033,6 +1034,7 @@ TnCoPhVFsVeDjQwg");
         ISlot slot = slots.SelectTestSlot();
 
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
 
         string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);

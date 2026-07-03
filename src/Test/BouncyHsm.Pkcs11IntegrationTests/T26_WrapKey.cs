@@ -869,6 +869,50 @@ public class T26_WrapKey
         Assert.IsNotNull(wrappedKey);
     }
 
+    [TestMethod]
+    public void WrapKey_NotLoggedIn_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session, ckaToken: false);
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32, true)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)32),
+        };
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+
+        IObjectHandle key = session.GenerateKey(mechanism, keyAttributes);
+        byte[] iv = Utils.GetRandomBytes(16);
+
+        using IMechanism wrapMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
+        byte[] wrappedKey = session.WrapKey(wrapMechanism, key, privateKey);
+
+        Assert.IsNotNull(wrappedKey);
+    }
+
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
