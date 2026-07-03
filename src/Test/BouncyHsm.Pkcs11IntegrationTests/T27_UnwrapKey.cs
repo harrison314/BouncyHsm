@@ -290,7 +290,7 @@ public class T27_UnwrapKey
         IObjectHandle unwrappedKey = session.UnwrapKey(mechanism, key, wrappedKey, secretTemplate);
 
         byte[] unwrapedSecretValue = session.GetAttributeValue(unwrappedKey, new List<CKA>() { CKA.CKA_VALUE })[0].GetValueAsByteArray();
-    
+
         Assert.AreEqual(Convert.ToHexString(secretValue), Convert.ToHexString(unwrapedSecretValue), "Error during unwrap secret key - keys mismtch.");
     }
 
@@ -1018,6 +1018,50 @@ public class T27_UnwrapKey
         IObjectHandle unwrappedKey = session.UnwrapKey(wrapMechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session, ckaToken: false));
     }
 
+    [TestMethod]
+    public void UnwrapKey_NotLoggedIn_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session, ckaToken: false, ckaPrivate: false);
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}"),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, Utils.GetRandomBytes(32, true)),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)32),
+        };
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+
+        IObjectHandle key = session.GenerateKey(mechanism, keyAttributes);
+        byte[] iv = Utils.GetRandomBytes(16);
+
+        using IMechanism wrapMechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
+        byte[] wrappedKey = session.WrapKey(wrapMechanism, key, privateKey);
+
+        IObjectHandle unwrappedKey = session.UnwrapKey(wrapMechanism, key, wrappedKey, this.GetPrivateRsaKeyTemplate(session, ckaToken: false, ckaPrivate: false));
+    }
+
     private IObjectHandle GenerateAesKey(ISession session, int size)
     {
         string label = $"AES-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
@@ -1071,7 +1115,7 @@ public class T27_UnwrapKey
         return keyAttributes;
     }
 
-    private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session, bool ckaToken = true)
+    private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session, bool ckaToken = true, bool? ckaPrivate = null)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);
@@ -1079,7 +1123,7 @@ public class T27_UnwrapKey
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, ckaToken),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, ckaPrivate ??false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
@@ -1093,7 +1137,7 @@ public class T27_UnwrapKey
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
         {
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, ckaToken),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE,ckaPrivate ?? true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
@@ -1115,7 +1159,7 @@ public class T27_UnwrapKey
         return (privateKey, publicKey);
     }
 
-    private List<IObjectAttribute> GetPrivateRsaKeyTemplate(ISession session, bool ckaToken = true)
+    private List<IObjectAttribute> GetPrivateRsaKeyTemplate(ISession session, bool ckaToken = true, bool ckaPrivate = true)
     {
         string label = $"RSAKeyUn-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);
@@ -1125,7 +1169,7 @@ public class T27_UnwrapKey
              session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_RSA),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, ckaToken),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, ckaPrivate),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),

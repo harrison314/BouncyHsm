@@ -111,6 +111,45 @@ public class T33_SignWithRecover
         Assert.IsNotNull(signature);
     }
 
+    [TestMethod]
+    public void SignWithRecover_NotLoggedIn_Success()
+    {
+        byte[] dataToSign = new byte[32];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        CreateRsaKeyPair(factories, ckId, label, false, session, false, false, out _, out _);
+
+        List<IObjectAttribute> searchTemplate = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_RSA),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label)
+        };
+
+        IObjectHandle handle = session.FindAllObjects(searchTemplate).Single();
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
+
+        byte[] signature = session.SignRecover(mechanism, handle, dataToSign);
+
+        Assert.IsNotNull(signature);
+    }
+
     private IObjectHandle FindPrivateKey(ISession session, byte[] ckaId, string ckaLabel)
     {
         List<IObjectAttribute> searchTemplate = new List<IObjectAttribute>()
@@ -131,17 +170,17 @@ public class T33_SignWithRecover
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
 
         IObjectHandle publicKey, privateKey;
-        CreateRsaKeyPair(factories, ckId, label, true, session, enableStandardSign, out publicKey, out privateKey);
+        CreateRsaKeyPair(factories, ckId, label, true, session, enableStandardSign, null, out publicKey, out privateKey);
 
         return (publicKey, privateKey);
     }
 
-    private static void CreateRsaKeyPair(Pkcs11InteropFactories factories, byte[] ckId, string label, bool token, ISession session, bool enableStandardSign, out IObjectHandle publicKey, out IObjectHandle privateKey)
+    private static void CreateRsaKeyPair(Pkcs11InteropFactories factories, byte[] ckId, string label, bool token, ISession session, bool enableStandardSign, bool? ckaPrivate, out IObjectHandle publicKey, out IObjectHandle privateKey)
     {
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, token),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE,ckaPrivate ?? false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
@@ -155,7 +194,7 @@ public class T33_SignWithRecover
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
         {
             factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, token),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, ckaPrivate ?? true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),

@@ -974,4 +974,97 @@ TnCoPhVFsVeDjQwg");
         Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.CreateObject(objectAttributes));
         Assert.AreEqual(CKR.CKR_SESSION_READ_ONLY, ex.RV);
     }
+
+    [TestMethod]
+    [DataRow(SessionType.ReadOnly)]
+    [DataRow(SessionType.ReadWrite)]
+    public void CreateObject_NotLoggedIn_Success(SessionType sessionType)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
+
+        string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        byte[] secret = new byte[32];
+        Random.Shared.NextBytes(secret);
+
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_AES),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_COPYABLE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, secret),
+        };
+
+        _ = session.CreateObject(objectAttributes);
+    }
+
+    [TestMethod]
+    public void CreateObject_NotLoggedIn_Failed()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
+
+        string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        byte[] secret = new byte[32];
+        Random.Shared.NextBytes(secret);
+
+        List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_AES),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_COPYABLE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DECRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_WRAP, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_UNWRAP, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, secret),
+        };
+
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.CreateObject(objectAttributes));
+        Assert.AreEqual(CKR.CKR_USER_NOT_LOGGED_IN, ex.RV);
+    }
 }
