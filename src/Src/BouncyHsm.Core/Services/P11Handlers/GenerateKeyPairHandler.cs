@@ -31,11 +31,6 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        if (!memorySession.IsUserLogged(p11Session.SlotId))
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "CreateObject requires login");
-        }
-
         Dictionary<CKA, IAttributeValue> publicKeyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.PublicKeyTemplate);
         Dictionary<CKA, IAttributeValue> privateKeyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.PrivateKeyTemplate);
 
@@ -56,6 +51,19 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
                 publicKeyObject.CkaToken,
                 privateKeyObject.CkaToken);
             throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "A read-write session is required to write to the token.");
+        }
+
+        if (!memorySession.IsUserLogged(p11Session.SlotId))
+        {
+            if (publicKeyObject.CkaPrivate || privateKeyObject.CkaPrivate)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to work with private objects (CKA_PRIVATE = true).");
+            }
+
+            if (publicKeyObject.CkaToken || privateKeyObject.CkaToken)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to write to the token (CKA_TOKEN = true).");
+            }
         }
 
         publicKeyObject.Validate();

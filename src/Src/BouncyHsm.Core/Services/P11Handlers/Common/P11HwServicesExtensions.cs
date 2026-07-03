@@ -1,5 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.SpeedAwaiters;
 using Microsoft.Extensions.Logging;
 using System;
@@ -84,6 +85,20 @@ internal static class P11HwServicesExtensions
        CancellationToken cancellationToken)
     {
         uint handle;
+
+        if (!memorySession.IsUserLogged(p11Session.SlotId))
+        {
+            if (storageObject.CkaPrivate)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to work with private objects (CKA_PRIVATE = true).");
+            }
+
+            if (storageObject.CkaToken)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to write to the token (CKA_TOKEN = true).");
+            }
+        }
+
         if (storageObject.CkaToken)
         {
             if (!p11Session.IsRwSession)

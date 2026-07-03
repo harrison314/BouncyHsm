@@ -31,11 +31,6 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        if (!memorySession.IsUserLogged(p11Session.SlotId))
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "DestroyObject requires login");
-        }
-
         StorageObject storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession,
             p11Session,
             request.ObjectHandle,
@@ -44,6 +39,19 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         if (!storageObject.CkaDestroyable)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ACTION_PROHIBITED, $"Object with id {storageObject.Id} is not destroyable.");
+        }
+
+        if (!memorySession.IsUserLogged(p11Session.SlotId))
+        {
+            if (storageObject.CkaPrivate)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to work with private objects (CKA_PRIVATE = true).");
+            }
+
+            if (storageObject.CkaToken)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to write to the token (CKA_TOKEN = true).");
+            }
         }
 
         if (storageObject.CkaToken)
@@ -61,6 +69,11 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         }
         else
         {
+            if (storageObject.CkaPrivate)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to work with private objects (CKA_PRIVATE = true).");
+            }
+
             memorySession.DestroyObjectHandle(storageObject.Id);
             p11Session.DestroyObject(storageObject);
         }

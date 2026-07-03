@@ -34,11 +34,6 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        if (!memorySession.IsUserLogged(p11Session.SlotId))
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "CreateObject requires login");
-        }
-
         IReadOnlyDictionary<CKA, IAttributeValue> keyTemplate = AttrTypeUtils.BuildDictionaryTemplate(request.Template);
 
         KeyObject baseKeyObject = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession,

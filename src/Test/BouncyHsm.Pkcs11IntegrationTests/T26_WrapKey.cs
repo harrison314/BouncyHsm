@@ -839,7 +839,7 @@ public class T26_WrapKey
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
         session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
 
-        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session, ckaToken:false);
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session, ckaToken: false);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -883,7 +883,7 @@ public class T26_WrapKey
         using ISession session = slot.OpenSession(SessionType.ReadOnly);
         Assert.IsTrue(session.GetSessionInfo().State is CKS.CKS_RW_PUBLIC_SESSION or CKS.CKS_RO_PUBLIC_SESSION, "The user must not be logged in for this test.");
 
-        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session, ckaToken: false);
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session, ckaToken: false, ckaPrivate: false);
 
         List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
         {
@@ -940,7 +940,7 @@ public class T26_WrapKey
         return session.GenerateKey(mechanism, keyAttributes);
     }
 
-    private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session, bool ckaToken = true)
+    private (IObjectHandle privateKey, IObjectHandle publicKey) GenerateRsa(ISession session, bool ckaToken = true, bool? ckaPrivate = null)
     {
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);
@@ -948,7 +948,7 @@ public class T26_WrapKey
         List<IObjectAttribute> publicKeyAttributes = new List<IObjectAttribute>()
         {
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, ckaToken),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, false),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE,ckaPrivate ?? false),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, false),
@@ -962,7 +962,7 @@ public class T26_WrapKey
         List<IObjectAttribute> privateKeyAttributes = new List<IObjectAttribute>()
         {
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, ckaToken),
-            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE,ckaPrivate ?? true),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),

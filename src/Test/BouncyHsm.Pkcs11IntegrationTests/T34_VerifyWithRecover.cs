@@ -224,16 +224,31 @@ public class T34_VerifyWithRecover
         string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);
 
-        this.CreateRsaKeyPair(factories, slot, ckId, label, false, false);
+        CreateRsaKeyPair(factories, ckId, label, false, session, false, false, out _, out _);
 
-        IObjectHandle handle = this.FindPrivateKey(session, ckId, label);
+        List<IObjectAttribute> searchTemplate = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_RSA),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label)
+        };
+
+        IObjectHandle handle = session.FindAllObjects(searchTemplate).Single();
 
         using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_RSA_9796);
-
         byte[] signature = session.SignRecover(mechanism, handle, dataToSign);
 
 
-        IObjectHandle pubKey = this.FindPublicKey(session, ckId, label);
+        List<IObjectAttribute> pubKeySearchTemplate = new List<IObjectAttribute>()
+        {
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PUBLIC_KEY),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK.CKK_RSA),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            session.Factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label)
+        };
+
+        IObjectHandle pubKey = session.FindAllObjects(pubKeySearchTemplate).Single();
 
         byte[] recoveredData = session.VerifyRecover(mechanism, pubKey, signature, out bool isValid);
 
