@@ -42,6 +42,15 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
             init;
         }
 
+        [CommandOption("-d|--signatureDigestHint <SignatureDigestHint>", isRequired: false)]
+        [Description("Path for store CSR file (*.csr).")]
+        [DefaultValue(PkiDigestAlgorithm.SHA256)]
+        public required PkiDigestAlgorithm DigestHint
+        {
+            get;
+            init;
+        }
+
         [CommandOption("-o|--outputPath <OutputPath>", isRequired: true)]
         [Description("Path for store CSR file (*.csr).")]
         public required string OutputPath
@@ -72,6 +81,7 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
                {
                    PrivateKeyId = settings.PrivateKeyId,
                    PublicKeyId = settings.PublicKeyId,
+                   SignatureDigestHint = settings.DigestHint,
                    Subject = new SubjectNameDto()
                    {
                        DirName = subjectName

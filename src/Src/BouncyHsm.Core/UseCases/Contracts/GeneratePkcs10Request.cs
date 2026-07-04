@@ -26,6 +26,12 @@ public class GeneratePkcs10Request
         set;
     }
 
+    public PkiDigestAlgorithm SignatureDigestHint
+    {
+        get;
+        set;
+    }
+
     public GeneratePkcs10Request()
     {
         this.Subject = default!;

@@ -5335,6 +5335,10 @@ namespace BouncyHsm.Client
         [System.Text.Json.Serialization.JsonPropertyName("Subject")]
         public SubjectNameDto Subject { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("SignatureDigestHint")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<PkiDigestAlgorithm>))]
+        public PkiDigestAlgorithm SignatureDigestHint { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -5358,6 +5362,30 @@ namespace BouncyHsm.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("Value")]
         public string Value { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum PkiDigestAlgorithm
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHA256")]
+        SHA256 = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHA384")]
+        SHA384 = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHA512")]
+        SHA512 = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHA3_256")]
+        SHA3_256 = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHA3_384")]
+        SHA3_384 = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SHA3_512")]
+        SHA3_512 = 5,
 
     }
 

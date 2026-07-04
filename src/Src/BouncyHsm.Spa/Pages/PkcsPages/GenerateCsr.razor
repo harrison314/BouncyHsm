@@ -38,6 +38,17 @@
                 <div class="form-text">Subject value eg. <code>CN=common name, C=SK, SERIALNUMBER=458965</code>.</div>
                 <ValidationMessage For="() => this.model.Subject" />
             </div>
+            <div class="mb-1">
+                <label for="i-digesthint" class="form-label">Signature digest hint</label>
+                <InputSelect class="form-select" @bind-Value="this.model.SignatureDigestHint" id="i-digesthint">
+                   @foreach(string name in Enum.GetNames<PkiDigestAlgorithm>())
+                    {
+                        <option value="@name">@name.Replace('_', '-')</option>
+                    }
+                </InputSelect>
+                <div class="form-text">The digest algorithm is used for signing only if the key type allows it.</div>
+                <ValidationMessage For="() => this.model.SignatureDigestHint" />
+            </div>
 
             <div class="justify-content-end pt-4">
                 <button type="submit" class="btn btn-primary"><span class="icon-Rename icon-1x"></span> Generate</button>
@@ -96,15 +107,16 @@
         try
         {
             Pkcs10Dto pkcs10 = await this.bouncyHsmClient.Pkcs_GeneratePkcs10Async(this.SlotId, new GeneratePkcs10RequestDto()
+            {
+                PrivateKeyId = this.PrivateKeyId,
+                PublicKeyId = this.PublicKeyId,
+                SignatureDigestHint = this.model.SignatureDigestHint,
+                Subject = new SubjectNameDto()
                 {
-                    PrivateKeyId = this.PrivateKeyId,
-                    PublicKeyId = this.PublicKeyId,
-                    Subject = new SubjectNameDto()
-                    {
-                        DirName = this.model.Subject,
-                        OidValuePairs = null
-                    }
-                });
+                    DirName = this.model.Subject,
+                    OidValuePairs = null
+                }
+            });
 
             await this.JS.DownloadFile("request.csr", pkcs10.Content);
         }

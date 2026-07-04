@@ -1,4 +1,6 @@
-﻿namespace BouncyHsm.Models.Pkcs;
+﻿using BouncyHsm.Core.UseCases.Contracts;
+
+namespace BouncyHsm.Models.Pkcs;
 
 [SmartAnalyzers.CSharpExtensions.Annotations.TwinType(typeof(BouncyHsm.Core.UseCases.Contracts.GeneratePkcs10Request), IgnoredMembers = new string[] { "SlotId" })]
 public class GeneratePkcs10RequestDto
@@ -16,6 +18,12 @@ public class GeneratePkcs10RequestDto
     }
 
     public SubjectNameDto Subject
+    {
+        get;
+        set;
+    }
+
+    public PkiDigestAlgorithm SignatureDigestHint
     {
         get;
         set;

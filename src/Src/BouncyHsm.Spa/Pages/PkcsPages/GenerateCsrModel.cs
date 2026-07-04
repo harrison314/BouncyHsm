@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BouncyHsm.Client;
+using System.ComponentModel.DataAnnotations;
 
 namespace BouncyHsm.Spa.Pages.PkcsPages;
 
@@ -12,8 +13,16 @@ public class GenerateCsrModel
         set;
     }
 
+    [Required]
+    public PkiDigestAlgorithm SignatureDigestHint
+    {
+        get;
+        set;
+    }
+
     public GenerateCsrModel()
     {
         this.Subject = string.Empty;
+        this.SignatureDigestHint = PkiDigestAlgorithm.SHA256;
     }
 }
