@@ -32,6 +32,12 @@ public class GenerateSelfSignedCertRequest
         set;
     }
 
+    public PkcsDigestAlgorithm SignatureDigestHint
+    {
+        get;
+        set;
+    }
+
     public GenerateSelfSignedCertRequest()
     {
         this.Subject = default!;

@@ -263,15 +263,7 @@ public class PkcsFacade : IPkcsFacade
             oidValuePairs => new X509Name(oidValuePairs.Pairs.Select(t => new Org.BouncyCastle.Asn1.DerObjectIdentifier(t.Oid)).ToList(),
                  oidValuePairs.Pairs.Select(t => t.Value).ToList()));
 
-        string algorithm = privKo.CkaKeyType switch
-        {
-            CKK.CKK_RSA => "SHA224WITHRSA",
-            CKK.CKK_ECDSA => "SHA256WITHECDSA",
-            CKK.CKK_EC_EDWARDS => this.GetEdwardsSignatureOid(privKo),
-            CKK.CKK_ML_DSA => this.GetMlDsaSignatureName(privKo),
-            CKK.CKK_SLH_DSA => this.GetSlhDsaSignatureName(privKo),
-            _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
-        };
+        string algorithm = this.GetSignatureName(privKo, request.SignatureDigestHint);
 
         Asn1SignatureFactory asn1SignatureFactory = new Asn1SignatureFactory(algorithm,
             privKo.GetPrivateKey());

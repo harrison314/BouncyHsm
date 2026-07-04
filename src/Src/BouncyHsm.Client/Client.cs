@@ -5414,6 +5414,10 @@ namespace BouncyHsm.Client
         [System.Text.Json.Serialization.JsonPropertyName("Validity")]
         public System.TimeSpan Validity { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("SignatureDigestHint")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<PkcsDigestAlgorithm>))]
+        public PkcsDigestAlgorithm SignatureDigestHint { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]

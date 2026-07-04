@@ -40,6 +40,18 @@
             </div>
 
             <div class="mb-1">
+                <label for="i-digesthint" class="form-label">Signature digest hint</label>
+                <InputSelect class="form-select" @bind-Value="this.model.SignatureDigestHint" id="i-digesthint">
+                    @foreach (string name in Enum.GetNames<PkcsDigestAlgorithm>())
+                    {
+                        <option value="@name">@name.Replace('_', '-')</option>
+                    }
+                </InputSelect>
+                <div class="form-text">The digest algorithm is used for signing only if the key type allows it.</div>
+                <ValidationMessage For="() => this.model.SignatureDigestHint" />
+            </div>
+
+            <div class="mb-1">
                 <label for="i-validity" class="form-label">Validity</label>
                 <InputSelect class="form-select" @bind-Value="this.model.ValidityInDays" id="i-validity">
                     <option value="1">1 dayt</option>
@@ -85,9 +97,9 @@
     }
 
     private GenerateSelfSignedCertificateModel model = new GenerateSelfSignedCertificateModel()
-        {
-            ValidityInDays = "365"
-        };
+    {
+        ValidityInDays = "365"
+    };
 
     private EditContext? editContext;
     private string? errorMessage = null;
@@ -114,16 +126,17 @@
         try
         {
             _ = await this.bouncyHsmClient.Pkcs_GenerateSelfSignedCertAsync(this.SlotId, new GenerateSelfSignedCertRequestDto()
+            {
+                PrivateKeyId = this.PrivateKeyId,
+                PublicKeyId = this.PublicKeyId,
+                Subject = new SubjectNameDto()
                 {
-                    PrivateKeyId = this.PrivateKeyId,
-                    PublicKeyId = this.PublicKeyId,
-                    Subject = new SubjectNameDto()
-                    {
-                        DirName = this.model.Subject,
-                        OidValuePairs = null
-                    },
-                    Validity = this.ParseValidity(this.model.ValidityInDays)
-                });
+                    DirName = this.model.Subject,
+                    OidValuePairs = null
+                },
+                SignatureDigestHint = this.model.SignatureDigestHint,
+                Validity = this.ParseValidity(this.model.ValidityInDays)
+            });
 
             this.Navigation.NavigateTo($"Slots/{this.SlotId}/Pkcs");
         }

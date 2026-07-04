@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BouncyHsm.Client;
+using System.ComponentModel.DataAnnotations;
 
 namespace BouncyHsm.Spa.Pages.PkcsPages;
 
@@ -7,6 +8,13 @@ public class GenerateSelfSignedCertificateModel
     [Required]
     [MinLength(3)]
     public string Subject
+    {
+        get;
+        set;
+    }
+
+    [Required]
+    public PkcsDigestAlgorithm SignatureDigestHint
     {
         get;
         set;
@@ -23,5 +31,6 @@ public class GenerateSelfSignedCertificateModel
     {
         this.Subject = string.Empty;
         this.ValidityInDays = string.Empty;
+        this.SignatureDigestHint = PkcsDigestAlgorithm.SHA256;
     }
 }
