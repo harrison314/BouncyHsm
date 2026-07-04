@@ -42,6 +42,7 @@ public static class Program
                 pkcs.AddCommand<ImportP12Command>("importP12").WithDescription("Import P12/PFX file into token.");
                 pkcs.AddCommand<GenerateCsrCommand>("generateCsr").WithDescription("Generate CSR (PKCS#10 request).");
                 pkcs.AddCommand<ImportCertificateCommand>("importCert").WithDescription("Import certificate file into token.");
+                pkcs.AddCommand<GenerateSelfSignedCertCommand>("generateCert").WithDescription("Generate self-signed X509 certificate.");
 
                 pkcs.AddBranch("generate", generate =>
                 {
