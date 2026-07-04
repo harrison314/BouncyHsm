@@ -8,6 +8,7 @@ using BouncyHsm.Core.UseCases.Implementation.Visitors;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.Nist;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1.X9;
@@ -206,27 +207,7 @@ public class PkcsFacade : IPkcsFacade
             oidValuePairs => new X509Name(oidValuePairs.Pairs.Select(t => new Org.BouncyCastle.Asn1.DerObjectIdentifier(t.Oid)).ToList(),
                  oidValuePairs.Pairs.Select(t => t.Value).ToList()));
 
-        string algorithm = (privKo.CkaKeyType, request.SignatureDigestHint) switch
-        {
-            (CKK.CKK_RSA, PkiDigestAlgorithm.SHA256) => PkcsObjectIdentifiers.Sha256WithRsaEncryption.Id,
-            (CKK.CKK_RSA, PkiDigestAlgorithm.SHA384) => PkcsObjectIdentifiers.Sha384WithRsaEncryption.Id,
-            (CKK.CKK_RSA, PkiDigestAlgorithm.SHA512) => PkcsObjectIdentifiers.Sha512WithRsaEncryption.Id,
-            (CKK.CKK_RSA, PkiDigestAlgorithm.SHA3_256) => NistObjectIdentifiers.IdRsassaPkcs1V15WithSha3_256.Id,
-            (CKK.CKK_RSA, PkiDigestAlgorithm.SHA3_384) => NistObjectIdentifiers.IdRsassaPkcs1V15WithSha3_384.Id,
-            (CKK.CKK_RSA, PkiDigestAlgorithm.SHA3_512) => NistObjectIdentifiers.IdRsassaPkcs1V15WithSha3_512.Id,
-
-            (CKK.CKK_ECDSA, PkiDigestAlgorithm.SHA256) => X9ObjectIdentifiers.ECDsaWithSha256.Id,
-            (CKK.CKK_ECDSA, PkiDigestAlgorithm.SHA384) => X9ObjectIdentifiers.ECDsaWithSha384.Id,
-            (CKK.CKK_ECDSA, PkiDigestAlgorithm.SHA512) => X9ObjectIdentifiers.ECDsaWithSha512.Id,
-            (CKK.CKK_ECDSA, PkiDigestAlgorithm.SHA3_256) => NistObjectIdentifiers.IdEcdsaWithSha3_256.Id,
-            (CKK.CKK_ECDSA, PkiDigestAlgorithm.SHA3_384) => NistObjectIdentifiers.IdEcdsaWithSha3_384.Id,
-            (CKK.CKK_ECDSA, PkiDigestAlgorithm.SHA3_512) => NistObjectIdentifiers.IdEcdsaWithSha3_512.Id,
-
-            (CKK.CKK_EC_EDWARDS, _) => this.GetEdwardsSignatureOid(privKo),
-            (CKK.CKK_ML_DSA, _) => this.GetMlDsaSignatureName(privKo),
-            (CKK.CKK_SLH_DSA,_) => this.GetSlhDsaSignatureName(privKo),
-            _ => throw new InvalidProgramException($"Enum value {privKo.CkaKeyType} is not supported.")
-        };
+        string algorithm = this.GetSignatureName(privKo, request.SignatureDigestHint);
 
         Pkcs10CertificationRequest certificationRequest = new Pkcs10CertificationRequest(algorithm,
             subject,
@@ -596,5 +577,34 @@ public class PkcsFacade : IPkcsFacade
         System.Diagnostics.Debug.Assert(privateKeyObject.CkaKeyType == CKK.CKK_SLH_DSA, "Key type is not SLH-DSA.");
 
         return SlhDsaUtils.GetSignatureAlgorithmName(((SlhDsaPrivateKeyObject)privateKeyObject).CkaParameterSet);
+    }
+
+    private string GetSignatureName(PrivateKeyObject privateKeyObject, PkcsDigestAlgorithm digetAlgorithm)
+    {
+        this.logger.LogTrace("Entering to GetSignatureName with keyType {KeyType}, digest hint {DigestHint}.",
+            privateKeyObject.CkaKeyType,
+            digetAlgorithm);
+
+        return (privateKeyObject.CkaKeyType, digetAlgorithm) switch
+        {
+            (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA256) => PkcsObjectIdentifiers.Sha256WithRsaEncryption.Id,
+            (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA384) => PkcsObjectIdentifiers.Sha384WithRsaEncryption.Id,
+            (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA512) => PkcsObjectIdentifiers.Sha512WithRsaEncryption.Id,
+            (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA3_256) => NistObjectIdentifiers.IdRsassaPkcs1V15WithSha3_256.Id,
+            (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA3_384) => NistObjectIdentifiers.IdRsassaPkcs1V15WithSha3_384.Id,
+            (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA3_512) => NistObjectIdentifiers.IdRsassaPkcs1V15WithSha3_512.Id,
+
+            (CKK.CKK_ECDSA, PkcsDigestAlgorithm.SHA256) => X9ObjectIdentifiers.ECDsaWithSha256.Id,
+            (CKK.CKK_ECDSA, PkcsDigestAlgorithm.SHA384) => X9ObjectIdentifiers.ECDsaWithSha384.Id,
+            (CKK.CKK_ECDSA, PkcsDigestAlgorithm.SHA512) => X9ObjectIdentifiers.ECDsaWithSha512.Id,
+            (CKK.CKK_ECDSA, PkcsDigestAlgorithm.SHA3_256) => NistObjectIdentifiers.IdEcdsaWithSha3_256.Id,
+            (CKK.CKK_ECDSA, PkcsDigestAlgorithm.SHA3_384) => NistObjectIdentifiers.IdEcdsaWithSha3_384.Id,
+            (CKK.CKK_ECDSA, PkcsDigestAlgorithm.SHA3_512) => NistObjectIdentifiers.IdEcdsaWithSha3_512.Id,
+
+            (CKK.CKK_EC_EDWARDS, _) => this.GetEdwardsSignatureOid(privateKeyObject),
+            (CKK.CKK_ML_DSA, _) => this.GetMlDsaSignatureName(privateKeyObject),
+            (CKK.CKK_SLH_DSA, _) => this.GetSlhDsaSignatureName(privateKeyObject),
+            _ => throw new InvalidProgramException($"Enum value {privateKeyObject.CkaKeyType} is not supported.")
+        };
     }
 }

@@ -23,7 +23,7 @@ public class GeneratePkcs10RequestDto
         set;
     }
 
-    public PkiDigestAlgorithm SignatureDigestHint
+    public PkcsDigestAlgorithm SignatureDigestHint
     {
         get;
         set;

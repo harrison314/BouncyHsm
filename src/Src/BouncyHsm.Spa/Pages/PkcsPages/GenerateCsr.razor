@@ -41,7 +41,7 @@
             <div class="mb-1">
                 <label for="i-digesthint" class="form-label">Signature digest hint</label>
                 <InputSelect class="form-select" @bind-Value="this.model.SignatureDigestHint" id="i-digesthint">
-                   @foreach(string name in Enum.GetNames<PkiDigestAlgorithm>())
+                   @foreach(string name in Enum.GetNames<PkcsDigestAlgorithm>())
                     {
                         <option value="@name">@name.Replace('_', '-')</option>
                     }

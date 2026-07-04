@@ -14,7 +14,7 @@ public class GenerateCsrModel
     }
 
     [Required]
-    public PkiDigestAlgorithm SignatureDigestHint
+    public PkcsDigestAlgorithm SignatureDigestHint
     {
         get;
         set;
@@ -23,6 +23,6 @@ public class GenerateCsrModel
     public GenerateCsrModel()
     {
         this.Subject = string.Empty;
-        this.SignatureDigestHint = PkiDigestAlgorithm.SHA256;
+        this.SignatureDigestHint = PkcsDigestAlgorithm.SHA256;
     }
 }

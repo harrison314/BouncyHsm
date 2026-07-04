@@ -44,8 +44,8 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
 
         [CommandOption("-d|--signatureDigestHint <SignatureDigestHint>", isRequired: false)]
         [Description("Path for store CSR file (*.csr).")]
-        [DefaultValue(PkiDigestAlgorithm.SHA256)]
-        public required PkiDigestAlgorithm DigestHint
+        [DefaultValue(PkcsDigestAlgorithm.SHA256)]
+        public required PkcsDigestAlgorithm DigestHint
         {
             get;
             init;

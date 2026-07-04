@@ -5336,8 +5336,8 @@ namespace BouncyHsm.Client
         public SubjectNameDto Subject { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("SignatureDigestHint")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<PkiDigestAlgorithm>))]
-        public PkiDigestAlgorithm SignatureDigestHint { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<PkcsDigestAlgorithm>))]
+        public PkcsDigestAlgorithm SignatureDigestHint { get; set; } = default!;
 
     }
 
@@ -5366,7 +5366,7 @@ namespace BouncyHsm.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum PkiDigestAlgorithm
+    public enum PkcsDigestAlgorithm
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"SHA256")]
