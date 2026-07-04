@@ -43,7 +43,7 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
         }
 
         [CommandOption("-d|--signatureDigestHint <SignatureDigestHint>", isRequired: false)]
-        [Description("Path for store CSR file (*.csr).")]
+        [Description("The digest algorithm is used for signing only if the key type allows it.")]
         [DefaultValue(PkcsDigestAlgorithm.SHA256)]
         public required PkcsDigestAlgorithm DigestHint
         {
