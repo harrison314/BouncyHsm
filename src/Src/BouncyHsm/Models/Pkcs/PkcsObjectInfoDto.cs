@@ -33,6 +33,12 @@ public class PkcsObjectInfoDto
         set;
     }
 
+    public bool CanCreateCsr
+    {
+        get;
+        set;
+    }
+
     public string? Subject
     {
         get;

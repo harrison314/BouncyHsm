@@ -128,6 +128,7 @@ public class PkcsFacade : IPkcsFacade
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
             canSign = t is not MontgomeryPrivateKeyObject && t is not MlKemPrivateKeyObject, //Fix curent state
+            canCreateCsr = t is not MontgomeryPrivateKeyObject,
             description = t.Accept(descriptionVisitor),
             subject = null as string
         })
@@ -138,6 +139,7 @@ public class PkcsFacade : IPkcsFacade
                 id = t.Id,
                 alwaysAuthenticate = false,
                 canSign = false,
+                canCreateCsr = t is MlKemPublicKeyObject,
                 description = t.Accept(descriptionVisitor),
                 subject = null as string
             }))
@@ -148,6 +150,7 @@ public class PkcsFacade : IPkcsFacade
                 id = t.Id,
                 alwaysAuthenticate = false,
                 canSign = false,
+                canCreateCsr = false,
                 description = t.Accept(descriptionVisitor),
                 subject = this.TryParseCertSubject(t)
             }))
@@ -159,6 +162,7 @@ public class PkcsFacade : IPkcsFacade
                 Objects = t.Select(q => new PkcsSpecificObject(q.type, q.id, q.description)).OrderByDescending(o => (uint)o.CkaClass).ToArray(),
                 AlwaysAuthenticate = t.Any(q => q.alwaysAuthenticate),
                 CanSign = t.Any(q => q.canSign),
+                CanCreateCsr = t.Any(q => q.canSign) || t.Any(q => q.canCreateCsr),
                 Subject = t.Select(q => q.subject).FirstOrDefault(q => q != null)
             })
             .ToList();
@@ -206,6 +210,18 @@ public class PkcsFacade : IPkcsFacade
         X509Name subject = request.Subject.Match(text => new X509Name(dirName: text.X509NameText),
             oidValuePairs => new X509Name(oidValuePairs.Pairs.Select(t => new Org.BouncyCastle.Asn1.DerObjectIdentifier(t.Oid)).ToList(),
                  oidValuePairs.Pairs.Select(t => t.Value).ToList()));
+
+        if (pubKo is MlKemPublicKeyObject mlKemPublicKeyObject)
+        {
+            Pkcs10CertificationRequest mlKemCertificationRequest = MlKemCsrGenerator.GenerateRequest(this.timeProvider,
+                subject,
+                TimeSpan.FromDays(365),
+                (Org.BouncyCastle.Crypto.Parameters.MLKemPublicKeyParameters)mlKemPublicKeyObject.GetPublicKey(),
+                new Org.BouncyCastle.Security.SecureRandom());
+
+            this.logger.LogWarning("Create CSR for ML-KEM key by RFC 9883 with self-signed certificate - it is experimental feature.");
+            return new DomainResult<byte[]>.Ok(mlKemCertificationRequest.GetEncoded());
+        }
 
         string algorithm = this.GetSignatureName(privKo, request.SignatureDigestHint);
 

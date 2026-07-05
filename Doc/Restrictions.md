@@ -8,6 +8,8 @@ Here is a list of general restrictions and deviations of BouncyHsm that were arc
 - It is not possible to destroy public crypto objects on a token without logging in.
 
 ### v2.3.0
+- Generating PKCS#10/CSR for ML-KEM key by _RFC 9883_ is experimental feature, uses a self-signed ML-DSA certificate that is included in the request.
+
 #### CK_CHACHA20_PARAMS 
 - Accept only value 0 for blockCounter (filed `pBlockCounter`).
 

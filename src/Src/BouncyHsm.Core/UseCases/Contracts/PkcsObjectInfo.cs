@@ -1,4 +1,6 @@
-﻿namespace BouncyHsm.Core.UseCases.Contracts;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace BouncyHsm.Core.UseCases.Contracts;
 
 public class PkcsObjectInfo
 {
@@ -27,6 +29,12 @@ public class PkcsObjectInfo
     }
 
     public bool CanSign
+    {
+        get;
+        set;
+    }
+
+    public bool CanCreateCsr
     {
         get;
         set;
