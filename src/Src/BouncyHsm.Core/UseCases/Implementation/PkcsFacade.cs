@@ -139,7 +139,7 @@ public class PkcsFacade : IPkcsFacade
                 id = t.Id,
                 alwaysAuthenticate = false,
                 canSign = false,
-                canCreateCsr = t is MlKemPublicKeyObject,
+                canCreateCsr = false,
                 description = t.Accept(descriptionVisitor),
                 subject = null as string
             }))
