@@ -41,6 +41,11 @@ internal class P12ObjectsGenerator
         {
             CKK.CKK_RSA => new RsaPrivateKeyObject(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN),
             CKK.CKK_ECDSA => new EcdsaPrivateKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN),
+            CKK.CKK_EC_EDWARDS => new EdwardsPrivateKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN),
+            CKK.CKK_EC_MONTGOMERY => new MontgomeryPrivateKeyObject(CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN),
+            CKK.CKK_ML_KEM => new MlKemPrivateKeyObject(),
+            CKK.CKK_ML_DSA => new MlDsaPrivateKeyObject(),
+            CKK.CKK_SLH_DSA => new SlhDsaPrivateKeyObject(),
             _ => throw new BouncyHsmInvalidInputException("Unsupported key type in P12 file.")
         };
 
@@ -72,6 +77,11 @@ internal class P12ObjectsGenerator
         {
             CKK.CKK_RSA => new RsaPublicKeyObject(CKM.CKM_RSA_PKCS_KEY_PAIR_GEN),
             CKK.CKK_ECDSA => new EcdsaPublicKeyObject(CKM.CKM_ECDSA_KEY_PAIR_GEN),
+            CKK.CKK_EC_EDWARDS => new EdwardsPublicKeyObject(CKM.CKM_EC_EDWARDS_KEY_PAIR_GEN),
+            CKK.CKK_EC_MONTGOMERY => new MontgomeryPublicKeyObject(CKM.CKM_EC_MONTGOMERY_KEY_PAIR_GEN),
+            CKK.CKK_ML_KEM => new MlKemPublicKeyObject(),
+            CKK.CKK_ML_DSA => new MlDsaPublicKeyObject(),
+            CKK.CKK_SLH_DSA => new SlhDsaPublicKeyObject(),
             _ => throw new BouncyHsmInvalidInputException("Unsupported key type in P12 file.")
         };
 
