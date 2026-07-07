@@ -12,7 +12,7 @@ The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
 ## Makefile parameters
 To facilitate building for other platforms, it is possible to parameterize the makefile:
 - `CC` - for compiler, default is `clang`,
-- `ARCH_FLAGS` - for architcture, default is `-m64`,
+- `ARCH_FLAGS` - for architecture, default is `-m64`,
 - `EXTRA_FLAGS` - for extra compilation flags.
 
 Example build command for _ARM_ with _gcc_:
