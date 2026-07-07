@@ -53,7 +53,7 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
 
     public string Visit(X509AttributeCertificateObject x509AttributeCertificateObject)
     {
-        return "WTLS Attribute Certificate";
+        return "X509 Attribute Certificate";
     }
 
     public string Visit(EcdsaPublicKeyObject ecdsaPublicKeyObject)
