@@ -23,11 +23,11 @@ internal static class AttributeValueExtensions
         };
     }
 
-    public static string? ToPrintable(this IAttributeValue attributeValue, CKA attributeType, IReadOnlyDictionary<CKA, IAttributeValue> memenoto)
+    public static string? ToPrintable(this IAttributeValue attributeValue, CKA attributeType, IReadOnlyDictionary<CKA, IAttributeValue> memento)
     {
         if (attributeType == CKA.CKA_PARAMETER_SET)
         {
-            return ParameterSetToString(attributeValue, memenoto);
+            return ParameterSetToString(attributeValue, memento);
         }
 
         return attributeValue.TypeTag switch

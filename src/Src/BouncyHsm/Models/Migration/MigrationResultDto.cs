@@ -9,7 +9,7 @@ public class MigrationResultDto
         set;
     }
 
-    public int SuccessedObjects
+    public int SucceededObjects
     {
         get;
         set;

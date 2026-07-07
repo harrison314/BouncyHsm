@@ -16,7 +16,7 @@ using System.Text;
 
 namespace BouncyHsm.Core.UseCases.Implementation.Generators;
 
-//https://datatracker.ietf.org/doc/html/rfc9883
+// RFC 9883 - https://datatracker.ietf.org/doc/html/rfc9883
 internal class MlKemCsrGenerator
 {
     public static Pkcs10CertificationRequest GenerateRequest(TimeProvider timeProvider, X509Name subject, TimeSpan validity, MLKemPublicKeyParameters publicKey, SecureRandom secureRandom)

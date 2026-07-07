@@ -127,7 +127,7 @@ public class PkcsFacade : IPkcsFacade
             type = CKO.CKO_PRIVATE_KEY,
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
-            canSign = t is not MontgomeryPrivateKeyObject && t is not MlKemPrivateKeyObject, //Fix curent state
+            canSign = t is not MontgomeryPrivateKeyObject && t is not MlKemPrivateKeyObject, //Fix current state
             canCreateCsr = t is not MontgomeryPrivateKeyObject,
             description = t.Accept(descriptionVisitor),
             subject = null as string
@@ -568,7 +568,7 @@ public class PkcsFacade : IPkcsFacade
 
         IAttributeValue value = privateKeyObject.GetValue(CKA.CKA_EC_PARAMS, CryptoApiObjectGetValueMode.Default).UnwrapOk().Value;
 
-        // Works beacose OID for key is same as oid for singature
+        // Works because OID for key is same as oid for signature
         DerObjectIdentifier curveOid = EdEcUtils.GetOidFromParams(value.AsByteArray());
         return curveOid.Id;
     }
@@ -587,13 +587,13 @@ public class PkcsFacade : IPkcsFacade
         return SlhDsaUtils.GetSignatureAlgorithmName(((SlhDsaPrivateKeyObject)privateKeyObject).CkaParameterSet);
     }
 
-    private string GetSignatureName(PrivateKeyObject privateKeyObject, PkcsDigestAlgorithm digetAlgorithm)
+    private string GetSignatureName(PrivateKeyObject privateKeyObject, PkcsDigestAlgorithm digestAlgorithm)
     {
         this.logger.LogTrace("Entering to GetSignatureName with keyType {KeyType}, digest hint {DigestHint}.",
             privateKeyObject.CkaKeyType,
-            digetAlgorithm);
+            digestAlgorithm);
 
-        return (privateKeyObject.CkaKeyType, digetAlgorithm) switch
+        return (privateKeyObject.CkaKeyType, digestAlgorithm) switch
         {
             (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA256) => PkcsObjectIdentifiers.Sha256WithRsaEncryption.Id,
             (CKK.CKK_RSA, PkcsDigestAlgorithm.SHA384) => PkcsObjectIdentifiers.Sha384WithRsaEncryption.Id,

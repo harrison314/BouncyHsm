@@ -5299,8 +5299,8 @@ namespace BouncyHsm.Client
         [System.Text.Json.Serialization.JsonPropertyName("FailedObjects")]
         public int FailedObjects { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SuccessedObjects")]
-        public int SuccessedObjects { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("SucceededObjects")]
+        public int SucceededObjects { get; set; } = default!;
 
     }
 

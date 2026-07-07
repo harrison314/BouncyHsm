@@ -43,11 +43,11 @@ internal class MigrateObjectsCommand : AsyncCommand<MigrateObjectsCommand.Settin
 
         if (migrationResult.FailedObjects > 0)
         {
-            AnsiConsole.MarkupLine($"Migration completed. [green]{migrationResult.SuccessedObjects}[/] objects are compliant with the current version of BouncyHsm. An error occurred at [red]{migrationResult.FailedObjects}[/].");
+            AnsiConsole.MarkupLine($"Migration completed. [green]{migrationResult.SucceededObjects}[/] objects are compliant with the current version of BouncyHsm. An error occurred at [red]{migrationResult.FailedObjects}[/].");
         }
         else
         {
-            AnsiConsole.MarkupLine($"Migration completed. [green]{migrationResult.SuccessedObjects}[/] objects are compliant with the current version of BouncyHsm. An error occurred at [green]{migrationResult.FailedObjects}[/].");
+            AnsiConsole.MarkupLine($"Migration completed. [green]{migrationResult.SucceededObjects}[/] objects are compliant with the current version of BouncyHsm. An error occurred at [green]{migrationResult.FailedObjects}[/].");
 
         }
 
