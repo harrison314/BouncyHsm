@@ -39,6 +39,7 @@ internal sealed class TcpHostedService : BackgroundService
         }
 
         using Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+        socket.NoDelay = true;
         socket.ReceiveTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEndpoint.ReceiveTimeout);
         socket.SendTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEndpoint.SendTimeout);
 
