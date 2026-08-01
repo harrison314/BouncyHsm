@@ -1,10 +1,7 @@
 ﻿using BouncyHsm.Core.Rpc;
 using BouncyHsm.Services.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -44,7 +41,7 @@ internal sealed class TcpHostedService : BackgroundService
         socket.SendTimeout = this.TimeSpanToTimeout(this.bouncyHsmSetup.Value.TcpEndpoint.SendTimeout);
 
         socket.Bind(System.Net.IPEndPoint.Parse(this.bouncyHsmSetup.Value.TcpEndpoint.Endpoint));
-        socket.Listen(100);
+        socket.Listen(512);
 
         this.logger.LogInformation("Starting TCP listening on {bindAddress}.", this.bouncyHsmSetup.Value.TcpEndpoint.Endpoint);
 
