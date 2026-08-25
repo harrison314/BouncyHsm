@@ -760,7 +760,7 @@ TnCoPhVFsVeDjQwg");
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
 
             factories.ObjectAttributeFactory.Create(CKA.CKA_ISSUER, new Org.BouncyCastle.Asn1.X509.X509Name("CN=TestIssuer,C=SK").ToAsn1Object().GetEncoded()),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_SERIAL_NUMBER, new Org.BouncyCastle.Asn1.DerInteger(12).ToAsn1Object().GetEncoded()),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SERIAL_NUMBER, Org.BouncyCastle.Asn1.DerInteger.ValueOf(12).ToAsn1Object().GetEncoded()),
             factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_HASH_OF_CERTIFICATE, new byte[32]),
             factories.ObjectAttributeFactory.Create(CKA.CKA_MECHANISM_TYPE, (uint)CKM.CKM_SHA256),
             factories.ObjectAttributeFactory.Create(CKA_V3_2.CKA_TRUST_SERVER_AUTH, CKT_V3_2.CKT_NOT_TRUSTED),
