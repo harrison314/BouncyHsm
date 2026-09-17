@@ -152,7 +152,7 @@ internal class BufferedCipherWrapperFactory
             }
 
             return new AesAeadBufferedCipherWrapper(bufferedCipher,
-                (int)ccmParams.MacLen,
+                (int)ccmParams.MacLen * 8,
                 ccmParams.Nonce,
                 ccmParams.Aad,
                 (CKM)mechanism.MechanismType,

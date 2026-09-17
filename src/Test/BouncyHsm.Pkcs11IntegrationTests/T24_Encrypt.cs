@@ -154,7 +154,7 @@ public class T24_Encrypt
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkCcmParams ccmParams = session.Factories.MechanismParamsFactory.CreateCkCcmParams((ulong)plainText.Length,
             nonce,
             null,
-            16 * 8);
+            16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CCM, ccmParams);
         byte[] cipherText = session.Encrypt(mechanism, key, plainText);
