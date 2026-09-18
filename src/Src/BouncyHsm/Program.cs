@@ -60,7 +60,7 @@ public class Program
             cfg.Title = "Bouncy Hsm REST API";
             cfg.Description = "Management API for Bouncy Hsm.";
             cfg.UseRouteNameAsOperationId = true;
-            cfg.Version = "2.3.1";
+            cfg.Version = "2.3.2";
         });
 
         builder.Host.UseWindowsService();
