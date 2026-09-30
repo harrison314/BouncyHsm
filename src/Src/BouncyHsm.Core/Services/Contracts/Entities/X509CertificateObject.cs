@@ -99,32 +99,33 @@ public sealed class X509CertificateObject : CertificateObject
     {
         base.Validate();
 
-        CryptoObjectValueChecker.CheckX509Name(CKA.CKA_SUBJECT, this.CkaSubject, true);
-        CryptoObjectValueChecker.CheckX509Name(CKA.CKA_ISSUER, this.CkaIssuer, true);
-        CryptoObjectValueChecker.CheckDerInteger(CKA.CKA_SERIAL_NUMBER, this.CkaSerialNumber, true, true);
-
-
-        if (this.CkaValue.Length == 0 && this.CkaUrl.Length == 0)
+        if (!RuntimeSwitches.SkipAttributeChecks)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
-                   $"Attributes CKA_VALUE or CKA_URL must contains valid value.");
+            CryptoObjectValueChecker.CheckX509Name(CKA.CKA_SUBJECT, this.CkaSubject, true);
+            CryptoObjectValueChecker.CheckX509Name(CKA.CKA_ISSUER, this.CkaIssuer, true);
+            CryptoObjectValueChecker.CheckDerInteger(CKA.CKA_SERIAL_NUMBER, this.CkaSerialNumber, true, true);
+
+
+            if (this.CkaValue.Length == 0 && this.CkaUrl.Length == 0)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                       $"Attributes CKA_VALUE or CKA_URL must contains valid value.");
+            }
+
+            this.CheckValueAndUrl();
+
+            CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_SUBJECT_PUBLIC_KEY,
+                this.CkaNameHashAlgorithm,
+                this.CkaHashOfSubjectPublicKey,
+                true);
+
+            CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_ISSUER_PUBLIC_KEY,
+                this.CkaNameHashAlgorithm,
+                this.CkaHashOfIssuerPublicKey,
+                true);
         }
 
         CryptoObjectValueChecker.CheckX509DerCertificate(CKA.CKA_VALUE, this.CkaValue, true);
-
-
-        this.CheckValueAndUrl();
-
-        CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_SUBJECT_PUBLIC_KEY,
-            this.CkaNameHashAlgorithm,
-            this.CkaHashOfSubjectPublicKey,
-            true);
-
-        CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_ISSUER_PUBLIC_KEY,
-            this.CkaNameHashAlgorithm,
-            this.CkaHashOfIssuerPublicKey,
-            true);
-
         //TODO: this.CkaHashOfSubjectPublicKey can by empty is URL is empty
     }
 

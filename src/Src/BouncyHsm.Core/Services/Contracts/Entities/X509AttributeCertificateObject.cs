@@ -59,10 +59,14 @@ public sealed class X509AttributeCertificateObject : CertificateObject
     {
         base.Validate();
 
-        CryptoObjectValueChecker.CheckX509Name(CKA.CKA_OWNER, this.CkaOwner, false);
-        CryptoObjectValueChecker.CheckX509Name(CKA.CKA_AC_ISSUER, this.CkaAcIssuer, true);
-        CryptoObjectValueChecker.CheckDerInteger(CKA.CKA_SERIAL_NUMBER, this.CkaSerialNumber, true, true);
-        this.CheckAttributeTypes();
+        if (!RuntimeSwitches.SkipAttributeChecks)
+        {
+            CryptoObjectValueChecker.CheckX509Name(CKA.CKA_OWNER, this.CkaOwner, false);
+            CryptoObjectValueChecker.CheckX509Name(CKA.CKA_AC_ISSUER, this.CkaAcIssuer, true);
+            CryptoObjectValueChecker.CheckDerInteger(CKA.CKA_SERIAL_NUMBER, this.CkaSerialNumber, true, true);
+            this.CheckAttributeTypes();
+        }
+
         CryptoObjectValueChecker.CheckX509DerCertificate(CKA.CKA_VALUE, this.CkaValue, false);
     }
 
