@@ -13,7 +13,7 @@ public static class RuntimeSwitches
 
         string? skipAttributeChecks = Environment.GetEnvironmentVariable("BOUNCYHSM_BADHSM_LEVEL");
 
-        if (string.Equals(skipAttributeChecks, "1", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(skipAttributeChecks, "1", StringComparison.Ordinal))
         {
             SkipAttributeChecks = true;
         }
