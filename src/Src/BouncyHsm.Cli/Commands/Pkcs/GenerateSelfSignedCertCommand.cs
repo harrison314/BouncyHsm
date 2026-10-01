@@ -60,7 +60,7 @@ internal class GenerateSelfSignedCertCommand : AsyncCommand<GenerateSelfSignedCe
         }
     }
 
-    protected override async Task<int> ExecuteAsync(CommandContext context, GenerateSelfSignedCertCommand.Settings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, GenerateSelfSignedCertCommand.Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 

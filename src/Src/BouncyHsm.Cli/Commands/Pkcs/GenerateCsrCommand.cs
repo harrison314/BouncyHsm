@@ -60,7 +60,7 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
         }
     }
 
-    protected override async Task<int> ExecuteAsync(CommandContext context, GenerateCsrCommand.Settings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, GenerateCsrCommand.Settings settings, CancellationToken cancellationToken)
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
