@@ -165,7 +165,9 @@ public class Program
         BouncyHsm.Core.UseCases.Implementation.HsmInfoFacade hsmInfoFacade = new Core.UseCases.Implementation.HsmInfoFacade();
         Core.UseCases.Contracts.BouncyHsmVersion version = hsmInfoFacade.GetVersions();
         app.Logger.LogInformation("Starting BouncyHsm version: {version}, commit: {commit}", version.Version, version.Commit);
-        app.Logger.LogInformation("Runtime switches - BOUNCYHSM_BADHSM_LEVEL: {BadHsmLevel}", Core.RuntimeSwitches.BadHsmLevel);
-        app.Logger.LogInformation("                 - SkipAttributeChecks: {SkipAttributeChecks}, ", Core.RuntimeSwitches.SkipAttributeChecks);
+
+        LogLevel logLevel = (Core.RuntimeSwitches.BadHsmLevel != 0) ? LogLevel.Warning : LogLevel.Debug;
+        app.Logger.Log(logLevel, "Runtime switches - BOUNCYHSM_BADHSM_LEVEL: {BadHsmLevel}", Core.RuntimeSwitches.BadHsmLevel);
+        app.Logger.Log(logLevel, "                 - SkipAttributeChecks: {SkipAttributeChecks}, ", Core.RuntimeSwitches.SkipAttributeChecks);
     }
 }
