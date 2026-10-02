@@ -19,13 +19,13 @@ HDRS := $(wildcard $(SRC_DIR)/*.h) \
         $(wildcard $(SRC_DIR)/utils/*.h)
 
 .PHONY: all clean universal
-all: BouncyHsm.Pkcs11Lib-x64.dylib BouncyHsm.Pkcs11Lib-arm64.dylib
+all: libBouncyHsm.Pkcs11Lib-x64.dylib libBouncyHsm.Pkcs11Lib-arm64.dylib
 
-BouncyHsm.Pkcs11Lib-x64.dylib: $(OBJS_x64)
+libBouncyHsm.Pkcs11Lib-x64.dylib: $(OBJS_x64)
 	$(CC) $(CFLAGS_BASE) $(ARCH_FLAGS_x64) -dynamiclib \
 	    -install_name @rpath/$@ -o $@ $^
 
-BouncyHsm.Pkcs11Lib-arm64.dylib: $(OBJS_arm64)
+libBouncyHsm.Pkcs11Lib-arm64.dylib: $(OBJS_arm64)
 	$(CC) $(CFLAGS_BASE) $(ARCH_FLAGS_arm64) -dynamiclib \
 	    -install_name @rpath/$@ -o $@ $^
 
@@ -40,8 +40,8 @@ $(BUILD_DIR)/arm64/%.o: $(SRC_DIR)/%.c $(HDRS)
 universal: all
 	lipo -create \
 	    -output BouncyHsm.Pkcs11Lib.dylib \
-	    BouncyHsm.Pkcs11Lib-x64.dylib \
-	    BouncyHsm.Pkcs11Lib-arm64.dylib
+	    libBouncyHsm.Pkcs11Lib-x64.dylib \
+	    libBouncyHsm.Pkcs11Lib-arm64.dylib
 
 clean:
 	rm -rf $(BUILD_DIR)
