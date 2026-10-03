@@ -119,30 +119,34 @@ public class TrustObject : StorageObject
     public override void Validate()
     {
         CryptoObjectValueChecker.CheckX509Name(CKA.CKA_ISSUER, this.CkaIssuer, false);
-        CryptoObjectValueChecker.CheckDerInteger(CKA.CKA_SERIAL_NUMBER, this.CkaSerialNumber, false, true);
 
-        if (this.GetTrustValues().All(v => v is CKT.CKT_TRUST_UNKNOWN or CKT.CKT_NOT_TRUSTED))
+        if (!RuntimeSwitches.SkipAttributeChecks)
         {
-            CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_CERTIFICATE,
-               this.CkaMechanismType,
-               this.CkaHashOfCertificate,
-               false);
-        }
-        else
-        {
-            CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_CERTIFICATE,
-               this.CkaMechanismType,
-               this.CkaHashOfCertificate,
-               true);
-        }
+            CryptoObjectValueChecker.CheckDerInteger(CKA.CKA_SERIAL_NUMBER, this.CkaSerialNumber, false, true);
 
-        this.CheckTrustValue(this.CkaTrustServerAuth, CKA.CKA_TRUST_SERVER_AUTH);
-        this.CheckTrustValue(this.CkaTrustClientAuth, CKA.CKA_TRUST_CLIENT_AUTH);
-        this.CheckTrustValue(this.CkaTrustCodeSigning, CKA.CKA_TRUST_CODE_SIGNING);
-        this.CheckTrustValue(this.CkaTrustEmailProtection, CKA.CKA_TRUST_EMAIL_PROTECTION);
-        this.CheckTrustValue(this.CkaTrustIpsecIke, CKA.CKA_TRUST_IPSEC_IKE);
-        this.CheckTrustValue(this.CkaTrustTimeStamping, CKA.CKA_TRUST_TIME_STAMPING);
-        this.CheckTrustValue(this.CkaTrustOcpsSigning, CKA.CKA_TRUST_OCSP_SIGNING);
+            if (this.GetTrustValues().All(v => v is CKT.CKT_TRUST_UNKNOWN or CKT.CKT_NOT_TRUSTED))
+            {
+                CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_CERTIFICATE,
+                   this.CkaMechanismType,
+                   this.CkaHashOfCertificate,
+                   false);
+            }
+            else
+            {
+                CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_CERTIFICATE,
+                   this.CkaMechanismType,
+                   this.CkaHashOfCertificate,
+                   true);
+            }
+
+            this.CheckTrustValue(this.CkaTrustServerAuth, CKA.CKA_TRUST_SERVER_AUTH);
+            this.CheckTrustValue(this.CkaTrustClientAuth, CKA.CKA_TRUST_CLIENT_AUTH);
+            this.CheckTrustValue(this.CkaTrustCodeSigning, CKA.CKA_TRUST_CODE_SIGNING);
+            this.CheckTrustValue(this.CkaTrustEmailProtection, CKA.CKA_TRUST_EMAIL_PROTECTION);
+            this.CheckTrustValue(this.CkaTrustIpsecIke, CKA.CKA_TRUST_IPSEC_IKE);
+            this.CheckTrustValue(this.CkaTrustTimeStamping, CKA.CKA_TRUST_TIME_STAMPING);
+            this.CheckTrustValue(this.CkaTrustOcpsSigning, CKA.CKA_TRUST_OCSP_SIGNING);
+        }
     }
 
     private void CheckTrustValue(CKT value, CKA attributeName)
