@@ -198,4 +198,12 @@ Or view console logs:
 sudo journalctl -fu bouncyhsm
 ```
 
+### Creating symlinks to the native library (recommended)
+To support Linux applications that require the `lib` prefix when loading so-libraries, you can create the necessary symbolic links using the following command.
+
+```
+ln -s native/Linux-x64/BouncyHsm.Pkcs11Lib.so native/Linux-x64/libBouncyHsm.Pkcs11Lib.so
+ln -s native/Rhel-x64/BouncyHsm.Pkcs11Lib.so native/Rhel-x64/libBouncyHsm.Pkcs11Lib.so
+```
+
 For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-10.0>.
