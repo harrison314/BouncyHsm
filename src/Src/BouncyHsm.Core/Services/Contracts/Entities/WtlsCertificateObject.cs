@@ -87,15 +87,18 @@ public sealed class WtlsCertificateObject : CertificateObject
     {
         base.Validate();
 
-        CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_SUBJECT_PUBLIC_KEY,
+        if (!RuntimeSwitches.SkipAttributeChecks)
+        {
+            CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_SUBJECT_PUBLIC_KEY,
             this.CkaNameHashAlgorithm,
             this.CkaHashOfSubjectPublicKey,
             true);
 
-        CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_ISSUER_PUBLIC_KEY,
-            this.CkaNameHashAlgorithm,
-            this.CkaHashOfIssuerPublicKey,
-            true);
+            CryptoObjectValueChecker.CheckDigestValue(CKA.CKA_HASH_OF_ISSUER_PUBLIC_KEY,
+                this.CkaNameHashAlgorithm,
+                this.CkaHashOfIssuerPublicKey,
+                true);
+        }
     }
 
     public override void ReComputeAttributes()
