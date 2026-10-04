@@ -45,7 +45,10 @@ public sealed class DataObject : StorageObject
 
     public override void Validate()
     {
-        CryptoObjectValueChecker.CheckDerObjectIdentifier(CKA.CKA_OBJECT_ID, this.CkaObjectId, true);
+        if (!RuntimeSwitches.SkipAttributeChecks)
+        {
+            CryptoObjectValueChecker.CheckDerObjectIdentifier(CKA.CKA_OBJECT_ID, this.CkaObjectId, true);
+        }
     }
 
     public override void Accept(ICryptoApiObjectVisitor visitor)
