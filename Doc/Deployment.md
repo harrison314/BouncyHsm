@@ -202,8 +202,8 @@ sudo journalctl -fu bouncyhsm
 To support Linux applications that require the _lib_ prefix when loading so-libraries, you can create the necessary symbolic links using the following command.
 
 ```
-ln -s $(pwd)/native/Linux-x64/BouncyHsm.Pkcs11Lib.so native/Linux-x64/libBouncyHsm.Pkcs11Lib.so
-ln -s $(pwd)/native/Rhel-x64/BouncyHsm.Pkcs11Lib.so native/Rhel-x64/libBouncyHsm.Pkcs11Lib.so
+ln -s /opt/BouncyHsm/bin/native/Linux-x64/BouncyHsm.Pkcs11Lib.so /opt/BouncyHsm/bin/native/Linux-x64/libBouncyHsm.Pkcs11Lib.so
+ln -s /opt/BouncyHsm/bin/native/Rhel-x64/BouncyHsm.Pkcs11Lib.so /opt/BouncyHsm/bin/native/Rhel-x64/libBouncyHsm.Pkcs11Lib.so
 ```
 
 For more information see <https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-apache?view=aspnetcore-10.0>.
