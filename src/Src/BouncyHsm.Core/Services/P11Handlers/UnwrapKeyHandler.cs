@@ -124,14 +124,21 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
         if (useExplicitPading)
         {
-            uint? requiredLength = secretKeyObject.GetRequiredSecretLen();
-            if (requiredLength.HasValue)
+            if (RuntimeSwitches.SkipExplicitUnwrapPadding)
             {
-                unwrappedKey = unwrappedKey[..((int)requiredLength.Value)];
+                this.logger.LogWarning("Skip check explicit padding for {Mechanism} and object  {CkaKeyType}", mechanism, secretKeyObject.CkaKeyType);
             }
             else
             {
-                unwrappedKey = this.PadSecretKeyByTemplate(unwrappedKey, mechanism, template);
+                uint? requiredLength = secretKeyObject.GetRequiredSecretLen();
+                if (requiredLength.HasValue)
+                {
+                    unwrappedKey = unwrappedKey[..((int)requiredLength.Value)];
+                }
+                else
+                {
+                    unwrappedKey = this.PadSecretKeyByTemplate(unwrappedKey, mechanism, template);
+                }
             }
         }
 

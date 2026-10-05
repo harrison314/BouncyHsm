@@ -7,6 +7,11 @@ public static class RuntimeSwitches
         get;
     }
 
+    public static bool SkipExplicitUnwrapPadding
+    {
+        get;
+    }
+
     public static int BadHsmLevel
     {
         get;
@@ -16,6 +21,7 @@ public static class RuntimeSwitches
     {
         BadHsmLevel = 0;
         SkipAttributeChecks = false;
+        SkipExplicitUnwrapPadding = false;
 
         string? skipAttributeChecks = Environment.GetEnvironmentVariable("BOUNCYHSM_BADHSM_LEVEL");
 
@@ -23,6 +29,13 @@ public static class RuntimeSwitches
         {
             BadHsmLevel = 1;
             SkipAttributeChecks = true;
+            SkipExplicitUnwrapPadding = false;
+        }
+        else if (string.Equals(skipAttributeChecks, "2", StringComparison.Ordinal))
+        {
+            BadHsmLevel = 2;
+            SkipAttributeChecks = true;
+            SkipExplicitUnwrapPadding = true;
         }
     }
 }

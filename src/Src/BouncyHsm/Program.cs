@@ -169,5 +169,6 @@ public class Program
         LogLevel logLevel = (Core.RuntimeSwitches.BadHsmLevel != 0) ? LogLevel.Warning : LogLevel.Debug;
         app.Logger.Log(logLevel, "Runtime switches - BOUNCYHSM_BADHSM_LEVEL: {BadHsmLevel}", Core.RuntimeSwitches.BadHsmLevel);
         app.Logger.Log(logLevel, "                 - SkipAttributeChecks: {SkipAttributeChecks}, ", Core.RuntimeSwitches.SkipAttributeChecks);
+        app.Logger.Log(logLevel, "                 - SkipExplicitUnwrapPadding: {SkipExplicitUnwrapPadding}, ", Core.RuntimeSwitches.SkipExplicitUnwrapPadding);
     }
 }
