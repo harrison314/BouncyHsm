@@ -9,7 +9,7 @@ Here is a list of general restrictions and deviations of BouncyHsm that were arc
 
 ### v2.3.3
 - Generating PKCS#10/CSR for ML-KEM key by _RFC 9883_ is experimental feature, uses a self-signed ML-DSA certificate that is included in the request.
-- Using the `BOUNCYHSM_BADHSM_LEVEL` environment variable, it is possible to set the level of non-compliance with the PKCS#11 standard:
+- Using the `BOUNCYHSM_BADHSM_LEVEL` environment variable, it is possible to set the level of non-compliance with the PKCS#11 standard (This feature may be removed in the future.):
   - `BOUNCYHSM_BADHSM_LEVEL=1`
     - It skips validation of some attributes that are not directly used in cryptographic operations. 
   - `BOUNCYHSM_BADHSM_LEVEL=2`
