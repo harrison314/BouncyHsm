@@ -40,7 +40,7 @@ internal class VerifyState : ISessionState
 
         if (this.isEmpty)
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: Verify empty data.");
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Verify empty data.");
         }
 
        return this.signer.VerifySignature(signature);
