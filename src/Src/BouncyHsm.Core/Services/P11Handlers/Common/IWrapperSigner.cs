@@ -7,6 +7,11 @@ namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
 internal interface IWrapperSigner
 {
+    bool AcceptEmptyData
+    {
+        get;
+    }
+
     AuthenticatedSigner IntoSigningSigner(KeyObject keyObject, SecureRandom secureRandom);
 
     ISigner IntoValidationSigner(KeyObject keyObject);

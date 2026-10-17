@@ -13,6 +13,11 @@ internal class RsaWrapperSigner : IWrapperSigner
     private readonly CKM mechanism;
     private readonly ILogger<RsaWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public RsaWrapperSigner(ISigner signer, CKM mechanism, ILogger<RsaWrapperSigner> logger)
     {
         this.signer = signer;

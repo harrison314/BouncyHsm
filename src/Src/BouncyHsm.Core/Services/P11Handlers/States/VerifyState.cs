@@ -12,13 +12,15 @@ namespace BouncyHsm.Core.Services.P11Handlers.States;
 internal class VerifyState : ISessionState
 {
     private readonly ISigner signer;
+    private readonly bool acceptEmptyData;
     private bool isEmpty;
 
-    public VerifyState(ISigner signer)
+    public VerifyState(ISigner signer, bool acceptEmptyData)
     {
         System.Diagnostics.Debug.Assert(signer != null);
 
         this.signer = signer;
+        this.acceptEmptyData = acceptEmptyData;
         this.isEmpty = true;
     }
 
@@ -38,12 +40,12 @@ internal class VerifyState : ISessionState
     {
         System.Diagnostics.Debug.Assert(signature != null);
 
-        if (this.isEmpty)
+        if (this.isEmpty && !this.acceptEmptyData)
         {
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Verify empty data.");
         }
 
-       return this.signer.VerifySignature(signature);
+        return this.signer.VerifySignature(signature);
     }
 
     public override string ToString()
