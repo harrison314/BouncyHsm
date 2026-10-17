@@ -84,7 +84,7 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
     {
         if (this.isEmpty)
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: Signing empty data.");
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Signing empty data.");
         }
 
         if (this.RequireContextPin && !this.IsContextPinHasSet)
