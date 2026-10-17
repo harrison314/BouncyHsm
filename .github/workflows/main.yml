@@ -1,6 +1,17 @@
 name: Build Bouncy Hsm
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      publish-ghcr:
+        description: Push docker image to GHCR
+        required: true
+        default: false
+        type: boolean
+      build-docker-tar:
+        description: Build docker image as tar file
+        required: true
+        default: false
+        type: boolean
   
 jobs:
   Build-linux-libs:
@@ -97,6 +108,7 @@ jobs:
   Build-Docker:
     name: Build-Docker
     runs-on: ubuntu-latest
+    if: ${{ inputs.build-docker-tar }} 
     needs:
       - Build-Bouncy-Hsm
     steps: 
@@ -123,3 +135,51 @@ jobs:
       with:
         name: docker-image
         path: docker-bouncyhsm.tar
+
+  Publish-GHCR:
+    name: Publish-GHCR
+    runs-on: ubuntu-latest
+  
+    permissions:
+      contents: read
+      packages: write
+  
+    needs:
+      - Build-Bouncy-Hsm
+  
+    steps:
+      - uses: actions/checkout@v6
+  
+      - name: Get latest tag
+        id: varver
+        run: |
+          git fetch --tags --prune --unshallow || true
+          TAG=$(git describe --tags --abbrev=0)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+  
+      - uses: actions/download-artifact@v8
+        with:
+          name: Bouncy-Hsm-Artifacts
+          path: artifacts
+  
+      - name: Unzip artifacts
+        run: unzip artifacts/BouncyHsm.zip -d artifacts/BouncyHsm
+  
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: Build and push image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/bouncyhsm
+  
+          docker build \
+            -t $IMAGE:latest \
+            -t $IMAGE:${{ steps.varver.outputs.tag }} \
+            -f Build/DockerImage/Dockerfile .
+  
+          docker push $IMAGE:latest
+          docker push $IMAGE:${{ steps.varver.outputs.tag }}
