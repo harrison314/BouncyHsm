@@ -20,6 +20,11 @@ internal class EdDsaCipherWrapper : IWrapperSigner
     private readonly Ckp_CkEddsaParams? eddsaParams;
     private readonly ILogger<EdDsaCipherWrapper> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public EdDsaCipherWrapper(Ckp_CkEddsaParams? eddsaParams, ILogger<EdDsaCipherWrapper> logger)
     {
         this.eddsaParams = eddsaParams;

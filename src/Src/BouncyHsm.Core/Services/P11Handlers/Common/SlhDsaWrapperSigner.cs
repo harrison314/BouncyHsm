@@ -15,6 +15,11 @@ internal class SlhDsaWrapperSigner : IWrapperSigner
     private readonly Ckp_CkSignAdditionalContext? mechanismParams;
     private readonly ILogger<SlhDsaWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public SlhDsaWrapperSigner(Ckp_CkSignAdditionalContext? mechanismParams, ILogger<SlhDsaWrapperSigner> logger)
     {
         this.mechanismParams = mechanismParams;

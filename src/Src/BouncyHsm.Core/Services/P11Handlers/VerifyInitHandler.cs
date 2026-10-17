@@ -43,7 +43,7 @@ public partial class VerifyInitHandler : IRpcRequestHandler<VerifyInitRequest, V
         IWrapperSigner signerWrapper = signerFactory.CreateSignatureAlgorithm(request.Mechanism);
         ISigner signer = signerWrapper.IntoValidationSigner(objectInstance);
 
-        p11Session.State = new VerifyState(signer);
+        p11Session.State = new VerifyState(signer, signerWrapper.AcceptEmptyData);
 
         return new VerifyInitEnvelope()
         {

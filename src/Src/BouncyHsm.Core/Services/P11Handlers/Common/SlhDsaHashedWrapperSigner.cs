@@ -16,6 +16,11 @@ internal class SlhDsaHashedWrapperSigner : IWrapperSigner
     private readonly IDigest digest;
     private readonly ILogger<SlhDsaHashedWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public SlhDsaHashedWrapperSigner(CKM mechanism,
         Ckp_CkSignAdditionalContext? mechanismParams,
         IDigest digest,

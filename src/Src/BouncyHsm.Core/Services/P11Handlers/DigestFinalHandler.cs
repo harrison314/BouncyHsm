@@ -32,7 +32,7 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
 
         if (!digestSessionState.IsUpdated)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Can not create digest from empty data.");
+            throw new RpcPkcs11Exception(CKR.CKR_DATA_LEN_RANGE, "Can not create digest from empty data.");
         }
 
         if (request.IsDigestPtrSet)

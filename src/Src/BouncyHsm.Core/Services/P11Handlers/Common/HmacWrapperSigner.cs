@@ -18,6 +18,11 @@ internal class HmacWrapperSigner : IWrapperSigner
     private readonly int? generalParameter;
     private readonly ILogger<HmacWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => true;
+    }
+
     public HmacWrapperSigner(IDigest digest,
         CKM mechanism,
         CKK? addAllowedKeyType,

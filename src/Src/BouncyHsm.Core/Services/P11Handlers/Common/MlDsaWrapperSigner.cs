@@ -20,6 +20,11 @@ internal class MlDsaWrapperSigner : IWrapperSigner
     private readonly Ckp_CkSignAdditionalContext? mechanismParams;
     private readonly ILogger<MlDsaWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public MlDsaWrapperSigner(Ckp_CkSignAdditionalContext? mechanismParams, ILogger<MlDsaWrapperSigner> logger)
     {
         this.mechanismParams = mechanismParams;

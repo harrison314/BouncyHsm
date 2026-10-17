@@ -13,6 +13,11 @@ internal class EcdsaWrapperSigner : IWrapperSigner
     private readonly CKM mechanism;
     private readonly ILogger<EcdsaWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public EcdsaWrapperSigner(ISigner signer, CKM mechanism, ILogger<EcdsaWrapperSigner> logger)
     {
         this.signer = signer;

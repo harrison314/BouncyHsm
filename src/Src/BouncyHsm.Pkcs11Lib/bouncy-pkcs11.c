@@ -2080,7 +2080,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pData || 0 == ulDataLen)
+    if (NULL == pData && pData != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2134,7 +2134,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pPart || 0 == ulPartLen)
+    if (NULL == pPart && ulPartLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2296,7 +2296,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
 CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
 {
     LOG_ENTERING_TO_FUNCTION();
-    if (NULL == pData || NULL == pulSignatureLen)
+    if (NULL == pData && ulDataLen != 0)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (NULL == pulSignatureLen)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2350,7 +2355,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pPart)
+    if (NULL == pPart && ulPartLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2572,7 +2577,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pData || 0 == ulDataLen)
+    if (NULL == pData && ulDataLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2618,7 +2623,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pPart)
+    if (NULL == pPart && ulPartLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }

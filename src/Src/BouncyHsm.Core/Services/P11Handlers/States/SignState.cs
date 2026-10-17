@@ -6,6 +6,7 @@ namespace BouncyHsm.Core.Services.P11Handlers.States;
 internal class SignState : ISessionStateWithAlwaysAuthenticated
 {
     private readonly ISigner signer;
+    private readonly bool acceptEmptyData;
     private bool isEmpty;
     private byte[]? signature;
 
@@ -30,7 +31,7 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
         get;
     }
 
-    public SignState(ISigner signer, Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate)
+    public SignState(ISigner signer, Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate, bool acceptEmptyData)
     {
         System.Diagnostics.Debug.Assert(signer != null);
         System.Diagnostics.Debug.Assert(privateKeyId != Guid.Empty);
@@ -42,6 +43,7 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
         this.isEmpty = true;
         this.signature = null;
         this.RequiredUserLogin = isObjectPrivate;
+        this.acceptEmptyData = acceptEmptyData;
     }
 
     public void ContextLogin()
@@ -82,9 +84,9 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
 
     public byte[] GetSignature()
     {
-        if (this.isEmpty)
+        if (this.isEmpty && !this.acceptEmptyData)
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: Signing empty data.");
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Signing empty data.");
         }
 
         if (this.RequireContextPin && !this.IsContextPinHasSet)

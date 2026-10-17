@@ -16,6 +16,11 @@ internal class PlainMacWrapperSigner : IWrapperSigner
     private readonly ILogger<PlainMacWrapperSigner> logger;
     private readonly CKK? addAllowedKeyType;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public PlainMacWrapperSigner(CKM mechanism,
         IMac macAlgorithm,
         ILogger<PlainMacWrapperSigner> logger,
