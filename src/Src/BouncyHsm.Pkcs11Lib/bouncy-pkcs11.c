@@ -2572,7 +2572,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pData || 0 == ulDataLen)
+    if (NULL == pData)
     {
         return CKR_ARGUMENTS_BAD;
     }
