@@ -35,7 +35,8 @@ public partial class GetSessionInfoHandler : IRpcRequestHandler<GetSessionInfoRe
         bool isSoLogin = p11Session.IsLogged(CKU.CKU_SO);
         CKS sessionState = (isLoggedToSlot, isSoLogin, p11Session.IsRwSession) switch
         {
-            (false, false, _) => CKS.CKS_RO_PUBLIC_SESSION,
+            (false, false, true) => CKS.CKS_RW_PUBLIC_SESSION,
+            (false, false, false) => CKS.CKS_RO_PUBLIC_SESSION,
             (true, false, false) => CKS.CKS_RO_USER_FUNCTIONS,
             (true, false, true) => CKS.CKS_RW_USER_FUNCTIONS,
             (_, true, true) => CKS.CKS_RW_SO_FUNCTIONS,
