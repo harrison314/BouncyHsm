@@ -27,9 +27,9 @@ public partial class LogoutHandler : IRpcRequestHandler<LogoutRequest, LogoutEnv
 
         CKR rv = CKR.CKR_USER_NOT_LOGGED_IN;
 
-        if (p11Session.IsLogged(CKU.CKU_USER))
+        if (memorySession.IsLogged(CKU.CKU_USER))
         {
-            p11Session.SetLoginStatus(CKU.CKU_USER, false);
+            memorySession.SetLoginStatus(CKU.CKU_USER, false);
             this.logger.LogInformation("Logout user.");
 
             p11Session.ClearState();
@@ -37,9 +37,9 @@ public partial class LogoutHandler : IRpcRequestHandler<LogoutRequest, LogoutEnv
             rv = CKR.CKR_OK;
         }
 
-        if (p11Session.IsLogged(CKU.CKU_SO))
+        if (memorySession.IsLogged(CKU.CKU_SO))
         {
-            p11Session.SetLoginStatus(CKU.CKU_SO, false);
+            memorySession.SetLoginStatus(CKU.CKU_SO, false);
             this.logger.LogInformation("Logout so.");
 
             p11Session.ClearState();

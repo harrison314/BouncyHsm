@@ -32,7 +32,7 @@ public partial class GetSessionInfoHandler : IRpcRequestHandler<GetSessionInfoRe
         }
 
         bool isLoggedToSlot = memorySession.IsUserLogged(p11Session.SlotId);
-        bool isSoLogin = p11Session.IsLogged(CKU.CKU_SO);
+        bool isSoLogin = memorySession.IsLogged(CKU.CKU_SO);
         CKS sessionState = (isLoggedToSlot, isSoLogin, p11Session.IsRwSession) switch
         {
             (false, false, _) => CKS.CKS_RO_PUBLIC_SESSION,

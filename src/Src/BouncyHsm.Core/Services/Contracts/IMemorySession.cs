@@ -1,4 +1,5 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Contracts.P11;
 using Org.BouncyCastle.Security;
 using System.Diagnostics.CodeAnalysis;
 
@@ -36,6 +37,10 @@ public interface IMemorySession
     int DestroySessionsBySlot(uint slotId);
 
     bool TryGetSession(uint sessionId, [NotNullWhen(true)] out IP11Session? session);
+
+    bool IsLogged(CKU userType);
+
+    void SetLoginStatus(CKU userType, bool isLogged);
 
     bool IsUserLogged(uint slotId);
 

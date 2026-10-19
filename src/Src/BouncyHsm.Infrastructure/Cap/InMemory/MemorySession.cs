@@ -13,6 +13,7 @@ public class MemorySession : IMemorySession
     private readonly ConcurrentDictionary<Guid, uint> objectHandlesToGuid;
     private readonly ConcurrentDictionary<uint, Guid> objectHandlesToHandles;
     private readonly HashSet<uint> slotEvents;
+    private LoggedUser loggedUser;
     private readonly Lock slotEventsLock;
     private DateTimeOffset lastActivity;
 
@@ -54,6 +55,7 @@ public class MemorySession : IMemorySession
         this.StartAt = startAt;
         this.lastActivity = startAt;
         this.slotEventsLock = new Lock();
+        this.loggedUser = LoggedUser.None;
     }
 
     public uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom)
@@ -94,6 +96,37 @@ public class MemorySession : IMemorySession
         }
 
         return sessionsToRemove.Count;
+    }
+
+    public bool IsLogged(CKU userType)
+    {
+        return userType switch
+        {
+            CKU.CKU_SO => this.loggedUser.HasFlag(LoggedUser.So),
+            CKU.CKU_USER => this.loggedUser.HasFlag(LoggedUser.User),
+            CKU.CKU_CONTEXT_SPECIFIC => this.loggedUser.HasFlag(LoggedUser.ContextSpecific),
+            _ => throw new InvalidProgramException($"Enum value {userType} is noz supported.")
+        };
+    }
+
+    public void SetLoginStatus(CKU userType, bool isLogged)
+    {
+        LoggedUser userFlagType = userType switch
+        {
+            CKU.CKU_SO => LoggedUser.So,
+            CKU.CKU_USER => LoggedUser.User,
+            CKU.CKU_CONTEXT_SPECIFIC => LoggedUser.ContextSpecific,
+            _ => throw new InvalidProgramException($"Enum value {userType} is noz supported.")
+        };
+
+        if (isLogged)
+        {
+            this.loggedUser |= userFlagType;
+        }
+        else
+        {
+            this.loggedUser &= ~userFlagType;
+        }
     }
 
     public MemorySessionStatus GetStatus(uint? slotIdSpecification)
@@ -150,7 +183,7 @@ public class MemorySession : IMemorySession
 
     public bool IsUserLogged(uint slotId)
     {
-        return this.sessions.Any(t => t.Value.SlotId == slotId && (t.Value.IsLogged(CKU.CKU_USER) || t.Value.IsLogged(CKU.CKU_SO)));
+        return this.loggedUser.HasFlag(LoggedUser.User) || this.loggedUser.HasFlag(LoggedUser.So);
     }
 
     public uint CreateHandle(StorageObject storageObject)

@@ -86,7 +86,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
         }
         else
         {
-            if (p11Session.IsLogged(userType))
+            if (memorySession.IsLogged(userType))
             {
                 this.logger.LogDebug("User already logged in sessionId {SessionId}.", request.SessionId);
                 return new LoginEnvelope()
@@ -104,7 +104,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
                 };
             }
 
-            p11Session.SetLoginStatus(userType, true);
+            memorySession.SetLoginStatus(userType, true);
 
             this.logger.LogInformation("Successfully logged to slot {slotId} with token {TokenSerial}.", slot.SlotId, slot.Token.SerialNumber);
             return new LoginEnvelope()

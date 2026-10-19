@@ -7,7 +7,7 @@ namespace BouncyHsm.Infrastructure.Cap.InMemory;
 
 public class P11Session : IP11Session
 {
-    private LoggedUser loggedUser;
+  
     private List<StorageObjectMemento> objects;
 
     public uint SlotId
@@ -42,42 +42,10 @@ public class P11Session : IP11Session
     {
         this.SlotId = slotId;
         this.IsRwSession = isRwSession;
-        this.loggedUser = LoggedUser.None;
+        
         this.SecureRandom = secureRandom;
         this.State = EmptySessionState.Instance;
         this.objects = new List<StorageObjectMemento>();
-    }
-
-    public bool IsLogged(CKU userType)
-    {
-        return userType switch
-        {
-            CKU.CKU_SO => this.loggedUser.HasFlag(LoggedUser.So),
-            CKU.CKU_USER => this.loggedUser.HasFlag(LoggedUser.User),
-            CKU.CKU_CONTEXT_SPECIFIC => this.loggedUser.HasFlag(LoggedUser.ContextSpecific),
-            _ => throw new InvalidProgramException($"Enum value {userType} is noz supported.")
-        };
-    }
-
-    public void SetLoginStatus(CKU userType, bool isLogged)
-    {
-        LoggedUser userFlagType = userType switch
-        {
-            CKU.CKU_SO => LoggedUser.So,
-            CKU.CKU_USER => LoggedUser.User,
-            CKU.CKU_CONTEXT_SPECIFIC => LoggedUser.ContextSpecific,
-            _ => throw new InvalidProgramException($"Enum value {userType} is noz supported.")
-        };
-
-        if (isLogged)
-        {
-            this.loggedUser |= userFlagType;
-        }
-        else
-        {
-            this.loggedUser &= ~userFlagType;
-        }
-
     }
 
     public IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)
