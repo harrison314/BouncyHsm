@@ -45,7 +45,18 @@ internal class VerifyState : ISessionState
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Verify empty data.");
         }
 
-        return this.signer.VerifySignature(signature);
+        try
+        {
+            return this.signer.VerifySignature(signature);
+        }
+        catch(Org.BouncyCastle.Crypto.InvalidCipherTextException)
+        {
+            return false;
+        }
+        catch (Org.BouncyCastle.Crypto.DataLengthException)
+        {
+            return false;
+        }
     }
 
     public override string ToString()
