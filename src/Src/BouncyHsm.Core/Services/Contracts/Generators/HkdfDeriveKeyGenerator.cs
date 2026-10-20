@@ -44,10 +44,10 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
 
         HkdfParameters bcParams;
         byte[]? info = this.hkdfParams.Expand ? this.hkdfParams.Info : null;
-        byte[]? salt = this.CreateSalt();
 
         if (this.hkdfParams.Extract)
         {
+            byte[] salt = this.CreateSalt();
             bcParams = new HkdfParameters(baseKey.GetSecret(), salt, info);
         }
         else
@@ -65,11 +65,13 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
         return bytes;
     }
 
-    private byte[]? CreateSalt()
+    private byte[] CreateSalt()
     {
         if (this.hkdfParams.SaltType == CKF_HKDF_SALT_NULL)
         {
-            return null;
+            byte[] zeros = new byte[this.digetAlgorithm.GetDigestSize()];
+            Array.Clear(zeros, 0, zeros.Length);
+            return zeros;
         }
 
         if (this.hkdfParams.SaltType == CKF_HKDF_SALT_KEY)
