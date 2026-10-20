@@ -5,6 +5,5 @@ internal enum LoggedUser
 {
     None,
     User,
-    So,
-    ContextSpecific
+    So
 }
