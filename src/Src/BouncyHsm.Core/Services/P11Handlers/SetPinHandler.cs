@@ -50,7 +50,7 @@ public partial class SetPinHandler : IRpcRequestHandler<SetPinRequest, SetPinEnv
         }
 
         CKU userType = CKU.CKU_USER;
-        if (memorySession.IsLogged(CKU.CKU_SO))
+        if (memorySession.IsLogged(p11Session.SessionId, CKU.CKU_SO))
         {
             userType = CKU.CKU_SO;
         }

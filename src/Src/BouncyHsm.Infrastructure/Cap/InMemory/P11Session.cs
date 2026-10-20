@@ -38,6 +38,12 @@ public class P11Session : IP11Session
         set;
     }
 
+    public bool IsContextSpecificLogged
+    {
+        get;
+        set;
+    }
+
     public P11Session(uint slotId, bool isRwSession, SecureRandom secureRandom)
     {
         this.SlotId = slotId;
@@ -46,6 +52,7 @@ public class P11Session : IP11Session
         this.SecureRandom = secureRandom;
         this.State = EmptySessionState.Instance;
         this.objects = new List<StorageObjectMemento>();
+        this.IsContextSpecificLogged = false;
     }
 
     public IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)

@@ -98,25 +98,38 @@ public class MemorySession : IMemorySession
         return sessionsToRemove.Count;
     }
 
-    public bool IsLogged(CKU userType)
+    public bool IsLogged(uint sessionId, CKU userType)
     {
         return userType switch
         {
             CKU.CKU_SO => this.loggedUser.HasFlag(LoggedUser.So),
             CKU.CKU_USER => this.loggedUser.HasFlag(LoggedUser.User),
-            CKU.CKU_CONTEXT_SPECIFIC => this.loggedUser.HasFlag(LoggedUser.ContextSpecific),
+            CKU.CKU_CONTEXT_SPECIFIC => this.sessions.TryGetValue(sessionId, out P11Session? session) && session.IsContextSpecificLogged,
             _ => throw new InvalidProgramException($"Enum value {userType} is noz supported.")
         };
     }
 
-    public void SetLoginStatus(CKU userType, bool isLogged)
+    public void SetLoginStatus(uint sessionId, CKU userType, bool isLogged)
     {
+        if (userType == CKU.CKU_CONTEXT_SPECIFIC)
+        {
+            if (this.sessions.TryGetValue(sessionId, out P11Session? session))
+            {
+                session.IsContextSpecificLogged = isLogged;
+            }
+            else
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_SESSION_HANDLE_INVALID, $"Session {sessionId} does not exist.");
+            }
+
+            return;
+        }
+
         LoggedUser userFlagType = userType switch
         {
             CKU.CKU_SO => LoggedUser.So,
             CKU.CKU_USER => LoggedUser.User,
-            CKU.CKU_CONTEXT_SPECIFIC => LoggedUser.ContextSpecific,
-            _ => throw new InvalidProgramException($"Enum value {userType} is noz supported.")
+            _ => throw new InvalidProgramException($"Enum value {userType} is not supported.")
         };
 
         if (isLogged)

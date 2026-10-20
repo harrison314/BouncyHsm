@@ -38,9 +38,9 @@ public interface IMemorySession
 
     bool TryGetSession(uint sessionId, [NotNullWhen(true)] out IP11Session? session);
 
-    bool IsLogged(CKU userType);
+    bool IsLogged(uint sessionId, CKU userType);
 
-    void SetLoginStatus(CKU userType, bool isLogged);
+    void SetLoginStatus(uint sessionId, CKU userType, bool isLogged);
 
     bool IsUserLogged(uint slotId);
 
