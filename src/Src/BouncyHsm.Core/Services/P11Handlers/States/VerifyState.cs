@@ -49,7 +49,7 @@ internal class VerifyState : ISessionState
         {
             return this.signer.VerifySignature(signature);
         }
-        catch(Org.BouncyCastle.Crypto.InvalidCipherTextException)
+        catch (Org.BouncyCastle.Crypto.InvalidCipherTextException)
         {
             return false;
         }
