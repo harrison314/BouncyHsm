@@ -896,7 +896,7 @@ public class T23_DeriveKey
              null,
              new List<KdfDataParam>()
              {
-                 new KdfDataParam.IterationVariable(littleEndian, variableSize),
+                 new KdfDataParam.NullIterationVariable(),
                  new KdfDataParam.ByteArray(Convert.FromHexString(labelValue)),
                  new KdfDataParam.Counter(littleEndian, Math.Min(64, variableSize)),
                  new KdfDataParam.DkmLength(littleEndian, Math.Min(64, variableSize), lengthMethod)
@@ -986,7 +986,7 @@ public class T23_DeriveKey
              iv,
              new List<KdfDataParam>()
              {
-                 new KdfDataParam.IterationVariable(littleEndian, variableSize),
+                 new KdfDataParam.NullIterationVariable(),
                  new KdfDataParam.ByteArray(Convert.FromHexString(labelValue)),
                  new KdfDataParam.Counter(littleEndian, Math.Min(64, variableSize)),
                  new KdfDataParam.DkmLength(littleEndian, Math.Min(64, variableSize), lengthMethod)

@@ -986,14 +986,27 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
         {
         case CK_SP800_108_ITERATION_VARIABLE:
             ptr->Type = CK_SP800_108_ITERATION_VARIABLE;
-            if (ptrData->ulValueLen != sizeof(CK_SP800_108_COUNTER_FORMAT))
+            if (ptrData->pValue == NULL && ptrData->ulValueLen == 0)
+            {
+                ptr->IsNull = true;
+                break;
+            }
+
+            if (ptrData->pValue == NULL || ptrData->ulValueLen != sizeof(CK_SP800_108_COUNTER_FORMAT))
             {
                 free(paramArrayPtr);
-                log_message(LOG_LEVEL_ERROR, "Invalid ulValueLen for data param %s in %s", "CK_SP800_108_ITERATION_VARIABLE", __FUNCTION__);
+                log_message(LOG_LEVEL_ERROR, "Invalid pValue or ulValueLen for data param %s in %s", "CK_SP800_108_ITERATION_VARIABLE", __FUNCTION__);
                 return NMRPC_BAD_ARGUMENT;
             }
 
             CK_SP800_108_COUNTER_FORMAT* icf = (CK_SP800_108_COUNTER_FORMAT*)ptrData->pValue;
+            if (icf->ulWidthInBits == 0)
+            {
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid width for data param %s in %s", "CK_SP800_108_ITERATION_VARIABLE", __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+
             ptr->LittleEndian = (bool)icf->bLittleEndian;
             ptr->WidthInBits = (uint32_t)icf->ulWidthInBits;
             break;

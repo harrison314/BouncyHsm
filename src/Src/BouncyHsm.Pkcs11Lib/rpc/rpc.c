@@ -12168,10 +12168,13 @@ int Ckp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108PrfDat
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 6);
+    result = cmp_write_array(ctx, 7);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_uinteger(ctx, value->Type);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_bool(ctx, value->IsNull);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_bin(ctx, value->Value.data, (uint32_t)value->Value.size);
@@ -12209,10 +12212,13 @@ int Ckp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, const cmp_object_t*
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 6) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 7) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = cmp_read_uint(ctx, &value->Type);
   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Type");
+
+  result = cmp_read_bool(ctx, &value->IsNull);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsNull");
 
   result = cmph_read_binary(ctx, &value->Value);
    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Value");
