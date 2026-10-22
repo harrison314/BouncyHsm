@@ -36,7 +36,7 @@ void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 
 CK_FUNCTION_LIST bouncyHsm_pkcs11_2_40_functions =
 {
-    {2, 40},
+    { 2, 40 },
     &C_Initialize,
     &C_Finalize,
     &C_GetInfo,
@@ -118,7 +118,7 @@ CK_INTERFACE bouncyHsm_pkcs11_2_40_interface =
 
 CK_FUNCTION_LIST_3_0  bouncyHsm_pkcs11_3_1_functions =
 {
-    {0x03, 0x01},
+    { 0x03, 0x01 },
     &C_Initialize,
     &C_Finalize,
     &C_GetInfo,
@@ -223,7 +223,7 @@ CK_INTERFACE bouncyHsm_pkcs11_3_1_interface =
 
 CK_FUNCTION_LIST_3_2  bouncyHsm_pkcs11_3_2_functions =
 {
-    {0x03, 0x02},
+    { 0x03, 0x02 },
     &C_Initialize,
     &C_Finalize,
     &C_GetInfo,
@@ -2146,6 +2146,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
         {
             *pulDigestLen = envelope.Data->PulDigestLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pDigest != NULL)
+    {
+        *pulDigestLen = envelope.Data->PulDigestLen;
     }
 
     DigestEnvelope_Release(&envelope);
