@@ -39,7 +39,19 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
         {
             if (request.PulDigestLen < digestSessionState.DigestLength)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Digest buffer is small ({request.PulDigestLen}, required is {digestSessionState.DigestLength}).");
+                this.logger.LogError("Digest buffer is small ({PulDigestLen}, required is {DigestLength}).",
+                   request.PulDigestLen,
+                  digestSessionState.DigestLength);
+
+                return new DigestFinalEnvelope()
+                {
+                    Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
+                    Data = new DigestValue()
+                    {
+                        Data = null,
+                        PulDigestLen = digestSessionState.DigestLength
+                    }
+                };
             }
 
             byte[] digest = digestSessionState.Final();

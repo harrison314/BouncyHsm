@@ -2270,6 +2270,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
             *pulDigestLen = envelope.Data->PulDigestLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pDigest != NULL)
+    {
+        *pulDigestLen = envelope.Data->PulDigestLen;
+    }
 
     DigestFinalEnvelope_Release(&envelope);
 
