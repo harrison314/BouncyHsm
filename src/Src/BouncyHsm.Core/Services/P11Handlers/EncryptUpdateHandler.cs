@@ -35,7 +35,19 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
         {
             if (request.EncryptedDataLen < cipherTextLen)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Encrypted data buffer is small ({request.EncryptedDataLen}, required is {cipherTextLen}).");
+                this.logger.LogError("Encrypted data buffer is small ({EncryptedDataLenn}, required is {CipherTextLen}).",
+                     request.EncryptedDataLen,
+                     cipherTextLen);
+
+                return new EncryptUpdateEnvelope()
+                {
+                    Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
+                    Data = new EncryptData()
+                    {
+                        EncryptedData = Array.Empty<byte>(),
+                        PullEncryptedDataLen = cipherTextLen
+                    }
+                };
             }
 
             byte[] cipherText = encryptSessionState.Update(request.PartData);

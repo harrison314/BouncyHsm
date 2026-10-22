@@ -1722,6 +1722,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDa
             *pulEncryptedDataLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pEncryptedData != NULL)
+    {
+        *pulEncryptedDataLen = (CK_ULONG)envelope.Data->EncryptedData.size;
+    }
 
     EncryptEnvelope_Release(&envelope);
 
