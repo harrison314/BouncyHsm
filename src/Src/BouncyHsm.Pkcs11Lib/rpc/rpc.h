@@ -2218,6 +2218,7 @@ int Ckp_CkCamelliaCbcEncryptDataParams_Release(Ckp_CkCamelliaCbcEncryptDataParam
 typedef struct _Ckp_CkSp800_108PrfDataParsms
 {
     uint32_t Type;
+    bool IsNull;
     Binary Value;
     uint32_t KeyHandle;
     bool LittleEndian;

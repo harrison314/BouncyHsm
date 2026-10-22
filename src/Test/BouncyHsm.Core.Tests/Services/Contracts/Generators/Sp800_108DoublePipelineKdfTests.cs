@@ -23,7 +23,7 @@ public class Sp800_108DoublePipelineKdfTests
 
         IPrfDataParam[] parameters = new IPrfDataParam[]
         {
-            new IterationVariablePrfDataParam(false, 16 * 8),
+            new NullIterationVariablePrfDataParam(),
             new ByteArrayPrfDataParam(Convert.FromHexString("99c3d79cb978724e1e2f09dc90e3b694")),
             new ByteArrayPrfDataParam(new byte[]{0x00}),
             new CounterPrfDataParam(true, 32),
@@ -52,5 +52,24 @@ public class Sp800_108DoublePipelineKdfTests
 
         Assert.IsNotNull(bytes);
         Assert.HasCount(13, bytes);
+    }
+
+    [TestMethod]
+    public void Sp800_108DoublePipelineKdf_NullIterationVariable_UsesFullAlternativeIteration()
+    {
+        byte[] key = Convert.FromHexString("26ae34662efaac54fff373bf3ca5ec89b6db9532e9dc3158213c06a38616996d");
+        Sp800_108DoublePipelineKdf kdf = new Sp800_108DoublePipelineKdf(() => new HMac(new Sha256Digest()),
+            key);
+
+        byte[] withNullIteration = kdf.Derive(13, new IPrfDataParam[]
+        {
+            new NullIterationVariablePrfDataParam(),
+        });
+        byte[] withFullWidthIteration = kdf.Derive(13, new IPrfDataParam[]
+        {
+            new NullIterationVariablePrfDataParam(),
+        });
+
+        CollectionAssert.AreEqual(withFullWidthIteration, withNullIteration);
     }
 }

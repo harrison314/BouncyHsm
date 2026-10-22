@@ -29,7 +29,9 @@ internal static class PrfDataParamFactory
             Ckp_CkSp800_108PrfDataParsms dataParam = dataParams[i];
             result[i] = ((CK_PRF_DATA_TYPE)dataParam.Type) switch
             {
-                CK_PRF_DATA_TYPE.CK_SP800_108_ITERATION_VARIABLE => new IterationVariablePrfDataParam(dataParam.LittleEndian, (int)dataParam.WidthInBits),
+                CK_PRF_DATA_TYPE.CK_SP800_108_ITERATION_VARIABLE => dataParam.IsNull
+                    ? new NullIterationVariablePrfDataParam()
+                    : new IterationVariablePrfDataParam(dataParam.LittleEndian, (int)dataParam.WidthInBits),
                 CK_PRF_DATA_TYPE.CK_SP800_108_COUNTER => new CounterPrfDataParam(dataParam.LittleEndian, (int)dataParam.WidthInBits),
                 CK_PRF_DATA_TYPE.CK_SP800_108_BYTE_ARRAY => new ByteArrayPrfDataParam(dataParam.Value ?? throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, "pValue is null for CK_SP800_108_BYTE_ARRAY")),
                 CK_PRF_DATA_TYPE.CK_SP800_108_DKM_LENGTH => new DkmLengthPrfDataParam(dataParam.LittleEndian, (int)dataParam.WidthInBits, ConvertLengthMethod(dataParam.LengthMethod)),

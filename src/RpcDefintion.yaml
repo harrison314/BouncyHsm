@@ -1500,6 +1500,7 @@ Messages:
       CK_SP800_108_DKM_LENGTH use LittleEndian, WidthInBits, LengthMethod
     Fields:
       Type: uint32
+      IsNull: bool
       Value: binary
       KeyHandle: uint32
       LittleEndian: bool
