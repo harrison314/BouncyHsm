@@ -1724,7 +1724,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDa
     }
     else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pEncryptedData != NULL)
     {
-        *pulEncryptedDataLen = (CK_ULONG)envelope.Data->EncryptedData.size;
+        *pulEncryptedDataLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
     }
 
     EncryptEnvelope_Release(&envelope);
@@ -1782,7 +1782,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
     }
     else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pEncryptedPart != NULL)
     {
-        *pulEncryptedPartLen = (CK_ULONG)envelope.Data->EncryptedData.size;
+        *pulEncryptedPartLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
     }
 
     EncryptUpdateEnvelope_Release(&envelope);
@@ -1833,7 +1833,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
     }
     else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pLastEncryptedPart != NULL)
     {
-        *pulLastEncryptedPartLen = (CK_ULONG)envelope.Data->EncryptedData.size;
+        *pulLastEncryptedPartLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
     }
 
     EncryptFinalEnvelope_Release(&envelope);
@@ -1932,6 +1932,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEn
         {
             *pulDataLen = (CK_ULONG)envelope.Data->PullDataLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pData != NULL)
+    {
+        *pulDataLen = (CK_ULONG)envelope.Data->PullDataLen;
     }
 
     DecryptEnvelope_Release(&envelope);

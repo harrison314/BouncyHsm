@@ -35,7 +35,19 @@ public partial class DecryptHandler : IRpcRequestHandler<DecryptRequest, Decrypt
         {
             if (request.PullDataLen < plainTextLen)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Decrypt data buffer is small ({request.PullDataLen}, required is {plainTextLen}).");
+                this.logger.LogError("Decrypt data buffer is small ({PullDataLen}, required is {PlainTextLen}).",
+                    request.PullDataLen,
+                    plainTextLen);
+
+                return new DecryptEnvelope()
+                {
+                    Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
+                    Data = new DecryptData()
+                    {
+                        Data = Array.Empty<byte>(),
+                        PullDataLen = plainTextLen
+                    }
+                };
             }
 
             byte[] plainText = decryptSessionState.DoFinal(request.EncryptedData);
