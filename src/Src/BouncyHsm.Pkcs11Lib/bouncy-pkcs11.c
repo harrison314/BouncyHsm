@@ -1424,7 +1424,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     CK_RV rvMethod = (CK_RV)envelope.Rv;
 
-    if (rv == CKR_OK || rv == CKR_ATTRIBUTE_SENSITIVE || rv == CKR_ATTRIBUTE_TYPE_INVALID || rv == CKR_BUFFER_TOO_SMALL)
+    if (rvMethod == CKR_OK || rvMethod == CKR_ATTRIBUTE_SENSITIVE || rvMethod == CKR_ATTRIBUTE_TYPE_INVALID || rvMethod == CKR_BUFFER_TOO_SMALL)
     {
         CK_RV rvData = SetArributesToTemplate(envelope.Data->OutTemplate.array, pTemplate, ulCount, 0);
         if (rvData != CKR_OK)
