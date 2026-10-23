@@ -356,7 +356,7 @@ void GlobalContextInit()
 
     logger_init(LOG_LEVEL_ERROR_NAME, LOG_TARGET_ERR_CONSOLE);
 
-    char* cfgString;
+    char* cfgString = NULL;
     if (!envVariableDup(BOUNCY_HSM_CFG_STRING, &cfgString))
     {
         log_message(LOG_LEVEL_ERROR, "Error during read environment variable.");
