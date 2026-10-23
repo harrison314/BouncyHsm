@@ -2463,12 +2463,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
         }
         else
         {
-            *pulSignatureLen = envelope.Data->PullSignatureLen;
+            *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
         }
     }
     else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pSignature != NULL)
     {
-        *pulSignatureLen = envelope.Data->PullSignatureLen;
+        *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
     }
 
     SignFinalEnvelope_Release(&envelope);
@@ -2566,6 +2566,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
         {
             *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pSignature != NULL)
+    {
+        *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
     }
 
     SignRecoverEnvelope_Release(&envelope);
