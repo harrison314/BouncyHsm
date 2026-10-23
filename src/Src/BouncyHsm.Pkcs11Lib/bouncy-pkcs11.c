@@ -3086,6 +3086,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
             *pulWrappedKeyLen = (CK_ULONG)envelope.Data->PulWrappedKeyLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pWrappedKey != NULL)
+    {
+        *pulWrappedKeyLen = (CK_ULONG)envelope.Data->PulWrappedKeyLen;
+    }
 
     MechanismValue_Destroy(&request.Mechanism);
     WrapKeyEnvelope_Release(&envelope);
