@@ -6,7 +6,10 @@ public static class HeadEncoder
 
     public static (int HeaderSize, int BodySize) Decode(Span<byte> input)
     {
-        System.Diagnostics.Debug.Assert(input.Length == Size);
+        if (input.Length != Size)
+        {
+            throw new ArgumentException($"Input must be {Size} bytes long.", nameof(input));
+        }
 
         if (input[0] != 0xBC)
         {
