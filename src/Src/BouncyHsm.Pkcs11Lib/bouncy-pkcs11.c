@@ -2376,6 +2376,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData,
             *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pSignature != NULL)
+    {
+        *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
+    }
 
     SignEnvelope_Release(&envelope);
 
