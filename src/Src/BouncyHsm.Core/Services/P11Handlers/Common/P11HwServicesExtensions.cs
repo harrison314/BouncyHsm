@@ -126,7 +126,7 @@ internal static class P11HwServicesExtensions
         SlotEntity? slot = await hwServices.Persistence.GetSlot(slotId, cancellationToken);
         if (slot == null)
         {
-            throw new ArgumentException("Slot not found"); //TODO
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_SLOT_ID_INVALID, $"Slot {slotId} not found.");
         }
 
         return slot.Token.SpeedMode switch
