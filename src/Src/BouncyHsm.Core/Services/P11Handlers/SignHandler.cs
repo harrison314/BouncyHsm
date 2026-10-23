@@ -47,10 +47,17 @@ public partial class SignHandler : IRpcRequestHandler<SignRequest, SignEnvelope>
         {
             if (request.PullSignatureLen < (uint)signature.Length)
             {
+                this.logger.LogWarning("Signature buffer is small ({PullSignatureLen}, required is {SignatureLength}).",
+                 request.PullSignatureLen,
+                 signature.Length);
+
                 return new SignEnvelope()
                 {
                     Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
-                    Data = null
+                    Data = new SignatureData()
+                    {
+                        PullSignatureLen = (uint)signature.Length
+                    }
                 };
             }
 
