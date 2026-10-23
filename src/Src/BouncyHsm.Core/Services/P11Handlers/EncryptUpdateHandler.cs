@@ -35,7 +35,7 @@ public partial class EncryptUpdateHandler : IRpcRequestHandler<EncryptUpdateRequ
         {
             if (request.EncryptedDataLen < cipherTextLen)
             {
-                this.logger.LogError("Encrypted data buffer is small ({EncryptedDataLenn}, required is {CipherTextLen}).",
+                this.logger.LogWarning("Encrypted data buffer is small ({EncryptedDataLenn}, required is {CipherTextLen}).",
                      request.EncryptedDataLen,
                      cipherTextLen);
 

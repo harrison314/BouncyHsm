@@ -706,8 +706,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TY
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        *pulCount = (CK_ULONG)envelope.Data->PullCount;
-
         if (pMechanismList != NULL)
         {
             uint32_t i;
@@ -715,7 +713,16 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TY
             {
                 pMechanismList[i] = (CK_MECHANISM_TYPE)envelope.Data->MechanismTypes.array[i];
             }
+            *pulCount = (CK_ULONG)envelope.Data->PullCount;
         }
+        else
+        {
+            *pulCount = (CK_ULONG)envelope.Data->PullCount;
+        }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pMechanismList != NULL && envelope.Data != NULL)
+    {
+        *pulCount = (CK_ULONG)envelope.Data->PullCount;
     }
 
     GetMechanismListEnvelope_Release(&envelope);
@@ -2833,6 +2840,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_P
         {
             *pulDataLen = (CK_ULONG)envelope.Data->PulDataLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pData != NULL && envelope.Data != NULL)
+    {
+        *pulDataLen = (CK_ULONG)envelope.Data->PulDataLen;
     }
 
     VerifyRecoverEnvelope_Release(&envelope);

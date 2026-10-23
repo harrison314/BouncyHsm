@@ -35,7 +35,7 @@ public partial class DecryptFinalHandler : IRpcRequestHandler<DecryptFinalReques
         {
             if (request.PullDataLen < plainTextLen)
             {
-                this.logger.LogError("Decrypt data buffer is small ({PullDataLen}, required is {PlainTextLen}).",
+                this.logger.LogWarning("Decrypt data buffer is small ({PullDataLen}, required is {PlainTextLen}).",
                    request.PullDataLen,
                    plainTextLen);
 

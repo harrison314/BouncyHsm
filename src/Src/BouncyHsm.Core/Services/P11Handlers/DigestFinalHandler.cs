@@ -39,7 +39,7 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
         {
             if (request.PulDigestLen < digestSessionState.DigestLength)
             {
-                this.logger.LogError("Digest buffer is small ({PulDigestLen}, required is {DigestLength}).",
+                this.logger.LogWarning("Digest buffer is small ({PulDigestLen}, required is {DigestLength}).",
                    request.PulDigestLen,
                   digestSessionState.DigestLength);
 

@@ -32,18 +32,25 @@ public partial class VerifyRecoverHandler : IRpcRequestHandler<VerifyRecoverRequ
 
         bool isValid = state.Verify(request.Signature, out byte[]? recoveredMessage);
 
-        if(isValid)
+        if (isValid)
         {
             System.Diagnostics.Debug.Assert(recoveredMessage != null);
 
-            if(request.IsPtrDataSet)
+            if (request.IsPtrDataSet)
             {
                 if (request.PulDataLen < (uint)recoveredMessage.Length)
                 {
+                    this.logger.LogWarning("Data buffer is small ({PulDataLen}, required is {RecoveredMessageLength}).",
+                      request.PulDataLen,
+                      recoveredMessage.Length);
+
                     return new VerifyRecoverEnvelope()
                     {
                         Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
-                        Data = null
+                        Data = new VerifyRecoverData()
+                        {
+                            PulDataLen = (uint)recoveredMessage.Length
+                        }
                     };
                 }
             }
@@ -54,7 +61,7 @@ public partial class VerifyRecoverHandler : IRpcRequestHandler<VerifyRecoverRequ
                     Rv = (uint)CKR.CKR_OK,
                     Data = new VerifyRecoverData()
                     {
-                       PulDataLen = (uint)recoveredMessage.Length
+                        PulDataLen = (uint)recoveredMessage.Length
                     }
                 };
             }

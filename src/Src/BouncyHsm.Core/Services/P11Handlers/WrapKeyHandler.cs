@@ -58,7 +58,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         {
             if (request.PulWrappedKeyLen < wrappedKey.Length)
             {
-                this.logger.LogError("Wrapped key buffer is small ({PulWrappedKeyLen}, required is {WrappedKeyLength}).",
+                this.logger.LogWarning("Wrapped key buffer is small ({PulWrappedKeyLen}, required is {WrappedKeyLength}).",
                  request.PulWrappedKeyLen,
                  wrappedKey.Length);
 
