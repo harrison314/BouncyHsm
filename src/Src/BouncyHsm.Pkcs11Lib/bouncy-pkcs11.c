@@ -3410,6 +3410,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterfaceList)(CK_INTERFACE_PTR pInterfacesList, 
     {
         if (*pulCount < 3)
         {
+            *pulCount = 3;
             return CKR_BUFFER_TOO_SMALL;
         }
 
