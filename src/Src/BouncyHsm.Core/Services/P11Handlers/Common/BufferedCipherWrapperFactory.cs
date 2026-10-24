@@ -283,12 +283,6 @@ internal class BufferedCipherWrapperFactory
                 throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType} - blockCounterBits must be 32 or 64.");
             }
 
-            // BouncyHsm implementation errors
-            if (chaCha20params.BlockCounterLower != 0 || chaCha20params.BlockCounterUpper != 0)
-            {
-                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only value 0 for blockCounter in CHACHA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
-            }
-
             if (chaCha20params.Nonce.Length != ChaCha20CipherWrapper.Chacha20NonceSize
                 && chaCha20params.Nonce.Length != ChaCha20CipherWrapper.Chacha20_7539NonceSize)
             {
@@ -296,6 +290,8 @@ internal class BufferedCipherWrapperFactory
             }
 
             return new ChaCha20CipherWrapper(chaCha20params.Nonce,
+                chaCha20params.BlockCounterLower,
+                chaCha20params.BlockCounterUpper,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<ChaCha20CipherWrapper>());
         }
@@ -370,13 +366,8 @@ internal class BufferedCipherWrapperFactory
                 throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"BouncyHsm accept only 64 and 192 bits nonce length in SALSA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
             }
 
-            // BouncyHsm implementation errors
-            if (salsa20params.BlockCounter != 0UL)
-            {
-                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only value 0 for blockCounter in SALSA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
-            }
-
             return new Salsa20CipherWrapper(salsa20params.Nonce,
+                salsa20params.BlockCounter,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<Salsa20CipherWrapper>());
         }

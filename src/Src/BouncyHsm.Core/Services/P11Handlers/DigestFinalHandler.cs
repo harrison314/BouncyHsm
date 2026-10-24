@@ -32,14 +32,26 @@ public partial class DigestFinalHandler : IRpcRequestHandler<DigestFinalRequest,
 
         if (!digestSessionState.IsUpdated)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Can not create digest from empty data.");
+            throw new RpcPkcs11Exception(CKR.CKR_DATA_LEN_RANGE, "Can not create digest from empty data.");
         }
 
         if (request.IsDigestPtrSet)
         {
             if (request.PulDigestLen < digestSessionState.DigestLength)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Digest buffer is small ({request.PulDigestLen}, required is {digestSessionState.DigestLength}).");
+                this.logger.LogWarning("Digest buffer is small ({PulDigestLen}, required is {DigestLength}).",
+                   request.PulDigestLen,
+                  digestSessionState.DigestLength);
+
+                return new DigestFinalEnvelope()
+                {
+                    Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
+                    Data = new DigestValue()
+                    {
+                        Data = null,
+                        PulDigestLen = digestSessionState.DigestLength
+                    }
+                };
             }
 
             byte[] digest = digestSessionState.Final();

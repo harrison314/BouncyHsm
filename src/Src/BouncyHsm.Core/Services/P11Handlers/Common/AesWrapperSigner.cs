@@ -20,6 +20,11 @@ internal class AesWrapperSigner : IWrapperSigner
     private readonly int? generalParameter;
     private readonly ILogger<AesWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public AesWrapperSigner(CKM mechanismType,
         IMac mac,
         int? generalParameter,

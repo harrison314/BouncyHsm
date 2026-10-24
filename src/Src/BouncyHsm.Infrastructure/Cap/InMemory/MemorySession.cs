@@ -7,13 +7,16 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BouncyHsm.Infrastructure.Cap.InMemory;
 
-public class MemorySession : IMemorySession
+public sealed class MemorySession : IMemorySession, IDisposable
 {
-    private readonly ConcurrentDictionary<uint, P11Session> sessions;
-    private readonly ConcurrentDictionary<Guid, uint> objectHandlesToGuid;
-    private readonly ConcurrentDictionary<uint, Guid> objectHandlesToHandles;
+    private readonly Dictionary<uint, P11Session> sessions;
+    private readonly Dictionary<uint, SlotState> slotToSessions;
+    private readonly Dictionary<Guid, uint> objectHandlesToGuid;
+    private readonly Dictionary<uint, Guid> objectHandlesToHandles;
     private readonly HashSet<uint> slotEvents;
     private readonly Lock slotEventsLock;
+    private readonly ReaderWriterLockSlim rwSessionLock;
+    private readonly ReaderWriterLockSlim rwObjectLock;
     private DateTimeOffset lastActivity;
 
     public Guid Id
@@ -45,55 +48,176 @@ public class MemorySession : IMemorySession
 
     public MemorySession(MemorySessionData sessionData, DateTimeOffset startAt)
     {
-        this.sessions = new ConcurrentDictionary<uint, P11Session>();
-        this.objectHandlesToGuid = new ConcurrentDictionary<Guid, uint>();
-        this.objectHandlesToHandles = new ConcurrentDictionary<uint, Guid>();
+        this.sessions = new Dictionary<uint, P11Session>();
+        this.slotToSessions = new Dictionary<uint, SlotState>();
+        this.objectHandlesToGuid = new Dictionary<Guid, uint>();
+        this.objectHandlesToHandles = new Dictionary<uint, Guid>();
         this.slotEvents = new HashSet<uint>();
         this.Id = Guid.NewGuid();
         this.Data = sessionData;
         this.StartAt = startAt;
         this.lastActivity = startAt;
         this.slotEventsLock = new Lock();
+        this.rwSessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        this.rwObjectLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
     }
 
     public uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom)
     {
         P11Session newSession = new P11Session(slotId, isRwSession, secureRandom);
 
-        for (uint sessionId = 1000; sessionId < 5_000_000; sessionId++)
+        this.rwSessionLock.EnterWriteLock();
+        try
         {
-            if (this.sessions.TryAdd(sessionId, newSession))
+            for (uint sessionId = 1000; sessionId < 5_000_000; sessionId++)
             {
-                newSession.SessionId = sessionId;
-                return sessionId;
-            }
-        }
+                if (this.sessions.TryAdd(sessionId, newSession))
+                {
+                    newSession.SessionId = sessionId;
 
-        throw new RpcPkcs11Exception(CKR.CKR_SESSION_COUNT, "The maximum number of sessions has been reached.");
+                    if (this.slotToSessions.TryGetValue(slotId, out SlotState? slotState))
+                    {
+                        slotState.Sessions.Add(sessionId);
+                    }
+                    else
+                    {
+                        SlotState newSlotState = new SlotState();
+                        newSlotState.Sessions.Add(sessionId);
+                        this.slotToSessions.Add(slotId, newSlotState);
+                    }
+
+                    return sessionId;
+                }
+            }
+
+            throw new RpcPkcs11Exception(CKR.CKR_SESSION_COUNT, "The maximum number of sessions has been reached.");
+        }
+        finally
+        {
+            this.rwSessionLock.ExitWriteLock();
+        }
     }
 
     public bool DestroySession(uint sessionId)
     {
-        return this.sessions.Remove(sessionId, out _);
+        this.rwSessionLock.EnterWriteLock();
+        try
+        {
+            if (this.sessions.Remove(sessionId, out P11Session? p11Session))
+            {
+                if (this.slotToSessions.TryGetValue(p11Session.SlotId, out SlotState? slotState))
+                {
+                    slotState.Sessions.Remove(sessionId);
+                    if (slotState.Sessions.Count == 0)
+                    {
+                        this.slotToSessions.Remove(p11Session.SlotId);
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        finally
+        {
+            this.rwSessionLock.ExitWriteLock();
+        }
     }
 
     public int DestroySessionsBySlot(uint slotId)
     {
-        List<uint> sessionsToRemove = new List<uint>();
-        foreach ((uint sessionId, P11Session session) in this.sessions)
+        this.rwSessionLock.EnterWriteLock();
+        try
         {
-            if (session.SlotId == slotId)
+            List<uint> sessionsToRemove = new List<uint>();
+            foreach ((uint sessionId, P11Session session) in this.sessions)
             {
-                sessionsToRemove.Add(sessionId);
+                if (session.SlotId == slotId)
+                {
+                    sessionsToRemove.Add(sessionId);
+                }
+            }
+
+            foreach (uint sessionId in sessionsToRemove)
+            {
+                this.sessions.Remove(sessionId, out _);
+            }
+
+            this.slotToSessions.Remove(slotId);
+
+            return sessionsToRemove.Count;
+        }
+        finally
+        {
+            this.rwSessionLock.ExitWriteLock();
+        }
+    }
+
+    public bool IsLogged(uint sessionId, CKU userType)
+    {
+        this.rwSessionLock.EnterReadLock();
+        try
+        {
+            if (!this.sessions.TryGetValue(sessionId, out P11Session? session))
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_SESSION_HANDLE_INVALID, $"Session {sessionId} does not exist.");
+            }
+
+            LoggedUser loggedUser = this.slotToSessions[session.SlotId].LoggedState;
+            return userType switch
+            {
+                CKU.CKU_SO => loggedUser.HasFlag(LoggedUser.So),
+                CKU.CKU_USER => loggedUser.HasFlag(LoggedUser.User),
+                CKU.CKU_CONTEXT_SPECIFIC => session.IsContextSpecificLogged,
+                _ => throw new InvalidProgramException($"Enum value {userType} is not supported.")
+            };
+        }
+        finally
+        {
+            this.rwSessionLock.ExitReadLock();
+        }
+    }
+
+    public void SetLoginStatus(uint sessionId, CKU userType, bool isLogged)
+    {
+        this.rwSessionLock.EnterWriteLock();
+        try
+        {
+            if (!this.sessions.TryGetValue(sessionId, out P11Session? session))
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_SESSION_HANDLE_INVALID, $"Session {sessionId} does not exist.");
+            }
+
+            if (userType == CKU.CKU_CONTEXT_SPECIFIC)
+            {
+                session.IsContextSpecificLogged = isLogged;
+
+                return;
+            }
+
+            LoggedUser userFlagType = userType switch
+            {
+                CKU.CKU_SO => LoggedUser.So,
+                CKU.CKU_USER => LoggedUser.User,
+                _ => throw new InvalidProgramException($"Enum value {userType} is not supported.")
+            };
+
+            if (isLogged)
+            {
+                this.slotToSessions[session.SlotId].LoggedState |= userFlagType;
+            }
+            else
+            {
+                this.slotToSessions[session.SlotId].LoggedState &= ~userFlagType;
             }
         }
-
-        foreach (uint sessionId in sessionsToRemove)
+        finally
         {
-            this.sessions.Remove(sessionId, out _);
+            this.rwSessionLock.ExitWriteLock();
         }
-
-        return sessionsToRemove.Count;
     }
 
     public MemorySessionStatus GetStatus(uint? slotIdSpecification)
@@ -101,56 +225,88 @@ public class MemorySession : IMemorySession
         int rwSessions = 0;
         int roSessions = 0;
 
-        if (slotIdSpecification.HasValue)
+        this.rwSessionLock.EnterReadLock();
+        try
         {
-            foreach (P11Session session in this.sessions.Values.Where(t => t.SlotId == slotIdSpecification.Value))
-            {
-                if (session.IsRwSession)
-                {
-                    rwSessions++;
-                }
-                else
-                {
-                    roSessions++;
-                }
-            }
-        }
-        else
-        {
-            foreach (P11Session session in this.sessions.Values)
-            {
-                if (session.IsRwSession)
-                {
-                    rwSessions++;
-                }
-                else
-                {
-                    roSessions++;
-                }
-            }
-        }
 
 
-        return new MemorySessionStatus(roSessions, rwSessions);
+            if (slotIdSpecification.HasValue)
+            {
+                foreach (P11Session session in this.sessions.Values.Where(t => t.SlotId == slotIdSpecification.Value))
+                {
+                    if (session.IsRwSession)
+                    {
+                        rwSessions++;
+                    }
+                    else
+                    {
+                        roSessions++;
+                    }
+                }
+            }
+            else
+            {
+                foreach (P11Session session in this.sessions.Values)
+                {
+                    if (session.IsRwSession)
+                    {
+                        rwSessions++;
+                    }
+                    else
+                    {
+                        roSessions++;
+                    }
+                }
+            }
+
+
+            return new MemorySessionStatus(roSessions, rwSessions);
+        }
+        finally
+        {
+            this.rwSessionLock.ExitReadLock();
+        }
     }
 
     public bool TryGetSession(uint sessionId, [NotNullWhen(true)] out IP11Session? session)
     {
-        if (this.sessions.TryGetValue(sessionId, out P11Session? value))
+        this.rwSessionLock.EnterReadLock();
+        try
         {
-            session = value;
-            return true;
+            if (this.sessions.TryGetValue(sessionId, out P11Session? value))
+            {
+                session = value;
+                return true;
+            }
+            else
+            {
+                session = null;
+                return false;
+            }
+
         }
-        else
+        finally
         {
-            session = null;
-            return false;
+            this.rwSessionLock.ExitReadLock();
         }
     }
 
     public bool IsUserLogged(uint slotId)
     {
-        return this.sessions.Any(t => t.Value.SlotId == slotId && (t.Value.IsLogged(CKU.CKU_USER) || t.Value.IsLogged(CKU.CKU_SO)));
+        this.rwSessionLock.EnterReadLock();
+        try
+        {
+            if (!this.slotToSessions.TryGetValue(slotId, out SlotState? slotState))
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_SLOT_ID_INVALID, $"Slot {slotId} does not exist.");
+            }
+
+            return slotState.LoggedState.HasFlag(LoggedUser.User) || slotState.LoggedState.HasFlag(LoggedUser.So);
+        }
+        finally
+        {
+            this.rwSessionLock.ExitReadLock();
+        }
     }
 
     public uint CreateHandle(StorageObject storageObject)
@@ -160,40 +316,64 @@ public class MemorySession : IMemorySession
             storageObject.Id = Guid.NewGuid();
         }
 
-        if (this.objectHandlesToGuid.TryGetValue(storageObject.Id, out uint handle))
+        this.rwObjectLock.EnterWriteLock();
+        try
         {
-            return handle;
-        }
-
-        for (uint handleId = 1000; handleId < 5_000_000; handleId++)
-        {
-            if (this.objectHandlesToHandles.TryAdd(handleId, storageObject.Id))
+            if (this.objectHandlesToGuid.TryGetValue(storageObject.Id, out uint handle))
             {
-                this.objectHandlesToGuid.TryAdd(storageObject.Id, handleId);
-                return handleId;
+                return handle;
             }
-        }
 
-        throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "The maximum number of object handles has been reached.");
+            for (uint handleId = 1000; handleId < 5_000_000; handleId++)
+            {
+                if (this.objectHandlesToHandles.TryAdd(handleId, storageObject.Id))
+                {
+                    this.objectHandlesToGuid.TryAdd(storageObject.Id, handleId);
+                    return handleId;
+                }
+            }
+
+            throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "The maximum number of object handles has been reached.");
+        }
+        finally
+        {
+            this.rwObjectLock.ExitWriteLock();
+        }
     }
 
     public Guid? FindObjectHandle(uint objectHandle)
     {
-        if (this.objectHandlesToHandles.TryGetValue(objectHandle, out Guid id))
+        this.rwObjectLock.EnterReadLock();
+        try
         {
-            return id;
+            if (this.objectHandlesToHandles.TryGetValue(objectHandle, out Guid id))
+            {
+                return id;
+            }
+            else
+            {
+                return null;
+            }
         }
-        else
+        finally
         {
-            return null;
+            this.rwObjectLock.ExitReadLock();
         }
     }
 
     public void DestroyObjectHandle(Guid id)
     {
-        if (this.objectHandlesToGuid.TryRemove(id, out uint handle))
+        this.rwObjectLock.EnterWriteLock();
+        try
         {
-            this.objectHandlesToHandles.TryRemove(handle, out _);
+            if (this.objectHandlesToGuid.Remove(id, out uint handle))
+            {
+                this.objectHandlesToHandles.Remove(handle, out _);
+            }
+        }
+        finally
+        {
+            this.rwObjectLock.ExitWriteLock();
         }
     }
 
@@ -211,6 +391,12 @@ public class MemorySession : IMemorySession
 
             return slotId;
         }
+    }
+
+    public void Dispose()
+    {
+        this.rwSessionLock.Dispose();
+        this.rwObjectLock.Dispose();
     }
 
     internal void NotifySlotEvent(uint slotId)

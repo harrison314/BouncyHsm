@@ -31,6 +31,10 @@ public partial class GetMechanismListHandler : IRpcRequestHandler<GetMechanismLi
         {
             if (request.PullCount < mechanismTypes.Length)
             {
+                this.logger.LogWarning("Mechanism list buffer is small ({PullCount}, required is {MechanismTypesLength}).",
+                 request.PullCount,
+                 mechanismTypes.Length);
+
                 return new GetMechanismListEnvelope()
                 {
                     Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,

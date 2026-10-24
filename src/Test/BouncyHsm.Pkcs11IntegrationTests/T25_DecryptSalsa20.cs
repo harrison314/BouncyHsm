@@ -17,10 +17,9 @@ public class T25_DecryptSalsa20
     [TestMethod]
     [DataRow(0UL, 64, 256)]
     [DataRow(0UL, 192, 256)]
-    //[DataRow(0, 192, 256)]
-    //[DataRow(51, 64, 87)]
-    //[DataRow(13, 96, 20786)]
-    //[DataRow(13, 192, 478)]
+    [DataRow(51UL, 64, 87)]
+    [DataRow(13UL, 192, 20786)]
+    [DataRow(13UL, 192, 478)]
     public void Decrypt_Salsa20_Success(ulong counter, int nonceBits, int plainTextLen)
     {
         byte[] plainText = new byte[plainTextLen];
@@ -56,10 +55,9 @@ public class T25_DecryptSalsa20
     [TestMethod]
     [DataRow(0UL, 64, 256, 32)]
     [DataRow(0UL, 192, 256, 16)]
-    //[DataRow(0, 192, 256, 122)]
-    //[DataRow(51, 64, 87, 52)]
-    //[DataRow(13, 96, 20786, 200)]
-    //[DataRow(13, 192, 478, 32)]
+    [DataRow(51UL, 64, 87, 52)]
+    [DataRow(13UL, 192, 20786, 200)]
+    [DataRow(13UL, 192, 478, 32)]
     public void Decrypt_Salsa20WithEncriptBuffer_Success(ulong counter, int nonceBits, int plainTextLen, int streamBufferLen)
     {
         byte[] plainText = new byte[plainTextLen];
@@ -94,10 +92,9 @@ public class T25_DecryptSalsa20
     [TestMethod]
     [DataRow(0UL, 64, 256, 32)]
     [DataRow(0UL, 192, 256, 16)]
-    //[DataRow(0, 192, 256, 122)]
-    //[DataRow(51, 64, 87, 52)]
-    //[DataRow(13, 96, 20786, 200)]
-    //[DataRow(13, 192, 478, 32)]
+    [DataRow(51UL, 64, 87, 52)]
+    [DataRow(13UL, 192, 20786, 200)]
+    [DataRow(13UL, 192, 478, 32)]
     public void Decrypt_Salsa20WithBuffer_Success(ulong counter, int nonceBits, int plainTextLen, int streamBufferLen)
     {
         byte[] plainText = new byte[plainTextLen];

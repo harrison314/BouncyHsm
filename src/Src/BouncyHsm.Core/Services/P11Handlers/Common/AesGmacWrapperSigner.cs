@@ -16,6 +16,11 @@ internal class AesGmacWrapperSigner : IWrapperSigner
     private readonly byte[] iv;
     private readonly ILogger<AesGmacWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public AesGmacWrapperSigner(CKM mechanismType,
         byte[] iv,
         ILogger<AesGmacWrapperSigner> logger)

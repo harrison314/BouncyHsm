@@ -186,7 +186,7 @@ bool getProgramArgs(const char*** args, int* argc)
         {
             for (int j = 0; j < i; j++)
             {
-                free(arguments[j]);
+                free((void*)arguments[j]);
             }
 
             free(arguments);

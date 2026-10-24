@@ -21,7 +21,7 @@ public sealed class RemoveProfileOperation : ProfileOperation
     {
         if (!mechanisms.Remove(this.Mechanism))
         {
-            throw new BouncyHsmConfigurationException($"Can nor remove mechanism {this.Mechanism} because it was not found in profile."); //TODO
+            throw new BouncyHsmConfigurationException($"Cannot remove mechanism {this.Mechanism} because it was not found in profile."); //TODO
         }
     }
 }

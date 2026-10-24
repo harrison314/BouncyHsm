@@ -19,12 +19,16 @@ internal class ChaCha20CipherWrapper : ICipherWrapper
     public const int Chacha20_7539NonceSize = 12;
 
     private readonly byte[] nonce;
+    private readonly uint blockCounterLower;
+    private readonly uint blockCounterUpper;
     private readonly CKM mechanismType;
     private readonly ILogger<ChaCha20CipherWrapper> logger;
 
-    public ChaCha20CipherWrapper(byte[] nonce, CKM mechanismType, ILogger<ChaCha20CipherWrapper> logger)
+    public ChaCha20CipherWrapper(byte[] nonce, uint blockCounterLower, uint blockCounterUpper, CKM mechanismType, ILogger<ChaCha20CipherWrapper> logger)
     {
         this.nonce = nonce;
+        this.blockCounterLower = blockCounterLower;
+        this.blockCounterUpper = blockCounterUpper;
         this.mechanismType = mechanismType;
         this.logger = logger;
     }
@@ -35,6 +39,7 @@ internal class ChaCha20CipherWrapper : ICipherWrapper
 
         IStreamCipher engine = this.CreateChacha20();
         engine.Init(false, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_DECRYPT, keyObject), this.nonce));
+        this.SetCounter(engine);
 
         return new CipherUinion.StreamCipher(engine);
     }
@@ -45,6 +50,7 @@ internal class ChaCha20CipherWrapper : ICipherWrapper
 
         IStreamCipher engine = this.CreateChacha20();
         engine.Init(true, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_ENCRYPT, keyObject), this.nonce));
+        this.SetCounter(engine);
 
         return new CipherUinion.StreamCipher(engine);
     }
@@ -52,8 +58,11 @@ internal class ChaCha20CipherWrapper : ICipherWrapper
     public IWrapper IntoUnwrapping(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject.Id);
-        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(this.CreateChacha20());
+
+        IStreamCipher engine = this.CreateChacha20();
+        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(engine);
         wrapper.Init(false, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject), this.nonce));
+        this.SetCounter(engine);
 
         return wrapper;
     }
@@ -62,8 +71,10 @@ internal class ChaCha20CipherWrapper : ICipherWrapper
     {
         this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject.Id);
 
-        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(this.CreateChacha20());
+        IStreamCipher engine = this.CreateChacha20();
+        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(engine);
         wrapper.Init(true, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject), this.nonce));
+        this.SetCounter(engine);
 
         return wrapper;
     }
@@ -78,6 +89,23 @@ internal class ChaCha20CipherWrapper : ICipherWrapper
             Chacha20_7539NonceSize => new ChaCha7539Engine(),
             _ => throw new InvalidOperationException($"Invalid nonce size {this.nonce.Length}B.")
         };
+    }
+
+    private void SetCounter(IStreamCipher engine)
+    {
+        this.logger.LogTrace("Call set counter");
+        if (engine is ChaChaEngine chachaEngine)
+        {
+            chachaEngine.SetChaChaCounter(this.blockCounterLower, this.blockCounterUpper);
+        }
+        else if (engine is ChaCha7539Engine cha7539Engine)
+        {
+            cha7539Engine.SetChaCha7539Counter(this.blockCounterLower);
+        }
+        else
+        {
+            throw new InvalidProgramException($"Engine type {engine.GetType().FullName} is not supported");
+        }
     }
 
     private ICipherParameters CreateCipherParams(BufferedCipherWrapperOperation operation, KeyObject keyObject)

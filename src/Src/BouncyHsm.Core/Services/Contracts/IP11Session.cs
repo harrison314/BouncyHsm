@@ -34,10 +34,6 @@ public interface IP11Session
 
     IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
 
-    bool IsLogged(CKU userType);
-
-    void SetLoginStatus(CKU userType, bool isLogged);
-
     void StoreObject(StorageObject storageObject);
 
     void UpdateObject(StorageObject storageObject);

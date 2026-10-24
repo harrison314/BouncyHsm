@@ -14,12 +14,14 @@ internal class Salsa20CipherWrapper : ICipherWrapper
     public const int XSalsa20NonceSize = 24;
 
     private readonly byte[] nonce;
+    private readonly ulong blockCounter;
     private readonly CKM mechanismType;
     private readonly ILogger<Salsa20CipherWrapper> logger;
 
-    public Salsa20CipherWrapper(byte[] nonce, CKM mechanismType, ILogger<Salsa20CipherWrapper> logger)
+    public Salsa20CipherWrapper(byte[] nonce, ulong blockCounter, CKM mechanismType, ILogger<Salsa20CipherWrapper> logger)
     {
         this.nonce = nonce;
+        this.blockCounter = blockCounter;
         this.mechanismType = mechanismType;
         this.logger = logger;
     }
@@ -30,6 +32,7 @@ internal class Salsa20CipherWrapper : ICipherWrapper
 
         IStreamCipher engine = this.CreateSalsa20();
         engine.Init(false, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_DECRYPT, keyObject), this.nonce));
+        ((Salsa20Engine)engine).SetCounter(this.blockCounter);
 
         return new CipherUinion.StreamCipher(engine);
     }
@@ -40,6 +43,7 @@ internal class Salsa20CipherWrapper : ICipherWrapper
 
         IStreamCipher engine = this.CreateSalsa20();
         engine.Init(true, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_ENCRYPT, keyObject), this.nonce));
+        ((Salsa20Engine)engine).SetCounter(this.blockCounter);
 
         return new CipherUinion.StreamCipher(engine);
     }
@@ -47,8 +51,11 @@ internal class Salsa20CipherWrapper : ICipherWrapper
     public IWrapper IntoUnwrapping(KeyObject keyObject)
     {
         this.logger.LogTrace("Entering to IntoUnwrapping with object id {objectId}.", keyObject.Id);
-        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(this.CreateSalsa20());
+
+        IStreamCipher engine = this.CreateSalsa20();
+        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(engine);
         wrapper.Init(false, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_UNWRAP, keyObject), this.nonce));
+        ((Salsa20Engine)engine).SetCounter(this.blockCounter);
 
         return wrapper;
     }
@@ -57,8 +64,10 @@ internal class Salsa20CipherWrapper : ICipherWrapper
     {
         this.logger.LogTrace("Entering to IntoWrapping with object id {objectId}.", keyObject.Id);
 
-        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(this.CreateSalsa20());
+        IStreamCipher engine = this.CreateSalsa20();
+        PlainStreamCipherWrapper wrapper = new PlainStreamCipherWrapper(engine);
         wrapper.Init(true, new ParametersWithIV(this.CreateCipherParams(BufferedCipherWrapperOperation.CKA_WRAP, keyObject), this.nonce));
+        ((Salsa20Engine)engine).SetCounter(this.blockCounter);
 
         return wrapper;
     }

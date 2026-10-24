@@ -25,7 +25,7 @@ public class Sp800_108FeedbackKdfTests
 
         IPrfDataParam[] parameters = new IPrfDataParam[]
         {
-            new IterationVariablePrfDataParam(false, 16 * 8),
+            new NullIterationVariablePrfDataParam(),
             new ByteArrayPrfDataParam(Convert.FromHexString("99c3d79cb978724e1e2f09dc90e3b694")),
             new ByteArrayPrfDataParam(new byte[]{0x00}),
             new CounterPrfDataParam(true, 32),
@@ -69,7 +69,7 @@ public class Sp800_108FeedbackKdfTests
 
         IPrfDataParam[] parameters = new IPrfDataParam[]
         {
-            new IterationVariablePrfDataParam(false, 16 * 8),
+            new NullIterationVariablePrfDataParam(),
             new ByteArrayPrfDataParam(Convert.FromHexString("99c3d79cb978724e1e2f09dc90e3b694")),
             new ByteArrayPrfDataParam(new byte[]{0x00}),
             new CounterPrfDataParam(true, 32),

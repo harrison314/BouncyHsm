@@ -58,7 +58,19 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         {
             if (request.PulWrappedKeyLen < wrappedKey.Length)
             {
-                throw new RpcPkcs11Exception(CKR.CKR_BUFFER_TOO_SMALL, $"Wrapped data buffer is small ({request.PulWrappedKeyLen}, required is {wrappedKey.Length}).");
+                this.logger.LogWarning("Wrapped key buffer is small ({PulWrappedKeyLen}, required is {WrappedKeyLength}).",
+                 request.PulWrappedKeyLen,
+                 wrappedKey.Length);
+
+                return new WrapKeyEnvelope()
+                {
+                    Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
+                    Data = new WrapKeyData()
+                    {
+                        PulWrappedKeyLen = (uint)wrappedKey.Length,
+                        WrappedKeyData = Array.Empty<byte>()
+                    }
+                };
             }
 
             return new WrapKeyEnvelope()

@@ -46,7 +46,7 @@ internal class DigestSessionState : ISessionState
     {
         if (!this.IsUpdated)
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR, "Error: Digesting empty data.");
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Digesting empty data.");
         }
 
         byte[] buffer = new byte[this.digest.GetDigestSize()];

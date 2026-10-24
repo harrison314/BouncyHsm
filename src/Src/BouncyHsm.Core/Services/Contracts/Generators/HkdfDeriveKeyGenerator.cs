@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Macs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,10 +45,16 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
 
         HkdfParameters bcParams;
         byte[]? info = this.hkdfParams.Expand ? this.hkdfParams.Info : null;
-        byte[]? salt = this.CreateSalt();
 
         if (this.hkdfParams.Extract)
         {
+            byte[] salt = this.CreateSalt();
+
+            if (!this.hkdfParams.Expand)
+            {
+                return this.Extract(baseKey.GetSecret(), salt);
+            }
+
             bcParams = new HkdfParameters(baseKey.GetSecret(), salt, info);
         }
         else
@@ -65,11 +72,24 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
         return bytes;
     }
 
-    private byte[]? CreateSalt()
+    private byte[] Extract(byte[] inputKeyMaterial, byte[] salt)
+    {
+        HMac hmac = new HMac(this.digetAlgorithm);
+        hmac.Init(new KeyParameter(salt));
+        hmac.BlockUpdate(inputKeyMaterial, 0, inputKeyMaterial.Length);
+
+        byte[] pseudoRandomKey = new byte[hmac.GetMacSize()];
+        hmac.DoFinal(pseudoRandomKey, 0);
+        return pseudoRandomKey;
+    }
+
+    private byte[] CreateSalt()
     {
         if (this.hkdfParams.SaltType == CKF_HKDF_SALT_NULL)
         {
-            return null;
+            byte[] zeros = new byte[this.digetAlgorithm.GetDigestSize()];
+            Array.Clear(zeros, 0, zeros.Length);
+            return zeros;
         }
 
         if (this.hkdfParams.SaltType == CKF_HKDF_SALT_KEY)

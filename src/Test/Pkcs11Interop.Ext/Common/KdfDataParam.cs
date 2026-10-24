@@ -10,6 +10,7 @@ namespace Pkcs11Interop.Ext.Common;
 public partial record KdfDataParam
 {
     partial record IterationVariable(bool LittleEndian, int WidthInBits);
+    partial record NullIterationVariable();
     partial record Counter(bool LittleEndian, int WidthInBits);
     partial record DkmLength(bool LittleEndian, int WidthInBits, uint DkmLengthMethod);
     partial record KeyHandle(IObjectHandle ObjectHandle);

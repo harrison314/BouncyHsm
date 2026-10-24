@@ -15,6 +15,11 @@ internal class MlDsaPrehashedWrapperSigner : IWrapperSigner
     private readonly Ckp_CkHashSignAdditionalContext mechanismParams;
     private readonly ILogger<MlDsaPrehashedWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public MlDsaPrehashedWrapperSigner(Ckp_CkHashSignAdditionalContext mechanismParams, ILogger<MlDsaPrehashedWrapperSigner> logger)
     {
         this.mechanismParams = mechanismParams;

@@ -22,6 +22,11 @@ internal class MlDsaHashedWrapperSigner : IWrapperSigner
     private readonly IDigest digest;
     private readonly ILogger<MlDsaHashedWrapperSigner> logger;
 
+    public bool AcceptEmptyData
+    {
+        get => false;
+    }
+
     public MlDsaHashedWrapperSigner(CKM mechanism,
         Ckp_CkSignAdditionalContext? mechanismParams,
         IDigest digest,

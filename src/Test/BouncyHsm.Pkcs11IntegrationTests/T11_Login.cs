@@ -23,6 +23,42 @@ public class T11_Login
     }
 
     [TestMethod]
+    public void Login_CallMultiple_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+        Pkcs11Exception ex = Assert.ThrowsExactly<Pkcs11Exception>(() => session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin));
+        Assert.AreEqual(CKR.CKR_USER_ALREADY_LOGGED_IN, ex.RV);
+    }
+
+    [TestMethod]
+    public void Login_CallMultipleSessions_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        using ISession session2 = slot.OpenSession(SessionType.ReadOnly);
+        Pkcs11Exception ex = Assert.ThrowsExactly<Pkcs11Exception>(() => session2.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin));
+        Assert.AreEqual(CKR.CKR_USER_ALREADY_LOGGED_IN, ex.RV);
+    }
+
+    [TestMethod]
     public void Login_CallSo_Success()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();

@@ -36,7 +36,7 @@ void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 
 CK_FUNCTION_LIST bouncyHsm_pkcs11_2_40_functions =
 {
-    {2, 40},
+    { 2, 40 },
     &C_Initialize,
     &C_Finalize,
     &C_GetInfo,
@@ -118,7 +118,7 @@ CK_INTERFACE bouncyHsm_pkcs11_2_40_interface =
 
 CK_FUNCTION_LIST_3_0  bouncyHsm_pkcs11_3_1_functions =
 {
-    {0x03, 0x01},
+    { 0x03, 0x01 },
     &C_Initialize,
     &C_Finalize,
     &C_GetInfo,
@@ -223,7 +223,7 @@ CK_INTERFACE bouncyHsm_pkcs11_3_1_interface =
 
 CK_FUNCTION_LIST_3_2  bouncyHsm_pkcs11_3_2_functions =
 {
-    {0x03, 0x02},
+    { 0x03, 0x02 },
     &C_Initialize,
     &C_Finalize,
     &C_GetInfo,
@@ -706,8 +706,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TY
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        *pulCount = (CK_ULONG)envelope.Data->PullCount;
-
         if (pMechanismList != NULL)
         {
             uint32_t i;
@@ -715,7 +713,16 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TY
             {
                 pMechanismList[i] = (CK_MECHANISM_TYPE)envelope.Data->MechanismTypes.array[i];
             }
+            *pulCount = (CK_ULONG)envelope.Data->PullCount;
         }
+        else
+        {
+            *pulCount = (CK_ULONG)envelope.Data->PullCount;
+        }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pMechanismList != NULL && envelope.Data != NULL)
+    {
+        *pulCount = (CK_ULONG)envelope.Data->PullCount;
     }
 
     GetMechanismListEnvelope_Release(&envelope);
@@ -1417,7 +1424,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     CK_RV rvMethod = (CK_RV)envelope.Rv;
 
-    if (rv == CKR_OK || rv == CKR_ATTRIBUTE_SENSITIVE || rv == CKR_ATTRIBUTE_TYPE_INVALID || rv == CKR_BUFFER_TOO_SMALL)
+    if (rvMethod == CKR_OK || rvMethod == CKR_ATTRIBUTE_SENSITIVE || rvMethod == CKR_ATTRIBUTE_TYPE_INVALID || rvMethod == CKR_BUFFER_TOO_SMALL)
     {
         CK_RV rvData = SetArributesToTemplate(envelope.Data->OutTemplate.array, pTemplate, ulCount, 0);
         if (rvData != CKR_OK)
@@ -1722,6 +1729,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDa
             *pulEncryptedDataLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pEncryptedData != NULL && envelope.Data != NULL)
+    {
+        *pulEncryptedDataLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
+    }
 
     EncryptEnvelope_Release(&envelope);
 
@@ -1776,6 +1787,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
             *pulEncryptedPartLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pEncryptedPart != NULL && envelope.Data != NULL)
+    {
+        *pulEncryptedPartLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
+    }
 
     EncryptUpdateEnvelope_Release(&envelope);
 
@@ -1822,6 +1837,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
         {
             *pulLastEncryptedPartLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pLastEncryptedPart != NULL && envelope.Data != NULL)
+    {
+        *pulLastEncryptedPartLen = (CK_ULONG)envelope.Data->PullEncryptedDataLen;
     }
 
     EncryptFinalEnvelope_Release(&envelope);
@@ -1921,6 +1940,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEn
             *pulDataLen = (CK_ULONG)envelope.Data->PullDataLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pData != NULL && envelope.Data != NULL)
+    {
+        *pulDataLen = (CK_ULONG)envelope.Data->PullDataLen;
+    }
 
     DecryptEnvelope_Release(&envelope);
 
@@ -1974,6 +1997,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
             *pulPartLen = (CK_ULONG)envelope.Data->PullDataLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pPart != NULL && envelope.Data != NULL)
+    {
+        *pulPartLen = (CK_ULONG)envelope.Data->PullDataLen;
+    }
 
     DecryptUpdateEnvelope_Release(&envelope);
 
@@ -2024,6 +2051,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
         {
             *pulLastPartLen = (CK_ULONG)envelope.Data->PullDataLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pLastPart != NULL && envelope.Data != NULL)
+    {
+        *pulLastPartLen = (CK_ULONG)envelope.Data->PullDataLen;
     }
 
     DecryptFinalEnvelope_Release(&envelope);
@@ -2080,7 +2111,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pData || 0 == ulDataLen)
+    if (NULL == pData && pData != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2123,6 +2154,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
             *pulDigestLen = envelope.Data->PulDigestLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pDigest != NULL && envelope.Data != NULL)
+    {
+        *pulDigestLen = envelope.Data->PulDigestLen;
+    }
 
     DigestEnvelope_Release(&envelope);
 
@@ -2134,7 +2169,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pPart || 0 == ulPartLen)
+    if (NULL == pPart && ulPartLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2242,6 +2277,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
             *pulDigestLen = envelope.Data->PulDigestLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pDigest != NULL && envelope.Data != NULL)
+    {
+        *pulDigestLen = envelope.Data->PulDigestLen;
+    }
 
     DigestFinalEnvelope_Release(&envelope);
 
@@ -2296,7 +2335,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
 CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
 {
     LOG_ENTERING_TO_FUNCTION();
-    if (NULL == pData || NULL == pulSignatureLen)
+    if (NULL == pData && ulDataLen != 0)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (NULL == pulSignatureLen)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2339,6 +2383,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData,
             *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pSignature != NULL && envelope.Data != NULL)
+    {
+        *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
+    }
 
     SignEnvelope_Release(&envelope);
 
@@ -2350,7 +2398,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR 
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pPart)
+    if (NULL == pPart && ulPartLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2422,8 +2470,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
         }
         else
         {
-            *pulSignatureLen = envelope.Data->PullSignatureLen;
+            *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pSignature != NULL && envelope.Data != NULL)
+    {
+        *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
     }
 
     SignFinalEnvelope_Release(&envelope);
@@ -2522,6 +2574,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
             *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pSignature != NULL && envelope.Data != NULL)
+    {
+        *pulSignatureLen = (CK_ULONG)envelope.Data->PullSignatureLen;
+    }
 
     SignRecoverEnvelope_Release(&envelope);
 
@@ -2572,7 +2628,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pData || 0 == ulDataLen)
+    if (NULL == pData && ulDataLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2618,7 +2674,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pPart)
+    if (NULL == pPart && ulPartLen != 0)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2784,6 +2840,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_P
         {
             *pulDataLen = (CK_ULONG)envelope.Data->PulDataLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pData != NULL && envelope.Data != NULL)
+    {
+        *pulDataLen = (CK_ULONG)envelope.Data->PulDataLen;
     }
 
     VerifyRecoverEnvelope_Release(&envelope);
@@ -3036,6 +3096,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
         {
             *pulWrappedKeyLen = (CK_ULONG)envelope.Data->PulWrappedKeyLen;
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pWrappedKey != NULL && envelope.Data != NULL)
+    {
+        *pulWrappedKeyLen = (CK_ULONG)envelope.Data->PulWrappedKeyLen;
     }
 
     MechanismValue_Destroy(&request.Mechanism);
@@ -3346,6 +3410,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterfaceList)(CK_INTERFACE_PTR pInterfacesList, 
     {
         if (*pulCount < 3)
         {
+            *pulCount = 3;
             return CKR_BUFFER_TOO_SMALL;
         }
 
@@ -3711,8 +3776,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
             *phKey = (CK_OBJECT_HANDLE)envelope.Data->PhKeyHandle;
         }
     }
-
-    if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL)
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL && pCiphertext != NULL && envelope.Data != NULL)
     {
         *pulCiphertextLen = (CK_ULONG)envelope.Data->PulCiphertextLen;
     }

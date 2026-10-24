@@ -4586,34 +4586,41 @@ public partial class Ckp_CkSp800_108PrfDataParsms
     }
 
     [Key(1)]
+    public bool IsNull
+    {
+        get;
+        set;
+    }
+
+    [Key(2)]
     public byte[] Value
     {
         get;
         set;
     } = global::System.Array.Empty<byte>();
 
-    [Key(2)]
+    [Key(3)]
     public uint KeyHandle
     {
         get;
         set;
     }
 
-    [Key(3)]
+    [Key(4)]
     public bool LittleEndian
     {
         get;
         set;
     }
 
-    [Key(4)]
+    [Key(5)]
     public uint WidthInBits
     {
         get;
         set;
     }
 
-    [Key(5)]
+    [Key(6)]
     public uint LengthMethod
     {
         get;

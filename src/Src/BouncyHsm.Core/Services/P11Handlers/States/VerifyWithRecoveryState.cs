@@ -19,6 +19,11 @@ internal class VerifyWithRecoveryState : ISessionState
     {
         System.Diagnostics.Debug.Assert(signature != null);
 
+        if (signature.Length == 0)
+        {
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Signature is empty data.");
+        }
+
         this.signer.Reset();
         if (this.signer.VerifySignature(signature))
         {

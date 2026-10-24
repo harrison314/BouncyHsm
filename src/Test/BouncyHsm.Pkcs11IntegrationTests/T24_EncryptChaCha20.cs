@@ -17,10 +17,9 @@ public class T24_EncryptChaCha20
     [TestMethod]
     [DataRow(0, 64, 256)]
     [DataRow(0, 96, 256)]
-    //[DataRow(0, 192, 256)]
-    //[DataRow(51, 64, 87)]
-    //[DataRow(13, 96, 20786)]
-    //[DataRow(13, 192, 478)]
+    [DataRow(51, 64, 87)]
+    [DataRow(13, 96, 20786)]
+    [DataRow(13, 96, 478)]
     public void Encrypt_ChaCha20_Success(int counter, int nonceBits, int plainTextLen)
     {
         byte[] plainText = new byte[plainTextLen];
@@ -53,10 +52,10 @@ public class T24_EncryptChaCha20
     [TestMethod]
     [DataRow(0, 64, 256, 32)]
     [DataRow(0, 96, 256, 16)]
-    //[DataRow(0, 192, 256, 122)]
-    //[DataRow(51, 64, 87, 52)]
-    //[DataRow(13, 96, 20786, 200)]
-    //[DataRow(13, 192, 478, 32)]
+    [DataRow(0, 64, 256, 122)]
+    [DataRow(51, 64, 87, 52)]
+    [DataRow(13, 64, 20786, 200)]
+    [DataRow(13, 64, 478, 32)]
     public void Encrypt_ChaCha20AsStream_Success(int counter, int nonceBits, int plainTextLen, int streamBufferLen)
     {
         byte[] plainText = new byte[plainTextLen];
@@ -93,7 +92,8 @@ public class T24_EncryptChaCha20
     [TestMethod]
     [DataRow(0, 64, 256)]
     [DataRow(0, 96, 256)]
-    //[DataRow(0, 192, 256)]
+    [DataRow(2, 96, 256)]
+    [DataRow(15, 64, 256)]
     public void Encrypt_ChaCha20With64BitCounter_Success(int counter, int nonceBits, int plainTextLen)
     {
         byte[] plainText = new byte[plainTextLen];

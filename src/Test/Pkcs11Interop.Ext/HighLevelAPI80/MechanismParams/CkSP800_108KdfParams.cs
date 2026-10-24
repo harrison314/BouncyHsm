@@ -24,6 +24,7 @@ internal class CkSP800_108KdfParams : ICkSP800_108KdfParams
         {
             kdfParam.Match(
                 iteration => this.AddIteration(this.dataParsms, iteration),
+                nullIteration => this.AddIteration(this.dataParsms),
                 counter => this.AddCounter(this.dataParsms, counter),
                 dkmLength => this.AddDkmLength(this.dataParsms, dkmLength),
                 keyHandle => this.AddObjectHandle(this.dataParsms, keyHandle),
@@ -53,6 +54,18 @@ internal class CkSP800_108KdfParams : ICkSP800_108KdfParams
             type = CK_PRF_DATA_TYPE.CK_SP800_108_ITERATION_VARIABLE,
             pValue = MemoryUtils.MemDup(ref format),
             ulValueLen = (uint)sizeof(CK_SP800_108_COUNTER_FORMAT)
+        };
+
+        dataParsms.Add(prfDataValue);
+    }
+
+    private void AddIteration(List<CK_PRF_DATA_PARAM> dataParsms)
+    {
+        CK_PRF_DATA_PARAM prfDataValue = new CK_PRF_DATA_PARAM()
+        {
+            type = CK_PRF_DATA_TYPE.CK_SP800_108_ITERATION_VARIABLE,
+            pValue = IntPtr.Zero,
+            ulValueLen = 0
         };
 
         dataParsms.Add(prfDataValue);
