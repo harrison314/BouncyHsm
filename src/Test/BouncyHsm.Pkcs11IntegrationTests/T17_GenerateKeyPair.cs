@@ -239,7 +239,7 @@ public class T17_GenerateKeyPair
     }
 
     [TestMethod]
-    [DataRow("06082A8648CE3D030107", false, true, DisplayName = "NIST P-256")]
+    [DataRow("06082A8648CE3D030107", false, true, DisplayName = "NIST P-256 neverExtractavle")]
     [DataRow("06082A8648CE3D030107", true, false, DisplayName = "NIST P-256")]
     public void GenerateKeyPair_ECExtractable_Success(string ecParamsHex, bool extractable, bool neverExtractble)
     {
