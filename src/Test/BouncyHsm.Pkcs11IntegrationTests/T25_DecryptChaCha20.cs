@@ -22,10 +22,10 @@ public class T25_DecryptChaCha20
     [TestMethod]
     [DataRow(0, 64, 256)]
     [DataRow(0, 96, 256)]
-    //[DataRow(0, 192, 256)]
-    //[DataRow(51, 64, 87)]
-    //[DataRow(13, 96, 20786)]
-    //[DataRow(13, 192, 478)]
+    [DataRow(1, 96, 256)]
+    [DataRow(51, 64, 87)]
+    [DataRow(13, 96, 20786)]
+    [DataRow(13, 96, 478)]
     public void Decrypt_ChaCha20_Success(int counter, int nonceBits, int plainTextLen)
     {
         byte[] plainText = new byte[plainTextLen];
@@ -138,10 +138,10 @@ public class T25_DecryptChaCha20
     [TestMethod]
     [DataRow(0, 64, 256, 32)]
     [DataRow(0, 96, 256, 16)]
-    //[DataRow(0, 192, 256, 122)]
+    //[DataRow(0, 96, 256, 122)]
     //[DataRow(51, 64, 87, 52)]
     //[DataRow(13, 96, 20786, 200)]
-    //[DataRow(13, 192, 478, 32)]
+    //[DataRow(13, 96, 478, 32)]
     public void Decrypt_ChaCha20WithBuffer_Success(int counter, int nonceBits, int plainTextLen, int streamBufferLen)
     {
         byte[] plainText = new byte[plainTextLen];
