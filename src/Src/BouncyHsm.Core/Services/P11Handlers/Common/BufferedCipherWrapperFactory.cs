@@ -370,13 +370,8 @@ internal class BufferedCipherWrapperFactory
                 throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"BouncyHsm accept only 64 and 192 bits nonce length in SALSA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
             }
 
-            // BouncyHsm implementation errors
-            if (salsa20params.BlockCounter != 0UL)
-            {
-                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"BouncyHsm accept only value 0 for blockCounter in SALSA20_PARAMS for mechanism {(CKM)mechanism.MechanismType} yet.");
-            }
-
             return new Salsa20CipherWrapper(salsa20params.Nonce,
+                salsa20params.BlockCounter,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<Salsa20CipherWrapper>());
         }

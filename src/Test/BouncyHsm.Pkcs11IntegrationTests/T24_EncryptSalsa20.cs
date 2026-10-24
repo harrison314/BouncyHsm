@@ -17,6 +17,9 @@ public class T24_EncryptSalsa20
     [TestMethod]
     [DataRow(0UL, 64, 256)]
     [DataRow(0UL, 192, 256)]
+    [DataRow(1UL, 64, 256)]
+    [DataRow(126UL, 64, 256)]
+    [DataRow(458965UL, 64, 256)]
     public void Encrypt_Salsa20_Success(ulong counter, int nonceBits, int plainTextLen)
     {
         byte[] plainText = new byte[plainTextLen];
@@ -49,6 +52,9 @@ public class T24_EncryptSalsa20
     [TestMethod]
     [DataRow(0UL, 64, 256, 32)]
     [DataRow(0UL, 192, 256, 16)]
+    [DataRow(1UL, 64, 256, 32)]
+    [DataRow(126UL, 64, 256, 32)]
+    [DataRow(458965UL, 64, 256, 32)]
     public void Encrypt_Salsa20AsStream_Success(ulong counter, int nonceBits, int plainTextLen, int streamBufferLen)
     {
         byte[] plainText = new byte[plainTextLen];
