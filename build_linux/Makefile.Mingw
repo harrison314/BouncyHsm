@@ -1,0 +1,80 @@
+SRC_DIR=../src/Src/BouncyHsm.Pkcs11Lib
+
+CC=gcc
+EXTRA_FLAGS=
+
+CFLAGS=$(ARCH_FLAGS) -D_WIN32 -D_WIN32_WINNT=0x0600 -DCRYPTOKI_EXPORTS -DUNICODE -D_UNICODE -Wall -Wextra -O2 -I$(SRC_DIR) $(EXTRA_FLAGS)
+LDFLAGS=$(ARCH_FLAGS) -shared
+LDLIBS=-lws2_32
+
+HEADERFILES=$(SRC_DIR)/*.h $(SRC_DIR)/rpc/*.h $(SRC_DIR)/utils/*.h
+
+ifeq ($(origin BOUNCYOSENVIROMENT), environment)
+CFLAGS += -DBUILD_ENV=$(BOUNCYOSENVIROMENT)
+endif
+
+OBJECTS = \
+	globalContext.o \
+	logger.o \
+	dllMain.o \
+	cmp.o \
+	rpc.o \
+	tcpTransport.o \
+	bouncy-pkcs11-utils.o \
+	bouncy-pkcs11.o \
+	platformHelper.o
+
+all: ARCH_FLAGS=-m64
+all: LIBNAME=BouncyHsm.Pkcs11Lib-x64.dll
+all: build
+
+build64: ARCH_FLAGS=-m64
+build64: LIBNAME=BouncyHsm.Pkcs11Lib-x64.dll
+build64: build cleano
+
+build32: ARCH_FLAGS=-m32
+build32: LIBNAME=BouncyHsm.Pkcs11Lib-x86.dll
+build32: build cleano
+
+build: $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $(LIBNAME) $(OBJECTS) $(LDLIBS) \
+		-Wl,--out-implib,lib$(basename $(LIBNAME)).a
+	strip $(LIBNAME)
+
+platformHelper.o: $(SRC_DIR)/platformHelper.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+globalContext.o: $(SRC_DIR)/globalContext.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+logger.o: $(SRC_DIR)/logger.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+dllMain.o: $(SRC_DIR)/dllMain.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+cmp.o: $(SRC_DIR)/utils/cmp.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+rpc.o: $(SRC_DIR)/rpc/rpc.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+tcpTransport.o: $(SRC_DIR)/rpc/tcpTransport.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+bouncy-pkcs11-utils.o: $(SRC_DIR)/bouncy-pkcs11-utils.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+bouncy-pkcs11.o: $(SRC_DIR)/bouncy-pkcs11.c $(HEADERFILES)
+	$(CC) $(CFLAGS) -Wno-unused-parameter -c $< -o $@
+
+clean:
+	-del /Q *.o 2>nul
+	-del /Q *.dll 2>nul
+	-del /Q *.a 2>nul
+
+cleandll:
+	-del /Q *.dll 2>nul
+
+cleano:
+	-del /Q *.o 2>nul

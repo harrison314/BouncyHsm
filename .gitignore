@@ -351,3 +351,5 @@ MigrationBackup/
 
 build_linux/*.o
 build_linux/*.so
+build_linux/*.a
+build_linux/*.dll

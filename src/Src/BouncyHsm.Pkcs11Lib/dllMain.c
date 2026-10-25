@@ -8,7 +8,9 @@
 #define USE_VARIABLE(x) (void)(x)
 
 #ifdef _WIN32
+#if !defined(__MINGW32__)
 #pragma comment(lib,"ws2_32.lib") 
+#endif
 
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,

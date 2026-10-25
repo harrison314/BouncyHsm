@@ -372,3 +372,35 @@ bool freeProgramArgs(const char*** args, int* argc)
 }
 
 #endif
+
+#if defined(__MINGW32__)
+int vasprintf(char** strp, const char* fmt, va_list ap)
+{
+    va_list args;
+    va_copy(args, ap);
+    int len = vsnprintf(NULL, 0, fmt, args);
+    va_end(args);
+    if (len < 0)
+    {
+        return -1;
+    }
+
+    char* str = (char*)malloc((size_t)len + 1);
+    if (str == NULL)
+    {
+        return -1;
+    }
+
+    va_copy(args, ap);
+    int written = vsnprintf(str, (size_t)len + 1, fmt, args);
+    va_end(args);
+    if (written < 0)
+    {
+        free(str);
+        return -1;
+    }
+
+    *strp = str;
+    return written;
+}
+#endif

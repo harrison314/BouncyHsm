@@ -7,8 +7,11 @@
 
 // PKCS#11 related stuff
 #pragma pack(push, cryptoki, 1)
-
+#if !defined(__GNUC__)
 #define CK_IMPORT_SPEC __declspec(dllimport) 
+#else
+#define CK_IMPORT_SPEC
+#endif
 
 #ifdef CRYPTOKI_EXPORTS 
 #define CK_EXPORT_SPEC __declspec(dllexport) 

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 #include "includeWindows.h"
@@ -37,4 +38,7 @@ const char* GetPlatformName();
 bool getProgramArgs(const char*** args, int* argc);
 bool freeProgramArgs(const char*** args, int* argc);
 
+#if defined(__MINGW32__)
+int vasprintf(char** strp, const char* fmt, va_list ap);
+#endif
 #endif //PLATFORM_HELPER_H
