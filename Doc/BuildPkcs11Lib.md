@@ -84,3 +84,21 @@ cd BouncyHsm
 cd build_linux
 make CC=gcc ARCH_FLAGS=""
 ```
+
+## Example compilation for Windows using MinGW
+Install prerequisites:
+- git
+- MinGW
+
+Clone repository:
+```
+git clone https://github.com/harrison314/BouncyHsm.git
+```
+
+Build:
+```
+cd BouncyHsm
+# git checkout <last tag>
+cd build_linux
+mingw32-make.exe -f Makefile.Mingw
+```
