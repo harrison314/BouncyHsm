@@ -11,6 +11,7 @@
     <File Path="RpcDefintion.yaml" />
   </Folder>
   <Folder Name="/Src/">
+    <Project Path="Src/BouncyHsm.Aspire.Hosting/BouncyHsm.Aspire.Hosting.csproj" Id="25a79706-86d6-44bb-954a-a4c4cd495cfc" />
     <Project Path="Src/BouncyHsm.Cli/BouncyHsm.Cli.csproj" />
     <Project Path="Src/BouncyHsm.Client/BouncyHsm.Client.csproj" />
     <Project Path="Src/BouncyHsm.Core/BouncyHsm.Core.csproj" />
