@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyHsm.Client" Version="2.3.4" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
+    <PackageReference Include="Pkcs11Interop" Version="5.3.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.18.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AspireExample.ServiceDefaults\AspireExample.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>
