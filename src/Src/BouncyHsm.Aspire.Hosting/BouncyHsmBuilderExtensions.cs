@@ -1,6 +1,8 @@
 ﻿using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using BouncyHsm.Aspire.Hosting;
+using BouncyHsm.Client;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +11,8 @@ namespace Aspire.Hosting;
 
 public static class BouncyHsmBuilderExtensions
 {
+    private const string HttpClientName = "BouncyHsmResourceClient";
+
     [AspireExport]
     public static IResourceBuilder<BouncyHsmResource> AddBouncyHsm(this IDistributedApplicationBuilder builder, [ResourceName] string name, BouncyHsmImage? image = null)
     {
@@ -19,6 +23,10 @@ public static class BouncyHsmBuilderExtensions
         {
             image = BouncyHsmImage.Current;
         }
+
+        builder.Services.AddHttpClient(HttpClientName, client =>
+        {
+        });
 
         BouncyHsmResource bouncyHsmResource = new BouncyHsmResource(name);
         IResourceBuilder<BouncyHsmResource> rsBuilder = builder.AddResource(bouncyHsmResource)
@@ -31,10 +39,21 @@ public static class BouncyHsmBuilderExtensions
                      e.Protocol = System.Net.Sockets.ProtocolType.Tcp;
                  })
                  .WithHttpHealthCheck("/health")
-                 .OnResourceReady((resource, readyEvenet, ct) =>
+                 .OnResourceReady(async (resource, readyEvenet, ct) =>
                  {
-                     //TODO: use after initialize tasks
-                     return Task.CompletedTask;
+                     if (resource.InitializeTasks.Any())
+                     {
+                         EndpointReference apiEndpoint = resource.GetEndpoint(EndpointName.Http);
+                         IHttpClientFactory httpClientFactory = readyEvenet.Services.GetRequiredService<IHttpClientFactory>();
+                         HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
+
+                         BouncyHsmClient client = new BouncyHsmClient(apiEndpoint.Url, httpClient);
+
+                         foreach (Func<BouncyHsmClient, CancellationToken, Task> task in resource.InitializeTasks)
+                         {
+                             await task.Invoke(client, ct);
+                         }
+                     }
                  });
 
 
