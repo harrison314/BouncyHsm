@@ -98,7 +98,6 @@ public static class BouncyHsmBuilderInitializeExtensions
         return builder;
     }
 
-    //TODO: slot initialize,
-    // PEM import, P12 import
-    // migrate DB
+    //TODO: PEM import, P12 import
+    //TODO: Add plain method for generating
 }
