@@ -59,7 +59,7 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 
     if (value.InformationSensitive)
     {
-        return CKR_INFORMATION_SENSITIVE;
+        return CK_UNAVAILABLE_INFORMATION;
     }
 
     return (CK_ULONG)value.Value;
