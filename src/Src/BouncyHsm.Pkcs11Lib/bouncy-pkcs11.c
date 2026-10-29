@@ -445,6 +445,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pInfo)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     GetInfoRequest request;
     GetInfoEnvelope envelope;
 
@@ -1749,6 +1754,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
         return CKR_ARGUMENTS_BAD;
     }
 
+    if (NULL == pulEncryptedPartLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     EncryptUpdateRequest request;
     EncryptUpdateEnvelope envelope;
 
@@ -1801,6 +1811,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastEncryptedPart, CK_ULONG_PTR pulLastEncryptedPartLen)
 {
     LOG_ENTERING_TO_FUNCTION();
+
+    if (NULL == pulLastEncryptedPartLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
 
     EncryptFinalRequest request;
     EncryptFinalEnvelope envelope;
@@ -2246,6 +2261,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pulDigestLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     DigestFinalRequest request;
     DigestFinalEnvelope envelope;
 
@@ -2442,6 +2462,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pulSignatureLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     SignFinalRequest request;
     SignFinalEnvelope envelope;
 
@@ -2593,6 +2618,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {
     LOG_ENTERING_TO_FUNCTION();
+
+    if (NULL == pMechanism)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
 
     VerifyInitRequest request;
     VerifyInitEnvelope envelope;
@@ -2758,6 +2788,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {
     LOG_ENTERING_TO_FUNCTION();
+
+    if (NULL == pMechanism)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
 
     VerifyRecoverInitRequest request;
     VerifyRecoverInitEnvelope envelope;
