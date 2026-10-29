@@ -3372,7 +3372,15 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        memcpy(RandomData, envelope.Data->data, envelope.Data->size);
+        if (envelope.Data->size <= ulRandomLen)
+        {
+            memcpy(RandomData, envelope.Data->data, envelope.Data->size);
+        }
+        else
+        {
+            log_message(LOG_LEVEL_ERROR, "The server returned data that was too long for the %s function.", __FUNCTION__);
+            envelope.Rv = CKR_DEVICE_ERROR;
+        }
     }
 
     GenerateRandomEnvelope_Release(&envelope);
