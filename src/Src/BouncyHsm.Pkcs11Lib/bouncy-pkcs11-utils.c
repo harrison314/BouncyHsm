@@ -27,6 +27,11 @@ void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (destinationSize == 0)
+    {
+        return;
+    }
+
     if (src == NULL)
     {
         destination[0] = '\0';

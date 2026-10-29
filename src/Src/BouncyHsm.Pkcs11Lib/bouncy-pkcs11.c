@@ -817,7 +817,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_InitToken)(CK_SLOT_ID slotID, CK_UTF8CHAR_PTR pPin, 
     }
 
     char labelBuffer[36];
-    CopyPaddedStrToStr(labelBuffer, 32, pLabel);
+    // 32 chars + one char for `\0`
+    CopyPaddedStrToStr(labelBuffer, 32 + 1, pLabel);
     request.Label = labelBuffer;
 
     int rv = nmrpc_call_InitToken(&ctx, &request, &envelope);
