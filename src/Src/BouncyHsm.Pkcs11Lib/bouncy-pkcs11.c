@@ -16,7 +16,7 @@
 // https://github.com/Pkcs11Interop/pkcs11-mock/blob/master/src/pkcs11-mock.c
 // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
 
-void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
+static void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 {
     *appId = globalContext.appId;
 
@@ -32,6 +32,11 @@ void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 #ifndef _WIN32
     appId->Pid = (uint64_t)getpid();
 #endif
+}
+
+static size_t Minimum_size_t(size_t a, size_t b)
+{
+    return (a < b) ? a : b;
 }
 
 CK_FUNCTION_LIST bouncyHsm_pkcs11_2_40_functions =
@@ -484,9 +489,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
         pInfo->libraryVersion.minor = BOUNCY_HSM_LIBVERSION_MINOR;
 
         memset(pInfo->manufacturerID, ' ', sizeof(pInfo->manufacturerID));
-        memcpy(pInfo->manufacturerID, envelope.ManufacturerID, strlen(envelope.ManufacturerID));
+        memcpy(pInfo->manufacturerID,
+            envelope.ManufacturerID, 
+            Minimum_size_t(strlen(envelope.ManufacturerID), sizeof(pInfo->manufacturerID)));
     }
-
+    
     GetInfoEnvelope_Release(&envelope);
 
     return (CK_RV)envelope.Rv;
