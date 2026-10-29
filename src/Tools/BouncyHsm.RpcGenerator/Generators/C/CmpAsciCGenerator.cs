@@ -1039,6 +1039,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              if (!result)
              {
                  log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 result = NMRPC_FATAL_ERROR;
                  goto err;
              }
 

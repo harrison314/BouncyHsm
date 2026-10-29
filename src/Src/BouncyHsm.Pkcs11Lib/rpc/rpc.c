@@ -12501,6 +12501,7 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -12700,6 +12701,7 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -12899,6 +12901,7 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13098,6 +13101,7 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13297,6 +13301,7 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13496,6 +13501,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13695,6 +13701,7 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13894,6 +13901,7 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14093,6 +14101,7 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14292,6 +14301,7 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14491,6 +14501,7 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14690,6 +14701,7 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14889,6 +14901,7 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15088,6 +15101,7 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15287,6 +15301,7 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15486,6 +15501,7 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15685,6 +15701,7 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15884,6 +15901,7 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16083,6 +16101,7 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16282,6 +16301,7 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16481,6 +16501,7 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16680,6 +16701,7 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16879,6 +16901,7 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17078,6 +17101,7 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17277,6 +17301,7 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17476,6 +17501,7 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17675,6 +17701,7 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17874,6 +17901,7 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18073,6 +18101,7 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18272,6 +18301,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18471,6 +18501,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18670,6 +18701,7 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18869,6 +18901,7 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19068,6 +19101,7 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19267,6 +19301,7 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19466,6 +19501,7 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19665,6 +19701,7 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19864,6 +19901,7 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20063,6 +20101,7 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20262,6 +20301,7 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20461,6 +20501,7 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20660,6 +20701,7 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20859,6 +20901,7 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21058,6 +21101,7 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21257,6 +21301,7 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21456,6 +21501,7 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21655,6 +21701,7 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21854,6 +21901,7 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22053,6 +22101,7 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22252,6 +22301,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22451,6 +22501,7 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22650,6 +22701,7 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22849,6 +22901,7 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23048,6 +23101,7 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23247,6 +23301,7 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23446,6 +23501,7 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23645,6 +23701,7 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23844,6 +23901,7 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24043,6 +24101,7 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24242,6 +24301,7 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24441,6 +24501,7 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24640,6 +24701,7 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24839,6 +24901,7 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -25038,6 +25101,7 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
