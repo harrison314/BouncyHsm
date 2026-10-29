@@ -206,6 +206,19 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
             getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
 
             log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s, WSA error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, errorMsgBuffer);
+
+            int closeRv = closesocket(ctx->s);
+            if (closeRv != 0)
+            {
+                log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) closesocket failed after connect failed.", __FUNCTION__, __LINE__);
+            }
+
+            if (ctx->addr != NULL)
+            {
+                freeaddrinfo(ctx->addr);
+                ctx->addr = NULL;
+            }
+
             return NMRPC_FATAL_ERROR;
         }
 
