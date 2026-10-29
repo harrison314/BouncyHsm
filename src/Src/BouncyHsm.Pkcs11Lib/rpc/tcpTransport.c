@@ -305,6 +305,12 @@ int readclose(void* user_ctx)
 
 #else
 
+#if (defined(__APPLE__) && defined(__MACH__))
+#define SEND_SOCKET_FLAGS SO_NOSIGPIPE
+#else
+#define SEND_SOCKET_FLAGS MSG_NOSIGNAL
+#endif
+
 int translateHostName(const char* hostName, int port, SockContext_t* ctx)
 {
     struct addrinfo hints;
@@ -418,7 +424,7 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
         size_t remaining = request_data_size;
         while (remaining > 0)
         {
-            ssize_t sent = send(ctx->s, ptr, remaining, 0);
+            ssize_t sent = send(ctx->s, ptr, remaining, SEND_SOCKET_FLAGS);
             if (sent < 0)
             {
                 log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
