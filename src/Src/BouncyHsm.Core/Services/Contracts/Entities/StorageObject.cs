@@ -183,7 +183,8 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             or CKA.CKA_NEVER_EXTRACTABLE
             or CKA.CKA_ALWAYS_AUTHENTICATE
             or CKA.CKA_LOCAL
-            or CKA.CKA_UNIQUE_ID;
+            or CKA.CKA_UNIQUE_ID
+            or CKA.CKA_KEY_GEN_MECHANISM;
     }
 
     public override string ToString()
