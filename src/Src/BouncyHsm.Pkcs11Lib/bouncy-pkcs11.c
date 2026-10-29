@@ -902,7 +902,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetPIN)(CK_SESSION_HANDLE hSession, CK_UTF8CHAR_PTR 
         request.Utf8OldPin = &oldPinBinary;
     }
 
-    if (NULL != pOldPin)
+    if (NULL != pNewPin)
     {
         newPinBinary.data = (uint8_t*)pNewPin;
         newPinBinary.size = (size_t)ulNewLen;
