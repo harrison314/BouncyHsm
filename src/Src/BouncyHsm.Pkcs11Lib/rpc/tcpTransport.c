@@ -39,11 +39,13 @@ int translateHostName(const char* hostName, int port, SockContext_t* ctx)
     sprintf_s(portStr, sizeof(portStr), "%d", port);
 
     ZeroMemory(&hints, sizeof(hints));
+    
     hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // TCP socket
     hints.ai_protocol = IPPROTO_TCP;
 
     ctx->addr = NULL;
+    ZeroMemory(ctx->ipAddress, sizeof(ctx->ipAddress));
 
     result = getaddrinfo(hostName, portStr, &hints, &ctx->addr);
     if (result != 0)
@@ -335,6 +337,8 @@ int translateHostName(const char* hostName, int port, SockContext_t* ctx)
     hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // TCP socket
     hints.ai_protocol = IPPROTO_TCP;
+
+    memset(ctx->ipAddress, 0, sizeof(ctx->ipAddress));
 
     result = getaddrinfo(hostName, portStr, &hints, &ctx->addr);
     if (result != 0)
