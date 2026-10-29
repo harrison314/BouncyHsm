@@ -3409,6 +3409,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pSlot)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     WaitForSlotEventRequest request;
     WaitForSlotEventEnvelope envelope;
 
@@ -3424,7 +3429,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
     InitCallContext(&ctx, &request.AppId);
 
     request.Flags = (uint32_t)flags;
-    request.IsSlotPtrSet = pSlot != NULL;
     request.IsReservedPtrSet = pReserved != NULL;
 
     int rv = nmrpc_call_WaitForSlotEvent(&ctx, &request, &envelope);
@@ -3436,11 +3440,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        if (pSlot == NULL)
-        {
-            return CKR_ARGUMENTS_BAD;
-        }
-
         *pSlot = (CK_SLOT_ID)envelope.Data->SlotId;
     }
 

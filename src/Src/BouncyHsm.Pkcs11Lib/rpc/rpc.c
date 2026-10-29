@@ -9275,16 +9275,13 @@ int WaitForSlotEventRequest_Serialize(cmp_ctx_t* ctx, WaitForSlotEventRequest* v
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 4);
+    result = cmp_write_array(ctx, 3);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = AppIdentification_Serialize(ctx, &value->AppId);
    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_uinteger(ctx, value->Flags);
-   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
-
-  result = cmp_write_bool(ctx, value->IsSlotPtrSet);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_bool(ctx, value->IsReservedPtrSet);
@@ -9310,16 +9307,13 @@ int WaitForSlotEventRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* star
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 3) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field AppId");
 
   result = cmp_read_uint(ctx, &value->Flags);
   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Flags");
-
-  result = cmp_read_bool(ctx, &value->IsSlotPtrSet);
-  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsSlotPtrSet");
 
   result = cmp_read_bool(ctx, &value->IsReservedPtrSet);
   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsReservedPtrSet");

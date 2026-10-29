@@ -1715,7 +1715,6 @@ typedef struct _WaitForSlotEventRequest
 {
     AppIdentification AppId;
     uint32_t Flags;
-    bool IsSlotPtrSet;
     bool IsReservedPtrSet;
 } WaitForSlotEventRequest;
 

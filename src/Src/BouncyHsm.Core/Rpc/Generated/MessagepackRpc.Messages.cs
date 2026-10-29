@@ -3415,13 +3415,6 @@ public partial class WaitForSlotEventRequest : IRpcRequest
     }
 
     [Key(2)]
-    public bool IsSlotPtrSet
-    {
-        get;
-        set;
-    }
-
-    [Key(3)]
     public bool IsReservedPtrSet
     {
         get;
