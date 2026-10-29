@@ -86,13 +86,26 @@ public abstract class StorageObject : Entity, ICryptoApiObject
 
         if (attributeType == CKA.CKA_CLASS)
         {
-            // skip readonly properties
+            if (isUpdating)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                    $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
+            }
+
             return;
         }
 
         if (this.IsReadOnlyAttribute(attributeType))
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
+        }
+
+        if (isUpdating
+            && (attributeType == CKA.CKA_SENSITIVE && this.values[attributeType].AsBool() && !value.AsBool()
+                || attributeType == CKA.CKA_EXTRACTABLE && !this.values[attributeType].AsBool() && value.AsBool()))
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed in this direction.");
         }
 
         if (isUpdating && this.IsSensitiveAttribute(attributeType))
