@@ -653,7 +653,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR p
         pInfo->ulMaxSessionCount = ConvertCkSpecialUint(envelope.Data->MaxSessionCount);
         pInfo->ulRwSessionCount = ConvertCkSpecialUint(envelope.Data->RwSessionCount);
         pInfo->ulMaxPinLen = (CK_ULONG)envelope.Data->MaxPinLen;
-        pInfo->ulMinPinLen = (CK_ULONG)envelope.Data->MaxPinLen;
+        pInfo->ulMinPinLen = (CK_ULONG)envelope.Data->MinPinLen;
         pInfo->ulTotalPublicMemory = ConvertCkSpecialUint(envelope.Data->TotalPublicMemory);
         pInfo->ulFreePublicMemory = ConvertCkSpecialUint(envelope.Data->FreePublicMemory);
         pInfo->ulTotalPrivateMemory = ConvertCkSpecialUint(envelope.Data->TotalPrivateMemory);
