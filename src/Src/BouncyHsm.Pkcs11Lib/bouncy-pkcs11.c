@@ -2111,7 +2111,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pData && pData != 0)
+    if (NULL == pData && ulDataLen != 0)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (NULL == pulDigestLen)
     {
         return CKR_ARGUMENTS_BAD;
     }
