@@ -11,7 +11,7 @@
 
 void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const char* src)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     size_t copySize = strlen(src);
     if (copySize > destinationSize)
@@ -25,7 +25,7 @@ void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const ch
 
 void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8CHAR* src)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     if (destinationSize == 0)
     {
@@ -50,7 +50,7 @@ void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8
 
 CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     if (value.UnavailableInformation)
     {
@@ -72,7 +72,7 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 
 static void CopyCkUlongArrayToUint32Array(ArrayOfuint32_t* destination, CK_ULONG_PTR source)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     size_t i;
     size_t length = (size_t)destination->length;
@@ -251,7 +251,7 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
 
 void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     CK_ULONG i;
     for (i = 0; i < ulCount; i++)
@@ -291,7 +291,7 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
 
 static int CreateMacGeneralParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -317,7 +317,7 @@ static int CreateMacGeneralParams(MechanismValue* value, CK_MECHANISM_PTR pMecha
 
 static int CreateRsaPkcsPssParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_RSA_PKCS_PSS_PARAMS))
@@ -344,7 +344,7 @@ static int CreateRsaPkcsPssParams(MechanismValue* value, CK_MECHANISM_PTR pMecha
 
 static int CreateKeyDerivationStringData(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_KEY_DERIVATION_STRING_DATA))
@@ -370,7 +370,7 @@ static int CreateKeyDerivationStringData(MechanismValue* value, CK_MECHANISM_PTR
 
 static int CreateAesCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_AES_CBC_ENCRYPT_DATA_PARAMS))
@@ -397,7 +397,7 @@ static int CreateAesCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR
 
 static int CreateCamelliaCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS))
@@ -424,7 +424,7 @@ static int CreateCamelliaCbcEncryptDataparams(MechanismValue* value, CK_MECHANIS
 
 static int CreateConcatableBaseAndKey(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -449,7 +449,7 @@ static int CreateConcatableBaseAndKey(MechanismValue* value, CK_MECHANISM_PTR pM
 
 static int CreateKectractKeyFromKey(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_EXTRACT_PARAMS))
@@ -473,7 +473,7 @@ static int CreateKectractKeyFromKey(MechanismValue* value, CK_MECHANISM_PTR pMec
 
 static int CreateEcdh1DeriveParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_ECDH1_DERIVE_PARAMS))
@@ -519,7 +519,7 @@ static int CreateEcdh1DeriveParams(MechanismValue* value, CK_MECHANISM_PTR pMech
 
 static int CreateRawParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->pParameter == NULL)
@@ -543,7 +543,7 @@ static int CreateRawParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 static int CreateCgmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_GCM_PARAMS))
@@ -590,7 +590,7 @@ static int CreateCgmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 static int CreateCcmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_CCM_PARAMS))
@@ -637,7 +637,7 @@ static int CreateCcmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 static int CreateRsaPkcsOaepParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_RSA_PKCS_OAEP_PARAMS))
@@ -675,7 +675,7 @@ static int CreateRsaPkcsOaepParams(MechanismValue* value, CK_MECHANISM_PTR pMech
 
 static int CreateChacha20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -735,7 +735,7 @@ static int CreateChacha20Params(MechanismValue* value, CK_MECHANISM_PTR pMechani
 
 static int CreateSalsa20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_SALSA20_PARAMS))
@@ -780,7 +780,7 @@ static int CreateSalsa20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanis
 
 static int CreateSalsa20Poly1305Params(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_SALSA20_CHACHA20_POLY1305_PARAMS))
@@ -821,7 +821,7 @@ static int CreateSalsa20Poly1305Params(MechanismValue* value, CK_MECHANISM_PTR p
 
 static int CreateEddsaParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_EDDSA_PARAMS))
@@ -854,7 +854,7 @@ static int CreateEddsaParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 static int CreateSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -888,7 +888,7 @@ static int CreateSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM
 
 static int CreateHashSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -924,7 +924,7 @@ static int CreateHashSignAdditionalContextParams(MechanismValue* value, CK_MECHA
 
 static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -1084,7 +1084,7 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
 
 static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -1138,7 +1138,7 @@ static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pM
 
 static int CreateCkSp800_108FeedbackKdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
@@ -1200,7 +1200,7 @@ static int CreateCkSp800_108FeedbackKdfParams(MechanismValue* value, CK_MECHANIS
 
 int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     value->MechanismType = (uint32_t)pMechanism->mechanism;
     value->MechanismParamMp = NULL;
@@ -1374,7 +1374,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 void MechanismValue_Destroy(MechanismValue* value)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     if (value == NULL)
     {
