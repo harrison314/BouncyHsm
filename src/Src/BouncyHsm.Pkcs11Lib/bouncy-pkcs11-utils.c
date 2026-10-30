@@ -987,23 +987,23 @@ static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     return result;
 }
 
-static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ulDataParamsCount, Ckp_CkSp800_108PrfDataParsms** paramArrayPtrOutPtr)
+static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ulDataParamsCount, Ckp_CkSp800_108PrfDataParams** paramArrayPtrOutPtr)
 {
     *paramArrayPtrOutPtr = NULL;
-    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
-    paramArrayPtr = (Ckp_CkSp800_108PrfDataParsms*)malloc(ulDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParsms));
+    Ckp_CkSp800_108PrfDataParams* paramArrayPtr = NULL;
+    paramArrayPtr = (Ckp_CkSp800_108PrfDataParams*)malloc(ulDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParams));
     if (paramArrayPtr == NULL)
     {
         log_message(LOG_LEVEL_ERROR, "Malloc return null in FillPrfDataParams");
         return NMRPC_FATAL_ERROR;
     }
 
-    memset(paramArrayPtr, 0, ulDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParsms));
+    memset(paramArrayPtr, 0, ulDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParams));
 
     CK_ULONG i;
     for (i = 0; i < ulDataParamsCount; i++)
     {
-        Ckp_CkSp800_108PrfDataParsms* ptr = &paramArrayPtr[i];
+        Ckp_CkSp800_108PrfDataParams* ptr = &paramArrayPtr[i];
         CK_PRF_DATA_PARAM* ptrData = &(pDataParams[i]);
 
         switch (ptrData->type)
@@ -1142,7 +1142,7 @@ static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pM
     //TODO AdditionalDerivedKeys implementation
     ckSp800_108KdfParams.AdditionalDerivedKeysCount = (uint32_t)kdfparams->ulAdditionalDerivedKeys;
 
-    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
+    Ckp_CkSp800_108PrfDataParams* paramArrayPtr = NULL;
     if (kdfparams->ulNumberOfDataParams > 0)
     {
         result = FillPrfDataParams(kdfparams->pDataParams, kdfparams->ulNumberOfDataParams, &paramArrayPtr);
@@ -1204,7 +1204,7 @@ static int CreateCkSp800_108FeedbackKdfParams(MechanismValue* value, CK_MECHANIS
     //TODO AdditionalDerivedKeys implementation
     ckSp800_108FeedbackKdfParams.AdditionalDerivedKeysCount = (uint32_t)kdfparams->ulAdditionalDerivedKeys;
 
-    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
+    Ckp_CkSp800_108PrfDataParams* paramArrayPtr = NULL;
     if (kdfparams->ulNumberOfDataParams > 0)
     {
         result = FillPrfDataParams(kdfparams->pDataParams, kdfparams->ulNumberOfDataParams, &paramArrayPtr);

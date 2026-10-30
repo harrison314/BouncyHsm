@@ -1489,7 +1489,7 @@ Messages:
       Iv: binary
       Data: binary
 
-  Ckp_CkSp800_108PrfDataParsms:
+  Ckp_CkSp800_108PrfDataParams:
     Summary: > 
       Represents CK_PRF_DATA_PARAM, 
       CK_SP800_108_ITERATION_VARIABLE uses LittleEndian, WidthInBits;
@@ -1510,7 +1510,7 @@ Messages:
     Summary: Represents CK_SP800_108_KDF_PARAMS
     Fields:
       PrfType: uint32
-      DataParams: Ckp_CkSp800_108PrfDataParsms[]
+      DataParams: Ckp_CkSp800_108PrfDataParams[]
       # AdditionalDerivedKeys: AttrValueFromNative[] - is not support in current version
       AdditionalDerivedKeysCount: uint32
 
@@ -1518,7 +1518,7 @@ Messages:
     Summary: Represents CK_SP800_108_FEEDBACK_KDF_PARAMS
     Fields:
       PrfType: uint32
-      DataParams: Ckp_CkSp800_108PrfDataParsms[]
+      DataParams: Ckp_CkSp800_108PrfDataParams[]
       Iv: binary
       # AdditionalDerivedKeys: AttrValueFromNative[] - is not support in current version
       AdditionalDerivedKeysCount: uint32

@@ -11,7 +11,7 @@ namespace BouncyHsm.Core.Services.Contracts.Generators.PrfDataParams;
 
 internal static class PrfDataParamFactory
 {
-    public static async Task<IPrfDataParam[]> Create(Ckp_CkSp800_108PrfDataParsms[] dataParams,
+    public static async Task<IPrfDataParam[]> Create(Ckp_CkSp800_108PrfDataParams[] dataParams,
         IP11HwServices hwServices,
         IMemorySession memorySession,
         IP11Session p11Session,
@@ -26,7 +26,7 @@ internal static class PrfDataParamFactory
         IPrfDataParam[] result = new IPrfDataParam[dataParams.Length];
         for (int i = 0; i < result.Length; i++)
         {
-            Ckp_CkSp800_108PrfDataParsms dataParam = dataParams[i];
+            Ckp_CkSp800_108PrfDataParams dataParam = dataParams[i];
             result[i] = ((CK_PRF_DATA_TYPE)dataParam.Type) switch
             {
                 CK_PRF_DATA_TYPE.CK_SP800_108_ITERATION_VARIABLE => dataParam.IsNull
@@ -43,7 +43,7 @@ internal static class PrfDataParamFactory
         return result;
     }
 
-    private static async Task<SecretKeyObject> FindDeriveKey(IP11HwServices hwServices, IMemorySession memorySession, IP11Session p11Session, CKM alowedMechanism, Ckp_CkSp800_108PrfDataParsms dataParam, CancellationToken cancellationToken)
+    private static async Task<SecretKeyObject> FindDeriveKey(IP11HwServices hwServices, IMemorySession memorySession, IP11Session p11Session, CKM alowedMechanism, Ckp_CkSp800_108PrfDataParams dataParam, CancellationToken cancellationToken)
     {
         SecretKeyObject keyObject = await hwServices.FindObjectByHandle<SecretKeyObject>(memorySession, p11Session, dataParam.KeyHandle, cancellationToken);
 
