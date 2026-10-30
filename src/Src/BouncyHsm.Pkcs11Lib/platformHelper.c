@@ -88,6 +88,7 @@ int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...)
 bool GetCurrentComputerName(char* buffer, size_t maxSize)
 {
     int result = gethostname(buffer, maxSize);
+    buffer[maxSize - 1] = 0;
     return result == 0;
 }
 
@@ -133,7 +134,7 @@ static char* LPWSTRtoUtf8(const LPWSTR src, int* out_len)
 {
     size_t src_length = wcslen(src);
     int length = WideCharToMultiByte(CP_UTF8, 0, src, (int)src_length, 0, 0, NULL, NULL);
-    if (length == ERROR_NO_UNICODE_TRANSLATION)
+    if (length == 0)
     {
         return NULL;
     }

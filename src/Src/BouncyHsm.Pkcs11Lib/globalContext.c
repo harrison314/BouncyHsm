@@ -70,7 +70,7 @@ static char* toUtf8(const wchar_t* src, int* out_len)
 {
     size_t src_length = wcslen(src);
     int length = WideCharToMultiByte(CP_UTF8, 0, src, (int)src_length, 0, 0, NULL, NULL);
-    if (length == ERROR_NO_UNICODE_TRANSLATION)
+    if (length == 0)
     {
         return NULL;
     }
