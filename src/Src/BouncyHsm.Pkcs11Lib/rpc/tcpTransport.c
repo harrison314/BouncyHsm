@@ -105,7 +105,7 @@ bool toUtf8Msg(wchar_t* inBuffer, char* outBuffer, size_t outBufferLen)
         return false;
     }
 
-    if (((size_t)length) > outBufferLen)
+    if (((size_t)length) >= outBufferLen)
     {
         return false;
     }
@@ -124,12 +124,12 @@ int getWsaLastErrorMessage(char* buffer, size_t bufferLen)
     wchar_t msgbuf[WSA_ERROR_MESSAGE_BUFFER_LEN];
     msgbuf[0] = L'\0';
 
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
         NULL,                // lpsource
         wsaErr,                 // message id
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),    // languageid
         msgbuf,              // output buffer
-        sizeof(msgbuf),     // size of msgbuf, bytes
+        _countof(msgbuf),     // size of msgbuf, chars
         NULL);
 
     if (msgbuf[0] == L'\0')
@@ -253,12 +253,13 @@ int sock_flush(void* user_ctx)
 
     SockContext_t* ctx = (SockContext_t*)user_ctx;
 
-    if (shutdown(ctx->s, SD_SEND) == SOCKET_ERROR)
+    BOOL flag = TRUE;
+    if (setsockopt(ctx->s, IPPROTO_TCP, TCP_NODELAY, (const char*)&flag, sizeof(flag)) == SOCKET_ERROR)
     {
         char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
         getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+        log_message(LOG_LEVEL_ERROR, "setsockopt(TCP_NODELAY) failed: %s",  errorMsgBuffer);
 
-        log_message(LOG_LEVEL_ERROR, "shutdown failed : %s", errorMsgBuffer);
         return NMRPC_FATAL_ERROR;
     }
 
@@ -509,6 +510,7 @@ int readclose(void* user_ctx)
     if (ctx->addr != NULL)
     {
         freeaddrinfo(ctx->addr);
+        ctx->addr = NULL;
     }
 
     return NMRPC_OK;
