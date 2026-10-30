@@ -431,4 +431,46 @@ public class T29_CopyObject
 
         _ = session.CopyObject(key, template);
     }
+
+    [TestMethod]
+    public void CopyObject_KeySecurityAttributes_ReadOnly()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        List<IObjectAttribute> keyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, 32U),
+        };
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_AES_KEY_GEN);
+        IObjectHandle key = session.GenerateKey(mechanism, keyAttributes);
+
+        Pkcs11Exception sensitiveException = Assert.Throws<Pkcs11Exception>(() => _ = session.CopyObject(key,
+            new List<IObjectAttribute>() { factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false) }));
+        Assert.AreEqual(CKR.CKR_ATTRIBUTE_READ_ONLY, sensitiveException.RV);
+
+        Pkcs11Exception extractableException = Assert.Throws<Pkcs11Exception>(() => _ = session.CopyObject(key,
+            new List<IObjectAttribute>() { factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true) }));
+        Assert.AreEqual(CKR.CKR_ATTRIBUTE_READ_ONLY, extractableException.RV);
+
+        Pkcs11Exception mechanismException = Assert.Throws<Pkcs11Exception>(() => _ = session.CopyObject(key,
+            new List<IObjectAttribute>() { factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_GEN_MECHANISM, (uint)CKM.CKM_DES3_KEY_GEN) }));
+        Assert.AreEqual(CKR.CKR_ATTRIBUTE_READ_ONLY, mechanismException.RV);
+
+        Pkcs11Exception classException = Assert.Throws<Pkcs11Exception>(() => _ = session.CopyObject(key,
+            new List<IObjectAttribute>() { factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA) }));
+        Assert.AreEqual(CKR.CKR_ATTRIBUTE_READ_ONLY, classException.RV);
+    }
 }

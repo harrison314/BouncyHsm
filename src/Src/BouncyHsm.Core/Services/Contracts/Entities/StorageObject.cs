@@ -86,13 +86,31 @@ public abstract class StorageObject : Entity, ICryptoApiObject
 
         if (attributeType == CKA.CKA_CLASS)
         {
-            // skip readonly properties
+            if (isUpdating)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                    $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
+            }
+
             return;
         }
 
         if (this.IsReadOnlyAttribute(attributeType))
         {
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
+        }
+
+        if (isUpdating)
+        {
+            if (attributeType == CKA.CKA_SENSITIVE)
+            {
+                this.CheckChangeFalseToTrue(CKA.CKA_SENSITIVE, value);
+            }
+
+            if (attributeType == CKA.CKA_EXTRACTABLE)
+            {
+                this.CheckChangeTrueToFalse(CKA.CKA_EXTRACTABLE, value);
+            }
         }
 
         if (isUpdating && this.IsSensitiveAttribute(attributeType))
@@ -183,7 +201,8 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             or CKA.CKA_NEVER_EXTRACTABLE
             or CKA.CKA_ALWAYS_AUTHENTICATE
             or CKA.CKA_LOCAL
-            or CKA.CKA_UNIQUE_ID;
+            or CKA.CKA_UNIQUE_ID
+            or CKA.CKA_KEY_GEN_MECHANISM;
     }
 
     public override string ToString()
@@ -201,5 +220,23 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         }
 
         return size;
+    }
+
+    private void CheckChangeTrueToFalse(CKA attributeType, IAttributeValue newValue)
+    {
+        if (!this.values[attributeType].AsBool() && newValue.AsBool())
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed from CK_FALSE to CK_TRUE.");
+        }
+    }
+
+    private void CheckChangeFalseToTrue(CKA attributeType, IAttributeValue newValue)
+    {
+        if (this.values[attributeType].AsBool() && !newValue.AsBool())
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed from CK_TRUE to CK_FALSE.");
+        }
     }
 }
