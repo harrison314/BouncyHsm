@@ -339,7 +339,7 @@ static void configureLogging(const char* configurationString)
 
 GlobalContext_t globalContext;
 
-void GlobalContextInit()
+void GlobalContextInit(void)
 {
 #ifdef _WIN32
     uint64_t pid = (uint64_t)GetCurrentProcessId();

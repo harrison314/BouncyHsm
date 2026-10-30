@@ -19,7 +19,7 @@ typedef struct _globalContext {
 
 extern GlobalContext_t globalContext;
 
-void GlobalContextInit();
+void GlobalContextInit(void);
 
 
 #define BOUNCY_HSM_CFG_STRING "BOUNCY_HSM_CFG_STRING"

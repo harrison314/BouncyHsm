@@ -13,6 +13,12 @@ void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const ch
 {
     LOG_TRACE_ENTERING_TO_FUNCTION();
 
+    if (destination == NULL || src == NULL)
+    {
+        log_message(LOG_LEVEL_ERROR, "Bad argument destination or src is NULL in functions %s.", __FUNCTION__);
+        return;
+    }
+
     size_t copySize = strlen(src);
     if (copySize > destinationSize)
     {
@@ -26,6 +32,12 @@ void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const ch
 void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8CHAR* src)
 {
     LOG_TRACE_ENTERING_TO_FUNCTION();
+
+    if (destination == NULL)
+    {
+        log_message(LOG_LEVEL_ERROR, "Bad argument destination is NULL in functions %s.", __FUNCTION__);
+        return;
+    }
 
     if (destinationSize == 0)
     {
