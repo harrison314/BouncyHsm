@@ -1706,6 +1706,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
+
         return CKR_DEVICE_ERROR;
     }
 
@@ -1927,6 +1929,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
+
         return CKR_DEVICE_ERROR;
     }
 
@@ -2375,6 +2379,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -2576,6 +2581,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECH
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -2677,6 +2683,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -2847,6 +2854,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_ME
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -3856,7 +3864,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
         *pulCiphertextLen = (CK_ULONG)envelope.Data->PulCiphertextLen;
     }
 
-    MechanismValue_Destroy(&request.Mechanism);
     if (NULL != attrTemplate)
     {
         AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
@@ -3929,7 +3936,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
         *phKey = (CK_OBJECT_HANDLE)envelope.Data->PhKeyHandle;
     }
 
-    MechanismValue_Destroy(&request.Mechanism);
     if (NULL != attrTemplate)
     {
         AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
