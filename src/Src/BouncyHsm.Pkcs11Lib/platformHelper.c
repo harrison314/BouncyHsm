@@ -22,8 +22,8 @@ int strcpy_s(char* destination, size_t SizeInBytes, const char* _Source)
         return _GCC_EINVAL;
     }
 
-    size_t srclLen = strlen(_Source);
-    if (srclLen >= SizeInBytes)
+    size_t srcLen = strlen(_Source);
+    if (srcLen >= SizeInBytes)
     {
         destination[0] = 0;
         return _GCC_ERANGE;
@@ -257,11 +257,11 @@ bool getProgramArgs(const char*** args, int* argc)
     char* buffer = NULL;
     size_t dataSize = 0;
     char tmpBuffer[4096];
-    size_t readed;
+    size_t bytesRead;
 
-    while ((readed = fread(tmpBuffer, 1, sizeof(tmpBuffer), fd)) > 0)
+    while ((bytesRead = fread(tmpBuffer, 1, sizeof(tmpBuffer), fd)) > 0)
     {
-        char* newBuffer = (char*)realloc(buffer, dataSize + readed + 1);
+        char* newBuffer = (char*)realloc(buffer, dataSize + bytesRead + 1);
         if (newBuffer == NULL)
         {
             if (buffer != NULL)
@@ -274,8 +274,8 @@ bool getProgramArgs(const char*** args, int* argc)
         }
 
         buffer = newBuffer;
-        memcpy(buffer + dataSize, tmpBuffer, readed);
-        dataSize += readed;
+        memcpy(buffer + dataSize, tmpBuffer, bytesRead);
+        dataSize += bytesRead;
         buffer[dataSize] = '\0';
     }
 

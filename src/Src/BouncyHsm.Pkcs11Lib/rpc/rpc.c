@@ -12533,14 +12533,14 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12733,14 +12733,14 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12933,14 +12933,14 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13133,14 +13133,14 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13333,14 +13333,14 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13533,14 +13533,14 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13733,14 +13733,14 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13933,14 +13933,14 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14133,14 +14133,14 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14333,14 +14333,14 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14533,14 +14533,14 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14733,14 +14733,14 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14933,14 +14933,14 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15133,14 +15133,14 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15333,14 +15333,14 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15533,14 +15533,14 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15733,14 +15733,14 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15933,14 +15933,14 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16133,14 +16133,14 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16333,14 +16333,14 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16533,14 +16533,14 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16733,14 +16733,14 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16933,14 +16933,14 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17133,14 +17133,14 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17333,14 +17333,14 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17533,14 +17533,14 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17733,14 +17733,14 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17933,14 +17933,14 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18133,14 +18133,14 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18333,14 +18333,14 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18533,14 +18533,14 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18733,14 +18733,14 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18933,14 +18933,14 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19133,14 +19133,14 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19333,14 +19333,14 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19533,14 +19533,14 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19733,14 +19733,14 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19933,14 +19933,14 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20133,14 +20133,14 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20333,14 +20333,14 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20533,14 +20533,14 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20733,14 +20733,14 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20933,14 +20933,14 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21133,14 +21133,14 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21333,14 +21333,14 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21533,14 +21533,14 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21733,14 +21733,14 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21933,14 +21933,14 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22133,14 +22133,14 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22333,14 +22333,14 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22533,14 +22533,14 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22733,14 +22733,14 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22933,14 +22933,14 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23133,14 +23133,14 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23333,14 +23333,14 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23533,14 +23533,14 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23733,14 +23733,14 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23933,14 +23933,14 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24133,14 +24133,14 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24333,14 +24333,14 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24533,14 +24533,14 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24733,14 +24733,14 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24933,14 +24933,14 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -25133,14 +25133,14 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 

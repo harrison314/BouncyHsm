@@ -1077,14 +1077,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
              if (read_head_buffer.size != response_header_size)
              {
-                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
                  goto err;
              }
 
              read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
              if (read_body_buffer.size != response_body_size)
              {
-                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
                  goto err;
              }
 

@@ -333,7 +333,7 @@ static void configureLogging(const char* configurationString)
 
     if (!logger_init(levelBuffer, targetBuffer))
     {
-        log_message(LOG_LEVEL_ERROR, "Error during initialized logger. Check LogTarget and LogLevel setting.");
+        log_message(LOG_LEVEL_ERROR, "Error during logger initialization. Check LogTarget and LogLevel setting.");
     }
 }
 
@@ -431,8 +431,8 @@ void GlobalContextInit(void)
         free((void*)cfgString);
     }
 
-    log_message(LOG_LEVEL_INFO, "Successful initialized PKCS11 library.");
-    log_message(LOG_LEVEL_INFO, "Config - pid %lu AppName: %s Nonce: %s", globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
+    log_message(LOG_LEVEL_INFO, "PKCS#11 library successfully initialized.");
+    log_message(LOG_LEVEL_INFO, "Config - pid %lu AppName: %s Nonce: %s", (unsigned long)globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
     log_message(LOG_LEVEL_INFO, "Config - Server: %s Port: %i", globalContext.server, globalContext.port);
     log_message(LOG_LEVEL_INFO, "Config - Tag: %s", globalContext.tag);
 }
