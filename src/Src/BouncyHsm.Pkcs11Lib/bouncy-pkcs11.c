@@ -1205,6 +1205,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
@@ -1272,6 +1277,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
@@ -1483,6 +1493,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
@@ -1538,6 +1553,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
