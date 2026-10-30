@@ -102,6 +102,13 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
     CK_ULONG i;
     for (i = 0; i < ulCount; i++)
     {
+        if (pTemplate[i].pValue == NULL && pTemplate[i].ulValueLen != 0)
+        {
+            log_message(LOG_LEVEL_ERROR, "Template pValue == NULL and ulValueLen != 0 on index %lu in ConvertToAttrValueFromNative.", (unsigned long)i);
+            AttrValueFromNative_Destroy(ptr, ulCount);
+            return CKR_ATTRIBUTE_VALUE_INVALID;
+        }
+
         ptr[i].ValueBool = false;
         ptr[i].ValueCkUlong = 0;
 
@@ -1449,7 +1456,7 @@ CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTem
 
                 if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Binary)
                 {
-                    memcpy(pTemplate[i].pValue, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
+                    memcpy_s(pTemplate[i].pValue, (size_t)pTemplate[i].ulValueLen, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
                 {
