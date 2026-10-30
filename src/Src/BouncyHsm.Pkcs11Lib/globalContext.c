@@ -368,6 +368,7 @@ void GlobalContextInit()
         if (!parseConnectionStringOrDefault(cfgString, "Server", globalContext.server, sizeof(globalContext.server), BOUNCY_HSM_DEFAULT_SERVER))
         {
             log_message(LOG_LEVEL_ERROR, "Error during reading Server.");
+            free((void*)cfgString);
             return;
         }
 
@@ -376,6 +377,7 @@ void GlobalContextInit()
         if (!parseConnectionString(cfgString, "Port", portBuffer, &portBufferSize))
         {
             log_message(LOG_LEVEL_ERROR, "Error during reading Port.");
+            free((void*)cfgString);
             return;
         }
 
@@ -390,12 +392,14 @@ void GlobalContextInit()
             if (rv != 1)
             {
                 log_message(LOG_LEVEL_ERROR, "Error during reading Port. Is not number.");
+                free((void*)cfgString);
                 return;
             }
 
             if (portValue < 0 || portValue > 65535)
             {
                 log_message(LOG_LEVEL_ERROR, "Error during reading Port. Invalid port number: %d.", portValue);
+                free((void*)cfgString);
                 return;
             }
 
@@ -405,6 +409,7 @@ void GlobalContextInit()
         if (!parseConnectionStringOrDefault(cfgString, "Tag", globalContext.tag, sizeof(globalContext.tag), ""))
         {
             log_message(LOG_LEVEL_ERROR, "Error during reading Tag.");
+            free((void*)cfgString);
             return;
         }
 
