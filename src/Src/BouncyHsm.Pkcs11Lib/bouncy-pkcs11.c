@@ -402,6 +402,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        freeProgramArgs(&request.ClientInfo.CmdLine.array, &request.ClientInfo.CmdLine.length);
+
         return CKR_DEVICE_ERROR;
     }
 
@@ -3843,6 +3845,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
                 {
                     AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
                 }
+
+                EncapsulateKeyEnvelope_Release(&envelope);
 
                 return CKR_DEVICE_ERROR;
             }
