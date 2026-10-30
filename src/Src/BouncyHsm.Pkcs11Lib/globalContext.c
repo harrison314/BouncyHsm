@@ -418,7 +418,7 @@ void GlobalContextInit()
     }
 
     log_message(LOG_LEVEL_INFO, "Successful initialized PKCS11 library.");
-    log_message(LOG_LEVEL_INFO, "Config - pid %i AppName: %s Nonce: %s", globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
+    log_message(LOG_LEVEL_INFO, "Config - pid %lu AppName: %s Nonce: %s", globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
     log_message(LOG_LEVEL_INFO, "Config - Server: %s Port: %i", globalContext.server, globalContext.port);
     log_message(LOG_LEVEL_INFO, "Config - Tag: %s", globalContext.tag);
 }
