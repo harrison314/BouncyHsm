@@ -114,6 +114,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
               if (!ctx->read(ctx, (void*) buff, size))
               {
                   NMRPC_LOG_ERR_TEXT("Error during deserializing.");
+                  free((void*)buff);
                   return NMRPC_DESERIALIZE_ERR;
               }
 
@@ -152,11 +153,16 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
               if (!ctx->read(ctx, (void*) buff, size))
               {
                   NMRPC_LOG_ERR_TEXT("Error during deserilizing.");
+                  free((void*)buff);
                   return NMRPC_DESERIALIZE_ERR;
               }
             
               Binary* binary = (Binary*) malloc(sizeof(Binary));
-              if (binary == NULL) return NMRPC_FATAL_ERROR;
+              if (binary == NULL)
+              {
+                  free((void*)buff);
+                  return NMRPC_FATAL_ERROR;
+              }
               
               binary->data = buff;
               binary->size = size;
@@ -349,12 +355,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 result = serialize(&ctx, data);
                 if (result != NMRPC_OK)
                 {
+                    InternalBuffer_free(&buffer);
                     return result;
                 }
 
                 Binary* rData = (Binary*) malloc(sizeof(Binary));
                 if (rData == NULL)
                 {
+                   InternalBuffer_free(&buffer);
                    return NMRPC_FATAL_ERROR;
                 }
 
