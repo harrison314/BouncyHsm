@@ -1044,6 +1044,13 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
                 return NMRPC_BAD_ARGUMENT;
             }
 
+            if (ptrData->pValue == NULL)
+            {
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid pValue for data param %s in %s", "CK_SP800_108_COUNTER_FORMAT", __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+
             CK_SP800_108_COUNTER_FORMAT* cf = (CK_SP800_108_COUNTER_FORMAT*)ptrData->pValue;
             ptr->LittleEndian = (bool)cf->bLittleEndian;
             ptr->WidthInBits = (uint32_t)cf->ulWidthInBits;
@@ -1071,6 +1078,13 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
                 return NMRPC_BAD_ARGUMENT;
             }
 
+            if (ptrData->pValue == NULL)
+            {
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid pValue for data param %s in %s", "CK_SP800_108_KEY_HANDLE", __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+
             ptr->KeyHandle = (uint32_t)(*((uint32_t*)ptrData->pValue));
             break;
 
@@ -1080,6 +1094,13 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
             {
                 free(paramArrayPtr);
                 log_message(LOG_LEVEL_ERROR, "Invalid ulValueLen for data param %s in %s", "CK_SP800_108_DKM_LENGTH", __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+
+            if (ptrData->pValue == NULL)
+            {
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid pValue for data param %s in %s", "CK_SP800_108_DKM_LENGTH", __FUNCTION__);
                 return NMRPC_BAD_ARGUMENT;
             }
 
@@ -1226,6 +1247,12 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
     if (pMechanism->pParameter == NULL)
     {
+        if (pMechanism->ulParameterLen != 0)
+        {
+            log_message(LOG_LEVEL_ERROR, "pMechanism->pParameter == NULL and pMechanism->ulParameterLen != 0. In function %s.", __FUNCTION__);
+            return NMRPC_BAD_ARGUMENT;
+        }
+
         return NMRPC_OK;
     }
 
