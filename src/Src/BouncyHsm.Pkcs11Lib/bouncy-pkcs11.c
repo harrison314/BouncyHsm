@@ -1422,6 +1422,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
     request.ObjectHandle = (uint32_t)hObject;
 
     request.InTemplate.array = (GetAttributeInputValues*)malloc(sizeof(GetAttributeInputValues) * ulCount);
+    if (request.InTemplate.array == NULL)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+
     request.InTemplate.length = (int)ulCount;
 
     CK_ULONG i;
