@@ -100,12 +100,17 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
         }
 
-        if (isUpdating
-            && (attributeType == CKA.CKA_SENSITIVE && this.values[attributeType].AsBool() && !value.AsBool()
-                || attributeType == CKA.CKA_EXTRACTABLE && !this.values[attributeType].AsBool() && value.AsBool()))
+        if (isUpdating)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
-                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed in this direction.");
+            if (attributeType == CKA.CKA_SENSITIVE)
+            {
+                this.CheckChangeFalseToTrue(CKA.CKA_SENSITIVE, value);
+            }
+
+            if (attributeType == CKA.CKA_EXTRACTABLE)
+            {
+                this.CheckChangeTrueToFalse(CKA.CKA_EXTRACTABLE, value);
+            }
         }
 
         if (isUpdating && this.IsSensitiveAttribute(attributeType))
@@ -215,5 +220,23 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         }
 
         return size;
+    }
+
+    private void CheckChangeTrueToFalse(CKA attributeType, IAttributeValue newValue)
+    {
+        if (!this.values[attributeType].AsBool() && newValue.AsBool())
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed from CK_FALSE to CK_TRUE.");
+        }
+    }
+
+    private void CheckChangeFalseToTrue(CKA attributeType, IAttributeValue newValue)
+    {
+        if (this.values[attributeType].AsBool() && !newValue.AsBool())
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed from CK_TRUE to CK_FALSE.");
+        }
     }
 }
