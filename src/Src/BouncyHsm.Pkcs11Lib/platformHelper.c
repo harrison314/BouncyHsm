@@ -23,7 +23,7 @@ int strcpy_s(char* destination, size_t SizeInBytes, const char* _Source)
     }
 
     size_t srclLen = strlen(_Source);
-    if (srclLen > SizeInBytes)
+    if (srclLen >= SizeInBytes)
     {
         destination[0] = 0;
         return _GCC_ERANGE;
@@ -49,7 +49,7 @@ int strncpy_s(char* destination, size_t destsz, const char* _Source, size_t coun
         srcSize = count;
     }
 
-    if (srcSize > destsz)
+    if (srcSize >= destsz)
     {
         destination[0] = 0;
         return _GCC_ERANGE;
@@ -165,7 +165,7 @@ bool getProgramArgs(const char*** args, int* argc)
     LPWSTR* szArgList = NULL;
     int argCount;
 
-    szArgList = CommandLineToArgvW((LPCWSTR)GetCommandLine(), &argCount);
+    szArgList = CommandLineToArgvW((LPCWSTR)GetCommandLineW(), &argCount);
     if (szArgList == NULL)
     {
         // Unable to parse command line
