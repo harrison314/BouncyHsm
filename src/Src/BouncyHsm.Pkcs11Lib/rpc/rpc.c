@@ -170,7 +170,7 @@ int nmrpc_global_context_init(nmrpc_global_context_t* ctx, void* user_ctx, nmrpc
     return NMRPC_OK;
 }
 
-static bool mnrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
+static bool nmrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
 {
     USE_VARIABLE(ctx);    
     USE_VARIABLE(data);
@@ -179,7 +179,7 @@ static bool mnrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
     return false;
 }
 
-static bool mnrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
+static bool nmrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
 {
     USE_VARIABLE(ctx);    
     USE_VARIABLE(count);
@@ -187,7 +187,7 @@ static bool mnrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
     return false;
 }
 
-static size_t mnrpc_empty_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
+static size_t nmrpc_empty_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
 {
     USE_VARIABLE(ctx);    
     USE_VARIABLE(data);   
@@ -259,7 +259,7 @@ static int InternalBuffer_append(InternalBuffer_t* buffer, const void* data, siz
    return NMRPC_OK;
 }
 
-static size_t mnrpc_buffer_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
+static size_t nmrpc_buffer_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
 {
     InternalBuffer_t* buffer = (InternalBuffer_t*)ctx->buf;
     if (InternalBuffer_append(buffer, data, count) != NMRPC_OK)
@@ -276,7 +276,7 @@ typedef struct _InternalBufferReader {
     size_t position;
 } InternalBufferReader_t;
 
-static bool mnrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
+static bool nmrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
 {
     InternalBufferReader_t* bufferReader = (InternalBufferReader_t*)ctx->buf;
     
@@ -291,7 +291,7 @@ static bool mnrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t li
     return true;
 }
 
-static bool mnrpc_bufferReader_file_skipper(cmp_ctx_t *ctx, size_t count)
+static bool nmrpc_bufferReader_file_skipper(cmp_ctx_t *ctx, size_t count)
 {
     InternalBufferReader_t* bufferReader = (InternalBufferReader_t*)ctx->buf;
     if (bufferReader->position + count > bufferReader->size)
@@ -319,7 +319,7 @@ int nmrpc_writeAsBinary(void *data, SerializeFnPtr_t serialize, Binary** outBina
         return result;
     }
 
-    cmp_init(&ctx, &buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&ctx, &buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     result = serialize(&ctx, data);
     if (result != NMRPC_OK)
@@ -12413,8 +12413,8 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -12549,7 +12549,7 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = PingEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -12613,8 +12613,8 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -12749,7 +12749,7 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = InitializeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -12813,8 +12813,8 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -12949,7 +12949,7 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FinalizeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13013,8 +13013,8 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13149,7 +13149,7 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13213,8 +13213,8 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13349,7 +13349,7 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSlotListEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13413,8 +13413,8 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13549,7 +13549,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSlotInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13613,8 +13613,8 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13749,7 +13749,7 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetTokenInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13813,8 +13813,8 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13949,7 +13949,7 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetMechanismListEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14013,8 +14013,8 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14149,7 +14149,7 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetMechanismInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14213,8 +14213,8 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14349,7 +14349,7 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = InitTokenEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14413,8 +14413,8 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14549,7 +14549,7 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = InitPinEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14613,8 +14613,8 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14749,7 +14749,7 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SetPinEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14813,8 +14813,8 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14949,7 +14949,7 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = OpenSessionEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15013,8 +15013,8 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15149,7 +15149,7 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CloseSessionEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15213,8 +15213,8 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15349,7 +15349,7 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CloseAllSessionsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15413,8 +15413,8 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15549,7 +15549,7 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSessionInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15613,8 +15613,8 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15749,7 +15749,7 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = LoginEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15813,8 +15813,8 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15949,7 +15949,7 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = LogoutEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16013,8 +16013,8 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16149,7 +16149,7 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SeedRandomEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16213,8 +16213,8 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16349,7 +16349,7 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GenerateRandomEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16413,8 +16413,8 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16549,7 +16549,7 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16613,8 +16613,8 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16749,7 +16749,7 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16813,8 +16813,8 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16949,7 +16949,7 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17013,8 +17013,8 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17149,7 +17149,7 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17213,8 +17213,8 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17349,7 +17349,7 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17413,8 +17413,8 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17549,7 +17549,7 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CreateObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17613,8 +17613,8 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17749,7 +17749,7 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DestroyObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17813,8 +17813,8 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17949,7 +17949,7 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FindObjectsInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18013,8 +18013,8 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18149,7 +18149,7 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FindObjectsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18213,8 +18213,8 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18349,7 +18349,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FindObjectsFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18413,8 +18413,8 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18549,7 +18549,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetObjectSizeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18613,8 +18613,8 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18749,7 +18749,7 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetAttributeValueEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18813,8 +18813,8 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18949,7 +18949,7 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GenerateKeyPairEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19013,8 +19013,8 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19149,7 +19149,7 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SetAttributeValueEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19213,8 +19213,8 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19349,7 +19349,7 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CopyObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19413,8 +19413,8 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19549,7 +19549,7 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19613,8 +19613,8 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19749,7 +19749,7 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19813,8 +19813,8 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19949,7 +19949,7 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20013,8 +20013,8 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20149,7 +20149,7 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20213,8 +20213,8 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20349,7 +20349,7 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20413,8 +20413,8 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20549,7 +20549,7 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20613,8 +20613,8 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20749,7 +20749,7 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20813,8 +20813,8 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20949,7 +20949,7 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21013,8 +21013,8 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21149,7 +21149,7 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GenerateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21213,8 +21213,8 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21349,7 +21349,7 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DeriveKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21413,8 +21413,8 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21549,7 +21549,7 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21613,8 +21613,8 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21749,7 +21749,7 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21813,8 +21813,8 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21949,7 +21949,7 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22013,8 +22013,8 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22149,7 +22149,7 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22213,8 +22213,8 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22349,7 +22349,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22413,8 +22413,8 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22549,7 +22549,7 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22613,8 +22613,8 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22749,7 +22749,7 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22813,8 +22813,8 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22949,7 +22949,7 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23013,8 +23013,8 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23149,7 +23149,7 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = WrapKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23213,8 +23213,8 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23349,7 +23349,7 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = UnwrapKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23413,8 +23413,8 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23549,7 +23549,7 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = WaitForSlotEventEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23613,8 +23613,8 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23749,7 +23749,7 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignRecoverInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23813,8 +23813,8 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23949,7 +23949,7 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignRecoverEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24013,8 +24013,8 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24149,7 +24149,7 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyRecoverInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24213,8 +24213,8 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24349,7 +24349,7 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyRecoverEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24413,8 +24413,8 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24549,7 +24549,7 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SessionCancelEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24613,8 +24613,8 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24749,7 +24749,7 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncapsulateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24813,8 +24813,8 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24949,7 +24949,7 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecapsulateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -25013,8 +25013,8 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -25149,7 +25149,7 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSessionValidationFlagsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
