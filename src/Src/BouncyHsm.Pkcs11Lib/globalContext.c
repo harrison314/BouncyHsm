@@ -383,11 +383,11 @@ void GlobalContextInit()
         {
             int portValue;
 #ifdef _WIN32
-            int rv = sscanf_s(portBuffer, "%i", &portValue);
+            int rv = sscanf_s(portBuffer, "%d", &portValue);
 #else
-            int rv = sscanf(portBuffer, "%i", &portValue);
+            int rv = sscanf(portBuffer, "%d", &portValue);
 #endif
-            if (rv == 0)
+            if (rv != 1)
             {
                 log_message(LOG_LEVEL_ERROR, "Error during reading Port. Is not number.");
                 return;
