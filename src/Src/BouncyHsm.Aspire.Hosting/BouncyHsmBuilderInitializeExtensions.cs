@@ -1,11 +1,12 @@
 ﻿using Aspire.Hosting.ApplicationModel;
+using BouncyHsm.Client;
 
 namespace Aspire.Hosting;
 
 public static class BouncyHsmBuilderInitializeExtensions
 {
     [AspireExport]
-    public static IResourceBuilder<BouncyHsmResource> WithDbMigration<T>(this IResourceBuilder<BouncyHsmResource> builder)
+    public static IResourceBuilder<BouncyHsmResource> WithDbMigration(this IResourceBuilder<BouncyHsmResource> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
@@ -21,7 +22,7 @@ public static class BouncyHsmBuilderInitializeExtensions
     }
 
     [AspireExport]
-    public static IResourceBuilder<BouncyHsmResource> WithHsmSlot<T>(this IResourceBuilder<BouncyHsmResource> builder,
+    public static IResourceBuilder<BouncyHsmResource> WithHsmSlot(this IResourceBuilder<BouncyHsmResource> builder,
         string slotDescription,
         string tokenLabel,
         string userPin,
@@ -63,7 +64,7 @@ public static class BouncyHsmBuilderInitializeExtensions
     }
 
     [AspireExport]
-    public static IResourceBuilder<BouncyHsmResource> WithHsmSlot<T>(this IResourceBuilder<BouncyHsmResource> builder,
+    public static IResourceBuilder<BouncyHsmResource> WithHsmSlot(this IResourceBuilder<BouncyHsmResource> builder,
         Action<BouncyHsm.Client.CreateSlotDto> setup)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -99,5 +100,16 @@ public static class BouncyHsmBuilderInitializeExtensions
     }
 
     //TODO: PEM import, P12 import
-    //TODO: Add plain method for generating
+
+
+    [AspireExport]
+    public static IResourceBuilder<BouncyHsmResource> WithInitializedAction(this IResourceBuilder<BouncyHsmResource> builder, Func<BouncyHsmClient, CancellationToken, Task> initializedAction)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(initializedAction);
+
+        builder.Resource.InitializeTasks.Add(initializedAction);
+
+        return builder;
+    }
 }
