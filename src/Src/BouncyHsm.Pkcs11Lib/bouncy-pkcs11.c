@@ -2681,7 +2681,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.KeyObjectHandle = (uint32_t)hKey;
@@ -2852,7 +2852,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_ME
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.KeyObjectHandle = (uint32_t)hKey;
@@ -2993,7 +2993,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
@@ -3151,7 +3151,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.WrappingKeyHandle = (uint32_t)hWrappingKey;
@@ -3218,7 +3218,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
@@ -3289,7 +3289,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.BaseKeyHandle = (uint32_t)hBaseKey;
@@ -3808,7 +3808,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.PublicKeyHandle = (uint32_t)hPublicKey;
@@ -3910,7 +3910,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.PrivateKeyHandle = (uint32_t)hPrivateKey;
