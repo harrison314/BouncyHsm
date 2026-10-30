@@ -118,8 +118,8 @@ static void send_log_message_syslog(int level, const char* levelText, const char
 #endif
 }
 
-int globalLogLevelLevel = LOG_LEVEL_NONE;
-send_log_message_ptr globalLogLevelTarget = send_log_message_None;
+static int globalLogLevelLevel = LOG_LEVEL_NONE;
+static send_log_message_ptr globalLogLevelTarget = send_log_message_None;
 
 bool logger_init(const char* level, const char* target)
 {
@@ -195,6 +195,9 @@ bool logger_init(const char* level, const char* target)
 #ifdef _MSC_VER
 int vasprintf(char** strp, const char* fmt, va_list ap) {
 	// _vscprintf tells you how big the buffer needs to be
+    va_list ap_other;
+    va_copy(ap_other, ap);
+
 	int len = _vscprintf(fmt, ap);
 	if (len == -1) {
 		return -1;
@@ -228,7 +231,11 @@ void log_message(int level, const char* format, ...)
 	va_list ap;
 	char* strp = NULL;
 	va_start(ap, format);
-	vasprintf(&strp, format, ap);
+    if (-1 == vasprintf(&strp, format, ap))
+    {
+        strp = NULL;
+    }
+
 	va_end(ap);
 
 	const char* levelText = "NONE";
