@@ -480,8 +480,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        pInfo->cryptokiVersion.major = 2;
-        pInfo->cryptokiVersion.minor = 40;
+        pInfo->cryptokiVersion.major = 3;
+        pInfo->cryptokiVersion.minor = 2;
 
         pInfo->flags = 0;
 
@@ -3540,7 +3540,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VER
         const char* requested_interface_name = (const char*)pInterfaceName;
         const char* supported_interface_name = "PKCS 11";
 
-        if (strlen(requested_interface_name) != strlen(supported_interface_name) || 0 != strcmp(requested_interface_name, supported_interface_name))
+        if (0 != strcmp(requested_interface_name, supported_interface_name))
         {
             log_message(LOG_LEVEL_INFO, "Unsupported PKCS#11 interface: %s in %s", requested_interface_name, __FUNCTION__);
 
@@ -3575,7 +3575,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VER
         }
     }
 
-    *ppInterface = &bouncyHsm_pkcs11_3_1_interface;
+    *ppInterface = &bouncyHsm_pkcs11_3_2_interface;
     return CKR_OK;
 }
 

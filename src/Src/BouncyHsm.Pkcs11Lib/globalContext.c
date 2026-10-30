@@ -53,6 +53,18 @@ static void myRandChars(unsigned long* generator, char* buffer, size_t len)
     buffer[len] = 0;
 }
 
+static void trimEnd(char* str)
+{
+    if (str == NULL) return;
+
+    size_t len = strlen(str);
+
+    while (len > 0 && isspace((unsigned char)str[len - 1]))
+    {
+        str[--len] = '\0';
+    }
+}
+
 #ifdef _WIN32
 static char* toUtf8(const wchar_t* src, int* out_len)
 {
@@ -134,6 +146,8 @@ static bool GetCurrentProgramName(char* buffer, size_t maxSize)
     {
         buffer[maxSize - 1] = 0;
     }
+
+    trimEnd(buffer);
 
     int rv = fclose(procFile);
     if (rv != 0)
