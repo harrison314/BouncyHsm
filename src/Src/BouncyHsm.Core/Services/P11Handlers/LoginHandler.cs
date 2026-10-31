@@ -46,6 +46,18 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
             };
         }
 
+        if ((userType == CKU.CKU_SO && memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER))
+            || (userType == CKU.CKU_USER && memorySession.IsLogged(p11Session.SessionId, CKU.CKU_SO)))
+        {
+            this.logger.LogError("Another user type already logged in in session {SessionId} for actual user type {UserType}.",
+                p11Session.SessionId,
+                userType);
+            return new LoginEnvelope()
+            {
+                Rv = (uint)CKR.CKR_USER_ANOTHER_ALREADY_LOGGED_IN
+            };
+        }
+
         if (userType == CKU.CKU_CONTEXT_SPECIFIC)
         {
             ISessionStateWithAlwaysAuthenticated state = p11Session.State.Ensure<ISessionStateWithAlwaysAuthenticated>();
@@ -104,7 +116,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
                 };
             }
 
-            memorySession.SetLoginStatus(p11Session.SessionId,userType, true);
+            memorySession.SetLoginStatus(p11Session.SessionId, userType, true);
 
             this.logger.LogInformation("Successfully logged to slot {slotId} with token {TokenSerial}.", slot.SlotId, slot.Token.SerialNumber);
             return new LoginEnvelope()
