@@ -43,6 +43,14 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
             foreach ((CKA attributeType, IAttributeValue value) in dictionaryTemplate)
             {
                 this.logger.LogDebug("Updating object {objectId} with type {attributeType} value {attributeValue}.", storageObject.Id, attributeType, value);
+
+                if (attributeType is CKA.CKA_TOKEN
+                    or CKA.CKA_PRIVATE
+                    or CKA.CKA_DESTROYABLE)
+                {
+                    throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"SetAttributeValue is inconsistent with object with id {storageObject.Id}. Attribute {attributeType} can by updated.");
+                }
+
                 storageObject.SetValue(attributeType, value, true);
             }
         }

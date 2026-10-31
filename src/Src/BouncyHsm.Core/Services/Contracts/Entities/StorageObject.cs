@@ -111,6 +111,26 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             {
                 this.CheckChangeTrueToFalse(CKA.CKA_EXTRACTABLE, value);
             }
+
+            if (attributeType == CKA.CKA_WRAP_WITH_TRUSTED)
+            {
+                this.CheckChangeFalseToTrue(CKA.CKA_WRAP_WITH_TRUSTED, value);
+            }
+
+            if (attributeType == CKA.CKA_PRIVATE)
+            {
+                this.CheckChangeFalseToTrue(CKA.CKA_PRIVATE, value);
+            }
+
+            if (attributeType == CKA.CKA_COPYABLE)
+            {
+                this.CheckChangeTrueToFalse(CKA.CKA_COPYABLE, value);
+            }
+
+            if (attributeType == CKA.CKA_MODIFIABLE)
+            {
+                this.CheckChangeTrueToFalse(CKA.CKA_MODIFIABLE, value);
+            }
         }
 
         if (isUpdating && this.IsSensitiveAttribute(attributeType))
@@ -202,7 +222,12 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             or CKA.CKA_ALWAYS_AUTHENTICATE
             or CKA.CKA_LOCAL
             or CKA.CKA_UNIQUE_ID
-            or CKA.CKA_KEY_GEN_MECHANISM;
+            or CKA.CKA_KEY_GEN_MECHANISM
+            or CKA.CKA_VALUE
+            or CKA.CKA_MODULUS
+            or CKA.CKA_SEED
+            or CKA.CKA_KEY_TYPE
+            or CKA.CKA_CLASS;
     }
 
     public override string ToString()
