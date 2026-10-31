@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
@@ -38,10 +39,10 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_CBC => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/NOPADDING"), true, mechanism),
             CKM.CKM_AES_CBC_PAD => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/PKCS7PADDING"), false, mechanism),
 
-            CKM.CKM_AES_CFB1 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB/NOPADDING"), true, mechanism), //TODO: check with specification
-            CKM.CKM_AES_CFB8 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB8/NOPADDING"), true, mechanism),
-            CKM.CKM_AES_CFB64 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB64/NOPADDING"), true, mechanism),
-            CKM.CKM_AES_CFB128 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB128/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CFB1 => this.CreateAes(this.CreateAesCbf(1), true, mechanism),
+            CKM.CKM_AES_CFB8 => this.CreateAes(this.CreateAesCbf(8), true, mechanism),
+            CKM.CKM_AES_CFB64 => this.CreateAes(this.CreateAesCbf(64), true, mechanism),
+            CKM.CKM_AES_CFB128 => this.CreateAes(this.CreateAesCbf(128), true, mechanism),
 
             CKM.CKM_AES_OFB => this.CreateAes(CipherUtilities.GetCipher("AES/OFB/NOPADDING"), true, mechanism),
             CKM.CKM_AES_CTR => this.CreateAes(CipherUtilities.GetCipher("AES/CTR/NOPADDING"), true, mechanism),
@@ -67,6 +68,11 @@ internal class BufferedCipherWrapperFactory
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
+    }
+
+    private IBufferedCipher CreateAesCbf(int bits)
+    {
+        return new BufferedBlockCipher(new CfbBlockCipher(AesUtilities.CreateEngine(), bits));
     }
 
     private AesBufferedCipherWrapper CreateAesWithoutIv(IBufferedCipher bufferedCipher, MechanismValue mechanism)
