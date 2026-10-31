@@ -137,7 +137,7 @@ internal static class AttrTypeUtils
             CKA.CKA_ENCAPSULATE => AttrTypeTag.CkBool,
             CKA.CKA_DECAPSULATE => AttrTypeTag.CkBool,
             CKA.CKA_VENDOR_DEFINED => throw new InvalidOperationException("value is not defined"),
-            _ => throw new InvalidProgramException($"Enum value {attributeType} is not supported.")
+            _ => throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_TYPE_INVALID, $"Enum value {attributeType} is not supported.")
         };
     }
 
@@ -173,15 +173,15 @@ internal static class AttrTypeUtils
 
     private static Dictionary<CKA, IAttributeValue> BuildDictionaryTemplateInternal(AttrValueFromNative[] template, ref CKA lastCka)
     {
-            Dictionary<CKA, IAttributeValue> dictTemplate = new Dictionary<CKA, IAttributeValue>();
-            foreach (AttrValueFromNative attr in template)
-            {
-                lastCka = (CKA)attr.AttributeType;
-                dictTemplate.Add(lastCka, new NativeAttributeValue(attr));
-            }
-
-            return dictTemplate;
+        Dictionary<CKA, IAttributeValue> dictTemplate = new Dictionary<CKA, IAttributeValue>();
+        foreach (AttrValueFromNative attr in template)
+        {
+            lastCka = (CKA)attr.AttributeType;
+            dictTemplate.Add(lastCka, new NativeAttributeValue(attr));
         }
+
+        return dictTemplate;
+    }
 
     public static bool Equals(IReadOnlyDictionary<CKA, IAttributeValue> a, IReadOnlyDictionary<CKA, IAttributeValue> b)
     {

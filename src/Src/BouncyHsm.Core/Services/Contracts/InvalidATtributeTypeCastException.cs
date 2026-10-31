@@ -2,21 +2,16 @@
 
 namespace BouncyHsm.Core.Services.Contracts;
 
-public class InvalidAttributeTypeCastException : Exception
+public class InvalidAttributeTypeCastException : RpcPkcs11Exception
 {
-    public InvalidAttributeTypeCastException()
-    {
-
-    }
-
     public InvalidAttributeTypeCastException(AttrTypeTag exceptedType, [CallerMemberName] string fnName = "")
-        : base($"Can not convert value of type {exceptedType} using method {fnName}.")
+        : base(P11.CKR.CKR_ATTRIBUTE_VALUE_INVALID, $"Can not convert value of type {exceptedType} using method {fnName}.")
     {
 
     }
 
     public InvalidAttributeTypeCastException(string message)
-        : base(message)
+        : base(P11.CKR.CKR_ATTRIBUTE_VALUE_INVALID, message)
     {
 
     }

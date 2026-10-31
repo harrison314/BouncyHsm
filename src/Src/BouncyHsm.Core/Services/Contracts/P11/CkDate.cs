@@ -55,8 +55,15 @@ public struct CkDate : IEquatable<CkDate>
             return new CkDate();
         }
 
-        DateOnly value = DateOnly.ParseExact(date, "dd.MM.yyyy");
-        return new CkDate(value);
+        try
+        {
+            DateOnly value = DateOnly.ParseExact(date, "dd.MM.yyyy");
+            return new CkDate(value);
+        }
+        catch (FormatException ex)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "Invalid CkDate string value on input.", ex);
+        }
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
