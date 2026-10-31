@@ -242,7 +242,7 @@ internal class WrapperSignerFactory
         }
         else
         {
-            if (signContentDigest.GetType() != contentDigest.GetType())
+            if (signContentDigest.AlgorithmName != contentDigest.AlgorithmName)
             {
                 throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
                     "Invalid mechanism param CK_RSA_PKCS_PSS_PARAMS.hashAlg: BouncyHsm required som hash algorithm in mechanism and CK_RSA_PKCS_PSS_PARAMS.hashAlg."
