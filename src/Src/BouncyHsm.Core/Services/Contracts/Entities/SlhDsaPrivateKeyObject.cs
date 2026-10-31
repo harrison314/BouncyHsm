@@ -65,6 +65,12 @@ public class SlhDsaPrivateKeyObject : PrivateKeyObject
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_VALUE, this.CkaValue);
     }
 
+    protected override bool IsSensitiveAttribute(CKA attributeType)
+    {
+        return (this.CkaSensitive || !this.CkaExtractable)
+            && attributeType is CKA.CKA_VALUE;
+    }
+
     protected override CKM[] GetAllovedMechanism()
     {
         return AllovedMechanismLookup.SlhDsaKeyObject;

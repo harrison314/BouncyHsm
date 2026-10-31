@@ -91,6 +91,11 @@ public sealed class ChaCha20KeyObject : SecretKeyObject
         }
     }
 
+    protected override bool IsSensitiveAttribute(CKA attributeType)
+    {
+        return (this.CkaSensitive || !this.CkaExtractable) && attributeType == CKA.CKA_VALUE;
+    }
+
     public override string ToString()
     {
         return $"{this.GetType().Name} (CHACHA20): Id={this.Id}";

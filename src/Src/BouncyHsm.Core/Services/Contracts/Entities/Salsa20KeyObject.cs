@@ -114,6 +114,11 @@ public sealed class Salsa20KeyObject : SecretKeyObject
         base.SetValue(attributeType, value, isUpdating);
     }
 
+    protected override bool IsSensitiveAttribute(CKA attributeType)
+    {
+        return (this.CkaSensitive || !this.CkaExtractable) && attributeType == CKA.CKA_VALUE;
+    }
+
     protected override CKM[] GetAllovedMechanism()
     {
         return AllovedMechanismLookup.Salsa20KeyObject;
