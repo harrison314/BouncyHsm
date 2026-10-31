@@ -38,7 +38,7 @@ public static class BouncyHsmBuilderExtensions
                      e.TargetPort = 8765;
                      e.Protocol = System.Net.Sockets.ProtocolType.Tcp;
                  })
-                 .WithHttpHealthCheck("/health")
+                 .WithHttpHealthCheck("/health", endpointName: EndpointName.Http)
                  .OnResourceReady(async (resource, readyEvenet, ct) =>
                  {
                      if (resource.InitializeTasks.Any())
