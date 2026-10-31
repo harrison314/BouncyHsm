@@ -65,4 +65,9 @@ public sealed class DataObject : StorageObject
     {
         //NOP
     }
+
+    protected override bool IsReadOnlyAttribute(CKA attributeType)
+    {
+        return false;
+    }
 }

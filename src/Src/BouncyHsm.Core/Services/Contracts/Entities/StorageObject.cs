@@ -95,13 +95,13 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             return;
         }
 
-        if (this.IsReadOnlyAttribute(attributeType))
-        {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
-        }
-
         if (isUpdating)
         {
+            if (this.IsReadOnlyAttribute(attributeType))
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
+            }
+
             if (attributeType == CKA.CKA_SENSITIVE)
             {
                 this.CheckChangeFalseToTrue(CKA.CKA_SENSITIVE, value);
@@ -131,13 +131,23 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             {
                 this.CheckChangeTrueToFalse(CKA.CKA_MODIFIABLE, value);
             }
-        }
 
-        if (isUpdating && this.IsSensitiveAttribute(attributeType))
-        {
-            if (this.values.ContainsKey(CKA.CKA_ALWAYS_SENSITIVE))
+            if (this.IsSensitiveAttribute(attributeType) && this.values.ContainsKey(CKA.CKA_ALWAYS_SENSITIVE))
             {
                 this.values[CKA.CKA_ALWAYS_SENSITIVE] = AttributeValue.Create(false);
+            }
+        }
+        else
+        {
+            if (attributeType is CKA.CKA_ALWAYS_SENSITIVE
+            or CKA.CKA_NEVER_EXTRACTABLE
+            or CKA.CKA_ALWAYS_AUTHENTICATE
+            or CKA.CKA_LOCAL
+            or CKA.CKA_UNIQUE_ID
+            or CKA.CKA_KEY_GEN_MECHANISM)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                    $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
             }
         }
 

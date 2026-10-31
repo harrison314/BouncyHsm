@@ -147,7 +147,7 @@ public class T28_SetAttributeValue
             factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_MODIFIABLE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_COPYABLE, false),
-            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
@@ -169,7 +169,7 @@ public class T28_SetAttributeValue
 
         List<IObjectAttribute> template = new List<IObjectAttribute>()
         {
-            factories.ObjectAttributeFactory.Create(CKA.CKA_COPYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_ID, newCkId),
             factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, newLabel),
             factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
