@@ -5,6 +5,7 @@ namespace Aspire.Hosting;
 
 public static partial class BouncyHsmBuilderInitializeExtensions
 {
+    [AspireExport]
     public static IResourceBuilder<BouncyHsmResource> WithImportPkcs12(this IResourceBuilder<BouncyHsmResource> builder,
         string tokenLabel,
         byte[] pkcs12Content,
@@ -45,6 +46,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         return builder;
     }
 
+    [AspireExport]
     public static IResourceBuilder<BouncyHsmResource> WithImportPkcs12IfNotExists(this IResourceBuilder<BouncyHsmResource> builder,
         string tokenLabel,
         byte[] pkcs12Content,
