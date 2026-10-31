@@ -74,7 +74,7 @@ public sealed class AesKeyObject : SecretKeyObject
 
     protected override bool IsSensitiveAttribute(CKA attributeType)
     {
-        return this.CkaSensitive && attributeType == CKA.CKA_VALUE;
+        return (this.CkaSensitive || !this.CkaExtractable) && attributeType == CKA.CKA_VALUE;
     }
 
     public override byte[] GetSecret()
