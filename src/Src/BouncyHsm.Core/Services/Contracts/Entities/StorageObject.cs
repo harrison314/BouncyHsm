@@ -67,7 +67,7 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         this.CkaCopyable = true;
         this.CkaDestroyable = true;
         this.CkaLabel = string.Empty;
-        this.CkaUniqueId = $"obj:{Guid.NewGuid():d}";
+        this.CkaUniqueId = CreateCkaUniqueId();
     }
 
     internal StorageObject(StorageObjectMemento memento)
@@ -225,6 +225,18 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         // NOP
     }
 
+
+
+    public override string ToString()
+    {
+        return $"{this.GetType().Name}: Id={this.Id}";
+    }
+
+    internal static string CreateCkaUniqueId()
+    {
+        return $"obj:{Guid.NewGuid():d}";
+    }
+
     protected virtual bool IsReadOnlyAttribute(CKA attributeType)
     {
         return attributeType is CKA.CKA_ALWAYS_SENSITIVE
@@ -238,11 +250,6 @@ public abstract class StorageObject : Entity, ICryptoApiObject
             or CKA.CKA_SEED
             or CKA.CKA_KEY_TYPE
             or CKA.CKA_CLASS;
-    }
-
-    public override string ToString()
-    {
-        return $"{this.GetType().Name}: Id={this.Id}";
     }
 
     private uint CalculateObjectSize()

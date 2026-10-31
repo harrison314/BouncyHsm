@@ -73,6 +73,9 @@ public partial class CopyObjectHandler : IRpcRequestHandler<CopyObjectRequest, C
         StorageObjectMemento memento = storageObject.ToMemento();
         memento.Id = Guid.Empty;
 
-        return StorageObjectFactory.CreateFromMemento(memento);
+        StorageObject newStorageObject = StorageObjectFactory.CreateFromMemento(memento);
+        newStorageObject.CkaUniqueId = StorageObject.CreateCkaUniqueId();
+
+        return newStorageObject;
     }
 }
