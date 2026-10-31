@@ -7,12 +7,14 @@ namespace BouncyHsm.Core.Services.Contracts.Generators;
 
 internal class GenericSecretHmacKeyGenerator : IKeyGenerator
 {
+    private readonly CKM generatingMechanism;
     private readonly CKK keyType;
     private readonly ILogger<GenericSecretHmacKeyGenerator> logger;
     private IReadOnlyDictionary<CKA, IAttributeValue>? template;
 
-    public GenericSecretHmacKeyGenerator(CKK keyType, ILogger<GenericSecretHmacKeyGenerator> logger)
+    public GenericSecretHmacKeyGenerator(CKM generatingMechanism, CKK keyType, ILogger<GenericSecretHmacKeyGenerator> logger)
     {
+        this.generatingMechanism = generatingMechanism;
         this.keyType = keyType;
         this.logger = logger;
     }
@@ -33,6 +35,7 @@ internal class GenericSecretHmacKeyGenerator : IKeyGenerator
         System.Diagnostics.Debug.Assert(this.template != null);
 
         GenericSecretKeyObject generalSecretKeyObject = new GenericSecretKeyObject();
+        generalSecretKeyObject.CkaKeyGenMechanism = this.generatingMechanism;
         generalSecretKeyObject.CkaKeyType = this.keyType;
 
         foreach (KeyValuePair<CKA, IAttributeValue> kvp in this.template)
