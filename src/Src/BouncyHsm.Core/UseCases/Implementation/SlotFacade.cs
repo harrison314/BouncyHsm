@@ -144,6 +144,16 @@ public class SlotFacade : ISlotFacade
                 plugged ? new SlotCommands.PlugDeviceCommand() : new SlotCommands.UnplugDeviceCommand(),
                 cancellationToken);
 
+            if (!plugged && slotChanged)
+            {
+                foreach (IMemorySession memorySession in this.clientAppCtx.GetActiveMemorySessions())
+                {
+                    memorySession.DestroySessionsBySlot(slotId);
+                }
+
+                this.logger.LogInformation("Destroy all sessions in slot with id {SlotId}.", slotId);
+            }
+
             if (slotChanged)
             {
                 this.clientAppCtx.NotifySlotEvent(slotId);
