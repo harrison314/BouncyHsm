@@ -36,9 +36,9 @@ internal static class MechanismUtils
     private static IDictionary<CKM, MechanismInfo> mechanism;
     private static string? profileName = null;
 
-    private const int Poly1305KeySize = 32;
-    private const int ChaCha20KeySize = 32;
-    private const int Salsa20KeySize = 32;
+    private const int Poly1305KeySize = 256;
+    private const int ChaCha20KeySize = 256;
+    private const int Salsa20KeySize = 256;
 
     private const int EdwardsMinKeySize = 32;
     private const int EdwardsMaxKeySize = 57;
