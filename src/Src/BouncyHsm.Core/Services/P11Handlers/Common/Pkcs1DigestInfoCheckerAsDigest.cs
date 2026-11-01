@@ -15,6 +15,7 @@ namespace BouncyHsm.Core.Services.P11Handlers.Common;
 internal class Pkcs1DigestInfoCheckerAsDigest : IDigest
 {
     private readonly MemoryStream buffer;
+    private readonly bool throwIfDataIsNotDigestInfo;
     private readonly ILogger<Pkcs1DigestInfoCheckerAsDigest> logger;
 
     public string AlgorithmName
@@ -22,9 +23,10 @@ internal class Pkcs1DigestInfoCheckerAsDigest : IDigest
         get => "NULL";
     }
 
-    public Pkcs1DigestInfoCheckerAsDigest(ILogger<Pkcs1DigestInfoCheckerAsDigest> logger)
+    public Pkcs1DigestInfoCheckerAsDigest(bool throwIfDataIsNotDigestInfo, ILogger<Pkcs1DigestInfoCheckerAsDigest> logger)
     {
         this.buffer = new MemoryStream();
+        this.throwIfDataIsNotDigestInfo = throwIfDataIsNotDigestInfo;
         this.logger = logger;
     }
 
@@ -109,28 +111,29 @@ internal class Pkcs1DigestInfoCheckerAsDigest : IDigest
 
                 if (digest.Length != exceptedDigestSize)
                 {
-                    this.logger.LogError("Invalid digest size ({digestSize}, excepted {exceptedDigestSize} in algorithm {algorithm}) for signing in PKCS1 DigestInfo. DigestInfo: {data}",
+                    this.logger.LogWarning("Invalid digest size ({digestSize}, excepted {exceptedDigestSize} in algorithm {algorithm}) for signing in PKCS1 DigestInfo. DigestInfo: {data}",
                         digest.Length,
                         exceptedDigestSize,
                         digestInfo.DigestAlgorithm.Algorithm,
                         Convert.ToBase64String(data, Base64FormattingOptions.InsertLineBreaks));
 
-                    throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_INVALID, $"Invalid digest size in PKCS1 DigestInfo.");
+                    if (this.throwIfDataIsNotDigestInfo)
+                    {
+                        throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_INVALID, $"Invalid digest size in PKCS1 DigestInfo.");
+                    }
                 }
-
             }
-        }
-        catch (RpcPkcs11Exception)
-        {
-            throw;
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex,
+            this.logger.LogWarning(ex,
                 "Invalid data structure of DigestInfo for signing. DigestInfo: {data}",
                 Convert.ToBase64String(data, Base64FormattingOptions.InsertLineBreaks));
 
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_INVALID, $"Invalid data structure of DigestInfo for signing.", ex);
+            if (this.throwIfDataIsNotDigestInfo)
+            {
+                throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_INVALID, $"Invalid data structure of DigestInfo for signing.", ex);
+            }
         }
     }
 }

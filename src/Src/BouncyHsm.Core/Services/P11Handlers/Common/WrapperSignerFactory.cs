@@ -1,21 +1,22 @@
 ﻿using BouncyHsm.Core.Rpc;
-using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.Services.Bc;
 using BouncyHsm.Core.Services.Contracts;
+using BouncyHsm.Core.Services.Contracts.P11;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Nist;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Macs;
 using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.Nist;
-using Org.BouncyCastle.Crypto.Macs;
 
 namespace BouncyHsm.Core.Services.P11Handlers.Common;
 
@@ -38,23 +39,23 @@ internal class WrapperSignerFactory
 
         return ckMechanism switch
         {
-            CKM.CKM_RSA_PKCS => new RsaWrapperSigner(this.CreateRsaPkcsSigner(), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_RSA_PKCS => new RsaWrapperSigner(this.CreateRsaPkcsSigner(), ckMechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
             CKM.CKM_SHA1_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha1Digest(), X509ObjectIdentifiers.IdSha1),
             CKM.CKM_SHA224_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha224Digest(), NistObjectIdentifiers.IdSha224),
             CKM.CKM_SHA256_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha256Digest(), NistObjectIdentifiers.IdSha256),
             CKM.CKM_SHA384_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha384Digest(), NistObjectIdentifiers.IdSha384),
             CKM.CKM_SHA512_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha512Digest(), NistObjectIdentifiers.IdSha512),
-            CKM.CKM_MD2_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("MD2withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
-            CKM.CKM_MD5_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("MD5withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
-            CKM.CKM_RIPEMD128_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD128withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
-            CKM.CKM_RIPEMD160_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD160withRSA"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_MD2_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("MD2withRSA"), ckMechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_MD5_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("MD5withRSA"), ckMechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_RIPEMD128_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD128withRSA"), ckMechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_RIPEMD160_RSA_PKCS => new RsaWrapperSigner(SignerUtilities.GetSigner("RIPEMD160withRSA"), ckMechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
             CKM.CKM_SHA3_224_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha3Digest(224), NistObjectIdentifiers.IdSha3_224),
             CKM.CKM_SHA3_256_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha3Digest(256), NistObjectIdentifiers.IdSha3_256),
             CKM.CKM_SHA3_384_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha3Digest(384), NistObjectIdentifiers.IdSha3_384),
             CKM.CKM_SHA3_512_RSA_PKCS => this.CreateHashRsaPkcsSigner(ckMechanism, new Sha3Digest(512), NistObjectIdentifiers.IdSha3_512),
 
-            CKM.CKM_SHA1_RSA_X9_31 => new RsaWrapperSigner(SignerUtilities.GetSigner("SHA1withRSA/X9.31"), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
-            //CKM.CKM_RSA_X9_31 => new RsaWrapperSigner(new X931Signer(new RsaBlindedEngine(), new NullDigest(), true), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_SHA1_RSA_X9_31 => new RsaWrapperSigner(SignerUtilities.GetSigner("SHA1withRSA/X9.31"), ckMechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            //CKM.CKM_RSA_X9_31 => new RsaWrapperSigner(new X931Signer(new RsaBlindedEngine(), new NullDigest(), true), ckMechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 
             CKM.CKM_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new NullDigest()),
             CKM.CKM_SHA1_RSA_PKCS_PSS => this.CreateRsaPssSigner(mechanism, new Sha1Digest()),
@@ -80,7 +81,7 @@ internal class WrapperSignerFactory
 
             CKM.CKM_EDDSA => this.CreateEddsaSigner(mechanism),
 
-            CKM.CKM_RSA_9796 => new RsaWrapperSigner(new Iso9796Signer(new RsaBlindedEngine(), new NullDigest()), ckMechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
+            CKM.CKM_RSA_9796 => new RsaWrapperSigner(new Iso9796Signer(new RsaBlindedEngine(), new NullDigest()), ckMechanism, false, this.loggerFactory.CreateLogger<RsaWrapperSigner>()),
 
             //TODO: Implement CKM_CMS_SIG 
             CKM.CKM_MD2_HMAC => this.CreateHmacWrapperSigner(ckMechanism, new MD2Digest(), null),
@@ -257,21 +258,23 @@ internal class WrapperSignerFactory
 
         return new RsaWrapperSigner(signer,
             (CKM)mechanism.MechanismType,
+            !(signContentDigest is NullDigest),
             this.loggerFactory.CreateLogger<RsaWrapperSigner>());
     }
 
     private ISigner CreateRsaPkcsSigner()
     {
-        Pkcs1DigestInfoCheckerAsDigest nullDigest = new Pkcs1DigestInfoCheckerAsDigest(this.loggerFactory.CreateLogger<Pkcs1DigestInfoCheckerAsDigest>());
+        // For check Pkcs1Digest info change parameter to true
+        Pkcs1DigestInfoCheckerAsDigest nullDigest = new Pkcs1DigestInfoCheckerAsDigest(false, this.loggerFactory.CreateLogger<Pkcs1DigestInfoCheckerAsDigest>());
 
-        // Alternative for SignerUtilities.GetSigner("RSA")
-        return new RsaDigestSigner(nullDigest, (AlgorithmIdentifier?)null);
+        //Alternative is  return new RsaDigestSigner(nullDigest, (AlgorithmIdentifier?)null);
+        return new RsaPkc1Signer(nullDigest);
     }
 
     private RsaWrapperSigner CreateHashRsaPkcsSigner(CKM mechanism, IDigest difest, DerObjectIdentifier digestOid)
     {
         RsaDigestSigner signer = new RsaDigestSigner(difest, new AlgorithmIdentifier(digestOid, DerNull.Instance));
-        return new RsaWrapperSigner(signer, mechanism, this.loggerFactory.CreateLogger<RsaWrapperSigner>());
+        return new RsaWrapperSigner(signer, mechanism, true, this.loggerFactory.CreateLogger<RsaWrapperSigner>());
     }
 
     private EdDsaCipherWrapper CreateEddsaSigner(MechanismValue mechanism)

@@ -15,13 +15,14 @@ internal class RsaWrapperSigner : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get;
     }
 
-    public RsaWrapperSigner(ISigner signer, CKM mechanism, ILogger<RsaWrapperSigner> logger)
+    public RsaWrapperSigner(ISigner signer, CKM mechanism, bool acceptEmptyData, ILogger<RsaWrapperSigner> logger)
     {
         this.signer = signer;
         this.mechanism = mechanism;
+        this.AcceptEmptyData = acceptEmptyData;
         this.logger = logger;
     }
 
