@@ -56,28 +56,28 @@ public sealed class Pkcs11CtrBlockCipher : IBlockCipherMode
 
     public void Init(bool forEncryption, ICipherParameters parameters)
     {
-        if (parameters is not ParametersWithIV p)
-        {
-            throw new ArgumentException("ParametersWithIV required");
-        }
-
-        if (p.IVLength != 16)
-        {
-            throw new ArgumentException("CTR block must be 16 bytes");
-        }
-
+        ParametersWithIV paramsWithIv;
         this.counterBits = 128;
 
         if (parameters is ParametersWithIVAndCounterBits pc)
         {
             this.counterBits = pc.CounterBits;
-            p = pc.ParametersWithIV;
+            paramsWithIv = pc.ParametersWithIV;
+        }
+        else
+        {
+            throw new ArgumentException("ParametersWithIVAndCounterBits required");
         }
 
-        this.counter = p.GetIV();
+        if (paramsWithIv.IVLength != 16)
+        {
+            throw new ArgumentException("CTR block must be 16 bytes");
+        }
+
+        this.counter = paramsWithIv.GetIV();
         this.counterOut = new byte[16];
 
-        this.cipher.Init(true, p.Parameters);
+        this.cipher.Init(true, paramsWithIv.Parameters);
 
         this.initialised = true;
     }

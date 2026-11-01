@@ -15,13 +15,13 @@ internal class AesCtrCipherWrapper : ICipherWrapper
 {
     private readonly IBufferedCipher bufferedCipher;
     private readonly int counterBits;
-    private readonly byte[]? iv;
+    private readonly byte[] iv;
     private readonly bool padZeroForWrap;
     private readonly CKM mechanismType;
     private readonly ILogger<AesCtrCipherWrapper> logger;
 
     public AesCtrCipherWrapper(int counterBits,
-        byte[]? iv,
+        byte[] iv,
         bool padZeroForWrap,
         CKM mechanismType,
         ILogger<AesCtrCipherWrapper> logger)

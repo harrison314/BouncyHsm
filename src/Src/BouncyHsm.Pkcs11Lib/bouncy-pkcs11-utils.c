@@ -559,7 +559,7 @@ static int CreateAesCtrParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism
     Ckp_CkAesCtrParams deriveParams = { 0 };
     deriveParams.CounterBits = (uint32_t)deriveParamsPtr->ulCounterBits;
     deriveParams.Cb.size = sizeof(deriveParamsPtr->cb);
-    deriveParams.Cb.array = deriveParamsPtr->cb;
+    deriveParams.Cb.data = deriveParamsPtr->cb;
 
     result = nmrpc_writeAsBinary(&deriveParams, (SerializeFnPtr_t)Ckp_CkAesCtrParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
