@@ -1,11 +1,12 @@
 ﻿using BouncyHsm.Core.Rpc;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Macs;
+using Org.BouncyCastle.Crypto.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -66,10 +67,30 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
         hkdfBytesGenerator.Init(bcParams);
 
         uint minKeySize = template.GetAttributeUint(CKA.CKA_VALUE_LEN, generatedKey.GetMinimalSecretLen());
+        this.CheckLength(minKeySize);
         byte[] bytes = new byte[minKeySize];
         hkdfBytesGenerator.GenerateBytes(bytes, 0, bytes.Length);
 
         return bytes;
+    }
+
+    private void CheckLength(uint minKeySize)
+    {
+        bool mechanismFound = MechanismUtils.TryGetMechanismInfo(CKM.CKM_HKDF_DERIVE, out P11Handlers.Common.MechanismInfo info);
+        System.Diagnostics.Debug.Assert(mechanismFound);
+
+        uint keySizeInBits = minKeySize * 8;
+        if (info.MinKeySize > keySizeInBits || info.MaxKeySize < keySizeInBits)
+        {
+            this.logger.LogError("Invalid key size for {Mechanism} actual key size {KeySizeInBits} bits (The permitted range is between {MinKeySize} and {MaxKeySize} bits).",
+                CKM.CKM_HKDF_DERIVE,
+                keySizeInBits,
+                info.MinKeySize,
+                info.MaxKeySize);
+
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_SIZE_RANGE,
+                $"Invalid key size for {CKM.CKM_HKDF_DERIVE} actual key size {keySizeInBits} bits (The permitted range is between {info.MinKeySize} and {info.MaxKeySize} bits).");
+        }
     }
 
     private byte[] Extract(byte[] inputKeyMaterial, byte[] salt)
