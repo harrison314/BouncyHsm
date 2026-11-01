@@ -6,6 +6,7 @@ Here is a list of general restrictions and deviations of BouncyHsm that were arc
 - PKCS#11 functions return `CKR_DEVICE_ERROR` when there is a communication error between the native library and the server (for example, unavailability, or an error in the TCP stack).
 - When using template attributes (`CK_ATTRIBUTE[]`), only nesting at level 10 is supported (via `CKA_DERIVE_TEMPLATE`, `CKA_WRAP_TEMPLATE` and `CKA_UNWRAP_TEMPLATE`).
 - It is not possible to destroy public crypto objects on a token without logging in.
+- Function `C_WaitForSlotEvent` works only with flag `CKF_DONT_BLOCK`.
 
 ### v2.3.4
 - Generating PKCS#10/CSR for ML-KEM key by _RFC 9883_ is experimental feature, uses a self-signed ML-DSA certificate that is included in the request.
