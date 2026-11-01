@@ -38,7 +38,11 @@ public partial class GetMechanismListHandler : IRpcRequestHandler<GetMechanismLi
                 return new GetMechanismListEnvelope()
                 {
                     Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
-                    Data = null
+                    Data = new MechanismList()
+                    {
+                        MechanismTypes = Array.Empty<uint>(),
+                        PullCount = (uint)mechanismTypes.Length
+                    }
                 };
             }
             else
