@@ -564,6 +564,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR p
             }
         }
     }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL)
+    {
+        *pulCount = (CK_ULONG)envelope.PullCount;
+    }
 
     GetSlotListEnvelope_Release(&envelope);
 
