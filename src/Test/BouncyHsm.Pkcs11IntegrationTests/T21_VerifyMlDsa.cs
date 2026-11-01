@@ -21,12 +21,18 @@ public class T21_VerifyMlDsa
     }
 
     [TestMethod]
-    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_44)]
-    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_65)]
-    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_87)]
-    public void VerifyMlDsa_WithoutParameters_Success(uint ckp)
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_44, 85)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_44, 0)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_44, 32)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_44, 12896)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_65, 85)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_87, 85)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_87, 0)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_87, 156)]
+    [DataRow(CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_87, 32)]
+    public void VerifyMlDsa_WithoutParameters_Success(uint ckp, int dataToSignSize)
     {
-        byte[] dataToSign = new byte[85];
+        byte[] dataToSign = new byte[dataToSignSize];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -53,7 +59,14 @@ public class T21_VerifyMlDsa
 
         Assert.IsTrue(isValid, "Signature is not valid.");
 
-        dataToSign[3] ^= 0xFF;
+        if (dataToSign.Length > 5)
+        {
+            dataToSign[3] ^= 0xFF;
+        }
+        else
+        {
+            dataToSign = Utils.GetRandomBytes(32, true);
+        }
 
         session.Verify(mechanism, publicKey, dataToSign, signature, out isValid);
 

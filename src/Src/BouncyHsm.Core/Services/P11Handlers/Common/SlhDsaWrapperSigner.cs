@@ -17,7 +17,7 @@ internal class SlhDsaWrapperSigner : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get => true;
     }
 
     public SlhDsaWrapperSigner(Ckp_CkSignAdditionalContext? mechanismParams, ILogger<SlhDsaWrapperSigner> logger)
