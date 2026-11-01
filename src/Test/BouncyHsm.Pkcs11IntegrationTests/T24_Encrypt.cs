@@ -72,7 +72,6 @@ public class T24_Encrypt
     [DataRow(CKM.CKM_AES_CFB64)]
     [DataRow(CKM.CKM_AES_CFB128)]
     [DataRow(CKM.CKM_AES_OFB)]
-    [DataRow(CKM.CKM_AES_CTR)]
     [DataRow(CKM.CKM_AES_CTS)]
     public void Encrypt_AesWithIv_Success(CKM mechanismType)
     {
@@ -94,6 +93,35 @@ public class T24_Encrypt
         byte[] iv = Utils.GetRandomBytes(16);
 
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(mechanismType, iv);
+        byte[] cipherText = session.Encrypt(mechanism, key, plainText);
+
+        Assert.IsNotNull(cipherText);
+    }
+
+    [TestMethod]
+    public void Encrypt_AesCtr_Success()
+    {
+        byte[] plainText = new byte[16];
+        Random.Shared.NextBytes(plainText);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        byte[] iv = Utils.GetRandomBytes(16);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkAesCtrParams ctrParams = session.Factories.MechanismParamsFactory.CreateCkAesCtrParams((ulong)64,
+            iv);
+
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CTR, ctrParams);
         byte[] cipherText = session.Encrypt(mechanism, key, plainText);
 
         Assert.IsNotNull(cipherText);

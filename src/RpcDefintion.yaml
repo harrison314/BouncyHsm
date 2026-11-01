@@ -1523,3 +1523,9 @@ Messages:
       Iv: binary
       # AdditionalDerivedKeys: AttrValueFromNative[] - is not support in current version
       AdditionalDerivedKeysCount: uint32
+
+  Ckp_CkAesCtrParams:
+    Summary: Represents CK_AES_CTR_PARAMS 
+    Fields:
+      CounterBits: uint32
+      Cb: binary
