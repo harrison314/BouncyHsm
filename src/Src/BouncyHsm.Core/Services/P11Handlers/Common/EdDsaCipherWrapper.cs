@@ -22,7 +22,7 @@ internal class EdDsaCipherWrapper : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get => true;
     }
 
     public EdDsaCipherWrapper(Ckp_CkEddsaParams? eddsaParams, ILogger<EdDsaCipherWrapper> logger)

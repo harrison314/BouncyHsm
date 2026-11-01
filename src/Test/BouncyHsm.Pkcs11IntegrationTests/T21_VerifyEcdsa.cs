@@ -14,21 +14,23 @@ public class T21_VerifyEcdsa
     }
 
     [TestMethod]
-    [DataRow(CKM.CKM_ECDSA)]
-    [DataRow(CKM.CKM_ECDSA_SHA1)]
-    [DataRow(CKM.CKM_ECDSA_SHA224)]
-    [DataRow(CKM.CKM_ECDSA_SHA256)]
-    [DataRow(CKM.CKM_ECDSA_SHA384)]
-    [DataRow(CKM.CKM_ECDSA_SHA512)]
-    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_224)]
-    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_256)]
-    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_384)]
-    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_512)]
-    public void VerifyEcdsa_SignAndVerify_Success(CKM mechnism)
+    [DataRow(CKM.CKM_ECDSA, 0)]
+    [DataRow(CKM.CKM_ECDSA, 32)]
+    [DataRow(CKM.CKM_ECDSA, 64)]
+    [DataRow(CKM.CKM_ECDSA, 657)]
+    [DataRow(CKM.CKM_ECDSA_SHA1, 32)]
+    [DataRow(CKM.CKM_ECDSA_SHA224, 32)]
+    [DataRow(CKM.CKM_ECDSA_SHA256, 32)]
+    [DataRow(CKM.CKM_ECDSA_SHA384, 32)]
+    [DataRow(CKM.CKM_ECDSA_SHA512, 32)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_224, 32)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_256, 32)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_384, 32)]
+    [DataRow(CKM_V3_0.CKM_ECDSA_SHA3_512, 32)]
+    public void VerifyEcdsa_SignAndVerify_Success(CKM mechnism, int dataToSignSize)
     {
-        byte[] dataToSign = new byte[32];
+        byte[] dataToSign = new byte[dataToSignSize];
         Random.Shared.NextBytes(dataToSign);
-
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,

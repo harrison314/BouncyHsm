@@ -18,7 +18,7 @@ internal class PlainMacWrapperSigner : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get => true;
     }
 
     public PlainMacWrapperSigner(CKM mechanism,

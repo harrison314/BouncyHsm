@@ -22,7 +22,7 @@ internal class AesWrapperSigner : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get => true;
     }
 
     public AesWrapperSigner(CKM mechanismType,

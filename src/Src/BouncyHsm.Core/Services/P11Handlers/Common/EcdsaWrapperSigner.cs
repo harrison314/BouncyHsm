@@ -15,7 +15,7 @@ internal class EcdsaWrapperSigner : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get => true;
     }
 
     public EcdsaWrapperSigner(ISigner signer, CKM mechanism, ILogger<EcdsaWrapperSigner> logger)

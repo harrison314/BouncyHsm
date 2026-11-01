@@ -14,12 +14,14 @@ public class T20_SignEcdsa
     }
 
     [TestMethod]
-    public void SignEcdsa_WithDotnetWerify_Success()
+    [DataRow(0)]
+    [DataRow(32)]
+    [DataRow(64)]
+    [DataRow(412)]
+    public void SignEcdsa_Plain_Success(int dataToSignSize)
     {
-        byte[] dataToSign = new byte[412];
+        byte[] dataToSign = new byte[dataToSignSize];
         Random.Shared.NextBytes(dataToSign);
-        byte[] hash = SHA256.HashData(dataToSign);
-
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
@@ -37,12 +39,44 @@ public class T20_SignEcdsa
 
         CreateEcdsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
 
-        using ECDsa rsaPubKey = this.ExportPublicKey(session, publicKey);
+        using ECDsa ecPubKey = this.ExportPublicKey(session, publicKey);
 
         using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA);
-        byte[] signature = session.Sign(mechanism, privateKey, hash);
+        byte[] signature = session.Sign(mechanism, privateKey, dataToSign);
+        Assert.IsNotNull(signature);
+    }
 
-        bool verfied = rsaPubKey.VerifyHash(hash, signature, DSASignatureFormat.IeeeP1363FixedFieldConcatenation);
+    [TestMethod]
+    [DataRow(32)]
+    [DataRow(64)]
+    [DataRow(412)]
+    public void SignEcdsa_WithDotnetWerify_Success(int dataToSignSize)
+    {
+        byte[] dataToSign = new byte[dataToSignSize];
+        Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"ECKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        CreateEcdsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
+
+        using ECDsa ecPubKey = this.ExportPublicKey(session, publicKey);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_ECDSA);
+        byte[] signature = session.Sign(mechanism, privateKey, dataToSign);
+
+        bool verfied = ecPubKey.VerifyHash(dataToSign, signature, DSASignatureFormat.IeeeP1363FixedFieldConcatenation);
 
         Assert.IsTrue(verfied, "Signature inconsistent.");
     }

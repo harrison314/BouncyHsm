@@ -15,11 +15,14 @@ public class T21_VerifyEddsa
     }
 
     [TestMethod]
-    public void VerifyEddsa_Ed25519Sign_Success()
+    [DataRow(0)]
+    [DataRow(32)]
+    [DataRow(64)]
+    [DataRow(658)]
+    public void VerifyEddsa_Ed25519Sign_Success(int dataToSignSize)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignSize];
         Random.Shared.NextBytes(dataToSign);
-
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,

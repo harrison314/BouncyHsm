@@ -18,7 +18,7 @@ internal class AesGmacWrapperSigner : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get => true;
     }
 
     public AesGmacWrapperSigner(CKM mechanismType,
