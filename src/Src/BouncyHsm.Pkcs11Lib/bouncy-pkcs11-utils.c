@@ -543,6 +543,33 @@ static int CreateRawParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     return result;
 }
 
+static int CreateAesCtrParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+{
+    LOG_ENTERING_TO_FUNCTION();
+
+    int result = NMRPC_FATAL_ERROR;
+    if (pMechanism->ulParameterLen != sizeof(CK_AES_CTR_PARAMS))
+    {
+        log_message(LOG_LEVEL_ERROR, "Excepted CK_AES_CTR_PARAMS in mechanism.");
+        return NMRPC_FATAL_ERROR;
+    }
+
+    CK_AES_CTR_PARAMS_PTR deriveParamsPtr = (CK_AES_CTR_PARAMS_PTR)pMechanism->pParameter;
+
+    Ckp_CkAesCtrParams deriveParams = { 0 };
+    deriveParams.CounterBits = (uint32_t)deriveParamsPtr->ulCounterBits;
+    deriveParams.Cb.size = sizeof(deriveParamsPtr->cb);
+    deriveParams.Cb.array = deriveParamsPtr->cb;
+
+    result = nmrpc_writeAsBinary(&deriveParams, (SerializeFnPtr_t)Ckp_CkAesCtrParams_Serialize, &value->MechanismParamMp);
+    if (result != NMRPC_OK)
+    {
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+    }
+
+    return result;
+}
+
 static int CreateCgmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
     LOG_ENTERING_TO_FUNCTION();
@@ -1288,12 +1315,15 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_AES_CFB64:
     case CKM_AES_CFB128:
     case CKM_AES_OFB:
-    case CKM_AES_CTR:
     case CKM_AES_CTS:
     case CKM_AES_GMAC:
     case CKM_CAMELLIA_CBC:
     case CKM_CAMELLIA_CBC_PAD:
         return CreateRawParams(value, pMechanism);
+        break;
+
+    case CKM_AES_CTR:
+        return CreateAesCtrParams(value, pMechanism);
         break;
 
     case  CKM_AES_GCM:
