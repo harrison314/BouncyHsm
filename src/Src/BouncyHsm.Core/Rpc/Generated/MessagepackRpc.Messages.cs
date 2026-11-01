@@ -4683,3 +4683,23 @@ public partial class Ckp_Ck800_108FeedbackKdfParams
 
 }
 
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+public partial class Ckp_CkAesCtrParams
+{
+    [Key(0)]
+    public uint CounterBits
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public byte[] Cb
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<byte>();
+
+}
+

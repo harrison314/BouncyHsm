@@ -12376,6 +12376,58 @@ int Ckp_Ck800_108FeedbackKdfParams_Release(Ckp_Ck800_108FeedbackKdfParams* value
   Binary_Release(&value->Iv);
     return NMRPC_OK;
 }
+int Ckp_CkAesCtrParams_Serialize(cmp_ctx_t* ctx, Ckp_CkAesCtrParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->CounterBits);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_bin(ctx, value->Cb.data, (uint32_t)value->Cb.size);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkAesCtrParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkAesCtrParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->CounterBits);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field CounterBits");
+
+  result = cmph_read_binary(ctx, &value->Cb);
+   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Cb");
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkAesCtrParams_Release(Ckp_CkAesCtrParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->Cb);
+    return NMRPC_OK;
+}
 int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvelope* response)
 {
     log_message(LOG_LEVEL_INFO, "Call RPC function %s", __FUNCTION__);
