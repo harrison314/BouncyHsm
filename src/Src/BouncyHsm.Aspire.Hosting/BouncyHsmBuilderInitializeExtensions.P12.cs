@@ -12,7 +12,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         string password,
         byte[] ckaId,
         string ckaLabel,
-        bool impotCertificateChain = false)
+        bool importCertificateChain = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNullOrEmpty(tokenLabel);
@@ -35,7 +35,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
                 {
                     CkaId = ckaId,
                     CkaLabel = ckaLabel,
-                    ImportChain = impotCertificateChain,
+                    ImportChain = importCertificateChain,
                     ImportMode = PrivateKeyImportMode.Local,
                     Password = password,
                     Pkcs12Content = pkcs12Content
@@ -53,7 +53,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         string password,
         byte[] ckaId,
         string ckaLabel,
-        bool impotCertificateChain = false)
+        bool importCertificateChain = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNullOrEmpty(tokenLabel);
@@ -79,7 +79,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
                     {
                         CkaId = ckaId,
                         CkaLabel = ckaLabel,
-                        ImportChain = impotCertificateChain,
+                        ImportChain = importCertificateChain,
                         ImportMode = PrivateKeyImportMode.Local,
                         Password = password,
                         Pkcs12Content = pkcs12Content
