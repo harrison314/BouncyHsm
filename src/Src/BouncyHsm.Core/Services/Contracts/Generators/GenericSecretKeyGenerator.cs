@@ -1,5 +1,7 @@
-﻿using BouncyHsm.Core.Services.Contracts.Entities;
+﻿using BouncyHsm.Core.Rpc;
+using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Security;
 
@@ -42,6 +44,8 @@ internal class GenericSecretKeyGenerator : IKeyGenerator
             generalSecretKeyObject.SetValue(kvp.Key, kvp.Value, false);
         }
 
+        this.CheckLength(generalSecretKeyObject);
+
         byte[] value = new byte[generalSecretKeyObject.CkaValueLen];
         secureRandom.NextBytes(value);
         generalSecretKeyObject.SetSecret(value);
@@ -51,6 +55,25 @@ internal class GenericSecretKeyGenerator : IKeyGenerator
             generalSecretKeyObject.CkaValueLen);
 
         return generalSecretKeyObject;
+    }
+
+    private void CheckLength(GenericSecretKeyObject generalSecretKeyObject)
+    {
+        bool mechanismFound = MechanismUtils.TryGetMechanismInfo(CKM.CKM_GENERIC_SECRET_KEY_GEN, out P11Handlers.Common.MechanismInfo info);
+        System.Diagnostics.Debug.Assert(mechanismFound);
+
+        uint keySizeInBits = generalSecretKeyObject.CkaValueLen * 8;
+        if (info.MinKeySize > keySizeInBits || info.MaxKeySize < keySizeInBits)
+        {
+            this.logger.LogError("Invalid key size for {Mechanism} actual key size {KeySizeInBits} bits (The permitted range is between {MinKeySize} and {MaxKeySize} bits).",
+                CKM.CKM_GENERIC_SECRET_KEY_GEN,
+                keySizeInBits,
+                info.MinKeySize,
+                info.MaxKeySize);
+
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_SIZE_RANGE,
+                $"Invalid key size for CKM_GENERIC_SECRET_KEY_GEN actual key size {keySizeInBits} bits (The permitted range is between {info.MinKeySize} and {info.MaxKeySize} bits).");
+        }
     }
 
     public override string ToString()

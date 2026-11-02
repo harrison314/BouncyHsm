@@ -114,6 +114,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
               if (!ctx->read(ctx, (void*) buff, size))
               {
                   NMRPC_LOG_ERR_TEXT("Error during deserializing.");
+                  free((void*)buff);
                   return NMRPC_DESERIALIZE_ERR;
               }
 
@@ -152,11 +153,16 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
               if (!ctx->read(ctx, (void*) buff, size))
               {
                   NMRPC_LOG_ERR_TEXT("Error during deserilizing.");
+                  free((void*)buff);
                   return NMRPC_DESERIALIZE_ERR;
               }
             
               Binary* binary = (Binary*) malloc(sizeof(Binary));
-              if (binary == NULL) return NMRPC_FATAL_ERROR;
+              if (binary == NULL)
+              {
+                  free((void*)buff);
+                  return NMRPC_FATAL_ERROR;
+              }
               
               binary->data = buff;
               binary->size = size;
@@ -195,7 +201,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 return NMRPC_OK;
             }
 
-            static bool mnrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
+            static bool nmrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
             {
                 USE_VARIABLE(ctx);    
                 USE_VARIABLE(data);
@@ -204,7 +210,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 return false;
             }
 
-            static bool mnrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
+            static bool nmrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
             {
                 USE_VARIABLE(ctx);    
                 USE_VARIABLE(count);
@@ -212,7 +218,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 return false;
             }
 
-            static size_t mnrpc_empty_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
+            static size_t nmrpc_empty_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
             {
                 USE_VARIABLE(ctx);    
                 USE_VARIABLE(data);   
@@ -284,7 +290,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                return NMRPC_OK;
             }
 
-            static size_t mnrpc_buffer_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
+            static size_t nmrpc_buffer_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
             {
                 InternalBuffer_t* buffer = (InternalBuffer_t*)ctx->buf;
                 if (InternalBuffer_append(buffer, data, count) != NMRPC_OK)
@@ -301,7 +307,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 size_t position;
             } InternalBufferReader_t;
 
-            static bool mnrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
+            static bool nmrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
             {
                 InternalBufferReader_t* bufferReader = (InternalBufferReader_t*)ctx->buf;
                 
@@ -316,7 +322,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                 return true;
             }
             
-            static bool mnrpc_bufferReader_file_skipper(cmp_ctx_t *ctx, size_t count)
+            static bool nmrpc_bufferReader_file_skipper(cmp_ctx_t *ctx, size_t count)
             {
                 InternalBufferReader_t* bufferReader = (InternalBufferReader_t*)ctx->buf;
                 if (bufferReader->position + count > bufferReader->size)
@@ -344,17 +350,19 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                     return result;
                 }
 
-                cmp_init(&ctx, &buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+                cmp_init(&ctx, &buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
                 result = serialize(&ctx, data);
                 if (result != NMRPC_OK)
                 {
+                    InternalBuffer_free(&buffer);
                     return result;
                 }
 
                 Binary* rData = (Binary*) malloc(sizeof(Binary));
                 if (rData == NULL)
                 {
+                   InternalBuffer_free(&buffer);
                    return NMRPC_FATAL_ERROR;
                 }
 
@@ -949,8 +957,8 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
                  return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
              }
 
-             cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-             cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+             cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+             cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
              if (!cmp_write_array(&write_head_ctx, 2)) 
              {
@@ -1039,6 +1047,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              if (!result)
              {
                  log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+                 result = NMRPC_FATAL_ERROR;
                  goto err;
              }
 
@@ -1068,14 +1077,14 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
              if (read_head_buffer.size != response_header_size)
              {
-                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
                  goto err;
              }
 
              read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
              if (read_body_buffer.size != response_body_size)
              {
-                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+                 log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
                  goto err;
              }
 
@@ -1084,7 +1093,7 @@ internal class CmpAsciCGenerator : BaseAsciCGenerator
              body_reader.size = read_body_buffer.size;
              body_reader.buffer = read_body_buffer.buffer;
 
-             cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+             cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
              result = {{this.GetDeserializeFnName(cresponseType)}}(&read_body_ctx, NULL, response);
              if (result != NMRPC_OK)

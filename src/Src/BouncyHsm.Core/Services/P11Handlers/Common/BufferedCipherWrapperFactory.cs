@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
@@ -38,13 +39,12 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_CBC => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/NOPADDING"), true, mechanism),
             CKM.CKM_AES_CBC_PAD => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/PKCS7PADDING"), false, mechanism),
 
-            CKM.CKM_AES_CFB1 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB/NOPADDING"), true, mechanism), //TODO: check with specification
-            CKM.CKM_AES_CFB8 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB8/NOPADDING"), true, mechanism),
-            CKM.CKM_AES_CFB64 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB64/NOPADDING"), true, mechanism),
-            CKM.CKM_AES_CFB128 => this.CreateAes(CipherUtilities.GetCipher("AES/CFB128/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CFB8 => this.CreateAes(this.CreateAesCbf(8), true, mechanism),
+            CKM.CKM_AES_CFB64 => this.CreateAes(this.CreateAesCbf(64), true, mechanism),
+            CKM.CKM_AES_CFB128 => this.CreateAes(this.CreateAesCbf(128), true, mechanism),
 
             CKM.CKM_AES_OFB => this.CreateAes(CipherUtilities.GetCipher("AES/OFB/NOPADDING"), true, mechanism),
-            CKM.CKM_AES_CTR => this.CreateAes(CipherUtilities.GetCipher("AES/CTR/NOPADDING"), true, mechanism),
+            CKM.CKM_AES_CTR => this.CreateAesCtr(true, mechanism),
             CKM.CKM_AES_CTS => this.CreateAes(CipherUtilities.GetCipher("AES/CTS/NOPADDING"), true, mechanism),
 
             CKM.CKM_AES_GCM => this.CreateAesGcm(CipherUtilities.GetCipher("AES/GCM/NOPADDING"), mechanism),
@@ -67,6 +67,11 @@ internal class BufferedCipherWrapperFactory
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for encrypt, decrypt, wrap or unwrap.")
         };
+    }
+
+    private IBufferedCipher CreateAesCbf(int bits)
+    {
+        return new BufferedBlockCipher(new CfbBlockCipher(AesUtilities.CreateEngine(), bits));
     }
 
     private AesBufferedCipherWrapper CreateAesWithoutIv(IBufferedCipher bufferedCipher, MechanismValue mechanism)
@@ -93,6 +98,29 @@ internal class BufferedCipherWrapperFactory
                 padZeroForWrap,
                 (CKM)mechanism.MechanismType,
                 this.loggerFactory.CreateLogger<AesBufferedCipherWrapper>());
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error in builds {MechanismType} from parameter.", (CKM)mechanism.MechanismType);
+            throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, $"Invalid parameter for mechanism {(CKM)mechanism.MechanismType}.", ex);
+        }
+    }
+
+    private AesCtrCipherWrapper CreateAesCtr(bool padZeroForWrap, MechanismValue mechanism)
+    {
+        try
+        {
+            Ckp_CkAesCtrParams rawDataParams = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkAesCtrParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
+
+            this.logger.LogDebug("Extract CK_AES_CTR_PARAMS with counter bists {CounterBits} for mechanism {Mechanism}.",
+                rawDataParams.CounterBits,
+                (CKM)mechanism.MechanismType);
+
+            return new AesCtrCipherWrapper(Convert.ToInt32(rawDataParams.CounterBits),
+                rawDataParams.Cb,
+                padZeroForWrap,
+                (CKM)mechanism.MechanismType,
+                this.loggerFactory.CreateLogger<AesCtrCipherWrapper>());
         }
         catch (Exception ex)
         {

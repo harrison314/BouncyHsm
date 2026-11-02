@@ -1,6 +1,7 @@
+#ifndef BOUNCY_PKCS11_H
+#define BOUNCY_PKCS11_H
 #include <stdio.h>
 #include <string.h>
-
 
 #ifdef _WIN32
 
@@ -53,3 +54,5 @@
 #include "cryptoki/pkcs11.h"
 
 #endif // #ifdef _WIN32
+
+#endif //BOUNCY_PKCS11_H

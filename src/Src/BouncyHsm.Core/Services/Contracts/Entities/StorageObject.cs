@@ -67,7 +67,7 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         this.CkaCopyable = true;
         this.CkaDestroyable = true;
         this.CkaLabel = string.Empty;
-        this.CkaUniqueId = $"obj:{Guid.NewGuid():d}";
+        this.CkaUniqueId = CreateCkaUniqueId();
     }
 
     internal StorageObject(StorageObjectMemento memento)
@@ -86,20 +86,68 @@ public abstract class StorageObject : Entity, ICryptoApiObject
 
         if (attributeType == CKA.CKA_CLASS)
         {
-            // skip readonly properties
+            if (isUpdating)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                    $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
+            }
+
             return;
         }
 
-        if (this.IsReadOnlyAttribute(attributeType))
+        if (isUpdating)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
-        }
+            if (this.IsReadOnlyAttribute(attributeType))
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY, $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
+            }
 
-        if (isUpdating && this.IsSensitiveAttribute(attributeType))
-        {
-            if (this.values.ContainsKey(CKA.CKA_ALWAYS_SENSITIVE))
+            if (attributeType == CKA.CKA_SENSITIVE)
+            {
+                this.CheckChangeFalseToTrue(CKA.CKA_SENSITIVE, value);
+            }
+
+            if (attributeType == CKA.CKA_EXTRACTABLE)
+            {
+                this.CheckChangeTrueToFalse(CKA.CKA_EXTRACTABLE, value);
+            }
+
+            if (attributeType == CKA.CKA_WRAP_WITH_TRUSTED)
+            {
+                this.CheckChangeFalseToTrue(CKA.CKA_WRAP_WITH_TRUSTED, value);
+            }
+
+            if (attributeType == CKA.CKA_PRIVATE)
+            {
+                this.CheckChangeFalseToTrue(CKA.CKA_PRIVATE, value);
+            }
+
+            if (attributeType == CKA.CKA_COPYABLE)
+            {
+                this.CheckChangeTrueToFalse(CKA.CKA_COPYABLE, value);
+            }
+
+            if (attributeType == CKA.CKA_MODIFIABLE)
+            {
+                this.CheckChangeTrueToFalse(CKA.CKA_MODIFIABLE, value);
+            }
+
+            if (this.IsSensitiveAttribute(attributeType) && this.values.ContainsKey(CKA.CKA_ALWAYS_SENSITIVE))
             {
                 this.values[CKA.CKA_ALWAYS_SENSITIVE] = AttributeValue.Create(false);
+            }
+        }
+        else
+        {
+            if (attributeType is CKA.CKA_ALWAYS_SENSITIVE
+            or CKA.CKA_NEVER_EXTRACTABLE
+            or CKA.CKA_ALWAYS_AUTHENTICATE
+            or CKA.CKA_LOCAL
+            or CKA.CKA_UNIQUE_ID
+            or CKA.CKA_KEY_GEN_MECHANISM)
+            {
+                throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                    $"Attribute {attributeType} in object {this.GetType().Name} is read only.");
             }
         }
 
@@ -177,18 +225,31 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         // NOP
     }
 
+
+
+    public override string ToString()
+    {
+        return $"{this.GetType().Name}: Id={this.Id}";
+    }
+
+    internal static string CreateCkaUniqueId()
+    {
+        return $"obj:{Guid.NewGuid():d}";
+    }
+
     protected virtual bool IsReadOnlyAttribute(CKA attributeType)
     {
         return attributeType is CKA.CKA_ALWAYS_SENSITIVE
             or CKA.CKA_NEVER_EXTRACTABLE
             or CKA.CKA_ALWAYS_AUTHENTICATE
             or CKA.CKA_LOCAL
-            or CKA.CKA_UNIQUE_ID;
-    }
-
-    public override string ToString()
-    {
-        return $"{this.GetType().Name}: Id={this.Id}";
+            or CKA.CKA_UNIQUE_ID
+            or CKA.CKA_KEY_GEN_MECHANISM
+            or CKA.CKA_VALUE
+            or CKA.CKA_MODULUS
+            or CKA.CKA_SEED
+            or CKA.CKA_KEY_TYPE
+            or CKA.CKA_CLASS;
     }
 
     private uint CalculateObjectSize()
@@ -201,5 +262,23 @@ public abstract class StorageObject : Entity, ICryptoApiObject
         }
 
         return size;
+    }
+
+    private void CheckChangeTrueToFalse(CKA attributeType, IAttributeValue newValue)
+    {
+        if (!this.values[attributeType].AsBool() && newValue.AsBool())
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed from CK_FALSE to CK_TRUE.");
+        }
+    }
+
+    private void CheckChangeFalseToTrue(CKA attributeType, IAttributeValue newValue)
+    {
+        if (this.values[attributeType].AsBool() && !newValue.AsBool())
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_READ_ONLY,
+                $"Attribute {attributeType} in object {this.GetType().Name} cannot be changed from CK_TRUE to CK_FALSE.");
+        }
     }
 }

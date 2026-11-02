@@ -53,12 +53,24 @@ static void myRandChars(unsigned long* generator, char* buffer, size_t len)
     buffer[len] = 0;
 }
 
+static void trimEnd(char* str)
+{
+    if (str == NULL) return;
+
+    size_t len = strlen(str);
+
+    while (len > 0 && isspace((unsigned char)str[len - 1]))
+    {
+        str[--len] = '\0';
+    }
+}
+
 #ifdef _WIN32
 static char* toUtf8(const wchar_t* src, int* out_len)
 {
     size_t src_length = wcslen(src);
     int length = WideCharToMultiByte(CP_UTF8, 0, src, (int)src_length, 0, 0, NULL, NULL);
-    if (length == ERROR_NO_UNICODE_TRANSLATION)
+    if (length == 0)
     {
         return NULL;
     }
@@ -134,6 +146,8 @@ static bool GetCurrentProgramName(char* buffer, size_t maxSize)
     {
         buffer[maxSize - 1] = 0;
     }
+
+    trimEnd(buffer);
 
     int rv = fclose(procFile);
     if (rv != 0)
@@ -319,13 +333,13 @@ static void configureLogging(const char* configurationString)
 
     if (!logger_init(levelBuffer, targetBuffer))
     {
-        log_message(LOG_LEVEL_ERROR, "Error during initialized logger. Check LogTarget and LogLevel setting.");
+        log_message(LOG_LEVEL_ERROR, "Error during logger initialization. Check LogTarget and LogLevel setting.");
     }
 }
 
 GlobalContext_t globalContext;
 
-void GlobalContextInit()
+void GlobalContextInit(void)
 {
 #ifdef _WIN32
     uint64_t pid = (uint64_t)GetCurrentProcessId();
@@ -368,6 +382,7 @@ void GlobalContextInit()
         if (!parseConnectionStringOrDefault(cfgString, "Server", globalContext.server, sizeof(globalContext.server), BOUNCY_HSM_DEFAULT_SERVER))
         {
             log_message(LOG_LEVEL_ERROR, "Error during reading Server.");
+            free((void*)cfgString);
             return;
         }
 
@@ -376,6 +391,7 @@ void GlobalContextInit()
         if (!parseConnectionString(cfgString, "Port", portBuffer, &portBufferSize))
         {
             log_message(LOG_LEVEL_ERROR, "Error during reading Port.");
+            free((void*)cfgString);
             return;
         }
 
@@ -383,19 +399,21 @@ void GlobalContextInit()
         {
             int portValue;
 #ifdef _WIN32
-            int rv = sscanf_s(portBuffer, "%i", &portValue);
+            int rv = sscanf_s(portBuffer, "%d", &portValue);
 #else
-            int rv = sscanf(portBuffer, "%i", &portValue);
+            int rv = sscanf(portBuffer, "%d", &portValue);
 #endif
-            if (rv == 0)
+            if (rv != 1)
             {
                 log_message(LOG_LEVEL_ERROR, "Error during reading Port. Is not number.");
+                free((void*)cfgString);
                 return;
             }
 
             if (portValue < 0 || portValue > 65535)
             {
                 log_message(LOG_LEVEL_ERROR, "Error during reading Port. Invalid port number: %d.", portValue);
+                free((void*)cfgString);
                 return;
             }
 
@@ -405,6 +423,7 @@ void GlobalContextInit()
         if (!parseConnectionStringOrDefault(cfgString, "Tag", globalContext.tag, sizeof(globalContext.tag), ""))
         {
             log_message(LOG_LEVEL_ERROR, "Error during reading Tag.");
+            free((void*)cfgString);
             return;
         }
 
@@ -412,8 +431,8 @@ void GlobalContextInit()
         free((void*)cfgString);
     }
 
-    log_message(LOG_LEVEL_INFO, "Successful initialized PKCS11 library.");
-    log_message(LOG_LEVEL_INFO, "Config - pid %i AppName: %s Nonce: %s", globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
+    log_message(LOG_LEVEL_INFO, "PKCS#11 library successfully initialized.");
+    log_message(LOG_LEVEL_INFO, "Config - pid %lu AppName: %s Nonce: %s", (unsigned long)globalContext.appId.Pid, globalContext.appId.AppName, globalContext.appId.AppNonce);
     log_message(LOG_LEVEL_INFO, "Config - Server: %s Port: %i", globalContext.server, globalContext.port);
     log_message(LOG_LEVEL_INFO, "Config - Tag: %s", globalContext.tag);
 }

@@ -83,6 +83,7 @@ static int cmph_read_binary(cmp_ctx_t* ctx, Binary* value)
   if (!ctx->read(ctx, (void*) buff, size))
   {
       NMRPC_LOG_ERR_TEXT("Error during deserializing.");
+      free((void*)buff);
       return NMRPC_DESERIALIZE_ERR;
   }
 
@@ -121,11 +122,16 @@ static int cmph_read_nullable_binary(cmp_ctx_t* ctx, Binary** ptr)
   if (!ctx->read(ctx, (void*) buff, size))
   {
       NMRPC_LOG_ERR_TEXT("Error during deserilizing.");
+      free((void*)buff);
       return NMRPC_DESERIALIZE_ERR;
   }
 
   Binary* binary = (Binary*) malloc(sizeof(Binary));
-  if (binary == NULL) return NMRPC_FATAL_ERROR;
+  if (binary == NULL)
+  {
+      free((void*)buff);
+      return NMRPC_FATAL_ERROR;
+  }
   
   binary->data = buff;
   binary->size = size;
@@ -164,7 +170,7 @@ int nmrpc_global_context_init(nmrpc_global_context_t* ctx, void* user_ctx, nmrpc
     return NMRPC_OK;
 }
 
-static bool mnrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
+static bool nmrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
 {
     USE_VARIABLE(ctx);    
     USE_VARIABLE(data);
@@ -173,7 +179,7 @@ static bool mnrpc_empty_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
     return false;
 }
 
-static bool mnrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
+static bool nmrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
 {
     USE_VARIABLE(ctx);    
     USE_VARIABLE(count);
@@ -181,7 +187,7 @@ static bool mnrpc_empty_file_skipper(cmp_ctx_t *ctx, size_t count)
     return false;
 }
 
-static size_t mnrpc_empty_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
+static size_t nmrpc_empty_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
 {
     USE_VARIABLE(ctx);    
     USE_VARIABLE(data);   
@@ -253,7 +259,7 @@ static int InternalBuffer_append(InternalBuffer_t* buffer, const void* data, siz
    return NMRPC_OK;
 }
 
-static size_t mnrpc_buffer_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
+static size_t nmrpc_buffer_file_writer(cmp_ctx_t *ctx, const void *data, size_t count)
 {
     InternalBuffer_t* buffer = (InternalBuffer_t*)ctx->buf;
     if (InternalBuffer_append(buffer, data, count) != NMRPC_OK)
@@ -270,7 +276,7 @@ typedef struct _InternalBufferReader {
     size_t position;
 } InternalBufferReader_t;
 
-static bool mnrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
+static bool nmrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t limit)
 {
     InternalBufferReader_t* bufferReader = (InternalBufferReader_t*)ctx->buf;
     
@@ -285,7 +291,7 @@ static bool mnrpc_bufferReader_file_reader(cmp_ctx_t *ctx, void *data, size_t li
     return true;
 }
 
-static bool mnrpc_bufferReader_file_skipper(cmp_ctx_t *ctx, size_t count)
+static bool nmrpc_bufferReader_file_skipper(cmp_ctx_t *ctx, size_t count)
 {
     InternalBufferReader_t* bufferReader = (InternalBufferReader_t*)ctx->buf;
     if (bufferReader->position + count > bufferReader->size)
@@ -313,17 +319,19 @@ int nmrpc_writeAsBinary(void *data, SerializeFnPtr_t serialize, Binary** outBina
         return result;
     }
 
-    cmp_init(&ctx, &buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&ctx, &buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     result = serialize(&ctx, data);
     if (result != NMRPC_OK)
     {
+        InternalBuffer_free(&buffer);
         return result;
     }
 
     Binary* rData = (Binary*) malloc(sizeof(Binary));
     if (rData == NULL)
     {
+       InternalBuffer_free(&buffer);
        return NMRPC_FATAL_ERROR;
     }
 
@@ -761,7 +769,7 @@ int ArrayOfGetAttributeOutValue_Release(ArrayOfGetAttributeOutValue* value)
   value->length = 0;
     return NMRPC_OK;
 }
-int ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, ArrayOfCkp_CkSp800_108PrfDataParsms* value)
+int ArrayOfCkp_CkSp800_108PrfDataParams_Serialize(cmp_ctx_t* ctx, ArrayOfCkp_CkSp800_108PrfDataParams* value)
 {
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
@@ -772,7 +780,7 @@ int ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, ArrayOfCkp_CkS
 
   for (i = 0; i < value->length; i++)
   {
-  result = Ckp_CkSp800_108PrfDataParsms_Serialize(ctx, &value->array[i]);
+  result = Ckp_CkSp800_108PrfDataParams_Serialize(ctx, &value->array[i]);
    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
 
   }
@@ -780,7 +788,7 @@ int ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, ArrayOfCkp_CkS
     return NMRPC_OK;
 }
 
-int ArrayOfCkp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfCkp_CkSp800_108PrfDataParsms* value)
+int ArrayOfCkp_CkSp800_108PrfDataParams_Deserialize(cmp_ctx_t* ctx, cmp_object_t* start_obj_ptr, ArrayOfCkp_CkSp800_108PrfDataParams* value)
 {
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
@@ -799,25 +807,25 @@ int ArrayOfCkp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, cmp_object_t
   if (!result) return log_serialization_error(NMRPC_DESERIALIZE_ERR, __FUNCTION__, __LINE__ - 1, NULL);
 
   value->length = (int)array_size;
-  value->array = (Ckp_CkSp800_108PrfDataParsms*) malloc(sizeof(Ckp_CkSp800_108PrfDataParsms) * array_size);
+  value->array = (Ckp_CkSp800_108PrfDataParams*) malloc(sizeof(Ckp_CkSp800_108PrfDataParams) * array_size);
   if (value->array == NULL && array_size != 0) return log_malloc_error(__FUNCTION__, __LINE__ - 1);
   for (i = 0; i < array_size; i++)
   {
-   result = Ckp_CkSp800_108PrfDataParsms_Deserialize(ctx, NULL, &value->array[i]);
+   result = Ckp_CkSp800_108PrfDataParams_Deserialize(ctx, NULL, &value->array[i]);
    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
   }
 
     return NMRPC_OK;
 }
 
-int ArrayOfCkp_CkSp800_108PrfDataParsms_Release(ArrayOfCkp_CkSp800_108PrfDataParsms* value)
+int ArrayOfCkp_CkSp800_108PrfDataParams_Release(ArrayOfCkp_CkSp800_108PrfDataParams* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
   int i;
   for (i = 0; i < value->length; i++)
   {
-      if (Ckp_CkSp800_108PrfDataParsms_Release(&value->array[i]) != NMRPC_OK)
+      if (Ckp_CkSp800_108PrfDataParams_Release(&value->array[i]) != NMRPC_OK)
      {
         return NMRPC_FATAL_ERROR;
      }
@@ -9275,16 +9283,13 @@ int WaitForSlotEventRequest_Serialize(cmp_ctx_t* ctx, WaitForSlotEventRequest* v
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 4);
+    result = cmp_write_array(ctx, 3);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = AppIdentification_Serialize(ctx, &value->AppId);
    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_uinteger(ctx, value->Flags);
-   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
-
-  result = cmp_write_bool(ctx, value->IsSlotPtrSet);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_bool(ctx, value->IsReservedPtrSet);
@@ -9310,16 +9315,13 @@ int WaitForSlotEventRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* star
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 4) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 3) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field AppId");
 
   result = cmp_read_uint(ctx, &value->Flags);
   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field Flags");
-
-  result = cmp_read_bool(ctx, &value->IsSlotPtrSet);
-  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsSlotPtrSet");
 
   result = cmp_read_bool(ctx, &value->IsReservedPtrSet);
   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsReservedPtrSet");
@@ -12163,7 +12165,7 @@ int Ckp_CkCamelliaCbcEncryptDataParams_Release(Ckp_CkCamelliaCbcEncryptDataParam
   Binary_Release(&value->Data);
     return NMRPC_OK;
 }
-int Ckp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108PrfDataParsms* value)
+int Ckp_CkSp800_108PrfDataParams_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108PrfDataParams* value)
 {
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
@@ -12195,7 +12197,7 @@ int Ckp_CkSp800_108PrfDataParsms_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108PrfDat
     return NMRPC_OK;
 }
 
-int Ckp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkSp800_108PrfDataParsms* value)
+int Ckp_CkSp800_108PrfDataParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkSp800_108PrfDataParams* value)
 {
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
@@ -12238,7 +12240,7 @@ int Ckp_CkSp800_108PrfDataParsms_Deserialize(cmp_ctx_t* ctx, const cmp_object_t*
     return NMRPC_OK;
 }
 
-int Ckp_CkSp800_108PrfDataParsms_Release(Ckp_CkSp800_108PrfDataParsms* value)
+int Ckp_CkSp800_108PrfDataParams_Release(Ckp_CkSp800_108PrfDataParams* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
@@ -12256,7 +12258,7 @@ int Ckp_CkSp800_108KdfParams_Serialize(cmp_ctx_t* ctx, Ckp_CkSp800_108KdfParams*
   result = cmp_write_uinteger(ctx, value->PrfType);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
-  result = ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(ctx, &value->DataParams);
+  result = ArrayOfCkp_CkSp800_108PrfDataParams_Serialize(ctx, &value->DataParams);
    if (result != NMRPC_OK) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_uinteger(ctx, value->AdditionalDerivedKeysCount);
@@ -12287,7 +12289,7 @@ int Ckp_CkSp800_108KdfParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* sta
   result = cmp_read_uint(ctx, &value->PrfType);
   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field PrfType");
 
-  result = ArrayOfCkp_CkSp800_108PrfDataParsms_Deserialize(ctx, NULL, &value->DataParams);
+  result = ArrayOfCkp_CkSp800_108PrfDataParams_Deserialize(ctx, NULL, &value->DataParams);
   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field DataParams");
 
   result = cmp_read_uint(ctx, &value->AdditionalDerivedKeysCount);
@@ -12300,7 +12302,7 @@ int Ckp_CkSp800_108KdfParams_Release(Ckp_CkSp800_108KdfParams* value)
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if(ArrayOfCkp_CkSp800_108PrfDataParsms_Release(&value->DataParams) != NMRPC_OK)
+  if(ArrayOfCkp_CkSp800_108PrfDataParams_Release(&value->DataParams) != NMRPC_OK)
    {
        return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
    }
@@ -12317,7 +12319,7 @@ int Ckp_Ck800_108FeedbackKdfParams_Serialize(cmp_ctx_t* ctx, Ckp_Ck800_108Feedba
   result = cmp_write_uinteger(ctx, value->PrfType);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
-  result = ArrayOfCkp_CkSp800_108PrfDataParsms_Serialize(ctx, &value->DataParams);
+  result = ArrayOfCkp_CkSp800_108PrfDataParams_Serialize(ctx, &value->DataParams);
    if (result != NMRPC_OK) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = cmp_write_bin(ctx, value->Iv.data, (uint32_t)value->Iv.size);
@@ -12351,7 +12353,7 @@ int Ckp_Ck800_108FeedbackKdfParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_
   result = cmp_read_uint(ctx, &value->PrfType);
   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field PrfType");
 
-  result = ArrayOfCkp_CkSp800_108PrfDataParsms_Deserialize(ctx, NULL, &value->DataParams);
+  result = ArrayOfCkp_CkSp800_108PrfDataParams_Deserialize(ctx, NULL, &value->DataParams);
   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field DataParams");
 
   result = cmph_read_binary(ctx, &value->Iv);
@@ -12367,11 +12369,63 @@ int Ckp_Ck800_108FeedbackKdfParams_Release(Ckp_Ck800_108FeedbackKdfParams* value
 {
      if (value == NULL) return NMRPC_BAD_ARGUMENT;
 
-  if(ArrayOfCkp_CkSp800_108PrfDataParsms_Release(&value->DataParams) != NMRPC_OK)
+  if(ArrayOfCkp_CkSp800_108PrfDataParams_Release(&value->DataParams) != NMRPC_OK)
    {
        return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
    }
   Binary_Release(&value->Iv);
+    return NMRPC_OK;
+}
+int Ckp_CkAesCtrParams_Serialize(cmp_ctx_t* ctx, Ckp_CkAesCtrParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+
+    result = cmp_write_array(ctx, 2);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_uinteger(ctx, value->CounterBits);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_bin(ctx, value->Cb.data, (uint32_t)value->Cb.size);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkAesCtrParams_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_ptr, Ckp_CkAesCtrParams* value)
+{
+  if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
+  int result = 0;
+  cmp_object_t start_obj;
+  cmp_object_t tmp_obj;
+  uint32_t array_size;
+
+   USE_VARIABLE(tmp_obj);
+  if (start_obj_ptr == NULL)
+  {
+    result = cmp_read_object(ctx, &start_obj);
+    if (!result){ NMRPC_LOG_ERR_TEXT("Can not read token."); return NMRPC_DESERIALIZE_ERR; }
+    start_obj_ptr = &start_obj;
+  }
+
+  result = cmp_object_as_array(start_obj_ptr, &array_size);
+  if (!result || array_size != 2) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+
+  result = cmp_read_uint(ctx, &value->CounterBits);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field CounterBits");
+
+  result = cmph_read_binary(ctx, &value->Cb);
+   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field Cb");
+
+    return NMRPC_OK;
+}
+
+int Ckp_CkAesCtrParams_Release(Ckp_CkAesCtrParams* value)
+{
+     if (value == NULL) return NMRPC_BAD_ARGUMENT;
+
+  Binary_Release(&value->Cb);
     return NMRPC_OK;
 }
 int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvelope* response)
@@ -12411,8 +12465,8 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -12501,6 +12555,7 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -12530,14 +12585,14 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12546,7 +12601,7 @@ int nmrpc_call_Ping(nmrpc_global_context_t* ctx, PingRequest* request, PingEnvel
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = PingEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -12610,8 +12665,8 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -12700,6 +12755,7 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -12729,14 +12785,14 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12745,7 +12801,7 @@ int nmrpc_call_Initialize(nmrpc_global_context_t* ctx, InitializeRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = InitializeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -12809,8 +12865,8 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -12899,6 +12955,7 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -12928,14 +12985,14 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -12944,7 +13001,7 @@ int nmrpc_call_Finalize(nmrpc_global_context_t* ctx, FinalizeRequest* request, F
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FinalizeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13008,8 +13065,8 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13098,6 +13155,7 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13127,14 +13185,14 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13143,7 +13201,7 @@ int nmrpc_call_GetInfo(nmrpc_global_context_t* ctx, GetInfoRequest* request, Get
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13207,8 +13265,8 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13297,6 +13355,7 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13326,14 +13385,14 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13342,7 +13401,7 @@ int nmrpc_call_GetSlotList(nmrpc_global_context_t* ctx, GetSlotListRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSlotListEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13406,8 +13465,8 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13496,6 +13555,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13525,14 +13585,14 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13541,7 +13601,7 @@ int nmrpc_call_GetSlotInfo(nmrpc_global_context_t* ctx, GetSlotInfoRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSlotInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13605,8 +13665,8 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13695,6 +13755,7 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13724,14 +13785,14 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13740,7 +13801,7 @@ int nmrpc_call_GetTokenInfo(nmrpc_global_context_t* ctx, GetTokenInfoRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetTokenInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -13804,8 +13865,8 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -13894,6 +13955,7 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -13923,14 +13985,14 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -13939,7 +14001,7 @@ int nmrpc_call_GetMechanismList(nmrpc_global_context_t* ctx, GetMechanismListReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetMechanismListEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14003,8 +14065,8 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14093,6 +14155,7 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14122,14 +14185,14 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14138,7 +14201,7 @@ int nmrpc_call_GetMechanismInfo(nmrpc_global_context_t* ctx, GetMechanismInfoReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetMechanismInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14202,8 +14265,8 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14292,6 +14355,7 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14321,14 +14385,14 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14337,7 +14401,7 @@ int nmrpc_call_InitToken(nmrpc_global_context_t* ctx, InitTokenRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = InitTokenEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14401,8 +14465,8 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14491,6 +14555,7 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14520,14 +14585,14 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14536,7 +14601,7 @@ int nmrpc_call_InitPIN(nmrpc_global_context_t* ctx, InitPinRequest* request, Ini
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = InitPinEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14600,8 +14665,8 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14690,6 +14755,7 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14719,14 +14785,14 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14735,7 +14801,7 @@ int nmrpc_call_SetPin(nmrpc_global_context_t* ctx, SetPinRequest* request, SetPi
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SetPinEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14799,8 +14865,8 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -14889,6 +14955,7 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -14918,14 +14985,14 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -14934,7 +15001,7 @@ int nmrpc_call_OpenSession(nmrpc_global_context_t* ctx, OpenSessionRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = OpenSessionEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -14998,8 +15065,8 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15088,6 +15155,7 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15117,14 +15185,14 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15133,7 +15201,7 @@ int nmrpc_call_CloseSession(nmrpc_global_context_t* ctx, CloseSessionRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CloseSessionEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15197,8 +15265,8 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15287,6 +15355,7 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15316,14 +15385,14 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15332,7 +15401,7 @@ int nmrpc_call_CloseAllSessions(nmrpc_global_context_t* ctx, CloseAllSessionsReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CloseAllSessionsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15396,8 +15465,8 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15486,6 +15555,7 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15515,14 +15585,14 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15531,7 +15601,7 @@ int nmrpc_call_GetSessionInfo(nmrpc_global_context_t* ctx, GetSessionInfoRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSessionInfoEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15595,8 +15665,8 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15685,6 +15755,7 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15714,14 +15785,14 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15730,7 +15801,7 @@ int nmrpc_call_Login(nmrpc_global_context_t* ctx, LoginRequest* request, LoginEn
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = LoginEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15794,8 +15865,8 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -15884,6 +15955,7 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -15913,14 +15985,14 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -15929,7 +16001,7 @@ int nmrpc_call_Logout(nmrpc_global_context_t* ctx, LogoutRequest* request, Logou
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = LogoutEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -15993,8 +16065,8 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16083,6 +16155,7 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16112,14 +16185,14 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16128,7 +16201,7 @@ int nmrpc_call_SeedRandom(nmrpc_global_context_t* ctx, SeedRandomRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SeedRandomEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16192,8 +16265,8 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16282,6 +16355,7 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16311,14 +16385,14 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16327,7 +16401,7 @@ int nmrpc_call_GenerateRandom(nmrpc_global_context_t* ctx, GenerateRandomRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GenerateRandomEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16391,8 +16465,8 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16481,6 +16555,7 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16510,14 +16585,14 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16526,7 +16601,7 @@ int nmrpc_call_DigestInit(nmrpc_global_context_t* ctx, DigestInitRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16590,8 +16665,8 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16680,6 +16755,7 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16709,14 +16785,14 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16725,7 +16801,7 @@ int nmrpc_call_Digest(nmrpc_global_context_t* ctx, DigestRequest* request, Diges
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16789,8 +16865,8 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -16879,6 +16955,7 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -16908,14 +16985,14 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -16924,7 +17001,7 @@ int nmrpc_call_DigestUpdate(nmrpc_global_context_t* ctx, DigestUpdateRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -16988,8 +17065,8 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17078,6 +17155,7 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17107,14 +17185,14 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17123,7 +17201,7 @@ int nmrpc_call_DigestKey(nmrpc_global_context_t* ctx, DigestKeyRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17187,8 +17265,8 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17277,6 +17355,7 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17306,14 +17385,14 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17322,7 +17401,7 @@ int nmrpc_call_DigestFinal(nmrpc_global_context_t* ctx, DigestFinalRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DigestFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17386,8 +17465,8 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17476,6 +17555,7 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17505,14 +17585,14 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17521,7 +17601,7 @@ int nmrpc_call_CreateObject(nmrpc_global_context_t* ctx, CreateObjectRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CreateObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17585,8 +17665,8 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17675,6 +17755,7 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17704,14 +17785,14 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17720,7 +17801,7 @@ int nmrpc_call_DestroyObject(nmrpc_global_context_t* ctx, DestroyObjectRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DestroyObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17784,8 +17865,8 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -17874,6 +17955,7 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -17903,14 +17985,14 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -17919,7 +18001,7 @@ int nmrpc_call_FindObjectsInit(nmrpc_global_context_t* ctx, FindObjectsInitReque
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FindObjectsInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -17983,8 +18065,8 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18073,6 +18155,7 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18102,14 +18185,14 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18118,7 +18201,7 @@ int nmrpc_call_FindObjects(nmrpc_global_context_t* ctx, FindObjectsRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FindObjectsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18182,8 +18265,8 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18272,6 +18355,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18301,14 +18385,14 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18317,7 +18401,7 @@ int nmrpc_call_FindObjectsFinal(nmrpc_global_context_t* ctx, FindObjectsFinalReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = FindObjectsFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18381,8 +18465,8 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18471,6 +18555,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18500,14 +18585,14 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18516,7 +18601,7 @@ int nmrpc_call_GetObjectSize(nmrpc_global_context_t* ctx, GetObjectSizeRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetObjectSizeEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18580,8 +18665,8 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18670,6 +18755,7 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18699,14 +18785,14 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18715,7 +18801,7 @@ int nmrpc_call_GetAttributeValue(nmrpc_global_context_t* ctx, GetAttributeValueR
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetAttributeValueEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18779,8 +18865,8 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -18869,6 +18955,7 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -18898,14 +18985,14 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -18914,7 +19001,7 @@ int nmrpc_call_GenerateKeyPair(nmrpc_global_context_t* ctx, GenerateKeyPairReque
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GenerateKeyPairEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -18978,8 +19065,8 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19068,6 +19155,7 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19097,14 +19185,14 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19113,7 +19201,7 @@ int nmrpc_call_SetAttributeValue(nmrpc_global_context_t* ctx, SetAttributeValueR
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SetAttributeValueEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19177,8 +19265,8 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19267,6 +19355,7 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19296,14 +19385,14 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19312,7 +19401,7 @@ int nmrpc_call_CopyObject(nmrpc_global_context_t* ctx, CopyObjectRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = CopyObjectEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19376,8 +19465,8 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19466,6 +19555,7 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19495,14 +19585,14 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19511,7 +19601,7 @@ int nmrpc_call_SignInit(nmrpc_global_context_t* ctx, SignInitRequest* request, S
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19575,8 +19665,8 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19665,6 +19755,7 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19694,14 +19785,14 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19710,7 +19801,7 @@ int nmrpc_call_Sign(nmrpc_global_context_t* ctx, SignRequest* request, SignEnvel
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19774,8 +19865,8 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -19864,6 +19955,7 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -19893,14 +19985,14 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -19909,7 +20001,7 @@ int nmrpc_call_SignUpdate(nmrpc_global_context_t* ctx, SignUpdateRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -19973,8 +20065,8 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20063,6 +20155,7 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20092,14 +20185,14 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20108,7 +20201,7 @@ int nmrpc_call_SignFinal(nmrpc_global_context_t* ctx, SignFinalRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20172,8 +20265,8 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20262,6 +20355,7 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20291,14 +20385,14 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20307,7 +20401,7 @@ int nmrpc_call_VerifyInit(nmrpc_global_context_t* ctx, VerifyInitRequest* reques
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20371,8 +20465,8 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20461,6 +20555,7 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20490,14 +20585,14 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20506,7 +20601,7 @@ int nmrpc_call_Verify(nmrpc_global_context_t* ctx, VerifyRequest* request, Verif
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20570,8 +20665,8 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20660,6 +20755,7 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20689,14 +20785,14 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20705,7 +20801,7 @@ int nmrpc_call_VerifyUpdate(nmrpc_global_context_t* ctx, VerifyUpdateRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20769,8 +20865,8 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -20859,6 +20955,7 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -20888,14 +20985,14 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -20904,7 +21001,7 @@ int nmrpc_call_VerifyFinal(nmrpc_global_context_t* ctx, VerifyFinalRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -20968,8 +21065,8 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21058,6 +21155,7 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21087,14 +21185,14 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21103,7 +21201,7 @@ int nmrpc_call_GenerateKey(nmrpc_global_context_t* ctx, GenerateKeyRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GenerateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21167,8 +21265,8 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21257,6 +21355,7 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21286,14 +21385,14 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21302,7 +21401,7 @@ int nmrpc_call_DeriveKey(nmrpc_global_context_t* ctx, DeriveKeyRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DeriveKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21366,8 +21465,8 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21456,6 +21555,7 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21485,14 +21585,14 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21501,7 +21601,7 @@ int nmrpc_call_EncryptInit(nmrpc_global_context_t* ctx, EncryptInitRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21565,8 +21665,8 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21655,6 +21755,7 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21684,14 +21785,14 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21700,7 +21801,7 @@ int nmrpc_call_Encrypt(nmrpc_global_context_t* ctx, EncryptRequest* request, Enc
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21764,8 +21865,8 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -21854,6 +21955,7 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -21883,14 +21985,14 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -21899,7 +22001,7 @@ int nmrpc_call_EncryptUpdate(nmrpc_global_context_t* ctx, EncryptUpdateRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -21963,8 +22065,8 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22053,6 +22155,7 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22082,14 +22185,14 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22098,7 +22201,7 @@ int nmrpc_call_EncryptFinal(nmrpc_global_context_t* ctx, EncryptFinalRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22162,8 +22265,8 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22252,6 +22355,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22281,14 +22385,14 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22297,7 +22401,7 @@ int nmrpc_call_DecryptInit(nmrpc_global_context_t* ctx, DecryptInitRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22361,8 +22465,8 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22451,6 +22555,7 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22480,14 +22585,14 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22496,7 +22601,7 @@ int nmrpc_call_Decrypt(nmrpc_global_context_t* ctx, DecryptRequest* request, Dec
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22560,8 +22665,8 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22650,6 +22755,7 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22679,14 +22785,14 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22695,7 +22801,7 @@ int nmrpc_call_DecryptUpdate(nmrpc_global_context_t* ctx, DecryptUpdateRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptUpdateEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22759,8 +22865,8 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -22849,6 +22955,7 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -22878,14 +22985,14 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -22894,7 +23001,7 @@ int nmrpc_call_DecryptFinal(nmrpc_global_context_t* ctx, DecryptFinalRequest* re
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecryptFinalEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -22958,8 +23065,8 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23048,6 +23155,7 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23077,14 +23185,14 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23093,7 +23201,7 @@ int nmrpc_call_WrapKey(nmrpc_global_context_t* ctx, WrapKeyRequest* request, Wra
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = WrapKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23157,8 +23265,8 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23247,6 +23355,7 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23276,14 +23385,14 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23292,7 +23401,7 @@ int nmrpc_call_UnwrapKey(nmrpc_global_context_t* ctx, UnwrapKeyRequest* request,
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = UnwrapKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23356,8 +23465,8 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23446,6 +23555,7 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23475,14 +23585,14 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23491,7 +23601,7 @@ int nmrpc_call_WaitForSlotEvent(nmrpc_global_context_t* ctx, WaitForSlotEventReq
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = WaitForSlotEventEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23555,8 +23665,8 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23645,6 +23755,7 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23674,14 +23785,14 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23690,7 +23801,7 @@ int nmrpc_call_SignRecoverInit(nmrpc_global_context_t* ctx, SignRecoverInitReque
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignRecoverInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23754,8 +23865,8 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -23844,6 +23955,7 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -23873,14 +23985,14 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -23889,7 +24001,7 @@ int nmrpc_call_SignRecover(nmrpc_global_context_t* ctx, SignRecoverRequest* requ
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SignRecoverEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -23953,8 +24065,8 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24043,6 +24155,7 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24072,14 +24185,14 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24088,7 +24201,7 @@ int nmrpc_call_VerifyRecoverInit(nmrpc_global_context_t* ctx, VerifyRecoverInitR
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyRecoverInitEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24152,8 +24265,8 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24242,6 +24355,7 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24271,14 +24385,14 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24287,7 +24401,7 @@ int nmrpc_call_VerifyRecover(nmrpc_global_context_t* ctx, VerifyRecoverRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = VerifyRecoverEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24351,8 +24465,8 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24441,6 +24555,7 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24470,14 +24585,14 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24486,7 +24601,7 @@ int nmrpc_call_SessionCancel(nmrpc_global_context_t* ctx, SessionCancelRequest* 
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = SessionCancelEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24550,8 +24665,8 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24640,6 +24755,7 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24669,14 +24785,14 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24685,7 +24801,7 @@ int nmrpc_call_EncapsulateKey(nmrpc_global_context_t* ctx, EncapsulateKeyRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = EncapsulateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24749,8 +24865,8 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -24839,6 +24955,7 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -24868,14 +24985,14 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -24884,7 +25001,7 @@ int nmrpc_call_DecapsulateKey(nmrpc_global_context_t* ctx, DecapsulateKeyRequest
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = DecapsulateKeyEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)
@@ -24948,8 +25065,8 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
         return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 2, NULL);
     }
 
-    cmp_init(&write_head_ctx, &write_head_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
-    cmp_init(&write_body_ctx, &write_body_buffer, mnrpc_empty_file_reader, mnrpc_empty_file_skipper, mnrpc_buffer_file_writer);
+    cmp_init(&write_head_ctx, &write_head_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
+    cmp_init(&write_body_ctx, &write_body_buffer, nmrpc_empty_file_reader, nmrpc_empty_file_skipper, nmrpc_buffer_file_writer);
 
     if (!cmp_write_array(&write_head_ctx, 2)) 
     {
@@ -25038,6 +25155,7 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     if (!result)
     {
         log_serialization_error(result, __FUNCTION__, __LINE__ - 3, NULL);
+        result = NMRPC_FATAL_ERROR;
         goto err;
     }
 
@@ -25067,14 +25185,14 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     read_head_buffer.size = ctx->read(ctx->user_ctx, (void*)read_head_buffer.buffer, response_header_size);
     if (read_head_buffer.size != response_header_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
     read_body_buffer.size = ctx->read(ctx->user_ctx, (void*)read_body_buffer.buffer, response_body_size);
     if (read_body_buffer.size != response_body_size)
     {
-        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Diferent data size and size in header.", __FUNCTION__, __LINE__);
+        log_message(LOG_LEVEL_ERROR, "Error in function %s (line %i) with read from socket. Different data size and size in header.", __FUNCTION__, __LINE__);
         goto err;
     }
 
@@ -25083,7 +25201,7 @@ int nmrpc_call_GetSessionValidationFlags(nmrpc_global_context_t* ctx, GetSession
     body_reader.size = read_body_buffer.size;
     body_reader.buffer = read_body_buffer.buffer;
 
-    cmp_init(&read_body_ctx, &body_reader, mnrpc_bufferReader_file_reader, mnrpc_bufferReader_file_skipper, mnrpc_empty_file_writer);
+    cmp_init(&read_body_ctx, &body_reader, nmrpc_bufferReader_file_reader, nmrpc_bufferReader_file_skipper, nmrpc_empty_file_writer);
 
     result = GetSessionValidationFlagsEnvelope_Deserialize(&read_body_ctx, NULL, response);
     if (result != NMRPC_OK)

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description></Description>
+    <RepositoryUrl>https://github.com/harrison314/BouncyHsm</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/harrison314/BouncyHsm</PackageProjectUrl>
+    <PackageIcon>BouncyHsm.png</PackageIcon>
+    <!--<PackageReadmeFile>BouncyHsmClient.md</PackageReadmeFile>-->
+    <PackageTags>BouncyHsm;HSM;Client;pkcs;pkcs11;security;cryptography;smartcard;HSM;test;Aspire</PackageTags>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Include="..\..\..\Doc\BouncyHsm.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <!--<None Include="..\..\..\Doc\BouncyHsmClient.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>-->
+  </ItemGroup>
+  
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting" Version="13.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BouncyHsm.Client\BouncyHsm.Client.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -82,6 +82,13 @@ public class MlDsaPrivateKeyObject : PrivateKeyObject
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_VALUE, this.CkaValue);
     }
 
+    protected override bool IsSensitiveAttribute(CKA attributeType)
+    {
+        return (this.CkaSensitive || !this.CkaExtractable)
+            && attributeType is CKA.CKA_VALUE
+            or CKA.CKA_SEED;
+    }
+
     protected override CKM[] GetAllovedMechanism()
     {
         return AllovedMechanismLookup.MlDsaKeyObject;

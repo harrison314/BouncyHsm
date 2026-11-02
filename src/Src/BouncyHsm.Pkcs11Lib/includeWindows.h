@@ -7,9 +7,6 @@
 #ifndef STRICT
 #define STRICT
 #endif
-#ifndef STRICT
-#define STRICT
-#endif
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif

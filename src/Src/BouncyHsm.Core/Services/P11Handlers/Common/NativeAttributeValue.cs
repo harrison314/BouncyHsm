@@ -164,7 +164,7 @@ internal class NativeAttributeValue : IAttributeValue
             AttrTypeTag.ByteArray => this.AsByteArray().SequenceEqual(other.AsByteArray()),
             AttrTypeTag.CkBool => this.AsBool() == other.AsBool(),
             AttrTypeTag.CkUint => this.AsUint() == other.AsUint(),
-            AttrTypeTag.String => string.Equals(this.AsString(), other.AsString(), StringComparison.OrdinalIgnoreCase),
+            AttrTypeTag.String => string.Equals(this.AsString(), other.AsString(), StringComparison.Ordinal),
             AttrTypeTag.DateTime => this.AsDate().Equals(other.AsDate()),
             AttrTypeTag.UintArray => this.AsUintArray().SequenceEqual(other.AsUintArray()),
             AttrTypeTag.CkAttributeArray => AttrTypeUtils.Equals(this.AsCkAttributeArray(), other.AsCkAttributeArray()),

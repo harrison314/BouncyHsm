@@ -1,13 +1,14 @@
 ﻿using BouncyHsm.Core.Rpc;
+using BouncyHsm.Core.Services.Bc;
+using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
-using BouncyHsm.Core.Services.Contracts;
 using BouncyHsm.Core.Services.P11Handlers.Common;
-using BouncyHsm.Core.Services.Bc;
-using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Asn1;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Pkcs;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Security;
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -26,7 +27,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
 
     public async Task<UnwrapKeyEnvelope> Handle(UnwrapKeyRequest request, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Entering to Handle with sessionId {SessionId} mechanism {mechanism}.",
+        this.logger.LogTrace("Entering to Handle with sessionId {SessionId} mechanism {Mechanism}.",
             request.SessionId,
             (CKM)request.Mechanism.MechanismType);
 
@@ -52,33 +53,62 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
             storageObject.SetValue(attrType, attrValue, false);
         }
 
-        byte[] unwrappedKey = unwrapper.Unwrap(request.WrappedKeyData, 0, request.WrappedKeyData.Length);
-        this.SetKeyValues(storageObject, unwrappedKey, (CKM)request.Mechanism.MechanismType, extendedKeyTemplate);
-
-        storageObject.ReComputeAttributes();
-        storageObject.Validate();
-
-        uint handle = await this.hwServices.StoreObject(memorySession,
-           p11Session,
-           storageObject,
-           cancellationToken);
-
-        if (this.logger.IsEnabled(LogLevel.Information))
+        try
         {
-            this.logger.LogInformation("Unwrap new key {keyName}. Key <Id: {keyId}, CK_LABEL: {publicKeyCkLabel}>",
-                storageObject,
-                storageObject.Id,
-                storageObject.CkaLabel);
-        }
+            byte[] unwrappedKey = unwrapper.Unwrap(request.WrappedKeyData, 0, request.WrappedKeyData.Length);
+            this.SetKeyValues(storageObject, unwrappedKey, (CKM)request.Mechanism.MechanismType, extendedKeyTemplate);
 
-        return new UnwrapKeyEnvelope()
-        {
-            Rv = (uint)CKR.CKR_OK,
-            Data = new UnwrapKeyData()
+            storageObject.ReComputeAttributes();
+            storageObject.Validate();
+
+            uint handle = await this.hwServices.StoreObject(memorySession,
+               p11Session,
+               storageObject,
+               cancellationToken);
+
+            if (this.logger.IsEnabled(LogLevel.Information))
             {
-                KeyHandle = handle
+                this.logger.LogInformation("Unwrap new key {KeyName}. Key <Id: {KeyId}, CK_LABEL: {PublicKeyCkLabel}>",
+                    storageObject,
+                    storageObject.Id,
+                    storageObject.CkaLabel);
             }
-        };
+
+            return new UnwrapKeyEnvelope()
+            {
+                Rv = (uint)CKR.CKR_OK,
+                Data = new UnwrapKeyData()
+                {
+                    KeyHandle = handle
+                }
+            };
+        }
+        catch (InvalidCipherTextException ex)
+        {
+            this.logger.LogError(ex, "Error during unwraping key in sessionId {SessionId} with mechanism {Mechanism}: {ErrorMessage}.",
+                request.SessionId,
+                (CKM)request.Mechanism.MechanismType,
+                ex.Message);
+
+            return new UnwrapKeyEnvelope()
+            {
+                Rv = (uint)CKR.CKR_WRAPPED_KEY_LEN_RANGE,
+                Data = null
+            };
+        }
+        catch (DataLengthException ex)
+        {
+            this.logger.LogError(ex, "Error during unwraping key in sessionId {SessionId} with mechanism {Mechanism}: {ErrorMessage}.",
+               request.SessionId,
+               (CKM)request.Mechanism.MechanismType,
+               ex.Message);
+
+            return new UnwrapKeyEnvelope()
+            {
+                Rv = (uint)CKR.CKR_WRAPPED_KEY_INVALID,
+                Data = null
+            };
+        }
     }
 
     private IReadOnlyDictionary<CKA, IAttributeValue> ApplyUnwrapTemplate(IReadOnlyDictionary<CKA, IAttributeValue> template, KeyObject unwrappingKey)

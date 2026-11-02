@@ -89,7 +89,7 @@ public class MontgomeryPrivateKeyObject : PrivateKeyObject
 
     protected override bool IsSensitiveAttribute(CKA attributeType)
     {
-        return this.CkaSensitive && attributeType == CKA.CKA_VALUE;
+        return (this.CkaSensitive || !this.CkaExtractable) && attributeType == CKA.CKA_VALUE;
     }
 
     public override void SetPrivateKey(AsymmetricKeyParameter privateKey)

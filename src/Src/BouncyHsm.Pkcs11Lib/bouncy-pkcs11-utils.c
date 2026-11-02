@@ -11,7 +11,13 @@
 
 void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const char* src)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
+
+    if (destination == NULL || src == NULL)
+    {
+        log_message(LOG_LEVEL_ERROR, "Bad argument destination or src is NULL in function %s.", __FUNCTION__);
+        return;
+    }
 
     size_t copySize = strlen(src);
     if (copySize > destinationSize)
@@ -25,7 +31,18 @@ void SetPaddedStrSafe(CK_UTF8CHAR* destination, size_t destinationSize, const ch
 
 void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8CHAR* src)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
+
+    if (destination == NULL)
+    {
+        log_message(LOG_LEVEL_ERROR, "Bad argument destination is NULL in function %s.", __FUNCTION__);
+        return;
+    }
+
+    if (destinationSize == 0)
+    {
+        return;
+    }
 
     if (src == NULL)
     {
@@ -45,7 +62,7 @@ void CopyPaddedStrToStr(char* destination, size_t destinationSize, const CK_UTF8
 
 CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     if (value.UnavailableInformation)
     {
@@ -59,7 +76,7 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 
     if (value.InformationSensitive)
     {
-        return CKR_INFORMATION_SENSITIVE;
+        return CK_UNAVAILABLE_INFORMATION;
     }
 
     return (CK_ULONG)value.Value;
@@ -67,7 +84,7 @@ CK_ULONG ConvertCkSpecialUint(CkSpecialUint value)
 
 static void CopyCkUlongArrayToUint32Array(ArrayOfuint32_t* destination, CK_ULONG_PTR source)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     size_t i;
     size_t length = (size_t)destination->length;
@@ -102,6 +119,13 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
     CK_ULONG i;
     for (i = 0; i < ulCount; i++)
     {
+        if (pTemplate[i].pValue == NULL && pTemplate[i].ulValueLen != 0)
+        {
+            log_message(LOG_LEVEL_ERROR, "Template pValue == NULL and ulValueLen != 0 on index %lu in ConvertToAttrValueFromNative.", (unsigned long)i);
+            AttrValueFromNative_Destroy(ptr, ulCount);
+            return CKR_ATTRIBUTE_VALUE_INVALID;
+        }
+
         ptr[i].ValueBool = false;
         ptr[i].ValueCkUlong = 0;
 
@@ -246,7 +270,7 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
 
 void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     CK_ULONG i;
     for (i = 0; i < ulCount; i++)
@@ -286,13 +310,13 @@ void AttrValueFromNative_Destroy(AttrValueFromNative* ptr, CK_ULONG ulCount)
 
 static int CreateMacGeneralParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_MAC_GENERAL_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_MAC_GENERAL_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_MAC_GENERAL_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -304,7 +328,7 @@ static int CreateMacGeneralParams(MechanismValue* value, CK_MECHANISM_PTR pMecha
 
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -312,12 +336,12 @@ static int CreateMacGeneralParams(MechanismValue* value, CK_MECHANISM_PTR pMecha
 
 static int CreateRsaPkcsPssParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_RSA_PKCS_PSS_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_RSA_PKCS_PSS_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_RSA_PKCS_PSS_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -331,7 +355,7 @@ static int CreateRsaPkcsPssParams(MechanismValue* value, CK_MECHANISM_PTR pMecha
     result = nmrpc_writeAsBinary(&ckpPssParam, (SerializeFnPtr_t)CkP_RsaPkcsPssParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -339,12 +363,12 @@ static int CreateRsaPkcsPssParams(MechanismValue* value, CK_MECHANISM_PTR pMecha
 
 static int CreateKeyDerivationStringData(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_KEY_DERIVATION_STRING_DATA))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_KEY_DERIVATION_STRING_DATA in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_KEY_DERIVATION_STRING_DATA in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -357,7 +381,7 @@ static int CreateKeyDerivationStringData(MechanismValue* value, CK_MECHANISM_PTR
     result = nmrpc_writeAsBinary(&derivationStringData, (SerializeFnPtr_t)CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -365,12 +389,12 @@ static int CreateKeyDerivationStringData(MechanismValue* value, CK_MECHANISM_PTR
 
 static int CreateAesCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_AES_CBC_ENCRYPT_DATA_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_AES_CBC_ENCRYPT_DATA_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_AES_CBC_ENCRYPT_DATA_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -384,7 +408,7 @@ static int CreateAesCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR
     result = nmrpc_writeAsBinary(&cbcData, (SerializeFnPtr_t)Ckp_CkAesCbcEnryptDataParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -392,12 +416,12 @@ static int CreateAesCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR
 
 static int CreateCamelliaCbcEncryptDataparams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -411,21 +435,21 @@ static int CreateCamelliaCbcEncryptDataparams(MechanismValue* value, CK_MECHANIS
     result = nmrpc_writeAsBinary(&cbcData, (SerializeFnPtr_t)Ckp_CkCamelliaCbcEncryptDataParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
 }
 
-static int CreateConcatableBaseAndKey(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+static int CreateConcatenateBaseAndKey(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_OBJECT_HANDLE))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_OBJECT_HANDLE in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_OBJECT_HANDLE in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -436,20 +460,20 @@ static int CreateConcatableBaseAndKey(MechanismValue* value, CK_MECHANISM_PTR pM
     result = nmrpc_writeAsBinary(&handleParams, (SerializeFnPtr_t)CkP_CkObjectHandle_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
 }
 
-static int CreateKectractKeyFromKey(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+static int CreateExtractKeyFromKey(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_EXTRACT_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_EXTRACT_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_EXTRACT_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -460,7 +484,7 @@ static int CreateKectractKeyFromKey(MechanismValue* value, CK_MECHANISM_PTR pMec
     result = nmrpc_writeAsBinary(&ep, (SerializeFnPtr_t)CkP_ExtractParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -468,12 +492,12 @@ static int CreateKectractKeyFromKey(MechanismValue* value, CK_MECHANISM_PTR pMec
 
 static int CreateEcdh1DeriveParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_ECDH1_DERIVE_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_ECDH1_DERIVE_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_ECDH1_DERIVE_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -506,7 +530,7 @@ static int CreateEcdh1DeriveParams(MechanismValue* value, CK_MECHANISM_PTR pMech
     result = nmrpc_writeAsBinary(&deriveParams, (SerializeFnPtr_t)Ckp_CkEcdh1DeriveParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -514,12 +538,12 @@ static int CreateEcdh1DeriveParams(MechanismValue* value, CK_MECHANISM_PTR pMech
 
 static int CreateRawParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->pParameter == NULL)
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted raw data in this mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected raw data in this mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -530,20 +554,47 @@ static int CreateRawParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     result = nmrpc_writeAsBinary(&rawData, (SerializeFnPtr_t)CkP_RawDataParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
+    }
+
+    return result;
+}
+
+static int CreateAesCtrParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+{
+    LOG_TRACE_ENTERING_TO_FUNCTION();
+
+    int result = NMRPC_FATAL_ERROR;
+    if (pMechanism->ulParameterLen != sizeof(CK_AES_CTR_PARAMS))
+    {
+        log_message(LOG_LEVEL_ERROR, "Excepted CK_AES_CTR_PARAMS in mechanism.");
+        return NMRPC_FATAL_ERROR;
+    }
+
+    CK_AES_CTR_PARAMS_PTR deriveParamsPtr = (CK_AES_CTR_PARAMS_PTR)pMechanism->pParameter;
+
+    Ckp_CkAesCtrParams deriveParams = { 0 };
+    deriveParams.CounterBits = (uint32_t)deriveParamsPtr->ulCounterBits;
+    deriveParams.Cb.size = sizeof(deriveParamsPtr->cb);
+    deriveParams.Cb.data = deriveParamsPtr->cb;
+
+    result = nmrpc_writeAsBinary(&deriveParams, (SerializeFnPtr_t)Ckp_CkAesCtrParams_Serialize, &value->MechanismParamMp);
+    if (result != NMRPC_OK)
+    {
         log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
     }
 
     return result;
 }
 
-static int CreateCgmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
+static int CreateGcmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_GCM_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_GCM_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_GCM_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -577,7 +628,7 @@ static int CreateCgmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     result = nmrpc_writeAsBinary(&gcmDerivedParams, (SerializeFnPtr_t)Ckp_CkGcmParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -585,38 +636,38 @@ static int CreateCgmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 static int CreateCcmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_CCM_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_CCM_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_CCM_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
-    CK_CCM_PARAMS_PTR gcmParams = (CK_CCM_PARAMS_PTR)pMechanism->pParameter;
+    CK_CCM_PARAMS_PTR ccmParams = (CK_CCM_PARAMS_PTR)pMechanism->pParameter;
 
     Ckp_CkCcmParams ccmDerivedParams;
     Binary nonceData;
     Binary aadData;
 
-    ccmDerivedParams.DataLen = (uint32_t)gcmParams->ulDataLen;
+    ccmDerivedParams.DataLen = (uint32_t)ccmParams->ulDataLen;
     ccmDerivedParams.Nonce = NULL;
     ccmDerivedParams.Aad = NULL;
-    ccmDerivedParams.MacLen = (uint32_t)gcmParams->ulMACLen;
+    ccmDerivedParams.MacLen = (uint32_t)ccmParams->ulMACLen;
 
-    if (gcmParams->pNonce != NULL)
+    if (ccmParams->pNonce != NULL)
     {
-        nonceData.data = (uint8_t*)gcmParams->pNonce;
-        nonceData.size = (size_t)gcmParams->ulNonceLen;
+        nonceData.data = (uint8_t*)ccmParams->pNonce;
+        nonceData.size = (size_t)ccmParams->ulNonceLen;
 
         ccmDerivedParams.Nonce = &nonceData;
     }
 
-    if (gcmParams->pAAD != NULL)
+    if (ccmParams->pAAD != NULL)
     {
-        aadData.data = (uint8_t*)gcmParams->pAAD;
-        aadData.size = (size_t)gcmParams->ulAADLen;
+        aadData.data = (uint8_t*)ccmParams->pAAD;
+        aadData.size = (size_t)ccmParams->ulAADLen;
 
         ccmDerivedParams.Aad = &aadData;
     }
@@ -624,7 +675,7 @@ static int CreateCcmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     result = nmrpc_writeAsBinary(&ccmDerivedParams, (SerializeFnPtr_t)Ckp_CkCcmParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -632,37 +683,37 @@ static int CreateCcmParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 static int CreateRsaPkcsOaepParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_RSA_PKCS_OAEP_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_RSA_PKCS_OAEP_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_RSA_PKCS_OAEP_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
     CK_RSA_PKCS_OAEP_PARAMS_PTR oaepParams = (CK_RSA_PKCS_OAEP_PARAMS_PTR)pMechanism->pParameter;
 
-    Ckp_CkRsaPkcsOaepParams oaepDervedParams;
+    Ckp_CkRsaPkcsOaepParams oaepDerivedParams;
     Binary sourceData;
 
-    oaepDervedParams.HashAlg = (uint32_t)oaepParams->hashAlg;
-    oaepDervedParams.Mgf = (uint32_t)oaepParams->mgf;
-    oaepDervedParams.Source = (uint32_t)oaepParams->source;
-    oaepDervedParams.SourceData = NULL;
+    oaepDerivedParams.HashAlg = (uint32_t)oaepParams->hashAlg;
+    oaepDerivedParams.Mgf = (uint32_t)oaepParams->mgf;
+    oaepDerivedParams.Source = (uint32_t)oaepParams->source;
+    oaepDerivedParams.SourceData = NULL;
 
     if (oaepParams->pSourceData != NULL)
     {
         sourceData.data = (uint8_t*)oaepParams->pSourceData;
         sourceData.size = (size_t)oaepParams->ulSourceDataLen;
 
-        oaepDervedParams.SourceData = &sourceData;
+        oaepDerivedParams.SourceData = &sourceData;
     }
 
-    result = nmrpc_writeAsBinary(&oaepDervedParams, (SerializeFnPtr_t)Ckp_CkRsaPkcsOaepParams_Serialize, &value->MechanismParamMp);
+    result = nmrpc_writeAsBinary(&oaepDerivedParams, (SerializeFnPtr_t)Ckp_CkRsaPkcsOaepParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -670,13 +721,13 @@ static int CreateRsaPkcsOaepParams(MechanismValue* value, CK_MECHANISM_PTR pMech
 
 static int CreateChacha20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_CHACHA20_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_CHACHA20_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_CHACHA20_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -722,7 +773,7 @@ static int CreateChacha20Params(MechanismValue* value, CK_MECHANISM_PTR pMechani
     result = nmrpc_writeAsBinary(&chaCha20DeriveParams, (SerializeFnPtr_t)Ckp_CkChaCha20Params_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -730,12 +781,12 @@ static int CreateChacha20Params(MechanismValue* value, CK_MECHANISM_PTR pMechani
 
 static int CreateSalsa20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_SALSA20_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_SALSA20_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_SALSA20_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -744,7 +795,7 @@ static int CreateSalsa20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanis
 
     if (salsa20Params->pNonce == NULL)
     {
-        log_message(LOG_LEVEL_ERROR, "Nonce value in CK_CK_SALSA20_PARAMS_PTR is NULL and ulNonceBits is not zero.");
+        log_message(LOG_LEVEL_ERROR, "Nonce value in CK_SALSA20_PARAMS_PTR is NULL.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -755,7 +806,7 @@ static int CreateSalsa20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanis
 
     if (salsa20Params->pBlockCounter == NULL)
     {
-        log_message(LOG_LEVEL_TRACE, "pBlockCounter value in CK_CK_SALSA20_PARAMS_PTR is NULL");
+        log_message(LOG_LEVEL_TRACE, "pBlockCounter value in CK_SALSA20_PARAMS_PTR is NULL");
         salsa20DeriveParams.BlockCounterIsSet = false;
     }
     else
@@ -767,7 +818,7 @@ static int CreateSalsa20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanis
     result = nmrpc_writeAsBinary(&salsa20DeriveParams, (SerializeFnPtr_t)Ckp_CkSalsa20Params_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -775,12 +826,12 @@ static int CreateSalsa20Params(MechanismValue* value, CK_MECHANISM_PTR pMechanis
 
 static int CreateSalsa20Poly1305Params(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_SALSA20_CHACHA20_POLY1305_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_SALSA20_CHACHA20_POLY1305_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_SALSA20_CHACHA20_POLY1305_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -789,7 +840,7 @@ static int CreateSalsa20Poly1305Params(MechanismValue* value, CK_MECHANISM_PTR p
 
     if (salsa20Chacha20Poly1305Params->pNonce == NULL || salsa20Chacha20Poly1305Params->ulNonceLen == 0)
     {
-        log_message(LOG_LEVEL_ERROR, "Nonce value in CK_SALSA20_CHACHA20_POLY1305_PARAMS_PTR is NULL and ulNonceLen is not zero.");
+        log_message(LOG_LEVEL_ERROR, "Nonce value in CK_SALSA20_CHACHA20_POLY1305_PARAMS_PTR is NULL or ulNonceLen is not zero.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -808,7 +859,7 @@ static int CreateSalsa20Poly1305Params(MechanismValue* value, CK_MECHANISM_PTR p
     result = nmrpc_writeAsBinary(&salsa20Chacha20Poly1305Derivedparams, (SerializeFnPtr_t)Ckp_CkSalsa20ChaCha20Poly1305Params_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -816,12 +867,12 @@ static int CreateSalsa20Poly1305Params(MechanismValue* value, CK_MECHANISM_PTR p
 
 static int CreateEddsaParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
     if (pMechanism->ulParameterLen != sizeof(CK_EDDSA_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_EDDSA_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_EDDSA_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -841,7 +892,7 @@ static int CreateEddsaParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     result = nmrpc_writeAsBinary(&eddsaParamsDerivedparams, (SerializeFnPtr_t)Ckp_CkEddsaParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -849,13 +900,13 @@ static int CreateEddsaParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 static int CreateSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_SIGN_ADDITIONAL_CONTEXT))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_SIGN_ADDITIONAL_CONTEXT in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_SIGN_ADDITIONAL_CONTEXT in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -875,7 +926,7 @@ static int CreateSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM
     result = nmrpc_writeAsBinary(&signAdditionalContextParameters, (SerializeFnPtr_t)Ckp_CkSignAdditionalContext_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -883,13 +934,13 @@ static int CreateSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM
 
 static int CreateHashSignAdditionalContextParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_HASH_SIGN_ADDITIONAL_CONTEXT))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_SIGN_ADDITIONAL_CONTEXT in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_HASH_SIGN_ADDITIONAL_CONTEXT in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -911,7 +962,7 @@ static int CreateHashSignAdditionalContextParams(MechanismValue* value, CK_MECHA
     result = nmrpc_writeAsBinary(&hashSignAdditionalContextParameters, (SerializeFnPtr_t)Ckp_CkHashSignAdditionalContext_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
@@ -919,13 +970,13 @@ static int CreateHashSignAdditionalContextParams(MechanismValue* value, CK_MECHA
 
 static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_HKDF_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_HKDF_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_HKDF_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -957,29 +1008,29 @@ static int CreateHkdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     result = nmrpc_writeAsBinary(&ckHkdfParams, (SerializeFnPtr_t)Ckp_CkHkdfParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     return result;
 }
 
-static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataParamsCount, Ckp_CkSp800_108PrfDataParsms** paramArrayPtrOutPtr)
+static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ulDataParamsCount, Ckp_CkSp800_108PrfDataParams** paramArrayPtrOutPtr)
 {
     *paramArrayPtrOutPtr = NULL;
-    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
-    paramArrayPtr = (Ckp_CkSp800_108PrfDataParsms*)malloc(ukDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParsms));
+    Ckp_CkSp800_108PrfDataParams* paramArrayPtr = NULL;
+    paramArrayPtr = (Ckp_CkSp800_108PrfDataParams*)malloc(ulDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParams));
     if (paramArrayPtr == NULL)
     {
         log_message(LOG_LEVEL_ERROR, "Malloc return null in FillPrfDataParams");
         return NMRPC_FATAL_ERROR;
     }
 
-    memset(paramArrayPtr, 0, ukDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParsms));
+    memset(paramArrayPtr, 0, ulDataParamsCount * sizeof(Ckp_CkSp800_108PrfDataParams));
 
     CK_ULONG i;
-    for (i = 0; i < ukDataParamsCount; i++)
+    for (i = 0; i < ulDataParamsCount; i++)
     {
-        Ckp_CkSp800_108PrfDataParsms* ptr = &paramArrayPtr[i];
+        Ckp_CkSp800_108PrfDataParams* ptr = &paramArrayPtr[i];
         CK_PRF_DATA_PARAM* ptrData = &(pDataParams[i]);
 
         switch (ptrData->type)
@@ -1020,6 +1071,13 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
                 return NMRPC_BAD_ARGUMENT;
             }
 
+            if (ptrData->pValue == NULL)
+            {
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid pValue for data param %s in %s", "CK_SP800_108_COUNTER_FORMAT", __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+
             CK_SP800_108_COUNTER_FORMAT* cf = (CK_SP800_108_COUNTER_FORMAT*)ptrData->pValue;
             ptr->LittleEndian = (bool)cf->bLittleEndian;
             ptr->WidthInBits = (uint32_t)cf->ulWidthInBits;
@@ -1047,6 +1105,13 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
                 return NMRPC_BAD_ARGUMENT;
             }
 
+            if (ptrData->pValue == NULL)
+            {
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid pValue for data param %s in %s", "CK_SP800_108_KEY_HANDLE", __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+
             ptr->KeyHandle = (uint32_t)(*((uint32_t*)ptrData->pValue));
             break;
 
@@ -1056,6 +1121,13 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
             {
                 free(paramArrayPtr);
                 log_message(LOG_LEVEL_ERROR, "Invalid ulValueLen for data param %s in %s", "CK_SP800_108_DKM_LENGTH", __FUNCTION__);
+                return NMRPC_BAD_ARGUMENT;
+            }
+
+            if (ptrData->pValue == NULL)
+            {
+                free(paramArrayPtr);
+                log_message(LOG_LEVEL_ERROR, "Invalid pValue for data param %s in %s", "CK_SP800_108_DKM_LENGTH", __FUNCTION__);
                 return NMRPC_BAD_ARGUMENT;
             }
 
@@ -1079,13 +1151,13 @@ static int FillPrfDataParams(CK_PRF_DATA_PARAM_PTR pDataParams, CK_ULONG ukDataP
 
 static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_SP800_108_KDF_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_SP800_108_KDF_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_SP800_108_KDF_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -1097,7 +1169,7 @@ static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pM
     //TODO AdditionalDerivedKeys implementation
     ckSp800_108KdfParams.AdditionalDerivedKeysCount = (uint32_t)kdfparams->ulAdditionalDerivedKeys;
 
-    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
+    Ckp_CkSp800_108PrfDataParams* paramArrayPtr = NULL;
     if (kdfparams->ulNumberOfDataParams > 0)
     {
         result = FillPrfDataParams(kdfparams->pDataParams, kdfparams->ulNumberOfDataParams, &paramArrayPtr);
@@ -1120,7 +1192,7 @@ static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pM
     result = nmrpc_writeAsBinary(&ckSp800_108KdfParams, (SerializeFnPtr_t)Ckp_CkSp800_108KdfParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     if (paramArrayPtr != NULL)
@@ -1133,13 +1205,13 @@ static int CreateCkSp800_108KdfParams(MechanismValue* value, CK_MECHANISM_PTR pM
 
 static int CreateCkSp800_108FeedbackKdfParams(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     int result = NMRPC_FATAL_ERROR;
 
     if (pMechanism->ulParameterLen != sizeof(CK_SP800_108_FEEDBACK_KDF_PARAMS))
     {
-        log_message(LOG_LEVEL_ERROR, "Excepted CK_SP800_108_FEEDBACK_KDF_PARAMS in mechanism.");
+        log_message(LOG_LEVEL_ERROR, "Expected CK_SP800_108_FEEDBACK_KDF_PARAMS in mechanism.");
         return NMRPC_FATAL_ERROR;
     }
 
@@ -1159,7 +1231,7 @@ static int CreateCkSp800_108FeedbackKdfParams(MechanismValue* value, CK_MECHANIS
     //TODO AdditionalDerivedKeys implementation
     ckSp800_108FeedbackKdfParams.AdditionalDerivedKeysCount = (uint32_t)kdfparams->ulAdditionalDerivedKeys;
 
-    Ckp_CkSp800_108PrfDataParsms* paramArrayPtr = NULL;
+    Ckp_CkSp800_108PrfDataParams* paramArrayPtr = NULL;
     if (kdfparams->ulNumberOfDataParams > 0)
     {
         result = FillPrfDataParams(kdfparams->pDataParams, kdfparams->ulNumberOfDataParams, &paramArrayPtr);
@@ -1182,7 +1254,7 @@ static int CreateCkSp800_108FeedbackKdfParams(MechanismValue* value, CK_MECHANIS
     result = nmrpc_writeAsBinary(&ckSp800_108FeedbackKdfParams, (SerializeFnPtr_t)Ckp_Ck800_108FeedbackKdfParams_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)
     {
-        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);;
+        log_message(LOG_LEVEL_ERROR, "Failed call nmrpc_writeAsBinary in %s with result code %i.", __FUNCTION__, result);
     }
 
     if (paramArrayPtr != NULL)
@@ -1195,13 +1267,19 @@ static int CreateCkSp800_108FeedbackKdfParams(MechanismValue* value, CK_MECHANIS
 
 int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     value->MechanismType = (uint32_t)pMechanism->mechanism;
     value->MechanismParamMp = NULL;
 
     if (pMechanism->pParameter == NULL)
     {
+        if (pMechanism->ulParameterLen != 0)
+        {
+            log_message(LOG_LEVEL_ERROR, "pMechanism->pParameter == NULL and pMechanism->ulParameterLen != 0. In function %s.", __FUNCTION__);
+            return NMRPC_BAD_ARGUMENT;
+        }
+
         return NMRPC_OK;
     }
 
@@ -1262,11 +1340,11 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         break;
 
     case CKM_CONCATENATE_BASE_AND_KEY:
-        return CreateConcatableBaseAndKey(value, pMechanism);
+        return CreateConcatenateBaseAndKey(value, pMechanism);
         break;
 
     case CKM_EXTRACT_KEY_FROM_KEY:
-        return CreateKectractKeyFromKey(value, pMechanism);
+        return CreateExtractKeyFromKey(value, pMechanism);
         break;
 
     case CKM_ECDH1_DERIVE:
@@ -1281,7 +1359,6 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
     case CKM_AES_CFB64:
     case CKM_AES_CFB128:
     case CKM_AES_OFB:
-    case CKM_AES_CTR:
     case CKM_AES_CTS:
     case CKM_AES_GMAC:
     case CKM_CAMELLIA_CBC:
@@ -1289,8 +1366,12 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
         return CreateRawParams(value, pMechanism);
         break;
 
+    case CKM_AES_CTR:
+        return CreateAesCtrParams(value, pMechanism);
+        break;
+
     case  CKM_AES_GCM:
-        return CreateCgmParams(value, pMechanism);
+        return CreateGcmParams(value, pMechanism);
         break;
 
     case  CKM_AES_CCM:
@@ -1369,7 +1450,7 @@ int MechanismValue_Create(MechanismValue* value, CK_MECHANISM_PTR pMechanism)
 
 void MechanismValue_Destroy(MechanismValue* value)
 {
-    LOG_ENTERING_TO_FUNCTION();
+    LOG_TRACE_ENTERING_TO_FUNCTION();
 
     if (value == NULL)
     {
@@ -1385,7 +1466,7 @@ void MechanismValue_Destroy(MechanismValue* value)
     }
 }
 
-CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel)
+CK_RV SetAttributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, int recursionLevel)
 {
     log_message(LOG_LEVEL_INFO, "Entering to function %s with recursionLevel %i", __FUNCTION__, recursionLevel);
 
@@ -1441,7 +1522,7 @@ CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTem
             {
                 if (newValueLen > pTemplate[i].ulValueLen)
                 {
-                    log_message(LOG_LEVEL_TRACE, "Invalid value length for attribute %i (excepted len %i actual %i) on line %i in function %s", (int)pTemplate[i].type, (int)newValueLen, (int)pTemplate[i].ulValueLen, __LINE__, __FUNCTION__);
+                    log_message(LOG_LEVEL_TRACE, "Invalid value length for attribute %i (expected len %i actual %i) on line %i in function %s", (int)pTemplate[i].type, (int)newValueLen, (int)pTemplate[i].ulValueLen, __LINE__, __FUNCTION__);
                     rvMethod = CKR_BUFFER_TOO_SMALL;
                     pTemplate[i].ulValueLen = newValueLen;
                     continue;
@@ -1449,7 +1530,7 @@ CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTem
 
                 if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Binary)
                 {
-                    memcpy(pTemplate[i].pValue, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
+                    memcpy_s(pTemplate[i].pValue, (size_t)pTemplate[i].ulValueLen, outAttrPtr->ValueBytes.data, outAttrPtr->ValueBytes.size);
                 }
                 else if (outAttrPtr->ValueType == AttrValueToNative_TypeHint_Bool)
                 {
@@ -1503,7 +1584,7 @@ CK_RV SetArributesToTemplate(GetAttributeOutValue* values, CK_ATTRIBUTE_PTR pTem
                         destinationTemplate[index].type = (CK_ATTRIBUTE_TYPE)(outAttrPtr->ValueTemplate->AttributeTypes.array[index]);
                     }
 
-                    CK_RV rvData = SetArributesToTemplate(outAttrPtr->ValueTemplate->Values.array,
+                    CK_RV rvData = SetAttributesToTemplate(outAttrPtr->ValueTemplate->Values.array,
                         destinationTemplate,
                         itemCount,
                         recursionLevel + 1);

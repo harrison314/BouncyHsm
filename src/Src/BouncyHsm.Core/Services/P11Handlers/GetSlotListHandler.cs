@@ -30,7 +30,7 @@ public partial class GetSlotListHandler : IRpcRequestHandler<GetSlotListRequest,
             if (request.PullCount < slotIds.Length)
             {
                 envelope.Slots = Array.Empty<uint>();
-                envelope.PullCount = 0;
+                envelope.PullCount = (uint)slotIds.Length;
                 envelope.Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL;
             }
             else

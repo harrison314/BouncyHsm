@@ -39,11 +39,13 @@ int translateHostName(const char* hostName, int port, SockContext_t* ctx)
     sprintf_s(portStr, sizeof(portStr), "%d", port);
 
     ZeroMemory(&hints, sizeof(hints));
+    
     hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // TCP socket
     hints.ai_protocol = IPPROTO_TCP;
 
     ctx->addr = NULL;
+    ZeroMemory(ctx->ipAddress, sizeof(ctx->ipAddress));
 
     result = getaddrinfo(hostName, portStr, &hints, &ctx->addr);
     if (result != 0)
@@ -103,7 +105,7 @@ bool toUtf8Msg(wchar_t* inBuffer, char* outBuffer, size_t outBufferLen)
         return false;
     }
 
-    if (((size_t)length) > outBufferLen)
+    if (((size_t)length) >= outBufferLen)
     {
         return false;
     }
@@ -122,12 +124,12 @@ int getWsaLastErrorMessage(char* buffer, size_t bufferLen)
     wchar_t msgbuf[WSA_ERROR_MESSAGE_BUFFER_LEN];
     msgbuf[0] = L'\0';
 
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
         NULL,                // lpsource
         wsaErr,                 // message id
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),    // languageid
         msgbuf,              // output buffer
-        sizeof(msgbuf),     // size of msgbuf, bytes
+        _countof(msgbuf),     // size of msgbuf, chars
         NULL);
 
     if (msgbuf[0] == L'\0')
@@ -206,6 +208,19 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
             getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
 
             log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. IP: %s, WSA error: %s", __FUNCTION__, __LINE__, ctx->ipAddress, errorMsgBuffer);
+
+            int closeRv = closesocket(ctx->s);
+            if (closeRv != 0)
+            {
+                log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) closesocket failed after connect failed.", __FUNCTION__, __LINE__);
+            }
+
+            if (ctx->addr != NULL)
+            {
+                freeaddrinfo(ctx->addr);
+                ctx->addr = NULL;
+            }
+
             return NMRPC_FATAL_ERROR;
         }
 
@@ -238,12 +253,13 @@ int sock_flush(void* user_ctx)
 
     SockContext_t* ctx = (SockContext_t*)user_ctx;
 
-    if (shutdown(ctx->s, SD_SEND) == SOCKET_ERROR)
+    BOOL flag = TRUE;
+    if (setsockopt(ctx->s, IPPROTO_TCP, TCP_NODELAY, (const char*)&flag, sizeof(flag)) == SOCKET_ERROR)
     {
         char errorMsgBuffer[WSA_ERROR_MESSAGE_BUFFER_LEN];
         getWsaLastErrorMessage(errorMsgBuffer, sizeof(errorMsgBuffer));
+        log_message(LOG_LEVEL_ERROR, "setsockopt(TCP_NODELAY) failed: %s",  errorMsgBuffer);
 
-        log_message(LOG_LEVEL_ERROR, "shutdown failed : %s", errorMsgBuffer);
         return NMRPC_FATAL_ERROR;
     }
 
@@ -305,6 +321,12 @@ int readclose(void* user_ctx)
 
 #else
 
+#if (defined(__APPLE__) && defined(__MACH__))
+#define SEND_SOCKET_FLAGS SO_NOSIGPIPE
+#else
+#define SEND_SOCKET_FLAGS MSG_NOSIGNAL
+#endif
+
 int translateHostName(const char* hostName, int port, SockContext_t* ctx)
 {
     struct addrinfo hints;
@@ -316,6 +338,8 @@ int translateHostName(const char* hostName, int port, SockContext_t* ctx)
     hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // TCP socket
     hints.ai_protocol = IPPROTO_TCP;
+
+    memset(ctx->ipAddress, 0, sizeof(ctx->ipAddress));
 
     result = getaddrinfo(hostName, portStr, &hints, &ctx->addr);
     if (result != 0)
@@ -418,7 +442,7 @@ int sock_writerequest(void* user_ctx, void* request_data, size_t request_data_si
         size_t remaining = request_data_size;
         while (remaining > 0)
         {
-            ssize_t sent = send(ctx->s, ptr, remaining, 0);
+            ssize_t sent = send(ctx->s, ptr, remaining, SEND_SOCKET_FLAGS);
             if (sent < 0)
             {
                 log_message(LOG_LEVEL_ERROR, "Error in %s (line %d) - Connection error. Error: %s", __FUNCTION__, __LINE__, strerror(errno));
@@ -486,6 +510,7 @@ int readclose(void* user_ctx)
     if (ctx->addr != NULL)
     {
         freeaddrinfo(ctx->addr);
+        ctx->addr = NULL;
     }
 
     return NMRPC_OK;

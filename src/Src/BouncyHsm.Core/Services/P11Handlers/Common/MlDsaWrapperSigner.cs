@@ -22,7 +22,7 @@ internal class MlDsaWrapperSigner : IWrapperSigner
 
     public bool AcceptEmptyData
     {
-        get => false;
+        get => true;
     }
 
     public MlDsaWrapperSigner(Ckp_CkSignAdditionalContext? mechanismParams, ILogger<MlDsaWrapperSigner> logger)

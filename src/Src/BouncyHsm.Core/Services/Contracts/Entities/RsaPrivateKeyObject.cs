@@ -117,7 +117,7 @@ public sealed class RsaPrivateKeyObject : PrivateKeyObject
 
     protected override bool IsSensitiveAttribute(CKA attributeType)
     {
-        return this.CkaSensitive
+        return (this.CkaSensitive || !this.CkaExtractable)
             && attributeType is CKA.CKA_PRIVATE_EXPONENT
               or CKA.CKA_PRIME_1
               or CKA.CKA_PRIME_2

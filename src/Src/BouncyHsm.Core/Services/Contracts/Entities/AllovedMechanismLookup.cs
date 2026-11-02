@@ -17,7 +17,7 @@ internal static class AllovedMechanismLookup
         CKM.CKM_AES_ECB,
         CKM.CKM_AES_CBC,
         CKM.CKM_AES_CBC_PAD,
-        CKM.CKM_AES_CFB1,
+        //CKM.CKM_AES_CFB1,
         CKM.CKM_AES_CFB8,
         CKM.CKM_AES_CFB64,
         CKM.CKM_AES_CFB128,

@@ -16,7 +16,7 @@
 // https://github.com/Pkcs11Interop/pkcs11-mock/blob/master/src/pkcs11-mock.c
 // https://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html
 
-void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
+static void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 {
     *appId = globalContext.appId;
 
@@ -32,6 +32,11 @@ void InitCallContext(nmrpc_global_context_t* ctxPtr, AppIdentification* appId)
 #ifndef _WIN32
     appId->Pid = (uint64_t)getpid();
 #endif
+}
+
+static size_t Minimum_size_t(size_t a, size_t b)
+{
+    return (a < b) ? a : b;
 }
 
 CK_FUNCTION_LIST bouncyHsm_pkcs11_2_40_functions =
@@ -390,13 +395,15 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
 
     if (!getProgramArgs(&request.ClientInfo.CmdLine.array, &request.ClientInfo.CmdLine.length))
     {
-        log_message(LOG_LEVEL_ERROR, "Can not read comand line arguments.");
+        log_message(LOG_LEVEL_ERROR, "Can not read command line arguments.");
     }
 
     int rv = nmrpc_call_Initialize(&ctx, &request, &envelope);
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        freeProgramArgs(&request.ClientInfo.CmdLine.array, &request.ClientInfo.CmdLine.length);
+
         return CKR_DEVICE_ERROR;
     }
 
@@ -445,6 +452,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pInfo)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     GetInfoRequest request;
     GetInfoEnvelope envelope;
 
@@ -468,8 +480,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        pInfo->cryptokiVersion.major = 2;
-        pInfo->cryptokiVersion.minor = 40;
+        pInfo->cryptokiVersion.major = 3;
+        pInfo->cryptokiVersion.minor = 2;
 
         pInfo->flags = 0;
 
@@ -479,9 +491,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
         pInfo->libraryVersion.minor = BOUNCY_HSM_LIBVERSION_MINOR;
 
         memset(pInfo->manufacturerID, ' ', sizeof(pInfo->manufacturerID));
-        memcpy(pInfo->manufacturerID, envelope.ManufacturerID, strlen(envelope.ManufacturerID));
+        memcpy(pInfo->manufacturerID,
+            envelope.ManufacturerID, 
+            Minimum_size_t(strlen(envelope.ManufacturerID), sizeof(pInfo->manufacturerID)));
     }
-
+    
     GetInfoEnvelope_Release(&envelope);
 
     return (CK_RV)envelope.Rv;
@@ -549,6 +563,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR p
                 pSlotList[i] = (CK_SLOT_ID)envelope.Slots.array[i];
             }
         }
+    }
+    else if ((CK_RV)envelope.Rv == CKR_BUFFER_TOO_SMALL)
+    {
+        *pulCount = (CK_ULONG)envelope.PullCount;
     }
 
     GetSlotListEnvelope_Release(&envelope);
@@ -653,7 +671,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR p
         pInfo->ulMaxSessionCount = ConvertCkSpecialUint(envelope.Data->MaxSessionCount);
         pInfo->ulRwSessionCount = ConvertCkSpecialUint(envelope.Data->RwSessionCount);
         pInfo->ulMaxPinLen = (CK_ULONG)envelope.Data->MaxPinLen;
-        pInfo->ulMinPinLen = (CK_ULONG)envelope.Data->MaxPinLen;
+        pInfo->ulMinPinLen = (CK_ULONG)envelope.Data->MinPinLen;
         pInfo->ulTotalPublicMemory = ConvertCkSpecialUint(envelope.Data->TotalPublicMemory);
         pInfo->ulFreePublicMemory = ConvertCkSpecialUint(envelope.Data->FreePublicMemory);
         pInfo->ulTotalPrivateMemory = ConvertCkSpecialUint(envelope.Data->TotalPrivateMemory);
@@ -812,7 +830,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_InitToken)(CK_SLOT_ID slotID, CK_UTF8CHAR_PTR pPin, 
     }
 
     char labelBuffer[36];
-    CopyPaddedStrToStr(labelBuffer, 32, pLabel);
+    // 32 chars + one char for `\0`
+    CopyPaddedStrToStr(labelBuffer, 32 + 1, pLabel);
     request.Label = labelBuffer;
 
     int rv = nmrpc_call_InitToken(&ctx, &request, &envelope);
@@ -902,7 +921,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetPIN)(CK_SESSION_HANDLE hSession, CK_UTF8CHAR_PTR 
         request.Utf8OldPin = &oldPinBinary;
     }
 
-    if (NULL != pOldPin)
+    if (NULL != pNewPin)
     {
         newPinBinary.data = (uint8_t*)pNewPin;
         newPinBinary.size = (size_t)ulNewLen;
@@ -1181,10 +1200,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
     CreateObjectEnvelope envelope;
     AttrValueFromNative* attrTemplate = NULL;
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     nmrpc_global_context_t ctx;
@@ -1192,6 +1211,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBU
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
@@ -1251,14 +1275,19 @@ CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HA
 
     AttrValueFromNative* attrTemplate = NULL;
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
@@ -1397,6 +1426,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
     request.ObjectHandle = (uint32_t)hObject;
 
     request.InTemplate.array = (GetAttributeInputValues*)malloc(sizeof(GetAttributeInputValues) * ulCount);
+    if (request.InTemplate.array == NULL)
+    {
+        return CKR_DEVICE_ERROR;
+    }
+
     request.InTemplate.length = (int)ulCount;
 
     CK_ULONG i;
@@ -1426,10 +1460,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     if (rvMethod == CKR_OK || rvMethod == CKR_ATTRIBUTE_SENSITIVE || rvMethod == CKR_ATTRIBUTE_TYPE_INVALID || rvMethod == CKR_BUFFER_TOO_SMALL)
     {
-        CK_RV rvData = SetArributesToTemplate(envelope.Data->OutTemplate.array, pTemplate, ulCount, 0);
+        CK_RV rvData = SetAttributesToTemplate(envelope.Data->OutTemplate.array, pTemplate, ulCount, 0);
         if (rvData != CKR_OK)
         {
-            log_message(LOG_LEVEL_ERROR, "SetArributesToTemplate returms bad error code %i (CKR) in functions %s", (int)rvData, __FUNCTION__);
+            log_message(LOG_LEVEL_ERROR, "SetArributesToTemplate returms bad error code %i (CKR) in function %s", (int)rvData, __FUNCTION__);
             rvMethod = rvData;
         }
     }
@@ -1462,14 +1496,19 @@ CK_DEFINE_FUNCTION(CK_RV, C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OB
 
     AttrValueFromNative* attrTemplate = NULL;
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
@@ -1514,10 +1553,10 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
     FindObjectsInitEnvelope envelope;
     AttrValueFromNative* attrTemplate = NULL;
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     nmrpc_global_context_t ctx;
@@ -1525,6 +1564,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTR
 
     if (P11SocketInit(&tcp) != NMRPC_OK)
     {
+        if (NULL != attrTemplate)
+        {
+            AttrValueFromNative_Destroy(attrTemplate, ulCount);
+        }
+
         return CKR_DEVICE_ERROR;
     }
     nmrpc_global_context_tcp_init(&ctx, &tcp);
@@ -1673,6 +1717,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
+
         return CKR_DEVICE_ERROR;
     }
 
@@ -1749,6 +1795,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
         return CKR_ARGUMENTS_BAD;
     }
 
+    if (NULL == pulEncryptedPartLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     EncryptUpdateRequest request;
     EncryptUpdateEnvelope envelope;
 
@@ -1801,6 +1852,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastEncryptedPart, CK_ULONG_PTR pulLastEncryptedPartLen)
 {
     LOG_ENTERING_TO_FUNCTION();
+
+    if (NULL == pulLastEncryptedPartLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
 
     EncryptFinalRequest request;
     EncryptFinalEnvelope envelope;
@@ -1884,6 +1940,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
+
         return CKR_DEVICE_ERROR;
     }
 
@@ -2111,7 +2169,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDat
 {
     LOG_ENTERING_TO_FUNCTION();
 
-    if (NULL == pData && pData != 0)
+    if (NULL == pData && ulDataLen != 0)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
+    if (NULL == pulDigestLen)
     {
         return CKR_ARGUMENTS_BAD;
     }
@@ -2241,6 +2304,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pulDigestLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     DigestFinalRequest request;
     DigestFinalEnvelope envelope;
 
@@ -2322,6 +2390,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -2437,6 +2506,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pulSignatureLen)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     SignFinalRequest request;
     SignFinalEnvelope envelope;
 
@@ -2518,6 +2592,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECH
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -2589,6 +2664,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pMechanism)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     VerifyInitRequest request;
     VerifyInitEnvelope envelope;
 
@@ -2605,7 +2685,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.KeyObjectHandle = (uint32_t)hKey;
@@ -2614,6 +2694,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -2754,6 +2835,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_ME
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pMechanism)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     VerifyRecoverInitRequest request;
     VerifyRecoverInitEnvelope envelope;
 
@@ -2770,7 +2856,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_ME
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.KeyObjectHandle = (uint32_t)hKey;
@@ -2779,6 +2865,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_ME
     if (rv != NMRPC_OK)
     {
         LOG_FAILED_CALL_RPC();
+        MechanismValue_Destroy(&request.Mechanism);
         return CKR_DEVICE_ERROR;
     }
 
@@ -2910,14 +2997,14 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANIS
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -2994,22 +3081,22 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECH
         return CKR_GENERAL_ERROR;
     }
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pPublicKeyTemplate, ulPublicKeyAttributeCount, 0, &pubKeyAttrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pPublicKeyTemplate, ulPublicKeyAttributeCount, 0, &pubKeyAttrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return converAttrRv;
+        return convertAttrRv;
     }
 
-    converAttrRv = ConvertToAttrValueFromNative(pPrivateKeyTemplate, ulPrivateKeyAttributeCount, 0, &privKeyAttrTemplate);
-    if (converAttrRv != CKR_OK)
+    convertAttrRv = ConvertToAttrValueFromNative(pPrivateKeyTemplate, ulPrivateKeyAttributeCount, 0, &privKeyAttrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
         if (pubKeyAttrTemplate != NULL)
         {
             AttrValueFromNative_Destroy(pubKeyAttrTemplate, ulPublicKeyAttributeCount);
         }
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     request.PublicKeyTemplate.array = pubKeyAttrTemplate;
@@ -3068,7 +3155,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.WrappingKeyHandle = (uint32_t)hWrappingKey;
@@ -3135,14 +3222,14 @@ CK_DEFINE_FUNCTION(CK_RV, C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3206,16 +3293,16 @@ CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.BaseKeyHandle = (uint32_t)hBaseKey;
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3324,7 +3411,15 @@ CK_DEFINE_FUNCTION(CK_RV, C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        memcpy(RandomData, envelope.Data->data, envelope.Data->size);
+        if (envelope.Data->size <= ulRandomLen)
+        {
+            memcpy(RandomData, envelope.Data->data, envelope.Data->size);
+        }
+        else
+        {
+            log_message(LOG_LEVEL_ERROR, "The server returned data that was too long for the %s function.", __FUNCTION__);
+            envelope.Rv = CKR_DEVICE_ERROR;
+        }
     }
 
     GenerateRandomEnvelope_Release(&envelope);
@@ -3353,6 +3448,11 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
 {
     LOG_ENTERING_TO_FUNCTION();
 
+    if (NULL == pSlot)
+    {
+        return CKR_ARGUMENTS_BAD;
+    }
+
     WaitForSlotEventRequest request;
     WaitForSlotEventEnvelope envelope;
 
@@ -3368,7 +3468,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
     InitCallContext(&ctx, &request.AppId);
 
     request.Flags = (uint32_t)flags;
-    request.IsSlotPtrSet = pSlot != NULL;
     request.IsReservedPtrSet = pReserved != NULL;
 
     int rv = nmrpc_call_WaitForSlotEvent(&ctx, &request, &envelope);
@@ -3380,11 +3479,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSl
 
     if ((CK_RV)envelope.Rv == CKR_OK)
     {
-        if (pSlot == NULL)
-        {
-            return CKR_ARGUMENTS_BAD;
-        }
-
         *pSlot = (CK_SLOT_ID)envelope.Data->SlotId;
     }
 
@@ -3450,7 +3544,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VER
         const char* requested_interface_name = (const char*)pInterfaceName;
         const char* supported_interface_name = "PKCS 11";
 
-        if (strlen(requested_interface_name) != strlen(supported_interface_name) || 0 != strcmp(requested_interface_name, supported_interface_name))
+        if (0 != strcmp(requested_interface_name, supported_interface_name))
         {
             log_message(LOG_LEVEL_INFO, "Unsupported PKCS#11 interface: %s in %s", requested_interface_name, __FUNCTION__);
 
@@ -3485,7 +3579,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInterface)(CK_UTF8CHAR_PTR pInterfaceName, CK_VER
         }
     }
 
-    *ppInterface = &bouncyHsm_pkcs11_3_1_interface;
+    *ppInterface = &bouncyHsm_pkcs11_3_2_interface;
     return CKR_OK;
 }
 
@@ -3718,16 +3812,16 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.PublicKeyHandle = (uint32_t)hPublicKey;
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3761,6 +3855,8 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
                     AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
                 }
 
+                EncapsulateKeyEnvelope_Release(&envelope);
+
                 return CKR_DEVICE_ERROR;
             }
             memcpy_s(pCiphertext, *pulCiphertextLen, envelope.Data->Ciphertext->data, envelope.Data->Ciphertext->size);
@@ -3781,7 +3877,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_EncapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
         *pulCiphertextLen = (CK_ULONG)envelope.Data->PulCiphertextLen;
     }
 
-    MechanismValue_Destroy(&request.Mechanism);
     if (NULL != attrTemplate)
     {
         AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);
@@ -3819,16 +3914,16 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
     request.SessionId = (uint32_t)hSession;
     if (MechanismValue_Create(&request.Mechanism, pMechanism) != NMRPC_OK)
     {
-        return CKR_MECHANISM_INVALID;
+        return CKR_MECHANISM_PARAM_INVALID;
     }
 
     request.PrivateKeyHandle = (uint32_t)hPrivateKey;
 
-    CK_RV converAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
-    if (converAttrRv != CKR_OK)
+    CK_RV convertAttrRv = ConvertToAttrValueFromNative(pTemplate, ulAttributeCount, 0, &attrTemplate);
+    if (convertAttrRv != CKR_OK)
     {
         MechanismValue_Destroy(&request.Mechanism);
-        return converAttrRv;
+        return convertAttrRv;
     }
 
     request.Template.array = attrTemplate;
@@ -3854,7 +3949,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_DecapsulateKey)(CK_SESSION_HANDLE hSession, CK_MECHA
         *phKey = (CK_OBJECT_HANDLE)envelope.Data->PhKeyHandle;
     }
 
-    MechanismValue_Destroy(&request.Mechanism);
     if (NULL != attrTemplate)
     {
         AttrValueFromNative_Destroy(attrTemplate, ulAttributeCount);

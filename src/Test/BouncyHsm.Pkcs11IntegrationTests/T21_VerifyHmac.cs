@@ -13,14 +13,22 @@ public class T21_VerifyHmac
     }
 
     [TestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC, 32)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA_1_HMAC, 32)]
-    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 32)]
-    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 64)]
-    [DataRow(CKK.CKK_SHA512_HMAC, CKM.CKM_SHA512_HMAC, 64)]
-    public void Verify_Hmac_Success(CKK type, CKM signatureMechanism, int size)
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC, 32, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC, 32, 0)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC, 32, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC, 32, 158)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA_1_HMAC, 32, 64)]
+    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 32, 64)]
+    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 14, 64)]
+    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 1, 64)]
+    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 64, 64)]
+    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 64, 32)]
+    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 64, 0)]
+    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC, 64, 259)]
+    [DataRow(CKK.CKK_SHA512_HMAC, CKM.CKM_SHA512_HMAC, 64, 64)]
+    public void Verify_Hmac_Success(CKK type, CKM signatureMechanism, int size, int dataToSignCount)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignCount];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -56,15 +64,18 @@ public class T21_VerifyHmac
     }
 
     [TestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_224_HMAC, 28)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 32)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 14)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 1)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_384_HMAC, 48)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC, 64)]
-    public void Verify_HmacSha3_Success(CKK type, CKM signatureMechanism, int size)
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_224_HMAC, 28, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 32, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 14, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC, 1, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_384_HMAC, 48, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC, 64, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC, 64, 0)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC, 64, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC, 64, 354)]
+    public void Verify_HmacSha3_Success(CKK type, CKM signatureMechanism, int size, int dataToSignCount)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignCount];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -100,15 +111,21 @@ public class T21_VerifyHmac
     }
 
     [TestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_160_HMAC, 28)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 14)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 1)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 48)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_512_HMAC, 64)]
-    public void Verify_Blake2_Success(CKK type, CKM signatureMechanism, int size)
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_160_HMAC, 28, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32, 0)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 32, 156)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 14, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_256_HMAC, 1, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_384_HMAC, 48, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_512_HMAC, 64, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_512_HMAC, 64, 0)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_512_HMAC, 64, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_BLAKE2B_512_HMAC, 64, 186)]
+    public void Verify_Blake2_Success(CKK type, CKM signatureMechanism, int size, int dataToSignCount)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignCount];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -144,14 +161,16 @@ public class T21_VerifyHmac
     }
 
     [TestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA256_HMAC_GENERAL, 32)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_SHA_1_HMAC_GENERAL, 32)]
-    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC_GENERAL, 32)]
-    [DataRow(CKK.CKK_SHA256_HMAC, CKM.CKM_SHA256_HMAC_GENERAL, 64)]
-    [DataRow(CKK.CKK_SHA512_HMAC, CKM.CKM_SHA512_HMAC_GENERAL, 64)]
-    public void Verify_HmacGeneral_Success(CKK type, CKM signatureMechanism, int size)
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 16, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 16, 0)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 16, 86)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 16, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 16, 1989)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 28, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM.CKM_GOSTR3411_HMAC, 64, 64)]
+    public void Verify_HmacGeneral_Success(CKK type, CKM signatureMechanism, int size, int dataToSignCount)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignCount];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -188,13 +207,16 @@ public class T21_VerifyHmac
     }
 
     [TestMethod]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_224_HMAC_GENERAL, 28)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC_GENERAL, 32)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_384_HMAC_GENERAL, 48)]
-    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC_GENERAL, 64)]
-    public void Verify_HmacSha3General_Success(CKK type, CKM signatureMechanism, int size)
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_224_HMAC_GENERAL, 28, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_256_HMAC_GENERAL, 32, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_384_HMAC_GENERAL, 48, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC_GENERAL, 64, 64)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC_GENERAL, 64, 0)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC_GENERAL, 64, 32)]
+    [DataRow(CKK.CKK_GENERIC_SECRET, CKM_V3_0.CKM_SHA3_512_HMAC_GENERAL, 64, 2591)]
+    public void Verify_HmacSha3General_Success(CKK type, CKM signatureMechanism, int size, int dataToSignCount)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignCount];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();

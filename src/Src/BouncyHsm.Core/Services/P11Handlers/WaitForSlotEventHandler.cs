@@ -37,15 +37,6 @@ public partial class WaitForSlotEventHandler : IRpcRequestHandler<WaitForSlotEve
             });
         }
 
-        if (!request.IsSlotPtrSet)
-        {
-            this.logger.LogError("In WaitForSlotEvent is pSlot NULL. Returns CKR_ARGUMENTS_BAD.");
-            return Task.FromResult(new WaitForSlotEventEnvelope()
-            {
-                Rv = (uint)CKR.CKR_ARGUMENTS_BAD
-            });
-        }
-
         if (request.IsReservedPtrSet)
         {
             this.logger.LogError("In WaitForSlotEvent is not pReseved NULL. Returns CKR_ARGUMENTS_BAD.");

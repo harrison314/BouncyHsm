@@ -15,24 +15,43 @@ public class T20_SignRsa
     }
 
     [TestMethod]
-    [DataRow(CKM.CKM_RSA_PKCS, true)]
-    [DataRow(CKM.CKM_SHA1_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_SHA224_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_SHA256_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_SHA384_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_SHA512_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_MD2_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_MD5_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_RIPEMD128_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_RIPEMD160_RSA_PKCS, false)]
-    [DataRow(CKM.CKM_SHA1_RSA_X9_31, false)]
-    [DataRow(CKM_V3_0.CKM_SHA3_224_RSA_PKCS, false)]
-    [DataRow(CKM_V3_0.CKM_SHA3_256_RSA_PKCS, false)]
-    [DataRow(CKM_V3_0.CKM_SHA3_384_RSA_PKCS, false)]
-    [DataRow(CKM_V3_0.CKM_SHA3_512_RSA_PKCS, false)]
-    public void SignRsaPkcs_Call_Success(CKM mechnism, bool createPkcs1DigestInfo)
+    [DataRow(CKM.CKM_RSA_PKCS, true, 412)]
+    [DataRow(CKM.CKM_RSA_PKCS, false, 12)]
+    [DataRow(CKM.CKM_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_SHA1_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_SHA1_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_SHA224_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_SHA224_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_SHA256_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_SHA256_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_SHA256_RSA_PKCS, false, 16)]
+    [DataRow(CKM.CKM_SHA256_RSA_PKCS, false, 32)]
+    [DataRow(CKM.CKM_SHA384_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_SHA384_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_SHA512_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_SHA512_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_SHA512_RSA_PKCS, false, 32)]
+    [DataRow(CKM.CKM_MD2_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_MD2_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_MD5_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_MD5_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_RIPEMD128_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_RIPEMD128_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_RIPEMD160_RSA_PKCS, false, 412)]
+    [DataRow(CKM.CKM_RIPEMD160_RSA_PKCS, false, 0)]
+    [DataRow(CKM.CKM_SHA1_RSA_X9_31, false, 412)]
+    [DataRow(CKM.CKM_SHA1_RSA_X9_31, false, 0)]
+    [DataRow(CKM_V3_0.CKM_SHA3_224_RSA_PKCS, false, 412)]
+    [DataRow(CKM_V3_0.CKM_SHA3_224_RSA_PKCS, false, 0)]
+    [DataRow(CKM_V3_0.CKM_SHA3_256_RSA_PKCS, false, 412)]
+    [DataRow(CKM_V3_0.CKM_SHA3_256_RSA_PKCS, false, 0)]
+    [DataRow(CKM_V3_0.CKM_SHA3_384_RSA_PKCS, false, 412)]
+    [DataRow(CKM_V3_0.CKM_SHA3_384_RSA_PKCS, false, 0)]
+    [DataRow(CKM_V3_0.CKM_SHA3_512_RSA_PKCS, false, 412)]
+    [DataRow(CKM_V3_0.CKM_SHA3_512_RSA_PKCS, false, 0)]
+    public void SignRsaPkcs_Call_Success(CKM mechnism, bool createPkcs1DigestInfo, int dataToSignSize)
     {
-        byte[] dataToSign = new byte[412];
+        byte[] dataToSign = new byte[dataToSignSize];
         Random.Shared.NextBytes(dataToSign);
 
         if (createPkcs1DigestInfo)
@@ -175,6 +194,41 @@ public class T20_SignRsa
     {
         byte[] dataToSign = new byte[412];
         Random.Shared.NextBytes(dataToSign);
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        string label = $"RSAKeyTest-{DateTime.UtcNow}-{RandomNumberGenerator.GetInt32(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+
+        CreateRsaKeyPair(factories, ckId, label, false, session, out IObjectHandle publicKey, out IObjectHandle privateKey);
+
+        using RSA rsaPubKey = this.ExportPublicKey(session, publicKey);
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkRsaPkcsPssParams mParam = factories.MechanismParamsFactory.CreateCkRsaPkcsPssParams((ulong)CKM.CKM_SHA256,
+             (ulong)CKG.CKG_MGF1_SHA256,
+             32);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_SHA256_RSA_PKCS_PSS, mParam);
+        byte[] signature = session.Sign(mechanism, privateKey, dataToSign);
+
+        bool verfied = rsaPubKey.VerifyData(dataToSign, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
+
+        Assert.IsTrue(verfied, "Signature inconsistent.");
+    }
+
+    [TestMethod]
+    public void SignRsaPssSha256_Empty_Success()
+    {
+        byte[] dataToSign = new byte[0];
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,

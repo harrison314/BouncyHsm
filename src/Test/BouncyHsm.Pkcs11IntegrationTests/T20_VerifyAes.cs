@@ -13,12 +13,16 @@ public class T20_VerifyAes
     }
 
     [TestMethod]
-    [DataRow(16)]
-    [DataRow(24)]
-    [DataRow(32)]
-    public void Verify_AesCmac_Success(int size)
+    [DataRow(16, 64)]
+    [DataRow(24, 64)]
+    [DataRow(32, 64)]
+    [DataRow(32, 0)]
+    [DataRow(32, 12)]
+    [DataRow(32, 32)]
+    [DataRow(32, 156)]
+    public void Verify_AesCmac_Success(int size, int dataToSignSize)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignSize];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -49,15 +53,17 @@ public class T20_VerifyAes
     }
 
     [TestMethod]
-    [DataRow(16, 8)]
-    [DataRow(24, 8)]
-    [DataRow(32, 8)]
-    [DataRow(16, 12)]
-    [DataRow(24, 4)]
-    [DataRow(32, 16)]
-    public void Verify_AesCmacGeneral_Success(int size, int parameter)
+    [DataRow(16, 8, 64)]
+    [DataRow(24, 8, 64)]
+    [DataRow(32, 8, 64)]
+    [DataRow(16, 12, 64)]
+    [DataRow(24, 4, 64)]
+    [DataRow(32, 16, 64)]
+    [DataRow(32, 8, 0)]
+    [DataRow(32, 16, 32)]
+    public void Verify_AesCmacGeneral_Success(int size, int parameter, int dataToSignSize)
     {
-        byte[] dataToSign = new byte[64];
+        byte[] dataToSign = new byte[dataToSignSize];
         Random.Shared.NextBytes(dataToSign);
 
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -90,10 +96,13 @@ public class T20_VerifyAes
     }
 
     [TestMethod]
-    [DataRow(16)]
-    [DataRow(24)]
-    [DataRow(32)]
-    public void Verify_AesGmac_Success(int size)
+    [DataRow(16, 64)]
+    [DataRow(24, 64)]
+    [DataRow(32, 64)]
+    [DataRow(32, 0)]
+    [DataRow(32, 32)]
+    [DataRow(32, 113)]
+    public void Verify_AesGmac_Success(int size, int dataToSignSize)
     {
         byte[] dataToSign = new byte[64];
         byte[] iv = new byte[16];

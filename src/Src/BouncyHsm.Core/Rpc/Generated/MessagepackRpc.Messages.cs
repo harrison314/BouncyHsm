@@ -3415,13 +3415,6 @@ public partial class WaitForSlotEventRequest : IRpcRequest
     }
 
     [Key(2)]
-    public bool IsSlotPtrSet
-    {
-        get;
-        set;
-    }
-
-    [Key(3)]
     public bool IsReservedPtrSet
     {
         get;
@@ -4576,7 +4569,7 @@ public partial class Ckp_CkCamelliaCbcEncryptDataParams
 
 [MessagePackObject]
 [System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
-public partial class Ckp_CkSp800_108PrfDataParsms
+public partial class Ckp_CkSp800_108PrfDataParams
 {
     [Key(0)]
     public uint Type
@@ -4641,11 +4634,11 @@ public partial class Ckp_CkSp800_108KdfParams
     }
 
     [Key(1)]
-    public Ckp_CkSp800_108PrfDataParsms[] DataParams
+    public Ckp_CkSp800_108PrfDataParams[] DataParams
     {
         get;
         set;
-    } = global::System.Array.Empty<Ckp_CkSp800_108PrfDataParsms>();
+    } = global::System.Array.Empty<Ckp_CkSp800_108PrfDataParams>();
 
     [Key(2)]
     public uint AdditionalDerivedKeysCount
@@ -4668,11 +4661,11 @@ public partial class Ckp_Ck800_108FeedbackKdfParams
     }
 
     [Key(1)]
-    public Ckp_CkSp800_108PrfDataParsms[] DataParams
+    public Ckp_CkSp800_108PrfDataParams[] DataParams
     {
         get;
         set;
-    } = global::System.Array.Empty<Ckp_CkSp800_108PrfDataParsms>();
+    } = global::System.Array.Empty<Ckp_CkSp800_108PrfDataParams>();
 
     [Key(2)]
     public byte[] Iv
@@ -4687,6 +4680,26 @@ public partial class Ckp_Ck800_108FeedbackKdfParams
         get;
         set;
     }
+
+}
+
+[MessagePackObject]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+public partial class Ckp_CkAesCtrParams
+{
+    [Key(0)]
+    public uint CounterBits
+    {
+        get;
+        set;
+    }
+
+    [Key(1)]
+    public byte[] Cb
+    {
+        get;
+        set;
+    } = global::System.Array.Empty<byte>();
 
 }
 

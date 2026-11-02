@@ -28,7 +28,10 @@ internal class Sp800_108DoublePipelineKdf
 
         for (int i = 1; i <= n; i++)
         {
-            this.PrfNextValue(acc);
+            if (i > 1)
+            {
+                this.PrfNextValue(acc);
+            }
 
             PrfDataContext ctx = new PrfDataContext(i, acc, outputLengthBytes, n * hLen);
             IMac mac = this.macFactory();

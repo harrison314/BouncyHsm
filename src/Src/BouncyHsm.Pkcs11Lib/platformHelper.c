@@ -22,8 +22,8 @@ int strcpy_s(char* destination, size_t SizeInBytes, const char* _Source)
         return _GCC_EINVAL;
     }
 
-    size_t srclLen = strlen(_Source);
-    if (srclLen > SizeInBytes)
+    size_t srcLen = strlen(_Source);
+    if (srcLen >= SizeInBytes)
     {
         destination[0] = 0;
         return _GCC_ERANGE;
@@ -49,7 +49,7 @@ int strncpy_s(char* destination, size_t destsz, const char* _Source, size_t coun
         srcSize = count;
     }
 
-    if (srcSize > destsz)
+    if (srcSize >= destsz)
     {
         destination[0] = 0;
         return _GCC_ERANGE;
@@ -88,6 +88,7 @@ int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...)
 bool GetCurrentComputerName(char* buffer, size_t maxSize)
 {
     int result = gethostname(buffer, maxSize);
+    buffer[maxSize - 1] = 0;
     return result == 0;
 }
 
@@ -133,7 +134,7 @@ static char* LPWSTRtoUtf8(const LPWSTR src, int* out_len)
 {
     size_t src_length = wcslen(src);
     int length = WideCharToMultiByte(CP_UTF8, 0, src, (int)src_length, 0, 0, NULL, NULL);
-    if (length == ERROR_NO_UNICODE_TRANSLATION)
+    if (length == 0)
     {
         return NULL;
     }
@@ -165,7 +166,7 @@ bool getProgramArgs(const char*** args, int* argc)
     LPWSTR* szArgList = NULL;
     int argCount;
 
-    szArgList = CommandLineToArgvW((LPCWSTR)GetCommandLine(), &argCount);
+    szArgList = CommandLineToArgvW((LPCWSTR)GetCommandLineW(), &argCount);
     if (szArgList == NULL)
     {
         // Unable to parse command line
@@ -256,11 +257,11 @@ bool getProgramArgs(const char*** args, int* argc)
     char* buffer = NULL;
     size_t dataSize = 0;
     char tmpBuffer[4096];
-    size_t readed;
+    size_t bytesRead;
 
-    while ((readed = fread(tmpBuffer, 1, sizeof(tmpBuffer), fd)) > 0)
+    while ((bytesRead = fread(tmpBuffer, 1, sizeof(tmpBuffer), fd)) > 0)
     {
-        char* newBuffer = (char*)realloc(buffer, dataSize + readed + 1);
+        char* newBuffer = (char*)realloc(buffer, dataSize + bytesRead + 1);
         if (newBuffer == NULL)
         {
             if (buffer != NULL)
@@ -273,8 +274,8 @@ bool getProgramArgs(const char*** args, int* argc)
         }
 
         buffer = newBuffer;
-        memcpy(buffer + dataSize, tmpBuffer, readed);
-        dataSize += readed;
+        memcpy(buffer + dataSize, tmpBuffer, bytesRead);
+        dataSize += bytesRead;
         buffer[dataSize] = '\0';
     }
 

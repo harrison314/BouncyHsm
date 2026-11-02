@@ -60,8 +60,10 @@ public class T99_Concurrency
     {
         slot.InitToken(AssemblyTestConstants.SoPin, "TestLabel1");
         using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_SO, AssemblyTestConstants.SoPin);
         session.InitPin("Foobar");
         session.InitPin(AssemblyTestConstants.UserPin);
+        session.Logout();
     }
 
     private void Worker(object? state)

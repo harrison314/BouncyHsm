@@ -162,7 +162,7 @@ public class T26_WrapKey
     [DataRow(CKM.CKM_AES_CFB64, 16)]
     [DataRow(CKM.CKM_AES_CFB8, 16)]
     [DataRow(CKM.CKM_AES_CFB128, 16)]
-    [DataRow(CKM.CKM_AES_CFB1, 16)]
+    //[DataRow(CKM.CKM_AES_CFB1, 16)]
     public void Wrap_AesKeyUpadedSecret_Success(CKM aesMechanism, int ivLen)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -220,7 +220,7 @@ public class T26_WrapKey
     [DataRow(CKM.CKM_AES_CFB64, 16)]
     [DataRow(CKM.CKM_AES_CFB8, 16)]
     [DataRow(CKM.CKM_AES_CFB128, 16)]
-    [DataRow(CKM.CKM_AES_CFB1, 16)]
+    //[DataRow(CKM.CKM_AES_CFB1, 16)]
     public void Wrap_AesKeyUpadedRsa_Success(CKM aesMechanism, int ivLen)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
