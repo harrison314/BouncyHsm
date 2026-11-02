@@ -30,18 +30,39 @@ internal class ConcatBaseAndKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
 
     protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
-        generalSecretKeyObject.CkaSensitive = baseKey.CkaSensitive && this.otherKey.CkaSensitive;
-        if (!generalSecretKeyObject.CkaSensitive && template.TryGetValue(CKA.CKA_SENSITIVE, out IAttributeValue? attrValue))
+        if (baseKey.CkaSensitive || this.otherKey.CkaSensitive)
         {
-            generalSecretKeyObject.SetValue(CKA.CKA_SENSITIVE, attrValue, false);
+            generalSecretKeyObject.CkaSensitive = true;
+        }
+        else
+        {
+            if (template.TryGetValue(CKA.CKA_SENSITIVE, out IAttributeValue? attrValue))
+            {
+                generalSecretKeyObject.CkaSensitive = attrValue.AsBool();
+            }
+            else
+            {
+                generalSecretKeyObject.CkaSensitive = false;
+            }
         }
 
-        generalSecretKeyObject.CkaExtractable = baseKey.CkaExtractable && this.otherKey.CkaExtractable;
-        if (!generalSecretKeyObject.CkaExtractable && template.TryGetValue(CKA.CKA_EXTRACTABLE, out IAttributeValue? extractableAttrValue))
+        if (baseKey.CkaExtractable && this.otherKey.CkaExtractable)
         {
-            generalSecretKeyObject.SetValue(CKA.CKA_EXTRACTABLE, extractableAttrValue, false);
+            if (template.TryGetValue(CKA.CKA_EXTRACTABLE, out IAttributeValue? attrValue))
+            {
+                generalSecretKeyObject.CkaExtractable = attrValue.AsBool();
+            }
+            else
+            {
+                generalSecretKeyObject.CkaExtractable = true;
+            }
+        }
+        else
+        {
+            generalSecretKeyObject.CkaExtractable = false;
         }
 
+        generalSecretKeyObject.CkaAlwaysSensitive = baseKey.CkaAlwaysSensitive && this.otherKey.CkaAlwaysSensitive;
         generalSecretKeyObject.CkaNewerExtractable = baseKey.CkaNewerExtractable && this.otherKey.CkaNewerExtractable;
     }
 
