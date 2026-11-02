@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
     <Description></Description>
     <RepositoryUrl>https://github.com/harrison314/BouncyHsm</RepositoryUrl>
     <PackageProjectUrl>https://github.com/harrison314/BouncyHsm</PackageProjectUrl>

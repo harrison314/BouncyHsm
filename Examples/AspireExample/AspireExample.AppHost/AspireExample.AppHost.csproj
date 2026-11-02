@@ -10,7 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExampleApi\ExampleApi.csproj" />
+    <ProjectReference Include="../ExampleApi/ExampleApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Src/BouncyHsm.Aspire.Hosting/BouncyHsm.Aspire.Hosting.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
 
 </Project>
