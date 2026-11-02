@@ -112,7 +112,7 @@ internal class PlainMacWrapperSigner : IWrapperSigner
             }
 
             byte[] secretKey = key.GetSecret();
-            if (mechanismInfo.MinKeySize > secretKey.Length || mechanismInfo.MaxKeySize < secretKey.Length)
+            if (mechanismInfo.MinKeySize > secretKey.Length * 8 || mechanismInfo.MaxKeySize < secretKey.Length * 8)
             {
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_SIZE_RANGE,
                     $"Mechanism {this.mechanism} require key size between {mechanismInfo.MinKeySize} and {mechanismInfo.MaxKeySize}. Key object {key.Id} has length {secretKey.Length}.");
