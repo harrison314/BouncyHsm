@@ -49,6 +49,47 @@ public class T15_Digest
     }
 
     [TestMethod]
+    [DataRow(CKM.CKM_MD2)]
+    [DataRow(CKM.CKM_MD5)]
+    [DataRow(CKM.CKM_SHA_1)]
+    [DataRow(CKM.CKM_SHA224)]
+    [DataRow(CKM.CKM_SHA256)]
+    [DataRow(CKM.CKM_SHA384)]
+    [DataRow(CKM.CKM_SHA512)]
+    [DataRow(CKM.CKM_SHA512_256)]
+    [DataRow(CKM.CKM_SHA512_224)]
+    [DataRow(CKM.CKM_RIPEMD128)]
+    [DataRow(CKM.CKM_RIPEMD160)]
+    [DataRow(CKM.CKM_GOSTR3411)]
+    [DataRow(CKM_V3_0.CKM_SHA3_224)]
+    [DataRow(CKM_V3_0.CKM_SHA3_256)]
+    [DataRow(CKM_V3_0.CKM_SHA3_384)]
+    [DataRow(CKM_V3_0.CKM_SHA3_512)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_160)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_256)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_384)]
+    [DataRow(CKM_V3_0.CKM_BLAKE2B_512)]
+    public void Digest_EmptyData_Success(CKM digestMechanism)
+    {
+        byte[] message = Array.Empty<byte>();
+
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadOnly);
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(digestMechanism);
+        byte[] digest = session.Digest(mechanism, message);
+
+        Assert.IsNotNull(digest);
+    }
+
+    [TestMethod]
     public void Digest_WithLongData_Success()
     {
         byte[] message = new byte[15_000];

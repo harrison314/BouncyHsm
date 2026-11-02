@@ -36,19 +36,11 @@ internal class DigestSessionState : ISessionState
 
         this.digest.BlockUpdate(data);
 
-        if (data.Length > 0)
-        {
-            this.IsUpdated = true;
-        }
+        this.IsUpdated = true;
     }
 
     public byte[] Final()
     {
-        if (!this.IsUpdated)
-        {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_DATA_LEN_RANGE, "Error: Digesting empty data.");
-        }
-
         byte[] buffer = new byte[this.digest.GetDigestSize()];
         this.digest.DoFinal(buffer);
 
