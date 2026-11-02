@@ -218,7 +218,7 @@ public class T27_UnwrapKey
     [DataRow(CKM.CKM_AES_CFB64, 16)]
     [DataRow(CKM.CKM_AES_CFB8, 16)]
     [DataRow(CKM.CKM_AES_CFB128, 16)]
-    [DataRow(CKM.CKM_AES_CFB1, 16)]
+    //[DataRow(CKM.CKM_AES_CFB1, 16)]
     public void Unwrap_AesKeyUpadedSecret_Success(CKM aesMechanism, int ivLen)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -301,7 +301,7 @@ public class T27_UnwrapKey
     [DataRow(CKM.CKM_AES_CFB64, 16)]
     [DataRow(CKM.CKM_AES_CFB8, 16)]
     [DataRow(CKM.CKM_AES_CFB128, 16)]
-    [DataRow(CKM.CKM_AES_CFB1, 16)]
+    //[DataRow(CKM.CKM_AES_CFB1, 16)]
     public void Unwrap_AesKeyUpadedRsa_Success(CKM aesMechanism, int ivLen)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();

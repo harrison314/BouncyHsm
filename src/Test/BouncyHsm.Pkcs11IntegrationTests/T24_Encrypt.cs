@@ -67,7 +67,7 @@ public class T24_Encrypt
     [TestMethod]
     [DataRow(CKM.CKM_AES_CBC)]
     [DataRow(CKM.CKM_AES_CBC_PAD)]
-    [DataRow(CKM.CKM_AES_CFB1)]
+    //[DataRow(CKM.CKM_AES_CFB1)]
     [DataRow(CKM.CKM_AES_CFB8)]
     [DataRow(CKM.CKM_AES_CFB64)]
     [DataRow(CKM.CKM_AES_CFB128)]

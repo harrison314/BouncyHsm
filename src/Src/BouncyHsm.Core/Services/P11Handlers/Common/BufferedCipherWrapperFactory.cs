@@ -39,7 +39,6 @@ internal class BufferedCipherWrapperFactory
             CKM.CKM_AES_CBC => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/NOPADDING"), true, mechanism),
             CKM.CKM_AES_CBC_PAD => this.CreateAes(CipherUtilities.GetCipher("AES/CBC/PKCS7PADDING"), false, mechanism),
 
-            CKM.CKM_AES_CFB1 => this.CreateAes(this.CreateAesCbf(1), true, mechanism),
             CKM.CKM_AES_CFB8 => this.CreateAes(this.CreateAesCbf(8), true, mechanism),
             CKM.CKM_AES_CFB64 => this.CreateAes(this.CreateAesCbf(64), true, mechanism),
             CKM.CKM_AES_CFB128 => this.CreateAes(this.CreateAesCbf(128), true, mechanism),
