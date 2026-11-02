@@ -46,7 +46,7 @@ internal class AgreementWithKdf1Agreement : IBasicAgreement
         byte[] z = result.ToByteArrayUnsigned();
         byte[] keyData = new byte[this.keySize];
 
-        Kdf1BytesGenerator kdfGenerator = new Kdf1BytesGenerator(this.kdfDigest);
+        Kdf2BytesGenerator kdfGenerator = new Kdf2BytesGenerator(this.kdfDigest);
         kdfGenerator.Init(new KdfParameters(z, this.sharedData));
         kdfGenerator.GenerateBytes(keyData);
 
