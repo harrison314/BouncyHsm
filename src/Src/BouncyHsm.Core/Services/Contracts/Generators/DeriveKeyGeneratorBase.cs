@@ -39,9 +39,6 @@ internal abstract class DeriveKeyGeneratorBase : IDeriveKeyGenerator
         SecretKeyObject sBaseKey = (SecretKeyObject)baseKey;
 
         SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(this.template);
-        generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
-        generalSecretKeyObject.CkaExtractable = sBaseKey.CkaExtractable;
-
         foreach (KeyValuePair<CKA, IAttributeValue> kvp in this.template)
         {
             if (kvp.Key == CKA.CKA_CLASS)
@@ -63,6 +60,8 @@ internal abstract class DeriveKeyGeneratorBase : IDeriveKeyGenerator
             this.TryUpdateValueLen(generalSecretKeyObject, (int)requestdValueLen);
         }
 
+        generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
+        generalSecretKeyObject.CkaExtractable = sBaseKey.CkaExtractable;
         generalSecretKeyObject.CkaAlwaysSensitive = sBaseKey.CkaAlwaysSensitive;
         generalSecretKeyObject.CkaNewerExtractable = sBaseKey.CkaNewerExtractable;
         generalSecretKeyObject.CkaLocal = false;
