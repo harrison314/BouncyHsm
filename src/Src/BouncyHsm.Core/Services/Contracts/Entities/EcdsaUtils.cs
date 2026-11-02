@@ -35,8 +35,20 @@ internal static class EcdsaUtils
         System.Diagnostics.Debug.Assert(ecParameters != null);
         System.Diagnostics.Debug.Assert(ecPoint != null);
 
-        Asn1OctetString octetString = DerOctetString.GetInstance(ecPoint);
-        return ecParameters.Curve.DecodePoint(octetString.GetOctets());
+        if (ecPoint is [0x04, ..]) // start with tag OctetString
+        {
+            try
+            {
+                Asn1OctetString octetString = DerOctetString.GetInstance(ecPoint);
+                return ecParameters.Curve.DecodePoint(octetString.GetOctets());
+            }
+            catch (ArgumentException)
+            {
+                // fallback decode ec point
+            }
+        }
+
+        return ecParameters.Curve.DecodePoint(ecPoint);
     }
 
     public static X9ECParameters ParseEcParams(byte[] ecParams)
