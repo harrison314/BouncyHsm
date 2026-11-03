@@ -72,7 +72,9 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
 
         if (this.signature != null)
         {
-            return;
+            //TODO: Check compliance with the specification: use C_SignUpdate followed by C_SignFinal.
+            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_GENERAL_ERROR,
+                "Currently, the BouncyHsm implementation does not support calling C_SignUpdate after C_SignFinal.");
         }
 
         if (data.Length > 0)
