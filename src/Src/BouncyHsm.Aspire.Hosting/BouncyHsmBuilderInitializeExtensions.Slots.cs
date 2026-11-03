@@ -1,11 +1,11 @@
-﻿using Aspire.Hosting;
-using Aspire.Hosting.ApplicationModel;
+﻿using Aspire.Hosting.ApplicationModel;
 using BouncyHsm.Client;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BouncyHsm.Aspire.Hosting;
+namespace Aspire.Hosting;
 
 public static partial class BouncyHsmBuilderInitializeExtensions
 {
@@ -25,7 +25,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         ArgumentNullException.ThrowIfNullOrEmpty(userPin);
         ArgumentNullException.ThrowIfNullOrEmpty(soPin);
 
-        builder.Resource.InitializeTasks.Add(async (client, ct) =>
+        builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
         {
             await client.CreateSlotAsync(new BouncyHsm.Client.CreateSlotDto()
             {
@@ -46,6 +46,8 @@ public static partial class BouncyHsmBuilderInitializeExtensions
                     UserPin = userPin
                 }
             }, ct);
+
+            logger.LogInformation("Token with label {Label} created.", tokenLabel);
         });
 
         return builder;
@@ -67,7 +69,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         ArgumentNullException.ThrowIfNullOrEmpty(userPin);
         ArgumentNullException.ThrowIfNullOrEmpty(soPin);
 
-        builder.Resource.InitializeTasks.Add(async (client, ct) =>
+        builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
         {
             IList<SlotDto> slots = await client.GetAllSlotsAsync(ct);
             if (!slots.Any(t => t.Token.Label == tokenLabel))
@@ -91,6 +93,12 @@ public static partial class BouncyHsmBuilderInitializeExtensions
                         UserPin = userPin
                     }
                 }, ct);
+
+                logger.LogInformation("Token with label {Label} created.", tokenLabel);
+            }
+            else
+            {
+                logger.LogWarning("A token with the label {Label} was not created because it already exists.", tokenLabel);
             }
         });
 
@@ -104,7 +112,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(setup);
 
-        builder.Resource.InitializeTasks.Add(async (client, ct) =>
+        builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
         {
             BouncyHsm.Client.CreateSlotDto model = new BouncyHsm.Client.CreateSlotDto()
             {
@@ -128,6 +136,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
 
             setup.Invoke(model);
             await client.CreateSlotAsync(model, ct);
+            logger.LogInformation("Token with label {Label} created.", model.Token.Label);
         });
 
         return builder;

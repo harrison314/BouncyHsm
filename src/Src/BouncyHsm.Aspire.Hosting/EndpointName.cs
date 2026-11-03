@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BouncyHsm.Aspire.Hosting;
+namespace Aspire.Hosting;
 
 internal class EndpointName
 {

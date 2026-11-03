@@ -1,5 +1,6 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using BouncyHsm.Client;
+using Microsoft.Extensions.Logging;
 
 namespace Aspire.Hosting;
 
@@ -21,7 +22,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         ArgumentNullException.ThrowIfNull(ckaLabel);
         ArgumentNullException.ThrowIfNullOrWhiteSpace(pem);
 
-        builder.Resource.InitializeTasks.Add(async (client, ct) =>
+        builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
         {
             IList<SlotDto> slots = await client.GetAllSlotsAsync(ct);
             SlotDto? slot = slots.SingleOrDefault(t => t.Token.Label == tokenLabel);
@@ -48,6 +49,11 @@ public static partial class BouncyHsmBuilderInitializeExtensions
                     Password = password
                 },
                 ct);
+
+            logger.LogInformation("PEM object imported into token with label {TokenLabel}, CKA_ID {CkaID}, CKA_LABEL {CkaLabel}.",
+                    tokenLabel,
+                    Convert.ToHexString(ckaId),
+                    ckaLabel);
         });
 
         return builder;

@@ -1,5 +1,7 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using BouncyHsm.Client;
+using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
 
 namespace Aspire.Hosting;
 
@@ -21,7 +23,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         ArgumentNullException.ThrowIfNull(ckaId);
         ArgumentNullException.ThrowIfNull(ckaLabel);
 
-        builder.Resource.InitializeTasks.Add(async (client, ct) =>
+        builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
         {
             IList<SlotDto> slots = await client.GetAllSlotsAsync(ct);
             SlotDto? slot = slots.SingleOrDefault(t => t.Token.Label == tokenLabel);
@@ -41,6 +43,11 @@ public static partial class BouncyHsmBuilderInitializeExtensions
                     Pkcs12Content = pkcs12Content
                 },
                 ct);
+
+            logger.LogInformation("Pkcs12 imported into token with label {TokenLabel}, CKA_ID {CkaID}, CKA_LABEL {CkaLabel}.",
+                    tokenLabel,
+                    Convert.ToHexString(ckaId),
+                    ckaLabel);
         });
 
         return builder;
@@ -62,7 +69,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         ArgumentNullException.ThrowIfNull(ckaId);
         ArgumentNullException.ThrowIfNull(ckaLabel);
 
-        builder.Resource.InitializeTasks.Add(async (client, ct) =>
+        builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
         {
             IList<SlotDto> slots = await client.GetAllSlotsAsync(ct);
             SlotDto? slot = slots.SingleOrDefault(t => t.Token.Label == tokenLabel);
@@ -85,6 +92,18 @@ public static partial class BouncyHsmBuilderInitializeExtensions
                         Pkcs12Content = pkcs12Content
                     },
                     ct);
+
+                logger.LogInformation("Pkcs12 imported into token with label {TokenLabel}, CKA_ID {CkaID}, CKA_LABEL {CkaLabel}.",
+                    tokenLabel,
+                    Convert.ToHexString(ckaId),
+                    ckaLabel);
+            }
+            else
+            {
+                logger.LogWarning("The import of the PKCS#12 file into the token labeled {TokenLabel} failed because another cryptographic object with CKA_ID {CkaID} and CKA_LABEL {CkaLabel} already exists.",
+                    tokenLabel,
+                    Convert.ToHexString(ckaId),
+                    ckaLabel);
             }
         });
 

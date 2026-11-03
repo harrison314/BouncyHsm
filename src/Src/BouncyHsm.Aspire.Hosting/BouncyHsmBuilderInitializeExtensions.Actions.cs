@@ -6,7 +6,7 @@ namespace Aspire.Hosting;
 public static partial class BouncyHsmBuilderInitializeExtensions
 {
     [AspireExport]
-    public static IResourceBuilder<BouncyHsmResource> WithInitializedAction(this IResourceBuilder<BouncyHsmResource> builder, Func<BouncyHsmClient, CancellationToken, Task> initializedAction)
+    public static IResourceBuilder<BouncyHsmResource> WithInitializedAction(this IResourceBuilder<BouncyHsmResource> builder, BouncyHsmInitializeTask initializedAction)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(initializedAction);
