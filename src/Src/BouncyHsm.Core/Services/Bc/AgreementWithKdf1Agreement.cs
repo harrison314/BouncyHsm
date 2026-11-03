@@ -1,18 +1,19 @@
-﻿using Org.BouncyCastle.Asn1.X9;
-using Org.BouncyCastle.Asn1;
+﻿using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Agreement.Kdf;
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Digests;
 
 namespace BouncyHsm.Core.Services.Bc;
 
@@ -43,10 +44,10 @@ internal class AgreementWithKdf1Agreement : IBasicAgreement
     {
         BigInteger result = this.agreement.CalculateAgreement(pubKey);
 
-        byte[] z = result.ToByteArrayUnsigned();
+        byte[] z = BigIntegers.AsUnsignedByteArray(this.kdfDigest.GetDigestSize(), result);
         byte[] keyData = new byte[this.keySize];
 
-        Kdf1BytesGenerator kdfGenerator = new Kdf1BytesGenerator(this.kdfDigest);
+        Kdf2BytesGenerator kdfGenerator = new Kdf2BytesGenerator(this.kdfDigest);
         kdfGenerator.Init(new KdfParameters(z, this.sharedData));
         kdfGenerator.GenerateBytes(keyData);
 

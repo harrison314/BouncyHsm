@@ -1,12 +1,13 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using BouncyHsm.Client;
+using Microsoft.Extensions.Logging;
 
 namespace Aspire.Hosting;
 
 public class BouncyHsmResource : ContainerResource, IResourceWithEndpoints
 {
    
-    internal List<Func<BouncyHsmClient, CancellationToken, Task>> InitializeTasks
+    internal List<BouncyHsmInitializeTask> InitializeTasks
     {
         get;
     }
@@ -14,6 +15,7 @@ public class BouncyHsmResource : ContainerResource, IResourceWithEndpoints
     public BouncyHsmResource(string name, string? entrypoint = null)
         : base(name, entrypoint)
     {
-        this.InitializeTasks = new List<Func<BouncyHsmClient, CancellationToken, Task>>();
+        this.InitializeTasks = new List<BouncyHsmInitializeTask>();
     }
 }
+

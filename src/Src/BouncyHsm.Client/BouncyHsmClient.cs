@@ -8,6 +8,8 @@ public partial class BouncyHsmClient
         if (baseAddress == null) throw new ArgumentNullException(nameof(baseAddress));
         if (httpClient == null) throw new ArgumentNullException(nameof(httpClient));
 
-        this._baseUrl = baseAddress;
+        this._baseUrl = baseAddress.EndsWith('/')
+            ? baseAddress
+            : string.Concat(baseAddress, "/");
     }
 }

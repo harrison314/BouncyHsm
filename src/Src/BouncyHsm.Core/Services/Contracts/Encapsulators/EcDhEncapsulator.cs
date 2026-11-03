@@ -99,6 +99,7 @@ internal class EcDhEncapsulator : P11EncapsulatorBase<EcdsaPublicKeyObject, Ecds
             }
 
             secretKeyObject.SetSecret(BigIntegers.AsUnsignedByteArray((int)requiredSecretkeyLen.Value, sharedSecret));
+            return;
         }
 
         uint minimalSecretLen = secretKeyObject.GetMinimalSecretLen();

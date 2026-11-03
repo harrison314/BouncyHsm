@@ -45,7 +45,7 @@ internal class RawAgreementWithKdf1Agreement : IRawAgreement
         byte[] z = new byte[this.agreement.AgreementSize];
         this.agreement.CalculateAgreement(publicKey, z.AsSpan());
 
-        Kdf1BytesGenerator kdfGenerator = new Kdf1BytesGenerator(this.kdfDigest);
+        Kdf2BytesGenerator kdfGenerator = new Kdf2BytesGenerator(this.kdfDigest);
         kdfGenerator.Init(new KdfParameters(z, this.sharedData));
         kdfGenerator.GenerateBytes(output);
     }

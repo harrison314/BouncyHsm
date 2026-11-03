@@ -1,8 +1,8 @@
 ﻿using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
-using BouncyHsm.Aspire.Hosting;
 using BouncyHsm.Client;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -45,13 +45,14 @@ public static class BouncyHsmBuilderExtensions
                      {
                          EndpointReference apiEndpoint = resource.GetEndpoint(EndpointName.Http);
                          IHttpClientFactory httpClientFactory = readyEvenet.Services.GetRequiredService<IHttpClientFactory>();
+                         ILogger<BouncyHsm.Aspire.Hosting.BouncyHsm> logger = readyEvenet.Services.GetRequiredService<ILogger<BouncyHsm.Aspire.Hosting.BouncyHsm>>();
                          HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
 
                          BouncyHsmClient client = new BouncyHsmClient(apiEndpoint.Url, httpClient);
 
-                         foreach (Func<BouncyHsmClient, CancellationToken, Task> task in resource.InitializeTasks)
+                         foreach (BouncyHsmInitializeTask task in resource.InitializeTasks)
                          {
-                             await task.Invoke(client, ct);
+                             await task.Invoke(client, logger, ct);
                          }
                      }
                  });
