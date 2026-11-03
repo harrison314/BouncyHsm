@@ -132,7 +132,7 @@ internal abstract class P11EncapsulatorBase<TPublicKey, TPrivateKey> : IP11Encap
 
     private void UpdateSecretKeyAttributes(SecretKeyObject secretKeyObject)
     {
-        secretKeyObject.CkaSensitive = false;
+        secretKeyObject.CkaAlwaysSensitive = false;
         secretKeyObject.CkaNewerExtractable = false;
         secretKeyObject.CkaLocal = false;
         secretKeyObject.ReComputeAttributes();
