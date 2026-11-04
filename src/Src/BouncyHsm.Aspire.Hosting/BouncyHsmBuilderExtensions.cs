@@ -39,13 +39,13 @@ public static class BouncyHsmBuilderExtensions
                      e.Protocol = System.Net.Sockets.ProtocolType.Tcp;
                  })
                  .WithHttpHealthCheck("/health", endpointName: EndpointName.Http)
-                 .OnResourceReady(async (resource, readyEvenet, ct) =>
+                 .OnResourceReady(async (resource, readyEvent, ct) =>
                  {
                      if (resource.InitializeTasks.Any())
                      {
                          EndpointReference apiEndpoint = resource.GetEndpoint(EndpointName.Http);
-                         IHttpClientFactory httpClientFactory = readyEvenet.Services.GetRequiredService<IHttpClientFactory>();
-                         ILogger<BouncyHsm.Aspire.Hosting.BouncyHsm> logger = readyEvenet.Services.GetRequiredService<ILogger<BouncyHsm.Aspire.Hosting.BouncyHsm>>();
+                         IHttpClientFactory httpClientFactory = readyEvent.Services.GetRequiredService<IHttpClientFactory>();
+                         ILogger<BouncyHsm.Aspire.Hosting.BouncyHsm> logger = readyEvent.Services.GetRequiredService<ILogger<BouncyHsm.Aspire.Hosting.BouncyHsm>>();
                          HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
 
                          BouncyHsmClient client = new BouncyHsmClient(apiEndpoint.Url, httpClient);

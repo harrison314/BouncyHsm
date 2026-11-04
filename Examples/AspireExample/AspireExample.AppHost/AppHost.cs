@@ -39,8 +39,8 @@ var bouncyHsm = builder.AddBouncyHsm("bouncyhsm")
 
 builder.AddProject<Projects.ExampleApi>("exampleapi")
      .WaitForStart(bouncyHsm)
-     .WithBouncyHsmApiReferenc(bouncyHsm)
-     .WithBouncyHsmNativeLibEndpointReferenc(bouncyHsm, BouncyHsmLogTarget.NONE, BouncyHsmLogLevel.NONE, tag: "exampleapi");
+     .WithBouncyHsmApiReference(bouncyHsm)
+     .WithBouncyHsmNativeLibEndpointReference(bouncyHsm, BouncyHsmLogTarget.NONE, BouncyHsmLogLevel.NONE, tag: "exampleapi");
 
 #endif
 

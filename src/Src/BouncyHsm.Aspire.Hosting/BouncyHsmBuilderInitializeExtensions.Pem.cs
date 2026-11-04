@@ -19,7 +19,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNullOrEmpty(tokenLabel);
         ArgumentNullException.ThrowIfNull(ckaId);
-        ArgumentNullException.ThrowIfNull(ckaLabel);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(ckaLabel);
         ArgumentNullException.ThrowIfNullOrWhiteSpace(pem);
 
         builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
@@ -28,7 +28,7 @@ public static partial class BouncyHsmBuilderInitializeExtensions
             SlotDto? slot = slots.SingleOrDefault(t => t.Token.Label == tokenLabel);
             if (slot == null)
             {
-                throw new ArgumentException($"Not found token with label {tokenLabel}");
+                throw new InvalidOperationException($"Token with label '{tokenLabel}' not found. Make sure the token is created before importing PEM objects.");
             }
 
             await client.ImportPemAsync(slot.SlotId,
