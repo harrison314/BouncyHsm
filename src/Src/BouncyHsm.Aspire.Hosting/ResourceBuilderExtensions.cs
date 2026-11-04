@@ -8,7 +8,7 @@ namespace Aspire.Hosting;
 public static class ResourceBuilderExtensions
 {
     [AspireExport]
-    public static IResourceBuilder<T> WithBouncyHsmApiReferenc<T>(this IResourceBuilder<T> builder, IResourceBuilder<BouncyHsmResource> bouncyHsm)
+    public static IResourceBuilder<T> WithBouncyHsmApiReference<T>(this IResourceBuilder<T> builder, IResourceBuilder<BouncyHsmResource> bouncyHsm)
         where T : IResourceWithEnvironment
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -18,7 +18,7 @@ public static class ResourceBuilderExtensions
     }
 
     [AspireExport]
-    public static IResourceBuilder<T> WithBouncyHsmNativeLibEndpointReferenc<T>(this IResourceBuilder<T> builder,
+    public static IResourceBuilder<T> WithBouncyHsmNativeLibEndpointReference<T>(this IResourceBuilder<T> builder,
         IResourceBuilder<BouncyHsmResource> bouncyHsm,
         BouncyHsmLogTarget? logTarget = null,
         BouncyHsmLogLevel? logLevel = null,
