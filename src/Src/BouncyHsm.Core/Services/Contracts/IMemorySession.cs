@@ -42,6 +42,7 @@ public interface IMemorySession
 
     void SetLoginStatus(uint sessionId, CKU userType, bool isLogged);
 
+    [Obsolete("Use IsLogged")]
     bool IsUserLogged(uint slotId);
 
     uint CreateHandle(StorageObject storageObject);
