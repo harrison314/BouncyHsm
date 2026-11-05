@@ -9,18 +9,18 @@ public static partial class BouncyHsmBuilderInitializeExtensions
     [AspireExport]
     public static IResourceBuilder<BouncyHsmResource> WithImportPemObjects(this IResourceBuilder<BouncyHsmResource> builder,
         string tokenLabel,
+        string pem,
         byte[] ckaId,
         string ckaLabel,
-        string pem,
         BouncyHsmPemHint hints = BouncyHsmPemHint.None,
         string? password = null
         )
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNullOrEmpty(tokenLabel);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(pem);
         ArgumentNullException.ThrowIfNull(ckaId);
         ArgumentNullException.ThrowIfNullOrWhiteSpace(ckaLabel);
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(pem);
 
         builder.Resource.InitializeTasks.Add(async (client, logger, ct) =>
         {
