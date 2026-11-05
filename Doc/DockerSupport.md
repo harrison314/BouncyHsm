@@ -1,12 +1,18 @@
 # Docker support
-_Bouncy Hsm_ Bouncy Hsm publishes a docker image as a tar file.
+The _BouncyHsm_ Docker image is available on _ghcr_, and you can download and run it as follows:
 
-To use the docker image, you need to download from [releases](https://github.com/harrison314/BouncyHsm/releases) and import it from the file `docker load -i docker-bouncyhsm.tar`,
-and then use it, for example, via `docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
+```
+docker pull ghcr.io/harrison314/bouncyhsm:latest
+docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest
+```
 
 ## Use wslc
-To use the docker image, you need to download from [releases](https://github.com/harrison314/BouncyHsm/releases) and import it from the file `wslc load -i docker-bouncyhsm.tar`,
-and then use it, for example, via `wslc run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest`.
+To use WSL containers:
+
+```
+wslc pull ghcr.io/harrison314/bouncyhsm:latest
+wslc run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest
+```
 
 ## Advanced
 This section is for creating your own containers and advanced configuration in Docker containers.
@@ -18,7 +24,7 @@ If you want to create your own Docker image, you can do so using the following D
 ```dockerfile
 FROM alpine:3.24
 
-ENV APP_VERSION=2.3.4
+ENV APP_VERSION=2.4.0
 
 WORKDIR /unzip
 ADD https://github.com/harrison314/BouncyHsm/releases/download/v${APP_VERSION}/BouncyHsm.zip .
@@ -34,8 +40,9 @@ EXPOSE 8765
 VOLUME /var/BouncyHsm/
 
 ENV ASPNETCORE_ENVIRONMENT=Docker
+ENV ASPNETCORE_URLS=http://+:8080 
 
-CMD ["dotnet", "BouncyHsm.dll"]
+ENTRYPOINT ["dotnet", "BouncyHsm.dll"]
 ```
 
 Additional configuration is possible using environment variables with the `BouncyHsm_` prefix.
@@ -71,10 +78,15 @@ In the second container, two environment variables are set:
 ```yaml
 services:
   bouncy_hsm_server:
-    build: BouncyHsmServer
+    image: "ghcr.io/harrison314/bouncyhsm:latest"
     ports:
       - "8080:8080"
       - "8765:8765"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
   test_service:
     build: TestContainer
     environment:

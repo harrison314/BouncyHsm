@@ -8,4 +8,4 @@ COPY  ExampleApp /App
 RUN ln -s /usr/lib/x86_64-linux-gnu/libdl.so.2 /usr/lib/x86_64-linux-gnu/libdl.so
 
 RUN dotnet restore & dotnet build
-CMD ["dotnet", "run"]
+ENTRYPOINT ["dotnet", "run"]
