@@ -2,6 +2,8 @@
 
 The BouncyHsm Nuget package for Aspire Hosting provides easy integration of the BouncyHsm system into applications built on [Aspire](https://aspire.dev/). It allows developers to declaratively create and manage BouncyHsm instances as native Aspire resources, thereby simplifying the development, testing, and operation of applications that use cryptographic services.
 
+This package allows you to configure the BouncyHsm environment at startup and create new tokens (and slots) within it, and then import cryptographic objects in PEM and P12/PFX formats into them.
+
 The Nuget BouncyHsm Aspire Hosting is built on top of the BouncyHsm Docker container.
 See more <https://github.com/harrison314/BouncyHsm>.
 
@@ -19,16 +21,16 @@ string aesKeyPem = """
     """;
 
 var bouncyHsm = builder.AddBouncyHsm("bouncyhsm")
-    .WithStorage(BouncyHsmStorage.InMemory) // InMemory or LiteDbInVolume with mount volume
-    .WithHsmSlotAndToken("Slot1", "oper1", "123456", "12345678") // crate a new slot after start
-        .WithImportPkcs12("oper1",
-            TestData.GenerateP12(), "password",
-            Encoding.UTF8.GetBytes("SigningCertificate"), "SigningCertificate") // import P12 file as private key, public key and certificate
-    .WithHsmSlotAndToken("Slot2", "oper2", "123456", "12345678")
-        .WithImportPemObjects("oper2",
-            aesKeyPem,
-            Encoding.UTF8.GetBytes("AES-key"), "AES-key",
-            BouncyHsmPemHint.ForEncryption | BouncyHsmPemHint.ForWrap); // import PEM objects
+    .WithStorage(storage: BouncyHsmStorage.InMemory) // InMemory or LiteDbInVolume with mount volume
+    .WithHsmSlotAndToken(slotDescription: "Slot1", tokenLabel: "oper1", userPin: "123456", soPin: "12345678") // crate a new slot after start
+        .WithImportPkcs12(tokenLabel: "oper1",
+            pkcs12Content: TestData.GenerateP12(), password: "password",
+            ckaId: Encoding.UTF8.GetBytes("SigningCertificate"), ckaLabel: "SigningCertificate") // import P12 file as private key, public key and certificate
+    .WithHsmSlotAndToken(slotDescription: "Slot2", tokenLabel: "oper2", userPin: "123456", soPin: "12345678")
+        .WithImportPemObjects(tokenLabel: "oper2",
+            pem: aesKeyPem,
+            ckaId: Encoding.UTF8.GetBytes("AES-key"), ckaLabel: "AES-key",
+            hints: BouncyHsmPemHint.ForEncryption | BouncyHsmPemHint.ForWrap); // import PEM objects
 
 builder.AddProject<Projects.ExampleApi>("exampleapi")
      .WaitForStart(bouncyHsm)
