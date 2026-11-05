@@ -5,6 +5,7 @@
 #include "bouncy-pkcs11.h"
 #include "rpc/rpc.h"
 #include "logger.h"
+#include "platformHelper.h"
 #include "globalContext.h"
 
 #include "bouncy-pkcs11-utils.h"

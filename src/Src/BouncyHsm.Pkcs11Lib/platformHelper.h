@@ -24,13 +24,15 @@
 #define GetCurrentPid() ((uint64_t)getpid())
 #define _InsertBreakpoint() __asm__("int3")
 
-#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 int strcpy_s(char* destination, size_t SizeInBytes, const char* _Source);
 int strncpy_s(char* destination, size_t destsz, const char* _Source, size_t count);
 int memcpy_s(void* restrictDest, size_t destsz, const void* restrictSrc, size_t count);
 int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...);
+
 #endif
 
+#if defined(__MINGW32__)
+int vasprintf(char** strp, const char* fmt, va_list ap);
 #endif
 
 bool GetCurrentComputerName(char* buffer, size_t maxSize);
@@ -38,7 +40,4 @@ const char* GetPlatformName();
 bool getProgramArgs(const char*** args, int* argc);
 bool freeProgramArgs(const char*** args, int* argc);
 
-#if defined(__MINGW32__)
-int vasprintf(char** strp, const char* fmt, va_list ap);
-#endif
 #endif //PLATFORM_HELPER_H
