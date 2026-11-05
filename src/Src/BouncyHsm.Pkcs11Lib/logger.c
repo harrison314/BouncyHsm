@@ -11,11 +11,11 @@
 #include <stdarg.h>
 #endif
 
-#include "logger.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
+#include "logger.h"
 #include "platformHelper.h"
 #define USE_VARIABLE(x) (void)(x)
 

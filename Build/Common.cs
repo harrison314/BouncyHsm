@@ -10,6 +10,7 @@ internal static class BuildTarget
     public const string BuildBouncyHsm = nameof(BuildBouncyHsm);
     public const string BuildBouncyHsmCli = nameof(BuildBouncyHsmCli);
     public const string BuildBouncyHsmClient = nameof(BuildBouncyHsmClient);
+    public const string BuildBouncyHsmAspireHosting = nameof(BuildBouncyHsmAspireHosting);
     public const string BuildAll = nameof(BuildAll);
 
     public const string BuildPkcs11LibWin32 = nameof(BuildPkcs11LibWin32);

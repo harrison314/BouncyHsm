@@ -1,9 +1,14 @@
 services:
   bouncy_hsm_server:
-    build: BouncyHsmServer
+    image: "ghcr.io/harrison314/bouncyhsm:latest"
     ports:
       - "8080:8080"
       - "8765:8765"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
   test_service:
     build: TestContainer
     environment:

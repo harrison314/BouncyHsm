@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 #include "globalContext.h"
 #include "platformHelper.h"
 #include "logger.h"
@@ -18,8 +19,6 @@
 #include <sys/syscall.h> 
 #include <unistd.h>
 #endif // __WIN32
-
-#include "platformHelper.h"
 
 static void myRandAddSeed(unsigned long* generator, unsigned long additionalSeed)
 {

@@ -176,6 +176,24 @@ Task(BuildTarget.BuildBouncyHsmClient)
         DotNetPack(projectFile, settings);
     });
 
+Task(BuildTarget.BuildBouncyHsmAspireHosting)
+    .IsDependentOn(BuildTarget.Clean)
+    .Does<BuildData>((ctx, data) =>
+    {
+        string projectFile = $"{SourceDirectory}BouncyHsm.Aspire.Hosting/BouncyHsm.Aspire.Hosting.csproj";
+        DotNetPackSettings settings = new DotNetPackSettings()
+        {
+            Configuration = configuration,
+            OutputDirectory = ArtifactsDirectory,
+            MSBuildSettings = new DotNetMSBuildSettings(),
+        };
+
+        settings.MSBuildSettings.Properties.Add("RepositoryCommit", new List<string>() { data.GitCommit });
+        settings.MSBuildSettings.Properties.Add("RepositoryBranch", new List<string>() { data.GitBranch });
+
+        DotNetPack(projectFile, settings);
+    });
+
 Task(BuildTarget.BuildAll)
     .IsDependentOn(BuildTarget.Clean)
     .IsDependentOn(BuildTarget.BuildPkcs11LibWin32)
@@ -183,6 +201,7 @@ Task(BuildTarget.BuildAll)
     .IsDependentOn(BuildTarget.BuildBouncyHsm)
     .IsDependentOn(BuildTarget.BuildBouncyHsmCli)
     .IsDependentOn(BuildTarget.BuildBouncyHsmClient)
+    .IsDependentOn(BuildTarget.BuildBouncyHsmAspireHosting)
     .Does<BuildData>((ctx, data) =>
     {
         CopyDirectory($"{ArtifactsTmpDirectory}native", $"{ArtifactsTmpDirectory}BouncyHsm/native");
