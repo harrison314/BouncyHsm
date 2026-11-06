@@ -377,7 +377,6 @@ static int CreateKeyDerivationStringData(MechanismValue* value, CK_MECHANISM_PTR
     CkP_KeyDerivationStringData derivationStringData;
     derivationStringData.Data.data = (uint8_t*)dsd->pData;
     derivationStringData.Data.size = (size_t)dsd->ulLen;
-    derivationStringData.Len = (uint32_t)dsd->ulLen;
 
     result = nmrpc_writeAsBinary(&derivationStringData, (SerializeFnPtr_t)CkP_KeyDerivationStringData_Serialize, &value->MechanismParamMp);
     if (result != NMRPC_OK)

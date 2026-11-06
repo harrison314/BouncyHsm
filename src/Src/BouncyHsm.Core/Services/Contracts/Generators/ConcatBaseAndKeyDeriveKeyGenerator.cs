@@ -30,6 +30,9 @@ internal class ConcatBaseAndKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
 
     protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
+        base.UpdatePropertiesAfterCeate(generalSecretKeyObject, baseKey, template);
+        generalSecretKeyObject.CkaKeyGenMechanism = CKM.CKM_CONCATENATE_BASE_AND_KEY;
+
         if (baseKey.CkaSensitive || this.otherKey.CkaSensitive)
         {
             generalSecretKeyObject.CkaSensitive = true;

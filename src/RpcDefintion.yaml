@@ -1387,7 +1387,6 @@ Messages:
     Summary: Represents CK_KEY_DERIVATION_STRING_DATA
     Fields:
       Data: binary
-      Len: uint32
 
   CkP_CkObjectHandle:
     Summary: Represents CK_OBJECT_HANDLE as parameter

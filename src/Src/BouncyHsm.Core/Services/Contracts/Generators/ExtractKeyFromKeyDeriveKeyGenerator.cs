@@ -45,6 +45,11 @@ internal class ExtractKeyFromKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
         return newSceecrit;
     }
 
+    protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        base.UpdatePropertiesAfterCeate(generalSecretKeyObject, baseKey, template);
+        generalSecretKeyObject.CkaKeyGenMechanism = CKM.CKM_EXTRACT_KEY_FROM_KEY;
+    }
     private byte CalculateMask(int extractAnotherBits)
     {
         System.Diagnostics.Debug.Assert(extractAnotherBits < 8);

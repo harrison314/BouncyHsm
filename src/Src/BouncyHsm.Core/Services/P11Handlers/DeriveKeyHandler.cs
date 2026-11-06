@@ -260,7 +260,6 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
                 throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID, "Key object from mechanism parameter can not allowed derive.");
             }
 
-
             return keyObject;
         }
         catch (RpcPkcs11Exception)

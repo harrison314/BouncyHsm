@@ -2052,7 +2052,6 @@ int CkP_RawDataParams_Release(CkP_RawDataParams* value);
 typedef struct _CkP_KeyDerivationStringData
 {
     Binary Data;
-    uint32_t Len;
 } CkP_KeyDerivationStringData;
 
 int CkP_KeyDerivationStringData_Serialize(cmp_ctx_t* ctx, CkP_KeyDerivationStringData* value);

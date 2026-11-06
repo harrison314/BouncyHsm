@@ -27,6 +27,12 @@ internal class ConcatBaseAndDataDeriveKeyGenerator : DeriveKeyGeneratorBase
         return concatedSecret;
     }
 
+    protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        base.UpdatePropertiesAfterCeate(generalSecretKeyObject, baseKey, template);
+        generalSecretKeyObject.CkaKeyGenMechanism = CKM.CKM_CONCATENATE_BASE_AND_DATA;
+    }
+
     public override string ToString()
     {
         return "ConcatBaseAndData";

@@ -4166,13 +4166,6 @@ public partial class CkP_KeyDerivationStringData
         set;
     } = global::System.Array.Empty<byte>();
 
-    [Key(1)]
-    public uint Len
-    {
-        get;
-        set;
-    }
-
 }
 
 [MessagePackObject]

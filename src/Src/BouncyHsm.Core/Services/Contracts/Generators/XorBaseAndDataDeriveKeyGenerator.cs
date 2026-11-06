@@ -32,4 +32,10 @@ internal class XorBaseAndDataDeriveKeyGenerator : DeriveKeyGeneratorBase
 
         return newSecret;
     }
+
+    protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        base.UpdatePropertiesAfterCeate(generalSecretKeyObject, baseKey, template);
+        generalSecretKeyObject.CkaKeyGenMechanism = CKM.CKM_XOR_BASE_AND_DATA;
+    }
 }
