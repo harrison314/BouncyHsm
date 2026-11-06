@@ -68,7 +68,8 @@ public class T23_DeriveKey
     [TestMethod]
     [DataRow(CKM.CKM_CONCATENATE_BASE_AND_DATA, "0102030405060708", "AABBCCDDEE", "0102030405060708AABBCCDDEE")]
     [DataRow(CKM.CKM_CONCATENATE_DATA_AND_BASE, "0102030405060708", "AABBCCDDEE", "AABBCCDDEE0102030405060708")]
-    [DataRow(CKM.CKM_XOR_BASE_AND_DATA, "0102030405060708", "AABBCCDDEE", "ABB9CFD9EBACBCC4")]
+    [DataRow(CKM.CKM_XOR_BASE_AND_DATA, "0102030405060708", "AABBCCDDEE", "ABB9CFD9EB")]
+    [DataRow(CKM.CKM_XOR_BASE_AND_DATA, "01234567", "89ABCDEF", "88888888")]
     public void Derive_ConcatData_Success(CKM mechanismType, string baseHex, string dataHex, string resultHex)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();

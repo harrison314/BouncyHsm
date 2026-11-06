@@ -22,12 +22,30 @@ internal class XorBaseAndDataDeriveKeyGenerator : DeriveKeyGeneratorBase
     protected override byte[] DeriveSecret(SecretKeyObject generatedKey, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
         byte[] baseKeySecet = baseKey.GetSecret();
-        byte[] newSecret = new byte[baseKeySecet.Length];
+        int newSecretLen;
+
+        if (!template.ContainsKey(CKA.CKA_KEY_TYPE) && !template.ContainsKey(CKA.CKA_VALUE_LEN))
+        {
+            newSecretLen = Math.Min(baseKeySecet.Length, this.data.Length);
+            this.logger.LogTrace("Set secred length {SecretLength} as value of minimum from base material length.", newSecretLen);
+        }
+        else if (template.TryGetValue(CKA.CKA_VALUE_LEN, out IAttributeValue? valzeLen))
+        {
+            newSecretLen = (int)valzeLen.AsUint();
+            this.logger.LogTrace("Set secred length {SecretLength} as value of CKA_VALUE_LEN", newSecretLen);
+        }
+        else
+        {
+            newSecretLen = (int)generatedKey.GetMinimalSecretLen();
+            this.logger.LogTrace("Set secred length {SecretLength} as minimal length of genrated key.", newSecretLen);
+        }
+
+        byte[] newSecret = new byte[newSecretLen];
         byte[] localData = this.data;
 
-        for (int i = 0; i < baseKeySecet.Length; i++)
+        for (int i = 0; i < newSecret.Length; i++)
         {
-            newSecret[i] = (byte)(baseKeySecet[i] ^ localData[i % localData.Length]);
+            newSecret[i] = (byte)(baseKeySecet[i % baseKeySecet.Length] ^ localData[i % localData.Length]);
         }
 
         return newSecret;
