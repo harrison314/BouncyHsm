@@ -1,6 +1,8 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections;
 
 namespace BouncyHsm.Core.Services.Contracts.Generators;
 
@@ -18,31 +20,19 @@ internal class ExtractKeyFromKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
     {
         this.logger.LogTrace("Entering to DeriveSecret with base key {baseKeyId}.", baseKey.Id);
 
+        byte[] baseSeecret = baseKey.GetSecret();
         if (this.extractParams == 0)
         {
-            return Array.Empty<byte>();
+            return baseSeecret;
         }
 
-        int extratBytes = Math.DivRem(this.extractParams, 8, out int extractAnotherBits);
-        int newArraySize = extratBytes + (extractAnotherBits > 0 ? 1 : 0);
-
-        byte[] baseSeecret = baseKey.GetSecret();
-        if (newArraySize > baseSeecret.Length)
+        if (this.extractParams > baseSeecret.Length*8)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
-                $"Can not extract {this.extractParams} bit from key with lenght {baseSeecret.Length} bytes.");
+                $"Can not extract {this.extractParams} bit from key with start bit {baseSeecret.Length}.");
         }
 
-        byte[] newSceecrit = new byte[newArraySize];
-        System.Buffer.BlockCopy(baseSeecret, 0, newSceecrit, 0, newSceecrit.Length);
-
-        if (extractAnotherBits > 0)
-        {
-            int lastIndex = newArraySize - 1;
-            newSceecrit[lastIndex] = (byte)(newSceecrit[lastIndex] & this.CalculateMask(extractAnotherBits));
-        }
-
-        return newSceecrit;
+        return this.Extract(baseSeecret, this.extractParams);
     }
 
     protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
@@ -50,21 +40,34 @@ internal class ExtractKeyFromKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
         base.UpdatePropertiesAfterCeate(generalSecretKeyObject, baseKey, template);
         generalSecretKeyObject.CkaKeyGenMechanism = CKM.CKM_EXTRACT_KEY_FROM_KEY;
     }
-    private byte CalculateMask(int extractAnotherBits)
-    {
-        System.Diagnostics.Debug.Assert(extractAnotherBits < 8);
-
-        uint mask = 0b00000000;
-        for (int i = 0; i < extractAnotherBits; i++)
-        {
-            mask = (mask >> 1) | 0b10000000;
-        }
-
-        return (byte)(mask & 0xFF);
-    }
 
     public override string ToString()
     {
         return $"ExtractKeyFromKey with {this.extractParams} bits";
+    }
+
+    private byte[] Extract(byte[] value, int startBit)
+    {
+        int totalBits = value.Length * 8 - startBit;
+        int resultLength = (totalBits + 7) / 8;
+        byte[] result = new byte[resultLength];
+
+        for (int i = 0; i < totalBits; i++)
+        {
+            int sourceBit = startBit + i;
+            int sourceByte = sourceBit / 8;
+            int sourceOffset = sourceBit % 8;
+
+            int bit = (value[sourceByte] >> sourceOffset) & 1;
+
+            int targetByte = i / 8;
+            int targetOffset = i % 8;
+            if (bit == 1)
+            {
+                result[targetByte] |= (byte)(1 << targetOffset);
+            }
+        }
+
+        return result;
     }
 }

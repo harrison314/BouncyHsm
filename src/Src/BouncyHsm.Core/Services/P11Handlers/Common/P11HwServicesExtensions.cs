@@ -47,7 +47,7 @@ internal static class P11HwServicesExtensions
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_OBJECT_HANDLE_INVALID, $"Can not load {objectHandle} as object handle.");
         }
 
-        if (storageObject.CkaPrivate && !memorySession.IsLogged(session.SlotId, CKU.CKU_USER))
+        if (storageObject.CkaPrivate && !memorySession.IsLogged(session.SessionId, CKU.CKU_USER))
         {
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, $"Object handle {objectHandle} with object id {storageObjectId.Value} is private.");
         }
@@ -86,7 +86,7 @@ internal static class P11HwServicesExtensions
     {
         uint handle;
 
-        if (!memorySession.IsLogged(p11Session.SlotId, CKU.CKU_USER))
+        if (!memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER))
         {
             if (storageObject.CkaPrivate)
             {

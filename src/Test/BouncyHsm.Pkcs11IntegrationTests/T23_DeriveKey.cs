@@ -167,10 +167,11 @@ public class T23_DeriveKey
     //}
 
     [TestMethod]
-    [DataRow("1202030405060708", 8U, "12")]
-    [DataRow("1202030405060708", 32U, "12020304")]
-    [DataRow("120203A405060708", 35U, "120203A400")]
-    [DataRow("120203FFFFFFFFFF", 39U, "120203FFFE")]
+    [DataRow("1202030405060708", 0U, "1202030405060708")]
+    [DataRow("1202030405060708", 8U, "02030405060708")]
+    [DataRow("1202030405060708", 32U, "05060708")]
+    [DataRow("120203A405060708", 35U, "C0E00001")]
+    [DataRow("120203FFFFFFFFFF", 39U, "FFFFFF01")]
     public void Derive_ExtractKey_Success(string baseHex, uint extract, string resultHex)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
