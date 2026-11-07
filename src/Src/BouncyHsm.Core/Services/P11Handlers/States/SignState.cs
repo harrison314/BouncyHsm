@@ -104,6 +104,11 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
         return this.signature;
     }
 
+    public uint GetMaxSignatureSize()
+    {
+        return Convert.ToUInt32(this.signer.GetMaxSignatureSize());
+    }
+
     public override string ToString()
     {
         return $"Sign state - algorithm: {this.signer.AlgorithmName}";

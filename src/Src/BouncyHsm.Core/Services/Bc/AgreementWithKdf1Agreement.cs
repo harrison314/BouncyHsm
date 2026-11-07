@@ -44,7 +44,16 @@ internal class AgreementWithKdf1Agreement : IBasicAgreement
     {
         BigInteger result = this.agreement.CalculateAgreement(pubKey);
 
-        byte[] z = BigIntegers.AsUnsignedByteArray(this.kdfDigest.GetDigestSize(), result);
+        byte[] z;
+        if (result.GetLengthofByteArrayUnsigned() >= this.kdfDigest.GetDigestSize())
+        {
+            z = result.ToByteArrayUnsigned();
+        }
+        else
+        {
+            z = BigIntegers.AsUnsignedByteArray(this.kdfDigest.GetDigestSize(), result);
+        }
+
         byte[] keyData = new byte[this.keySize];
 
         Kdf2BytesGenerator kdfGenerator = new Kdf2BytesGenerator(this.kdfDigest);

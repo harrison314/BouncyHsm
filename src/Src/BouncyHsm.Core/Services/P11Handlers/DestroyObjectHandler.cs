@@ -46,7 +46,7 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to work with private objects (CKA_PRIVATE = true).");
         }
 
-        if (!(memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER) || memorySession.IsLogged(p11Session.SlotId, CKU.CKU_SO)))
+        if (!(memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER) || memorySession.IsLogged(p11Session.SessionId, CKU.CKU_SO)))
         {
             if (storageObject.CkaToken)
             {

@@ -822,7 +822,7 @@ public class T26_WrapKey
         using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, iv);
 
         Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.WrapKey(mechanism, key, handle));
-        Assert.AreEqual(CKR.CKR_KEY_HANDLE_INVALID, ex.RV);
+        Assert.AreEqual(CKR.CKR_KEY_NOT_WRAPPABLE, ex.RV);
     }
 
     [TestMethod]

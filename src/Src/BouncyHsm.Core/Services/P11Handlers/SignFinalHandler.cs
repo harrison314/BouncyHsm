@@ -37,23 +37,22 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "User is not login.");
         }
 
-
-        byte[] signature = state.GetSignature();
+        uint maxSignatureSize = state.GetMaxSignatureSize();
 
         if (request.IsSignaturePtrSet)
         {
-            if (request.PullSignatureLen < (uint)signature.Length)
+            if (request.PullSignatureLen < maxSignatureSize)
             {
                 this.logger.LogWarning("Signature buffer is small ({PullSignatureLen}, required is {SignatureLength}).",
                  request.PullSignatureLen,
-                 signature.Length);
+                 maxSignatureSize);
 
                 return new SignFinalEnvelope()
                 {
                     Rv = (uint)CKR.CKR_BUFFER_TOO_SMALL,
                     Data = new SignatureData()
                     {
-                        PullSignatureLen = (uint)signature.Length
+                        PullSignatureLen = maxSignatureSize
                     }
                 };
             }
@@ -75,6 +74,7 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
                 throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Invalid object loaded - internal error.");
             }
 
+            byte[] signature = state.GetSignature();
             p11Session.ClearState();
 
             return new SignFinalEnvelope()
@@ -94,7 +94,7 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
                 Rv = (uint)CKR.CKR_OK,
                 Data = new SignatureData()
                 {
-                    PullSignatureLen = (uint)signature.Length
+                    PullSignatureLen = maxSignatureSize
                 }
             };
         }
