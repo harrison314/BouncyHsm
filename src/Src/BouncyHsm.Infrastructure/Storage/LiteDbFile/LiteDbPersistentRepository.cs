@@ -183,10 +183,17 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         this.logger.LogTrace("Entering to DeleteSlot with slotId {slotId}.", slotId);
 
         ILiteCollection<SlotModel> collection = this.database.GetCollection<SlotModel>();
+        SlotModel slotModel = collection.FindOne(t => t.SlotId == slotId);
         int deletedSlots = collection.DeleteMany(t => t.SlotId == slotId);
         if (deletedSlots != 1)
         {
             throw new BouncyHsmNotFoundException($"Slot with slotId {slotId} not found.");
+        }
+
+        ILiteCollection<PasswordsModel> passwordCollection = this.database.GetCollection<PasswordsModel>();
+        if (!passwordCollection.Delete(slotModel.Id))
+        {
+            this.logger.LogWarning("Password for slotId {slotId} not found in database.", slotId);
         }
 
         this.logger.LogDebug("Slot with slotId {slotId} has removed from database.", slotId);
