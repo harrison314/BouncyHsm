@@ -26,7 +26,7 @@ internal class ExtractKeyFromKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
             return baseSeecret;
         }
 
-        if (this.extractParams > baseSeecret.Length*8)
+        if (this.extractParams > baseSeecret.Length * 8)
         {
             throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
                 $"Can not extract {this.extractParams} bit from key with start bit {baseSeecret.Length}.");

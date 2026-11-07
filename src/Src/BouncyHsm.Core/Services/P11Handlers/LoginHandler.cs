@@ -42,7 +42,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
             this.logger.LogError("User type {userType} is not valid value.", request.UserType);
             return new LoginEnvelope()
             {
-                Rv = (uint)CKR.CKR_ARGUMENTS_BAD
+                Rv = (uint)CKR.CKR_USER_TYPE_INVALID
             };
         }
 

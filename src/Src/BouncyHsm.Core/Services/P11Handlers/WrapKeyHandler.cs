@@ -116,7 +116,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         if (!key.IsMatch(wrappingTemplate))
         {
             this.logger.LogError("The wrapping key {WrappingKey} can not wrap the key {Key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.", wrappingKey, key);
-            throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_NOT_WRAPPABLE,
                 $"The wrapping key {wrappingKey} can not wrap the key {key} because the key does not match the requirements in the CKA_WRAP_TEMPLATE template.");
         }
     }
@@ -132,7 +132,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
 
         if (!extractable)
         {
-            throw new RpcPkcs11Exception(CKR.CKR_KEY_NOT_WRAPPABLE, $"Key {key} can not enable CKA_EXTRACTABLE.");
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_UNEXTRACTABLE, $"Key {key} can not enable CKA_EXTRACTABLE.");
         }
 
         if (key is SecretKeyObject genericSecret && genericSecret.CkaKeyType == CKK.CKK_GENERIC_SECRET)
@@ -166,7 +166,7 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
                 this.logger.LogError("The wrapping key {WrappingKey} must have CKA_TRUSTED set to true, because the key {Key} it wraps has CKA_WRAP_WITH_TRUSTED set to true.",
                     wrappingKey,
                     key);
-                throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
+                throw new RpcPkcs11Exception(CKR.CKR_KEY_NOT_WRAPPABLE,
                     $"The wrapping key {wrappingKey} must have CKA_TRUSTED set to true, because the key {key} it wraps has CKA_WRAP_WITH_TRUSTED set to true.");
             }
         }

@@ -156,6 +156,13 @@ public partial class InitializeRequest : IRpcRequest
         set;
     } = default!;
 
+    [Key(5)]
+    public bool IsPtrReservedSet
+    {
+        get;
+        set;
+    }
+
 }
 
 [MessagePackObject]
@@ -183,7 +190,7 @@ public partial class FinalizeRequest : IRpcRequest
     } = default!;
 
     [Key(1)]
-    public bool IsPtrSet
+    public bool IsPtrReservedSet
     {
         get;
         set;

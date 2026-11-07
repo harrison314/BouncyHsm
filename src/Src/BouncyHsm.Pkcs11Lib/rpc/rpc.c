@@ -1101,7 +1101,7 @@ int InitializeRequest_Serialize(cmp_ctx_t* ctx, InitializeRequest* value)
   if (ctx == NULL || value == NULL) return NMRPC_BAD_ARGUMENT;
   int result = 0;
 
-    result = cmp_write_array(ctx, 5);
+    result = cmp_write_array(ctx, 6);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
   result = AppIdentification_Serialize(ctx, &value->AppId);
@@ -1118,6 +1118,9 @@ int InitializeRequest_Serialize(cmp_ctx_t* ctx, InitializeRequest* value)
 
   result = ExtendedClientInfo_Serialize(ctx, &value->ClientInfo);
    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
+
+  result = cmp_write_bool(ctx, value->IsPtrReservedSet);
+   if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
     return NMRPC_OK;
 }
@@ -1139,7 +1142,7 @@ int InitializeRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
   }
 
   result = cmp_object_as_array(start_obj_ptr, &array_size);
-  if (!result || array_size != 5) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
+  if (!result || array_size != 6) { NMRPC_LOG_ERR_TEXT("Incorrect field count."); return NMRPC_DESERIALIZE_ERR; }
 
   result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field AppId");
@@ -1155,6 +1158,9 @@ int InitializeRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_
 
   result = ExtendedClientInfo_Deserialize(ctx, NULL, &value->ClientInfo);
   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field ClientInfo");
+
+  result = cmp_read_bool(ctx, &value->IsPtrReservedSet);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsPtrReservedSet");
 
     return NMRPC_OK;
 }
@@ -1221,7 +1227,7 @@ int FinalizeRequest_Serialize(cmp_ctx_t* ctx, FinalizeRequest* value)
   result = AppIdentification_Serialize(ctx, &value->AppId);
    if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, NULL);
 
-  result = cmp_write_bool(ctx, value->IsPtrSet);
+  result = cmp_write_bool(ctx, value->IsPtrReservedSet);
    if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, NULL);
 
     return NMRPC_OK;
@@ -1249,8 +1255,8 @@ int FinalizeRequest_Deserialize(cmp_ctx_t* ctx, const cmp_object_t* start_obj_pt
   result = AppIdentification_Deserialize(ctx, NULL, &value->AppId);
   if (result != NMRPC_OK) return log_serialization_error(result, __FUNCTION__, __LINE__ - 1, "deserialize field AppId");
 
-  result = cmp_read_bool(ctx, &value->IsPtrSet);
-  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsPtrSet");
+  result = cmp_read_bool(ctx, &value->IsPtrReservedSet);
+  if (!result) return log_serialization_error(NMRPC_FATAL_ERROR, __FUNCTION__, __LINE__ - 1, "deserialize field IsPtrReservedSet");
 
     return NMRPC_OK;
 }

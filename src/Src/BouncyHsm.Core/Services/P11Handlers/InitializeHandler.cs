@@ -25,6 +25,15 @@ public partial class InitializeHandler : IRpcRequestHandler<InitializeRequest, I
             request.LibraryCantCreateOsThreads,
             request.OsLockingOk);
 
+        if (request.IsPtrReservedSet)
+        {
+            this.logger.LogError("InitializeHandler pReserved is not NULL return CKR_ARGUMENTS_BAD.");
+            return Task.FromResult(new InitializeEnvelope()
+            {
+                Rv = (uint)CKR.CKR_ARGUMENTS_BAD
+            });
+        }
+
         MemorySessionData sessionData = new MemorySessionData(request.ClientInfo.ComputerName,
             request.AppId.AppName,
             request.AppId.Pid,

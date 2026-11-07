@@ -306,6 +306,7 @@ Messages:
       LibraryCantCreateOsThreads: bool
       OsLockingOk: bool
       ClientInfo: ExtendedClientInfo
+      IsPtrReservedSet: bool
   
   InitializeEnvelope:
     Summary: Response envelope
@@ -316,7 +317,7 @@ Messages:
     Summary: Request for C_Finalize
     Fields:
       AppId: AppIdentification
-      IsPtrSet: bool
+      IsPtrReservedSet: bool
 
   FinalizeEnvelope:
     Summary:

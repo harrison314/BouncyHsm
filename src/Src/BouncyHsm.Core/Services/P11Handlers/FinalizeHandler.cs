@@ -19,8 +19,17 @@ public partial class FinalizeHandler : IRpcRequestHandler<FinalizeRequest, Final
 
     public Task<FinalizeEnvelope> Handle(FinalizeRequest request, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Entering to Handle with req IsPtrSet {IsPtrSet}.",
-            request.IsPtrSet);
+        this.logger.LogTrace("Entering to Handle with req IsPtrReservedSet {IsPtrReservedSet}.",
+            request.IsPtrReservedSet);
+
+        if (request.IsPtrReservedSet)
+        {
+            this.logger.LogError("FinalizeHandler pReserved is not NULL return CKR_ARGUMENTS_BAD.");
+            return Task.FromResult(new FinalizeEnvelope()
+            {
+                Rv = (uint)CKR.CKR_ARGUMENTS_BAD
+            });
+        }
 
         string key = DataTransform.GetApplicationKey(request.AppId);
         this.clientApplicationContext.ReleaseMemorySession(key);

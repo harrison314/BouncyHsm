@@ -98,7 +98,7 @@ internal class CamelliaBufferedCipherWrapper : ICipherWrapper
         }
         else
         {
-            throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, $"Mechanism {this.mechanismType} required CAMELLIA key.");
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_TYPE_INCONSISTENT, $"Mechanism {this.mechanismType} required CAMELLIA key.");
         }
     }
 }

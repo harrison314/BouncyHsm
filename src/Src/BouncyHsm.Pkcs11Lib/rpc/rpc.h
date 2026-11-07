@@ -322,6 +322,7 @@ typedef struct _InitializeRequest
     bool LibraryCantCreateOsThreads;
     bool OsLockingOk;
     ExtendedClientInfo ClientInfo;
+    bool IsPtrReservedSet;
 } InitializeRequest;
 
 int InitializeRequest_Serialize(cmp_ctx_t* ctx, InitializeRequest* value);
@@ -340,7 +341,7 @@ int InitializeEnvelope_Release(InitializeEnvelope* value);
 typedef struct _FinalizeRequest
 {
     AppIdentification AppId;
-    bool IsPtrSet;
+    bool IsPtrReservedSet;
 } FinalizeRequest;
 
 int FinalizeRequest_Serialize(cmp_ctx_t* ctx, FinalizeRequest* value);

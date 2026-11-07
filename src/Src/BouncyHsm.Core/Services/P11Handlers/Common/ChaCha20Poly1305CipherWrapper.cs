@@ -93,7 +93,7 @@ internal class ChaCha20Poly1305CipherWrapper : ICipherWrapper
         }
         else
         {
-            throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, $"Mechanism {this.mechanismType} required AES key.");
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_TYPE_INCONSISTENT, $"Mechanism {this.mechanismType} required AES key.");
         }
     }
 }

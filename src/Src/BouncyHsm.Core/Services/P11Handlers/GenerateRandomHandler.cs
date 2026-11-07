@@ -26,6 +26,21 @@ public partial class GenerateRandomHandler : IRpcRequestHandler<GenerateRandomRe
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
+        int maxRandomSize = 5_000_000; //TODO: use configuration
+        if (request.RandomLen > maxRandomSize)
+        {
+            this.logger.LogError("GenerateRandom returns CKR_ARGUMENTS_BAD in {SessionId} uRandomLen is {RandomLen} maximum permitted size {MaxSize}.",
+                request.SessionId,
+                request.RandomLen,
+                maxRandomSize);
+
+            return new GenerateRandomEnvelope()
+            {
+                Rv = (uint)CKR.CKR_ARGUMENTS_BAD,
+                Data = null
+            };
+        }
+
         Contracts.Entities.SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(p11Session.SlotId, true, cancellationToken);
 
         int length = Convert.ToInt32(request.RandomLen);

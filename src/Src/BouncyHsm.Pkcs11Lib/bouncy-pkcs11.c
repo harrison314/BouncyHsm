@@ -368,6 +368,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
         request.IsMutexFnSet = false;
         request.LibraryCantCreateOsThreads = false;
         request.OsLockingOk = false;
+        request.IsPtrReservedSet = false;
     }
     else
     {
@@ -375,6 +376,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Initialize)(CK_VOID_PTR pInitArgs)
         request.IsMutexFnSet = (pInitArgsTyped->DestroyMutex) != NULL;
         request.LibraryCantCreateOsThreads = ValueHasFlag(pInitArgsTyped->flags, CKF_LIBRARY_CANT_CREATE_OS_THREADS);
         request.OsLockingOk = ValueHasFlag(pInitArgsTyped->flags, CKF_OS_LOCKING_OK);
+        request.IsPtrReservedSet = pInitArgsTyped->pReserved != NULL;
     }
 
     request.ClientInfo.CkUlongSize = sizeof(CK_ULONG);
@@ -432,7 +434,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_Finalize)(CK_VOID_PTR pReserved)
     nmrpc_global_context_tcp_init(&ctx, &tcp);
     InitCallContext(&ctx, &request.AppId);
 
-    request.IsPtrSet = pReserved != NULL;
+    request.IsPtrReservedSet = pReserved != NULL;
 
     int rv = nmrpc_call_Finalize(&ctx, &request, &envelope);
 
