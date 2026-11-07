@@ -53,15 +53,25 @@ public partial class CreateObjectHandler : IRpcRequestHandler<CreateObjectReques
     private void ApplyReadonlyAttributes(StorageObject storageObject)
     {
         this.logger.LogTrace("Entering to ApplyReadonlyAttributes with storage object {storageObject}.", storageObject);
-        
+
         if (storageObject is KeyObject keyObject)
         {
             keyObject.CkaLocal = false;
         }
 
+        if (storageObject is SecretKeyObject secretKeyObject)
+        {
+            secretKeyObject.CkaLocal = false;
+            secretKeyObject.CkaAlwaysSensitive = false;
+            secretKeyObject.CkaNewerExtractable = false;
+        }
+
         if (storageObject is PrivateKeyObject privateKeyObject)
         {
+
+            privateKeyObject.CkaLocal = false;
             privateKeyObject.CkaAlwaysSensitive = false;
+            privateKeyObject.CkaNewerExtractable = false;
             privateKeyObject.CkaAlwaysAuthenticate = false;
         }
     }

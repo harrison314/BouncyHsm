@@ -345,7 +345,11 @@ TnCoPhVFsVeDjQwg");
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, secret),
         };
 
-        _ = session.CreateObject(objectAttributes);
+        IObjectHandle key = session.CreateObject(objectAttributes);
+
+        this.CheckAttribute(session, key, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, key, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, key, CKA.CKA_ALWAYS_SENSITIVE, false);
     }
 
     [TestMethod]
@@ -393,7 +397,11 @@ TnCoPhVFsVeDjQwg");
             factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, secret),
         };
 
-        _ = session.CreateObject(objectAttributes);
+        IObjectHandle key = session.CreateObject(objectAttributes);
+
+        this.CheckAttribute(session, key, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, key, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, key, CKA.CKA_ALWAYS_SENSITIVE, false);
     }
 
     [TestMethod]
@@ -432,7 +440,12 @@ TnCoPhVFsVeDjQwg");
             session.Factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, ecdhData.EcPrivateKey.D.ToByteArrayUnsigned())
         };
 
-        _ = session.CreateObject(privateKeyAttributes);
+        IObjectHandle key = session.CreateObject(privateKeyAttributes);
+
+        this.CheckAttribute(session, key, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, key, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, key, CKA.CKA_ALWAYS_SENSITIVE, false);
+        this.CheckAttribute(session, key, CKA.CKA_ALWAYS_AUTHENTICATE, false);
     }
 
     [TestMethod]
@@ -478,6 +491,10 @@ TnCoPhVFsVeDjQwg");
         };
 
         IObjectHandle handle = session.CreateObject(objectAttributes);
+
+        this.CheckAttribute(session, handle, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, handle, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, handle, CKA.CKA_ALWAYS_SENSITIVE, false);
 
         session.DestroyObject(handle);
     }
@@ -526,6 +543,10 @@ TnCoPhVFsVeDjQwg");
 
         IObjectHandle handle = session.CreateObject(objectAttributes);
 
+        this.CheckAttribute(session, handle, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, handle, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, handle, CKA.CKA_ALWAYS_SENSITIVE, false);
+
         session.DestroyObject(handle);
     }
 
@@ -573,6 +594,10 @@ TnCoPhVFsVeDjQwg");
 
         IObjectHandle handle = session.CreateObject(objectAttributes);
 
+        this.CheckAttribute(session, handle, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, handle, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, handle, CKA.CKA_ALWAYS_SENSITIVE, false);
+
         session.DestroyObject(handle);
     }
 
@@ -613,6 +638,11 @@ TnCoPhVFsVeDjQwg");
 
         IObjectHandle handle = session.CreateObject(privateKeyAttributes);
 
+        this.CheckAttribute(session, handle, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, handle, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, handle, CKA.CKA_ALWAYS_SENSITIVE, false);
+        this.CheckAttribute(session, handle, CKA.CKA_ALWAYS_AUTHENTICATE, false);
+
         session.DestroyObject(handle);
     }
 
@@ -652,6 +682,7 @@ TnCoPhVFsVeDjQwg");
         };
 
         IObjectHandle handle = session.CreateObject(publicKeyAttributes);
+        this.CheckAttribute(session, handle, CKA.CKA_LOCAL, false);
 
         session.DestroyObject(handle);
     }
@@ -692,6 +723,11 @@ TnCoPhVFsVeDjQwg");
         };
 
         IObjectHandle handle = session.CreateObject(privateKeyAttributes);
+
+        this.CheckAttribute(session, handle, CKA.CKA_LOCAL, false);
+        this.CheckAttribute(session, handle, CKA.CKA_NEVER_EXTRACTABLE, false);
+        this.CheckAttribute(session, handle, CKA.CKA_ALWAYS_SENSITIVE, false);
+        this.CheckAttribute(session, handle, CKA.CKA_ALWAYS_AUTHENTICATE, false);
 
         session.DestroyObject(handle);
     }
@@ -1039,8 +1075,7 @@ TnCoPhVFsVeDjQwg");
         string label = $"Aes-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
         byte[] ckId = Utils.GetRandomBytes(32, true);
 
-        byte[] secret = new byte[32];
-        Random.Shared.NextBytes(secret);
+        byte[] secret = Utils.GetRandomBytes(32, false);
 
         List<IObjectAttribute> objectAttributes = new List<IObjectAttribute>()
         {
@@ -1066,5 +1101,15 @@ TnCoPhVFsVeDjQwg");
 
         Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.CreateObject(objectAttributes));
         Assert.AreEqual(CKR.CKR_USER_NOT_LOGGED_IN, ex.RV);
+    }
+
+    private void CheckAttribute(ISession session, IObjectHandle key, CKA attr, bool exceptedValue)
+    {
+        List<IObjectAttribute> result = session.GetAttributeValue(key, new List<CKA>()
+        {
+            attr
+        });
+
+        Assert.IsTrue(result[0].GetValueAsBool() == exceptedValue, $"{attr} is not {exceptedValue}");
     }
 }
