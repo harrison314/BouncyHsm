@@ -15,8 +15,13 @@ public static class HssUtils
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"Value {(uint)lmsType:x} is not defined LMS type.");
         }
 
-        return LMSigParameters.GetParametersByID((int)lmsType)
-            ?? throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"LMS type {lmsType} is not supported.");
+        LMSigParameters? sigParameters = LMSigParameters.GetParametersByID((int)lmsType);
+        if (sigParameters == null)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"LMS type {lmsType} is not supported.");
+        }
+
+        return sigParameters;
     }
 
     public static CK_LMS_TYPE GetLmsType(LMSigParameters parameters)
@@ -39,8 +44,13 @@ public static class HssUtils
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"Value {(uint)lmOtsType:x} is not defined LM-OTS type.");
         }
 
-        return LMOtsParameters.GetParametersByID((int)lmOtsType)
-            ?? throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"LM-OTS type {lmOtsType} is not supported.");
+        LMOtsParameters? lmotsParams = LMOtsParameters.GetParametersByID((int)lmOtsType)
+        if (lmotsParams == null)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"LM-OTS type {lmOtsType} is not supported.");
+        }
+
+        return lmotsParams;
     }
 
     public static CK_LMOTS_TYPE GetLmOtsType(LMOtsParameters parameters)
@@ -75,8 +85,7 @@ public static class HssUtils
         LmsParameters[] result = new LmsParameters[levels];
         for (int i = 0; i < result.Length; i++)
         {
-            result[i] = new LmsParameters(
-                GetLmsParameters((CK_LMS_TYPE)lmsTypes[i]),
+            result[i] = new LmsParameters(GetLmsParameters((CK_LMS_TYPE)lmsTypes[i]),
                 GetLmOtsParameters((CK_LMOTS_TYPE)lmotsTypes[i]));
 
             // BouncyCastle derives the seed of a child LMS tree from the parent's LM-OTS output (n bytes),

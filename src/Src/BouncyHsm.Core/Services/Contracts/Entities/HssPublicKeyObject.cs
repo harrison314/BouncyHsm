@@ -35,7 +35,8 @@ public class HssPublicKeyObject : PublicKeyObject
     {
     }
 
-    public HssPublicKeyObject() : base(CKK.CKK_HSS, CKM.CKM_HSS_KEY_PAIR_GEN)
+    public HssPublicKeyObject()
+        : base(CKK.CKK_HSS, CKM.CKM_HSS_KEY_PAIR_GEN)
     {
         this.CkaHssLevels = 0;
         this.CkaHssLmsType = 0;
@@ -98,7 +99,7 @@ public class HssPublicKeyObject : PublicKeyObject
             return;
         }
 
-        HssPublicKeyParameters? decoded = TryDecode(value);
+        HssPublicKeyParameters? decoded = this.TryDecodeHssPublicKeyParameters(value);
         if (decoded == null)
         {
             return;
@@ -125,8 +126,11 @@ public class HssPublicKeyObject : PublicKeyObject
         base.Validate();
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_VALUE, this.CkaValue);
 
-        HssPublicKeyParameters decoded = TryDecode(this.CkaValue)
-            ?? throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "Attribute CKA_VALUE is not valid HSS public key.");
+        HssPublicKeyParameters? decoded = this.TryDecodeHssPublicKeyParameters(this.CkaValue);
+        if (decoded == null)
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID, "Attribute CKA_VALUE is not valid HSS public key.");
+        }
 
         if (this.CkaHssLevels != (uint)decoded.Level)
         {
@@ -149,7 +153,7 @@ public class HssPublicKeyObject : PublicKeyObject
         return AllovedMechanismLookup.HssKeyObject;
     }
 
-    private static HssPublicKeyParameters? TryDecode(byte[] value)
+    private HssPublicKeyParameters? TryDecodeHssPublicKeyParameters(byte[] value)
     {
         try
         {

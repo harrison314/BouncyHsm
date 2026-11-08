@@ -101,7 +101,10 @@ internal abstract class SignState : ISessionStateWithAlwaysAuthenticated
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, "Error: CONTEXT_SPECIFIC login required.");
         }
 
-        this.signature ??= await this.GenerateSignatureInternal(cancellationToken);
+        if (this.signature == null)
+        {
+            this.signature = await this.GenerateSignatureInternal(cancellationToken);
+        }
 
         return this.signature;
     }

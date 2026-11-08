@@ -82,8 +82,8 @@ internal class GenerateHssKeyPairCommand : AsyncCommand<GenerateHssKeyPairComman
     {
         IBouncyHsmClient client = BouncyHsmClientFactory.Create(settings.Endpoint);
 
-        string[] lmsTypes = ParseList(settings.LmsTypes);
-        string[] lmotsTypes = ParseList(settings.LmotsTypes);
+        string[] lmsTypes = this.ParseList(settings.LmsTypes);
+        string[] lmotsTypes = this.ParseList(settings.LmotsTypes);
 
         GeneratedKeyPairIdsDto? ids = null;
         await AnsiConsole.Status()
@@ -120,7 +120,7 @@ internal class GenerateHssKeyPairCommand : AsyncCommand<GenerateHssKeyPairComman
         return 0;
     }
 
-    private static string[] ParseList(string text)
+    private string[] ParseList(string text)
     {
         return text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }

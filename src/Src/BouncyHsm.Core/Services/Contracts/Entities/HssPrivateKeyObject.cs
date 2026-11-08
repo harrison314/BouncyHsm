@@ -4,7 +4,7 @@ using Org.BouncyCastle.Pqc.Crypto.Lms;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
-public class HssPrivateKeyObject : PrivateKeyObject, IStatefulKeyObject
+public class HssPrivateKeyObject : PrivateKeyObject
 {
     public uint CkaHssLevels
     {
@@ -36,7 +36,8 @@ public class HssPrivateKeyObject : PrivateKeyObject, IStatefulKeyObject
         set => this.values[CKA.CKA_HSS_KEYS_REMAINING] = AttributeValue.Create(value);
     }
 
-    public HssPrivateKeyObject() : base(CKK.CKK_HSS, CKM.CKM_HSS_KEY_PAIR_GEN)
+    public HssPrivateKeyObject()
+        : base(CKK.CKK_HSS, CKM.CKM_HSS_KEY_PAIR_GEN)
     {
         this.CkaSensitive = true;
         this.CkaExtractable = false;

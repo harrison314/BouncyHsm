@@ -37,7 +37,7 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_SIGN);
-        
+
         p11Session.State.EnsureEmpty();
 
         KeyObject objectInstance = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyObjectHandle, cancellationToken);
@@ -46,12 +46,21 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         WrapperSignerFactory signerFactory = new WrapperSignerFactory(this.loggerFactory);
 
         IWrapperSigner signerWrapper = signerFactory.CreateSignatureAlgorithm(request.Mechanism);
+        p11Session.State = this.CreateSessionState(p11Session, objectInstance, signerWrapper);
 
+        return new SignInitEnvelope()
+        {
+            Rv = (uint)CKR.CKR_OK
+        };
+    }
+
+    private ISessionState CreateSessionState(IP11Session p11Session, KeyObject objectInstance, IWrapperSigner signerWrapper)
+    {
         if (signerWrapper is IStatefulWrapperSigner statefulSignerWrapper)
         {
             AuthenticatedStatefulSigner statefulSigner = statefulSignerWrapper.IntoStatefulSigner(objectInstance, this.hwServices, p11Session);
 
-            p11Session.State = new SignStateWithStatefulSigner(statefulSigner.Signer,
+            return new SignStateWithStatefulSigner(statefulSigner.Signer,
                 objectInstance.Id,
                 statefulSigner.RequireSignaturePin,
                 objectInstance.CkaPrivate);
@@ -60,16 +69,11 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         {
             AuthenticatedSigner signer = signerWrapper.IntoSigningSigner(objectInstance, p11Session.SecureRandom);
 
-            p11Session.State = new SignStateWithSigner(signer.Signer,
+            return new SignStateWithSigner(signer.Signer,
                 objectInstance.Id,
                 signer.RequireSignaturePin,
                 objectInstance.CkaPrivate,
                 signerWrapper.AcceptEmptyData);
         }
-
-        return new SignInitEnvelope()
-        {
-            Rv = (uint)CKR.CKR_OK
-        };
     }
 }

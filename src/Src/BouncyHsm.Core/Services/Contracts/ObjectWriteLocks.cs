@@ -3,49 +3,24 @@
 namespace BouncyHsm.Core.Services.Contracts;
 
 /// <summary>
-/// Process-wide write lock for stateful key objects (<see cref="IStatefulKeyObject"/>, e.g. HSS private keys).
+/// Process-wide write lock for stateful key objects (<see cref="HssPrivateKeyObject"/>, e.g. HSS private keys).
 /// </summary>
-/// <remarks>
-/// Only stateful objects are locked: for them, persisting a stale copy would rewind the key state
-/// and reuse a one-time key. Other objects are written without a lock, as before.
-/// <para>
-/// Usage: load the object, call <see cref="Acquire(StorageObject, CancellationToken)"/>, and when
-/// a lock is returned, reload the object inside it before modifying, persisting or destroying it.
-/// The class of an object never changes, so deciding on the first (unlocked) load is safe.
-/// </para>
-/// <para>
-/// A semaphore exists only while its object is locked or waited for: it is created by the first
-/// <c>Acquire</c> and removed when the last holder or waiter is done. When no stateful key is in use,
-/// nothing is allocated.
-/// </para>
-/// <para>
-/// No code path holds two object locks at the same time; keep it that way when adding new callers.
-/// </para>
-/// </remarks>
 public static class ObjectWriteLocks
 {
     private static readonly Dictionary<Guid, LockEntry> entries = new Dictionary<Guid, LockEntry>();
 
-    /// <summary>
-    /// Acquires the write lock for <paramref name="storageObject"/> when it is a stateful key object.
-    /// </summary>
-    /// <returns>The lock to dispose, or <c>null</c> when the object does not need one.</returns>
     public static ValueTask<IDisposable?> Acquire(StorageObject storageObject, CancellationToken cancellationToken)
     {
         System.Diagnostics.Debug.Assert(storageObject != null);
 
-        if (storageObject is not IStatefulKeyObject)
+        if (storageObject is HssPrivateKeyObject)
         {
-            return new ValueTask<IDisposable?>((IDisposable?)null);
+            return AcquireNullable(storageObject.Id, cancellationToken);
         }
 
-        return AcquireNullable(storageObject.Id, cancellationToken);
+        return new ValueTask<IDisposable?>((IDisposable?)null);
     }
 
-    /// <summary>
-    /// Acquires the write lock by object id. For callers that already know the object is stateful
-    /// (e.g. the HSS signer, which must lock before it loads the key).
-    /// </summary>
     internal static async ValueTask<IDisposable> Acquire(Guid objectId, CancellationToken cancellationToken)
     {
         LockEntry entry;
@@ -108,13 +83,18 @@ public static class ObjectWriteLocks
         public SemaphoreSlim Semaphore
         {
             get;
-        } = new SemaphoreSlim(1, 1);
+        }
 
-        // Holder plus waiters; guarded by the entries dictionary lock.
         public int RefCount
         {
             get;
             set;
+        }
+
+        public LockEntry()
+        {
+            this.Semaphore = new SemaphoreSlim(1, 1);
+            this.RefCount = 0;
         }
     }
 
