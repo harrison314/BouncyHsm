@@ -1,14 +1,9 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
-using BouncyHsm.Core.Services.P11Handlers.Common;
-using Org.BouncyCastle.Crypto;
 
 namespace BouncyHsm.Core.Services.P11Handlers.States;
 
-internal class SignState : ISessionStateWithAlwaysAuthenticated
+internal abstract class SignState : ISessionStateWithAlwaysAuthenticated
 {
-    private readonly ISigner? signer;
-    private readonly IStatefulSigner? statefulSigner;
-    private readonly MemoryStream? statefulBuffer;
     private readonly bool acceptEmptyData;
     private bool isEmpty;
     private byte[]? signature;
@@ -34,17 +29,19 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
         get;
     }
 
-    public bool IsSinglePartOnly
+    /// <summary>
+    /// When true, only C_Sign is supported (C_SignUpdate and C_SignFinal are rejected)
+    /// and a failed C_Sign terminates the operation.
+    /// </summary>
+    public virtual bool IsSinglePartOnly
     {
-        get => this.statefulSigner != null;
+        get => false;
     }
 
-    public SignState(ISigner signer, Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate, bool acceptEmptyData)
+    protected SignState(Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate, bool acceptEmptyData)
     {
-        System.Diagnostics.Debug.Assert(signer != null);
         System.Diagnostics.Debug.Assert(privateKeyId != Guid.Empty);
 
-        this.signer = signer;
         this.PrivateKeyId = privateKeyId;
         this.RequireContextPin = alwaysAuthenticated;
         this.IsContextPinHasSet = false;
@@ -52,22 +49,6 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
         this.signature = null;
         this.RequiredUserLogin = isObjectPrivate;
         this.acceptEmptyData = acceptEmptyData;
-    }
-
-    public SignState(IStatefulSigner statefulSigner, Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate)
-    {
-        System.Diagnostics.Debug.Assert(statefulSigner != null);
-        System.Diagnostics.Debug.Assert(privateKeyId != Guid.Empty);
-
-        this.statefulSigner = statefulSigner;
-        this.statefulBuffer = new MemoryStream();
-        this.PrivateKeyId = privateKeyId;
-        this.RequireContextPin = alwaysAuthenticated;
-        this.IsContextPinHasSet = false;
-        this.isEmpty = true;
-        this.signature = null;
-        this.RequiredUserLogin = isObjectPrivate;
-        this.acceptEmptyData = true;
     }
 
     public void ContextLogin()
@@ -103,15 +84,7 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
 
         if (data.Length > 0)
         {
-            if (this.statefulBuffer != null)
-            {
-                this.statefulBuffer.Write(data);
-            }
-            else
-            {
-                this.signer!.BlockUpdate(data);
-            }
-
+            this.UpdateInternal(data);
             this.isEmpty = false;
         }
     }
@@ -128,35 +101,14 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, "Error: CONTEXT_SPECIFIC login required.");
         }
 
-        if (this.signature == null)
-        {
-            if (this.statefulSigner != null)
-            {
-                this.signature = await this.statefulSigner.Sign(this.statefulBuffer!.ToArray(), cancellationToken);
-            }
-            else
-            {
-                this.signature = this.signer!.GenerateSignature();
-            }
-        }
+        this.signature ??= await this.GenerateSignatureInternal(cancellationToken);
 
         return this.signature;
     }
 
-    public uint GetMaxSignatureSize()
-    {
-        if (this.statefulSigner != null)
-        {
-            return this.statefulSigner.SignatureSize;
-        }
+    public abstract uint GetMaxSignatureSize();
 
-        return Convert.ToUInt32(this.signer!.GetMaxSignatureSize());
-    }
+    protected abstract void UpdateInternal(byte[] data);
 
-    public override string ToString()
-    {
-        return this.signer != null
-            ? $"Sign state - algorithm: {this.signer.AlgorithmName}"
-            : $"Sign state - stateful signer: {this.statefulSigner!.GetType().Name}";
-    }
+    protected abstract ValueTask<byte[]> GenerateSignatureInternal(CancellationToken cancellationToken);
 }

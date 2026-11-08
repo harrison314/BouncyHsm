@@ -41,7 +41,7 @@ public class SignStateStatefulTests
         byte[] expected = new byte[] { 0xAA, 0xBB };
         FakeStatefulSigner statefulSigner = new FakeStatefulSigner(expected);
 
-        SignState state = new SignState(statefulSigner, Guid.NewGuid(), false, false);
+        SignState state = new SignStateWithStatefulSigner(statefulSigner, Guid.NewGuid(), false, false);
         Assert.AreEqual((uint)expected.Length, state.GetMaxSignatureSize());
         Assert.AreEqual(0, statefulSigner.Calls.Count, "Length query must not sign.");
         state.Update(new byte[] { 1, 2 });
@@ -62,7 +62,7 @@ public class SignStateStatefulTests
     {
         FakeStatefulSigner statefulSigner = new FakeStatefulSigner(new byte[] { 1 });
 
-        SignState state = new SignState(statefulSigner, Guid.NewGuid(), false, false);
+        SignState state = new SignStateWithStatefulSigner(statefulSigner, Guid.NewGuid(), false, false);
         state.Update(Array.Empty<byte>());
 
         _ = await state.GetSignatureAsync(CancellationToken.None);
@@ -72,19 +72,19 @@ public class SignStateStatefulTests
     }
 
     [TestMethod]
-    public void IsSinglePartOnly_TrueForStatefulCtor()
+    public void IsSinglePartOnly_TrueForStatefulState()
     {
-        SignState state = new SignState(new FakeStatefulSigner(new byte[] { 1 }), Guid.NewGuid(), false, false);
+        SignState state = new SignStateWithStatefulSigner(new FakeStatefulSigner(new byte[] { 1 }), Guid.NewGuid(), false, false);
 
         Assert.IsTrue(state.IsSinglePartOnly);
     }
 
     [TestMethod]
-    public void IsSinglePartOnly_FalseForSignerCtor()
+    public void IsSinglePartOnly_FalseForSignerState()
     {
         Mock<Org.BouncyCastle.Crypto.ISigner> signer = new Mock<Org.BouncyCastle.Crypto.ISigner>();
 
-        SignState state = new SignState(signer.Object, Guid.NewGuid(), false, false, false);
+        SignState state = new SignStateWithSigner(signer.Object, Guid.NewGuid(), false, false, false);
 
         Assert.IsFalse(state.IsSinglePartOnly);
     }

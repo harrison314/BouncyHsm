@@ -89,7 +89,7 @@ public class SignHandlerTests
     public async Task Handle_StatefulSignerThrows_ClearsSignState()
     {
         ThrowingStatefulSigner statefulSigner = new ThrowingStatefulSigner();
-        SignState state = new SignState(statefulSigner, Guid.NewGuid(), false, false);
+        SignState state = new SignStateWithStatefulSigner(statefulSigner, Guid.NewGuid(), false, false);
         var (handler, session) = CreateHandler(state);
 
         RpcPkcs11Exception ex = await Assert.ThrowsExactlyAsync<RpcPkcs11Exception>(
@@ -105,7 +105,7 @@ public class SignHandlerTests
     {
         Org.BouncyCastle.Crypto.Signers.Ed25519Signer signer = new Org.BouncyCastle.Crypto.Signers.Ed25519Signer();
         signer.Init(true, new Org.BouncyCastle.Crypto.Parameters.Ed25519PrivateKeyParameters(new Org.BouncyCastle.Security.SecureRandom()));
-        SignState state = new SignState(signer, Guid.NewGuid(), false, false, false);
+        SignState state = new SignStateWithSigner(signer, Guid.NewGuid(), false, false, false);
         var (handler, session) = CreateHandler(state);
 
         RpcPkcs11Exception ex = await Assert.ThrowsExactlyAsync<RpcPkcs11Exception>(

@@ -23,7 +23,7 @@ internal class HssWrapperSigner : IStatefulWrapperSigner
         this.logger = logger;
     }
 
-    public IStatefulSigner IntoStatefulSigner(KeyObject keyObject, IP11HwServices hwServices, IP11Session session)
+    public AuthenticatedStatefulSigner IntoStatefulSigner(KeyObject keyObject, IP11HwServices hwServices, IP11Session session)
     {
         this.logger.LogTrace("Entering to IntoStatefulSigner.");
 
@@ -42,12 +42,14 @@ internal class HssWrapperSigner : IStatefulWrapperSigner
                 throw new RpcPkcs11Exception(CKR.CKR_KEY_EXHAUSTED, "HSS private key is exhausted.");
             }
 
-            return new HssStatefulSigner(hwServices,
+            HssStatefulSigner signer = new HssStatefulSigner(hwServices,
                 session,
                 hssPrivateKeyObject.Id,
                 hssPrivateKeyObject.CkaToken,
                 HssUtils.GetSignatureLength(hssPrivateKeyObject.CkaHssLmsTypes, hssPrivateKeyObject.CkaHssLmotsTypes),
                 this.logger);
+
+            return new AuthenticatedStatefulSigner(signer, hssPrivateKeyObject.CkaAlwaysAuthenticate);
         }
         else
         {

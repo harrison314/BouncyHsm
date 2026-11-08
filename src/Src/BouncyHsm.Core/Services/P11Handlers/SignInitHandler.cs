@@ -49,18 +49,18 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
 
         if (signerWrapper is IStatefulWrapperSigner statefulSignerWrapper)
         {
-            IStatefulSigner statefulSigner = statefulSignerWrapper.IntoStatefulSigner(objectInstance, this.hwServices, p11Session);
+            AuthenticatedStatefulSigner statefulSigner = statefulSignerWrapper.IntoStatefulSigner(objectInstance, this.hwServices, p11Session);
 
-            p11Session.State = new SignState(statefulSigner,
+            p11Session.State = new SignStateWithStatefulSigner(statefulSigner.Signer,
                 objectInstance.Id,
-                ((PrivateKeyObject)objectInstance).CkaAlwaysAuthenticate,
+                statefulSigner.RequireSignaturePin,
                 objectInstance.CkaPrivate);
         }
         else
         {
             AuthenticatedSigner signer = signerWrapper.IntoSigningSigner(objectInstance, p11Session.SecureRandom);
 
-            p11Session.State = new SignState(signer.Signer,
+            p11Session.State = new SignStateWithSigner(signer.Signer,
                 objectInstance.Id,
                 signer.RequireSignaturePin,
                 objectInstance.CkaPrivate,
