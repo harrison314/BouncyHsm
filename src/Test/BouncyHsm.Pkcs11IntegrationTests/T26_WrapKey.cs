@@ -1028,4 +1028,25 @@ public class T26_WrapKey
 
         return (privateKey, publicKey);
     }
+
+    [TestMethod]
+    public void WrapKey_HssPrivate_KeyUnextractable()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = T20_SignHss.LoadLibrary(factories);
+        using ISession session = T20_SignHss.OpenLoggedSession(library);
+
+        T20_SignHss.CreateHssKeyPair(factories, session, 1,
+            new ulong[] { Pkcs11Interop.Ext.Common.CK_LMS_TYPE.LMS_SHA256_M32_H5 },
+            new ulong[] { Pkcs11Interop.Ext.Common.CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8 },
+            false,
+            out _,
+            out IObjectHandle privateKey);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, Utils.GetRandomBytes(16));
+
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.WrapKey(mechanism, key, privateKey));
+        Assert.AreEqual(CKR.CKR_KEY_UNEXTRACTABLE, ex.RV);
+    }
 }

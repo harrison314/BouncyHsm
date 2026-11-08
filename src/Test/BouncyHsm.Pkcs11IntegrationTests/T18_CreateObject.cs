@@ -1112,4 +1112,44 @@ TnCoPhVFsVeDjQwg");
 
         Assert.IsTrue(result[0].GetValueAsBool() == exceptedValue, $"{attr} is not {exceptedValue}");
     }
+
+    [TestMethod]
+    public void CreateObject_HssPublicKey_Success()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = T20_SignHss.LoadLibrary(factories);
+        using ISession session = T20_SignHss.OpenLoggedSession(library);
+
+        T20_SignHss.CreateHssKeyPair(factories, session, 1,
+            new ulong[] { CK_LMS_TYPE.LMS_SHA256_M32_H5 },
+            new ulong[] { CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8 },
+            false,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+
+        byte[] value = session.GetAttributeValue(publicKey, new List<CKA>() { CKA.CKA_VALUE })[0].GetValueAsByteArray();
+
+        IObjectHandle created = session.CreateObject(new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PUBLIC_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, CKK_V3_0.CKK_HSS),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE, value),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+        });
+
+        string[] names = new[] { "levels", "lms", "lmots" };
+        CKA[] types = new[] { CKA_V3_2.CKA_HSS_LEVELS, CKA_V3_2.CKA_HSS_LMS_TYPE, CKA_V3_2.CKA_HSS_LMOTS_TYPE };
+        List<IObjectAttribute> original = session.GetAttributeValue(publicKey, types.ToList());
+        List<IObjectAttribute> copy = session.GetAttributeValue(created, types.ToList());
+        for (int i = 0; i < types.Length; i++)
+        {
+            Assert.AreEqual(original[i].GetValueAsUlong(), copy[i].GetValueAsUlong(), names[i]);
+        }
+
+        byte[] data = RandomNumberGenerator.GetBytes(40);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM_V3_2.CKM_HSS);
+        byte[] signature = session.Sign(mechanism, privateKey, data);
+        session.Verify(mechanism, created, data, signature, out bool isValid);
+        Assert.IsTrue(isValid);
+    }
 }
