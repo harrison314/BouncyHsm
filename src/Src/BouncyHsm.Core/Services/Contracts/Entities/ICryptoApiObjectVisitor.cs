@@ -47,6 +47,10 @@ public interface ICryptoApiObjectVisitor
     void Visit(SlhDsaPublicKeyObject slhDsaPublicKeyObject);
 
     void Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject);
+
+    void Visit(HssPublicKeyObject hssPublicKeyObject);
+
+    void Visit(HssPrivateKeyObject hssPrivateKeyObject);
     
     void Visit(MlKemPublicKeyObject mlKemPublicKeyObject);
     
@@ -102,6 +106,10 @@ public interface ICryptoApiObjectVisitor<out T>
     T Visit(SlhDsaPublicKeyObject slhDsaPublicKeyObject);
 
     T Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject);
+
+    T Visit(HssPublicKeyObject hssPublicKeyObject);
+
+    T Visit(HssPrivateKeyObject hssPrivateKeyObject);
     
     T Visit(MlKemPublicKeyObject mlKemPublicKeyObject);
     

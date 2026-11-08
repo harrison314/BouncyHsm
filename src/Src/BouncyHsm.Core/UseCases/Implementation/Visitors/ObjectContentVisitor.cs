@@ -2,6 +2,7 @@
 using BouncyHsm.Core.UseCases.Contracts;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Pqc.Crypto.Utilities;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,17 @@ internal class ObjectContentVisitor : ICryptoApiObjectVisitor<DomainResult<Objec
     public DomainResult<ObjectContent> Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject)
     {
         return this.CreatePemResult("slh_dsa_private_key.pem", slhDsaPrivateKeyObject.GetPrivateKey());
+    }
+
+    public DomainResult<ObjectContent> Visit(HssPublicKeyObject hssPublicKeyObject)
+    {
+        byte[] der = PqcSubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(hssPublicKeyObject.GetPublicKey()).GetEncoded();
+        return this.CreatePemResult("hss_public_key.pem", new Org.BouncyCastle.Utilities.IO.Pem.PemObject("PUBLIC KEY", der));
+    }
+
+    public DomainResult<ObjectContent> Visit(HssPrivateKeyObject hssPrivateKeyObject)
+    {
+        return new DomainResult<ObjectContent>.InvalidInput("HSS private key is not exportable.");
     }
 
     public DomainResult<ObjectContent> Visit(MlKemPublicKeyObject mlKemPublicKeyObject)

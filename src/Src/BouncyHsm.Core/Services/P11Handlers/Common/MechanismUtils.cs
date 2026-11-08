@@ -325,6 +325,10 @@ internal static class MechanismUtils
             {CKM.CKM_HASH_SLH_DSA_SHAKE128, new MechanismInfo(SlhDsaMinKeySize, SlhDsaMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, true, Pkcs11SpecVersion.V3_2) },
             {CKM.CKM_HASH_SLH_DSA_SHAKE256, new MechanismInfo(SlhDsaMinKeySize, SlhDsaMaxKeySize, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, true, Pkcs11SpecVersion.V3_2) },
 
+            // HSS
+            {CKM.CKM_HSS_KEY_PAIR_GEN, new MechanismInfo(0, 0, MechanismCkf.CKF_GENERATE_KEY_PAIR, MechanismCkf.NONE, false, Pkcs11SpecVersion.V3_1) },
+            {CKM.CKM_HSS, new MechanismInfo(0, 0, MechanismCkf.CKF_SIGN | MechanismCkf.CKF_VERIFY, MechanismCkf.NONE, false, Pkcs11SpecVersion.V3_1) },
+
             // ML-KEM
             {CKM.CKM_ML_KEM_KEY_PAIR_GEN, new MechanismInfo(MlKemMinKeySize, MlKemMaxKeySize, MechanismCkf.CKF_GENERATE_KEY_PAIR, MechanismCkf.NONE, false, Pkcs11SpecVersion.V3_2) },
             {CKM.CKM_ML_KEM, new MechanismInfo(MlKemMinKeySize, MlKemMaxKeySize, MechanismCkf.CKF_ENCAPSULATE | MechanismCkf.CKF_DECAPSULATE, MechanismCkf.NONE, false, Pkcs11SpecVersion.V3_2) },

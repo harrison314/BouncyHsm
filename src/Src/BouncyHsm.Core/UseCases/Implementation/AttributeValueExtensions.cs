@@ -80,6 +80,8 @@ internal static class AttributeValueExtensions
             CKA.CKA_TRUST_IPSEC_IKE => ((CKT)value).ToString(),
             CKA.CKA_TRUST_TIME_STAMPING => ((CKT)value).ToString(),
             CKA.CKA_TRUST_OCSP_SIGNING => ((CKT)value).ToString(),
+            CKA.CKA_HSS_LMS_TYPE => ((CK_LMS_TYPE)value).ToString(),
+            CKA.CKA_HSS_LMOTS_TYPE => ((CK_LMOTS_TYPE)value).ToString(),
             _ => value.ToString()
         };
     }
@@ -89,6 +91,8 @@ internal static class AttributeValueExtensions
         return attributeType switch
         {
             CKA.CKA_ALLOWED_MECHANISMS => string.Concat("{", string.Join(", ", uints.Select(t => (CKM)t)), "}"),
+            CKA.CKA_HSS_LMS_TYPES => string.Concat("{", string.Join(", ", uints.Select(t => (CK_LMS_TYPE)t)), "}"),
+            CKA.CKA_HSS_LMOTS_TYPES => string.Concat("{", string.Join(", ", uints.Select(t => (CK_LMOTS_TYPE)t)), "}"),
             _ => string.Concat("{", string.Join(", ", uints), "}"),
         };
     }

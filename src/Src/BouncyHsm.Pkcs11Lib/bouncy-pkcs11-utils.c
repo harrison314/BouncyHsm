@@ -140,7 +140,7 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
         ptr[i].ValueUintArray = NULL;
         ptr[i].ValueTemplate = NULL;
 
-        if (pTemplate[i].type == CKA_ALLOWED_MECHANISMS)
+        if (pTemplate[i].type == CKA_ALLOWED_MECHANISMS || pTemplate[i].type == CKA_HSS_LMS_TYPES || pTemplate[i].type == CKA_HSS_LMOTS_TYPES)
         {
             UintArrayData* uintArrayData = (UintArrayData*)malloc(sizeof(UintArrayData));
             if (uintArrayData == NULL)

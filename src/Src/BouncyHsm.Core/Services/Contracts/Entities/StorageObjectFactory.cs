@@ -36,6 +36,8 @@ public static class StorageObjectFactory
         MlDsaPublicKeyObject,
         SlhDsaPrivateKeyObject,
         SlhDsaPublicKeyObject,
+        HssPrivateKeyObject,
+        HssPublicKeyObject,
         MlKemPrivateKeyObject,
         MlKemPublicKeyObject,
         CamelliaKeyObject,
@@ -79,6 +81,8 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.MlDsaPublicKeyObject => new MlDsaPublicKeyObject(),
                 StorageObjectInternalType.SlhDsaPrivateKeyObject => new SlhDsaPrivateKeyObject(),
                 StorageObjectInternalType.SlhDsaPublicKeyObject => new SlhDsaPublicKeyObject(),
+                StorageObjectInternalType.HssPrivateKeyObject => new HssPrivateKeyObject(),
+                StorageObjectInternalType.HssPublicKeyObject => new HssPublicKeyObject(),
                 StorageObjectInternalType.MlKemPublicKeyObject => new MlKemPublicKeyObject(),
                 StorageObjectInternalType.MlKemPrivateKeyObject => new MlKemPrivateKeyObject(),
                 StorageObjectInternalType.CamelliaKeyObject => new CamelliaKeyObject(),
@@ -122,6 +126,8 @@ public static class StorageObjectFactory
                 StorageObjectInternalType.MlDsaPublicKeyObject => new MlDsaPublicKeyObject(this.memento),
                 StorageObjectInternalType.SlhDsaPrivateKeyObject => new SlhDsaPrivateKeyObject(this.memento),
                 StorageObjectInternalType.SlhDsaPublicKeyObject => new SlhDsaPublicKeyObject(this.memento),
+                StorageObjectInternalType.HssPrivateKeyObject => new HssPrivateKeyObject(this.memento),
+                StorageObjectInternalType.HssPublicKeyObject => new HssPublicKeyObject(this.memento),
                 StorageObjectInternalType.MlKemPublicKeyObject => new MlKemPublicKeyObject(this.memento),
                 StorageObjectInternalType.MlKemPrivateKeyObject => new MlKemPrivateKeyObject(this.memento),
                 StorageObjectInternalType.CamelliaKeyObject => new CamelliaKeyObject(this.memento),
@@ -216,6 +222,11 @@ public static class StorageObjectFactory
                 return factory.Create(StorageObjectInternalType.SlhDsaPrivateKeyObject);
             }
 
+            if (keyType == CKK.CKK_HSS)
+            {
+                return factory.Create(StorageObjectInternalType.HssPrivateKeyObject);
+            }
+
             if (keyType == CKK.CKK_ML_KEM)
             {
                 return factory.Create(StorageObjectInternalType.MlKemPrivateKeyObject);
@@ -254,6 +265,11 @@ public static class StorageObjectFactory
             if (keyType == CKK.CKK_SLH_DSA)
             {
                 return factory.Create(StorageObjectInternalType.SlhDsaPublicKeyObject);
+            }
+
+            if (keyType == CKK.CKK_HSS)
+            {
+                return factory.Create(StorageObjectInternalType.HssPublicKeyObject);
             }
 
             if (keyType == CKK.CKK_ML_KEM)

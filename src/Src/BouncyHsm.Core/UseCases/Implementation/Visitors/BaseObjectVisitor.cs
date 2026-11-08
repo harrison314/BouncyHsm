@@ -124,6 +124,16 @@ internal abstract class BaseObjectVisitor<T> : ICryptoApiObjectVisitor<T>
         return this.ProcessStorageObject(slhDsaPrivateKeyObject);
     }
 
+    public virtual T Visit(HssPublicKeyObject hssPublicKeyObject)
+    {
+        return this.ProcessStorageObject(hssPublicKeyObject);
+    }
+
+    public virtual T Visit(HssPrivateKeyObject hssPrivateKeyObject)
+    {
+        return this.ProcessStorageObject(hssPrivateKeyObject);
+    }
+
     public virtual T Visit(MlKemPublicKeyObject mlKemPublicKeyObject)
     {
         return this.ProcessStorageObject(mlKemPublicKeyObject);

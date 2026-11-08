@@ -84,6 +84,18 @@ internal class SignVisitor : BaseKeyTimeVisitor
         return TimeSpan.FromMilliseconds(result);
     }
 
+    public override TimeSpan Visit(HssPrivateKeyObject hssPrivateKeyObject)
+    {
+        // Signing cost grows with the number of levels (each level re-signs with its own tree).
+        double x = hssPrivateKeyObject.CkaHssLevels;
+
+        double result = (x * 40.0) * this.GetMultiplicator(2);
+        result += (x * 5.0) * this.GetMultiplicator(1);
+        result += 10.0 * this.GetMultiplicator(0);
+
+        return TimeSpan.FromMilliseconds(result);
+    }
+
     public override TimeSpan Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject)
     {
         int keySize = slhDsaPrivateKeyObject.CkaValue.Length;

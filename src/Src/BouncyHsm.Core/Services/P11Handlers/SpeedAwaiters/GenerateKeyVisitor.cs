@@ -1,4 +1,5 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Contracts.P11;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,6 +90,30 @@ internal class GenerateKeyVisitor : BaseKeyTimeVisitor
         double result = 0.0;
         result += ((115.0 * x * x) / 16384.0) * this.GetMultiplicator(2);
         result += ((-577.0 * x) / 256.0) * this.GetMultiplicator(1);
+        result += 24.0 * this.GetMultiplicator(0);
+
+        return TimeSpan.FromMilliseconds(result);
+    }
+
+    public override TimeSpan Visit(HssPrivateKeyObject hssPrivateKeyObject)
+    {
+        // Key generation builds the top tree; cost doubles with each height step (h5 -> h25).
+        uint[] lmsTypes = hssPrivateKeyObject.CkaHssLmsTypes;
+        double height = 5.0;
+        if (lmsTypes.Length > 0)
+        {
+            CK_LMS_TYPE top = (CK_LMS_TYPE)lmsTypes[0];
+            if (Enum.IsDefined(top))
+            {
+                height = HssUtils.GetLmsParameters(top).H;
+            }
+        }
+
+        double x = Math.Pow(2.0, height / 5.0);
+        double levels = hssPrivateKeyObject.CkaHssLevels;
+
+        double result = (x * levels * 20.0) * this.GetMultiplicator(2);
+        result += (x * levels * 2.0) * this.GetMultiplicator(1);
         result += 24.0 * this.GetMultiplicator(0);
 
         return TimeSpan.FromMilliseconds(result);

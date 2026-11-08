@@ -142,6 +142,7 @@ public partial class UnwrapKeyHandler : IRpcRequestHandler<UnwrapKeyRequest, Unw
             MontgomeryPrivateKeyObject montgomeryPrivateKeyObject => this.SetKeyValueForPrivateKeyObject(unwrappedKey, useExplicitPading, montgomeryPrivateKeyObject),
             EdwardsPrivateKeyObject edwardsPrivateKeyObject => this.SetKeyValueForPrivateKeyObject(unwrappedKey, useExplicitPading, edwardsPrivateKeyObject),
             EcdsaPrivateKeyObject ecPrivateKeyObject => this.SetKeyvalueForEcdsaPrivateKeyObject(unwrappedKey, useExplicitPading, ecPrivateKeyObject),
+            HssPrivateKeyObject => throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, "Unwrapping HSS private keys is not supported."),
             PrivateKeyObject privateKeyObject => this.SetKeyValueForPrivateKeyObject(unwrappedKey, useExplicitPading, privateKeyObject),
             _ => throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
                 $"Can not crate key with invalid type {storageObject.GetType().Name}.")
