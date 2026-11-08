@@ -131,6 +131,23 @@ internal class StorageObjectDescriptionVisitor : ICryptoApiObjectVisitor<string>
         return $"Public key {SlhDsaUtils.GetParametersName(slhDsaPublicKeyObject.CkaParameterSet)}";
     }
 
+    public string Visit(HssPublicKeyObject hssPublicKeyObject)
+    {
+        return $"Public key {HssUtils.GetParametersName(hssPublicKeyObject.CkaHssLmsType, hssPublicKeyObject.CkaHssLmotsType, hssPublicKeyObject.CkaHssLevels)}";
+    }
+
+    public string Visit(HssPrivateKeyObject hssPrivateKeyObject)
+    {
+        uint[] lms = hssPrivateKeyObject.CkaHssLmsTypes;
+        uint[] ots = hssPrivateKeyObject.CkaHssLmotsTypes;
+        if (lms.Length == 0 || ots.Length == 0)
+        {
+            return "Private key HSS";
+        }
+
+        return $"Private key {HssUtils.GetParametersName((CK_LMS_TYPE)lms[0], (CK_LMOTS_TYPE)ots[0], hssPrivateKeyObject.CkaHssLevels)}";
+    }
+
     public string Visit(SlhDsaPrivateKeyObject slhDsaPrivateKeyObject)
     {
         return $"Private key {SlhDsaUtils.GetParametersName(slhDsaPrivateKeyObject.CkaParameterSet)}";

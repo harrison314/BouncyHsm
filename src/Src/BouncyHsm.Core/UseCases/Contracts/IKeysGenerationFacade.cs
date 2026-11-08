@@ -32,5 +32,7 @@ public interface IKeysGenerationFacade
 
     Task<DomainResult<GeneratedKeyPairIds>> GenerateSlhDsaKeyPair(uint slotId, GenerateSlhDsaKeyPairRequest request, CancellationToken cancellationToken);
 
+    Task<DomainResult<GeneratedKeyPairIds>> GenerateHssKeyPair(uint slotId, GenerateHssKeyPairRequest request, CancellationToken cancellationToken);
+
     Task<DomainResult<GeneratedKeyPairIds>> GenerateMLKemKeyPair(uint slotId, GenerateMLKemKeyPairRequest request, CancellationToken cancellationToken);
 }

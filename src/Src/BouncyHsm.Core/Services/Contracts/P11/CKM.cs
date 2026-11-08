@@ -1808,6 +1808,9 @@ public enum CKM : uint
     CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f,
     CKM_ML_KEM = 0x00000017,
 
+    CKM_HSS_KEY_PAIR_GEN = 0x00004032,
+    CKM_HSS = 0x00004033,
+
 
 
 }

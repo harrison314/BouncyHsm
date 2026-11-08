@@ -473,4 +473,22 @@ public class T29_CopyObject
             new List<IObjectAttribute>() { factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_DATA) }));
         Assert.AreEqual(CKR.CKR_ATTRIBUTE_READ_ONLY, classException.RV);
     }
+
+    [TestMethod]
+    public void CopyObject_HssPrivate_ActionProhibited()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = T20_SignHss.LoadLibrary(factories);
+        using ISession session = T20_SignHss.OpenLoggedSession(library);
+
+        T20_SignHss.CreateHssKeyPair(factories, session, 1,
+            new ulong[] { Pkcs11Interop.Ext.Common.CK_LMS_TYPE.LMS_SHA256_M32_H5 },
+            new ulong[] { Pkcs11Interop.Ext.Common.CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8 },
+            false,
+            out _,
+            out IObjectHandle privateKey);
+
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => _ = session.CopyObject(privateKey, new List<IObjectAttribute>()));
+        Assert.AreEqual(CKR.CKR_ACTION_PROHIBITED, ex.RV);
+    }
 }

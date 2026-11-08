@@ -72,6 +72,28 @@ public class DocModel
         get => this.SlhDsa.Distinct().Count();
     }
 
+    public List<string> HssLms
+    {
+        get;
+        internal set;
+    }
+
+    public List<string> HssLmots
+    {
+        get;
+        internal set;
+    }
+
+    public int HssLmsCount
+    {
+        get => this.HssLms.Distinct().Count();
+    }
+
+    public int HssLmotsCount
+    {
+        get => this.HssLmots.Distinct().Count();
+    }
+
     public List<string> MlKem
     {
         get;
@@ -97,6 +119,8 @@ public class DocModel
         this.Montgomery = new List<SupportedNameCurve>();
         this.MlDsa = new List<string>();
         this.SlhDsa = new List<string>();
+        this.HssLms = new List<string>();
+        this.HssLmots = new List<string>();
         this.MlKem = new List<string>();
         this.Versions = new BouncyHsmVersion("", "", [], "");
     }

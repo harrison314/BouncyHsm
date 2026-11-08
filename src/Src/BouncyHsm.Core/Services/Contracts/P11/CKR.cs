@@ -482,6 +482,11 @@ public enum CKR : uint
     CKR_FUNCTION_REJECTED = 0x00000200,
 
     /// <summary>
+    /// The key has no remaining one-time signatures (stateful hash-based signatures)
+    /// </summary>
+    CKR_KEY_EXHAUSTED = 0x00000203,
+
+    /// <summary>
     /// Permanently reserved for token vendors
     /// </summary>
     CKR_VENDOR_DEFINED = 0x80000000

@@ -262,6 +262,10 @@ public sealed class FilterFipsProfileOperation : ProfileOperation
             CKM.CKM_HASH_SLH_DSA_SHAKE128,
             CKM.CKM_HASH_SLH_DSA_SHAKE256,
 
+            // HSS
+            CKM.CKM_HSS_KEY_PAIR_GEN,
+            CKM.CKM_HSS,
+
             CKM.CKM_ML_KEM_KEY_PAIR_GEN,
             CKM.CKM_ML_KEM,
 

@@ -28,6 +28,12 @@ public partial class VerifyUpdateHandler : IRpcRequestHandler<VerifyUpdateReques
 
         VerifyState state = p11Session.State.Ensure<VerifyState>();
 
+        if (state.IsSinglePartOnly)
+        {
+            p11Session.ClearState();
+            throw new RpcPkcs11Exception(CKR.CKR_FUNCTION_NOT_SUPPORTED, "Mechanism supports only single-part verification.");
+        }
+
         state.Update(request.Data);
         this.logger.LogDebug("Updating signature with data length: {dataLength}.", request.Data.Length);
 

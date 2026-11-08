@@ -39,6 +39,12 @@ public class SupportedKeys
         init;
     }
 
+    public required IReadOnlyList<String> HssKeys
+    {
+        get;
+        init;
+    }
+
     public required IReadOnlyList<String> MlKemKeys
     {
         get;

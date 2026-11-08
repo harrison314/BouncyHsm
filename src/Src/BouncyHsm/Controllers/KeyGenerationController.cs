@@ -91,6 +91,28 @@ public class KeyGenerationController : Controller
         return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
     }
 
+    [HttpPost("{slotId}/GenerateHssKeyPair", Name = nameof(GenerateHssKeyPair))]
+    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    public async Task<IActionResult> GenerateHssKeyPair(uint slotId, [FromBody] GenerateHssKeyPairRequestDto model)
+    {
+        this.logger.LogTrace("Entering to GenerateHssKeyPair with slotId {slotId}.", slotId);
+
+        GenerateHssKeyPairRequest request;
+        try
+        {
+            request = KeyGenerationControllerMapper.MapFromDto(model);
+        }
+        catch (ArgumentException ex)
+        {
+            this.logger.LogError(ex, "Invalid HSS request.");
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput(ex.Message).ToActionResult();
+        }
+
+        DomainResult<GeneratedKeyPairIds> result = await this.keyGenerationFacade.GenerateHssKeyPair(slotId, request, this.HttpContext.RequestAborted);
+
+        return result.MapOk(KeyGenerationControllerMapper.ToDto).ToActionResult();
+    }
+
     [HttpPost("{slotId}/GenerateMlKemKeyPair", Name = nameof(GenerateMlKemKeyPair))]
     [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
     public async Task<IActionResult> GenerateMlKemKeyPair(uint slotId, [FromBody] GenerateMlKemKeyPairRequestDto model)

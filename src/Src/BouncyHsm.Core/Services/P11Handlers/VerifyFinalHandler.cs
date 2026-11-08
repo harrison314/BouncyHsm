@@ -28,6 +28,12 @@ public partial class VerifyFinalHandler : IRpcRequestHandler<VerifyFinalRequest,
 
         VerifyState state = p11Session.State.Ensure<VerifyState>();
 
+        if (state.IsSinglePartOnly)
+        {
+            p11Session.ClearState();
+            throw new RpcPkcs11Exception(CKR.CKR_FUNCTION_NOT_SUPPORTED, "Mechanism supports only single-part verification.");
+        }
+
         bool isValid = state.Verify(request.Signature);
 
         this.logger.LogInformation("Signature in session {SessionId} is {signatureValidity}.",

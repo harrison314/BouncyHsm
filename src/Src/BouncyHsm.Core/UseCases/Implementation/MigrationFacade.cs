@@ -41,11 +41,26 @@ public class MigrationFacade : IMigrationFacade
 
             IReadOnlyList<StorageObject> objects = await this.hwServices.Persistence.FindObjects(slot.SlotId, specification, cancellationToken);
 
-            foreach (StorageObject storageObject in objects)
+            foreach (StorageObject foundObject in objects)
             {
                 this.logger.LogTrace("Process object with id {ObjectId} and label <{ObjectLabel}>",
-                    storageObject.Id,
-                    storageObject.CkaLabel);
+                    foundObject.Id,
+                    foundObject.CkaLabel);
+
+                StorageObject? storageObject = foundObject;
+
+                using IDisposable? writeLock = await ObjectWriteLocks.Acquire(foundObject, cancellationToken);
+                if (writeLock != null)
+                {
+                    // Stateful key: re-load inside the lock so a concurrently persisted state
+                    // (e.g. after an HSS signature) is never overwritten with the stale copy from FindObjects.
+                    storageObject = await this.hwServices.Persistence.TryLoadObject(slot.SlotId, foundObject.Id, cancellationToken);
+                    if (storageObject == null)
+                    {
+                        this.logger.LogDebug("Object with id {ObjectId} was removed during migration, skipping.", foundObject.Id);
+                        continue;
+                    }
+                }
 
                 try
                 {
@@ -103,6 +118,7 @@ public class MigrationFacade : IMigrationFacade
 
         StorageObjectMemento memento = storageObject.ToMemento();
         StorageObject prototype = StorageObjectFactory.CreateEmpty(memento.Values);
+        prototype.Id = memento.Id;
 
         bool attributesAdded = false;
         foreach ((CKA attrType, IAttributeValue attrValue) in prototype.ToMemento().Values)
@@ -127,4 +143,4 @@ public class MigrationFacade : IMigrationFacade
             return storageObject;
         }
     }
-}
+}

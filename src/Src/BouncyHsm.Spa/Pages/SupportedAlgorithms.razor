@@ -211,6 +211,30 @@ else
                 </table>
             }
 
+            <h2>HSS (LMS)</h2>
+            @if (this.hss == null)
+            {
+                <BouncyHsm.Spa.Shared.Common.LoadingIndicator />
+            }
+            else
+            {
+                <table class="table table-responsive-md table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>LMS / LM-OTS type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (string name in this.hss)
+                        {
+                            <tr>
+                                <td>@name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
             <h2>ML-KEM</h2>
             @if (this.mlKem == null)
             {
@@ -246,6 +270,7 @@ else
     private IList<CurveInfoDto>? montgomeryCurves = null;
     private IList<string>? mlDsa = null;
     private IList<string>? slhDsa = null;
+    private IList<string>? hss = null;
     private IList<string>? mlKem = null;
 
     protected override async Task OnInitializedAsync()
@@ -262,6 +287,7 @@ else
         this.montgomeryCurves = keys.MontgomeryCurves.ToList();
         this.mlDsa = keys.MlDsaKeys.ToList();
         this.slhDsa = keys.SlhDsaKeys.ToList();
+        this.hss = keys.HssKeys.ToList();
         this.mlKem = keys.MlKemKeys.ToList();
     }
 

@@ -34,4 +34,11 @@ public static class CKA_V3_2
     public const CKA CKA_SEED = (CKA)0x00000637;
 
     public const CKA CKA_PUBLIC_CRC64_VALUE = (CKA)0x00000636;
+
+    public const CKA CKA_HSS_LEVELS = (CKA)0x00000617;
+    public const CKA CKA_HSS_LMS_TYPE = (CKA)0x00000618;
+    public const CKA CKA_HSS_LMOTS_TYPE = (CKA)0x00000619;
+    public const CKA CKA_HSS_LMS_TYPES = (CKA)0x0000061a;
+    public const CKA CKA_HSS_LMOTS_TYPES = (CKA)0x0000061b;
+    public const CKA CKA_HSS_KEYS_REMAINING = (CKA)0x0000061c;
 }

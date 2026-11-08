@@ -36,6 +36,16 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             request.ObjectHandle,
             cancellationToken);
 
+        using IDisposable? writeLock = await ObjectWriteLocks.Acquire(storageObject, cancellationToken);
+        if (writeLock != null)
+        {
+            // Stateful key: re-load inside the lock so a concurrent signature can not re-create it.
+            storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession,
+                p11Session,
+                request.ObjectHandle,
+                cancellationToken);
+        }
+
         if (!storageObject.CkaDestroyable)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ACTION_PROHIBITED, $"Object with id {storageObject.Id} is not destroyable.");
@@ -82,4 +92,4 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             Rv = (uint)CKR.CKR_OK
         };
     }
-}
+}

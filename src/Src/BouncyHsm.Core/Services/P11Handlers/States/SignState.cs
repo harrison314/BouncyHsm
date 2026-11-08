@@ -1,11 +1,9 @@
 ﻿using BouncyHsm.Core.Services.Contracts;
-using Org.BouncyCastle.Crypto;
 
 namespace BouncyHsm.Core.Services.P11Handlers.States;
 
-internal class SignState : ISessionStateWithAlwaysAuthenticated
+internal abstract class SignState : ISessionStateWithAlwaysAuthenticated
 {
-    private readonly ISigner signer;
     private readonly bool acceptEmptyData;
     private bool isEmpty;
     private byte[]? signature;
@@ -31,12 +29,19 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
         get;
     }
 
-    public SignState(ISigner signer, Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate, bool acceptEmptyData)
+    /// <summary>
+    /// When true, only C_Sign is supported (C_SignUpdate and C_SignFinal are rejected)
+    /// and a failed C_Sign terminates the operation.
+    /// </summary>
+    public virtual bool IsSinglePartOnly
     {
-        System.Diagnostics.Debug.Assert(signer != null);
+        get => false;
+    }
+
+    protected SignState(Guid privateKeyId, bool alwaysAuthenticated, bool isObjectPrivate, bool acceptEmptyData)
+    {
         System.Diagnostics.Debug.Assert(privateKeyId != Guid.Empty);
 
-        this.signer = signer;
         this.PrivateKeyId = privateKeyId;
         this.RequireContextPin = alwaysAuthenticated;
         this.IsContextPinHasSet = false;
@@ -79,12 +84,12 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
 
         if (data.Length > 0)
         {
-            this.signer.BlockUpdate(data);
+            this.UpdateInternal(data);
             this.isEmpty = false;
         }
     }
 
-    public byte[] GetSignature()
+    public async ValueTask<byte[]> GetSignatureAsync(CancellationToken cancellationToken)
     {
         if (this.isEmpty && !this.acceptEmptyData)
         {
@@ -96,21 +101,14 @@ internal class SignState : ISessionStateWithAlwaysAuthenticated
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_USER_NOT_LOGGED_IN, "Error: CONTEXT_SPECIFIC login required.");
         }
 
-        if (this.signature == null)
-        {
-            this.signature = this.signer.GenerateSignature();
-        }
+        this.signature ??= await this.GenerateSignatureInternal(cancellationToken);
 
         return this.signature;
     }
 
-    public uint GetMaxSignatureSize()
-    {
-        return Convert.ToUInt32(this.signer.GetMaxSignatureSize());
-    }
+    public abstract uint GetMaxSignatureSize();
 
-    public override string ToString()
-    {
-        return $"Sign state - algorithm: {this.signer.AlgorithmName}";
-    }
+    protected abstract void UpdateInternal(byte[] data);
+
+    protected abstract ValueTask<byte[]> GenerateSignatureInternal(CancellationToken cancellationToken);
 }

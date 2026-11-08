@@ -435,6 +435,75 @@ public class KeysGenerationFacade : IKeysGenerationFacade
         return new DomainResult<GeneratedKeyPairIds>.Ok(new GeneratedKeyPairIds(publicKey.Id, privateKey.Id));
     }
 
+    public async Task<DomainResult<GeneratedKeyPairIds>> GenerateHssKeyPair(uint slotId, GenerateHssKeyPairRequest request, CancellationToken cancellationToken)
+    {
+        this.logger.LogTrace("Entering to GenerateHssKeyPair with slotId {slotId}, levels {levels}, label {label}.", slotId, request.Levels, request.KeyAttributes.CkaLabel);
+
+        SlotEntity? slotEntity = await this.persistentRepository.GetSlot(slotId, cancellationToken);
+        if (slotEntity == null)
+        {
+            this.logger.LogError("Parameter slotId {slotId} is invalid.", slotId);
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput("Invalid slotId.");
+        }
+
+        byte[] ckaId = request.KeyAttributes.CkaId ?? RandomNumberGenerator.GetBytes(32);
+        uint[] lmsTypes = request.LmsTypes.Select(t => (uint)t).ToArray();
+        uint[] lmotsTypes = request.LmotsTypes.Select(t => (uint)t).ToArray();
+
+        Dictionary<CKA, IAttributeValue> publicKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(false) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_VERIFY, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_HSS_LEVELS, AttributeValue.Create(request.Levels) },
+            { CKA.CKA_HSS_LMS_TYPES, AttributeValue.Create(lmsTypes) },
+            { CKA.CKA_HSS_LMOTS_TYPES, AttributeValue.Create(lmotsTypes) },
+        };
+
+        // HSS private keys are stateful: always sensitive, never extractable or copyable.
+        Dictionary<CKA, IAttributeValue> privateKeyTemplate = new Dictionary<CKA, IAttributeValue>()
+        {
+            { CKA.CKA_TOKEN, AttributeValue.Create(true) },
+            { CKA.CKA_DESTROYABLE, AttributeValue.Create(true) },
+            { CKA.CKA_PRIVATE, AttributeValue.Create(true) },
+            { CKA.CKA_LABEL, AttributeValue.Create(request.KeyAttributes.CkaLabel) },
+            { CKA.CKA_ID, AttributeValue.Create(ckaId) },
+            { CKA.CKA_SENSITIVE, AttributeValue.Create(true) },
+            { CKA.CKA_EXTRACTABLE, AttributeValue.Create(false) },
+            { CKA.CKA_COPYABLE, AttributeValue.Create(false) },
+            { CKA.CKA_SIGN, AttributeValue.Create(request.KeyAttributes.ForSigning) },
+            { CKA.CKA_HSS_LEVELS, AttributeValue.Create(request.Levels) },
+            { CKA.CKA_HSS_LMS_TYPES, AttributeValue.Create(lmsTypes) },
+            { CKA.CKA_HSS_LMOTS_TYPES, AttributeValue.Create(lmotsTypes) },
+        };
+
+        HssKeyPairGenerator hssKeyPairGenerator = new HssKeyPairGenerator(this.loggerFactory.CreateLogger<HssKeyPairGenerator>());
+        try
+        {
+            hssKeyPairGenerator.Init(publicKeyTemplate, privateKeyTemplate);
+        }
+        catch (RpcPkcs11Exception ex)
+        {
+            this.logger.LogError(ex, "Invalid HSS parameters.");
+            return new DomainResult<GeneratedKeyPairIds>.InvalidInput(ex.Message);
+        }
+
+        (PublicKeyObject publicKey, PrivateKeyObject privateKey) = hssKeyPairGenerator.Generate(BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom);
+
+        this.UpdateKeys(slotEntity, publicKey, privateKey);
+
+        publicKey.Validate();
+        privateKey.Validate();
+
+        await this.persistentRepository.StoreObject(slotId, publicKey, cancellationToken);
+        await this.persistentRepository.StoreObject(slotId, privateKey, cancellationToken);
+
+        return new DomainResult<GeneratedKeyPairIds>.Ok(new GeneratedKeyPairIds(publicKey.Id, privateKey.Id));
+    }
+
     public async Task<DomainResult<GeneratedKeyPairIds>> GenerateMLKemKeyPair(uint slotId, GenerateMLKemKeyPairRequest request, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to GenerateMLDsaKeyPair with slotId {slotId}, ML-KEM parameter {mlKemParameter}, label {label}.", slotId, request.MlKemParameter, request.KeyAttributes.CkaLabel);

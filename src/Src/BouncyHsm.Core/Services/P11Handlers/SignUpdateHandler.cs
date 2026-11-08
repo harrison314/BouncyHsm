@@ -28,6 +28,12 @@ public partial class SignUpdateHandler : IRpcRequestHandler<SignUpdateRequest, S
 
         SignState state = p11Session.State.Ensure<SignState>();
 
+        if (state.IsSinglePartOnly)
+        {
+            p11Session.ClearState();
+            throw new RpcPkcs11Exception(CKR.CKR_FUNCTION_NOT_SUPPORTED, "Mechanism supports only single-part signing.");
+        }
+
         if (state.RequiredUserLogin && !memorySession.IsUserLogged(p11Session.SlotId))
         {
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "User is not login.");

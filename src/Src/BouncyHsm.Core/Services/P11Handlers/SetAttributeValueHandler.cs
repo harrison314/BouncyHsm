@@ -29,6 +29,14 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
         StorageObject storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession, p11Session, request.ObjectHandle, cancellationToken);
+
+        using IDisposable? writeLock = await ObjectWriteLocks.Acquire(storageObject, cancellationToken);
+        if (writeLock != null)
+        {
+            // Stateful key: re-load inside the lock so we never persist a stale key state.
+            storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession, p11Session, request.ObjectHandle, cancellationToken);
+        }
+
         if (!storageObject.CkaModifiable)
         {
             throw new RpcPkcs11Exception(CKR.CKR_ACTION_PROHIBITED, $"Object with id {storageObject.Id} can set CKA_MODIFIABLE to false.");

@@ -49,6 +49,8 @@ public static class Program
         model.Montgomery = supportedKeys.MontgomeryCurves.ToList();
         model.MlDsa = supportedKeys.MlDsaKeys.ToList();
         model.SlhDsa = supportedKeys.SlhDsaKeys.ToList();
+        model.HssLms = supportedKeys.HssKeys.Where(t => t.StartsWith("LMS_", StringComparison.Ordinal)).ToList();
+        model.HssLmots = supportedKeys.HssKeys.Where(t => t.StartsWith("LMOTS_", StringComparison.Ordinal)).ToList();
         model.MlKem = supportedKeys.MlKemKeys.ToList();
 
         return model;

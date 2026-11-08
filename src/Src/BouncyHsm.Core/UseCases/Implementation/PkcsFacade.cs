@@ -127,8 +127,8 @@ public class PkcsFacade : IPkcsFacade
             type = CKO.CKO_PRIVATE_KEY,
             id = t.Id,
             alwaysAuthenticate = t.CkaAlwaysAuthenticate,
-            canSign = t is not MontgomeryPrivateKeyObject && t is not MlKemPrivateKeyObject, //Fix current state
-            canCreateCsr = t is not MontgomeryPrivateKeyObject,
+            canSign = t is not MontgomeryPrivateKeyObject && t is not MlKemPrivateKeyObject && t is not HssPrivateKeyObject, //Fix current state
+            canCreateCsr = t is not MontgomeryPrivateKeyObject && t is not HssPrivateKeyObject,
             description = t.Accept(descriptionVisitor),
             subject = null as string
         })
@@ -191,6 +191,12 @@ public class PkcsFacade : IPkcsFacade
         {
             this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not private key.", request.SlotId, request.PrivateKeyId);
             return new DomainResult<byte[]>.InvalidInput("PrivateKeyId is not private key.");
+        }
+
+        if (privKo is HssPrivateKeyObject)
+        {
+            this.logger.LogError("HSS key in slotId {slotId}, object id {objectId} can not be used for certificate or CSR signing.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<byte[]>.InvalidInput("HSS keys can not be used for certificate or CSR signing.");
         }
 
         StorageObject? pubSo = await this.persistentRepository.TryLoadObject(request.SlotId, request.PublicKeyId, cancellationToken);
@@ -259,6 +265,12 @@ public class PkcsFacade : IPkcsFacade
         {
             this.logger.LogError("Object in slotId {slotId}, object id {objectId} is not private key.", request.SlotId, request.PrivateKeyId);
             return new DomainResult<Guid>.InvalidInput("PrivateKeyId is not private key.");
+        }
+
+        if (privKo is HssPrivateKeyObject)
+        {
+            this.logger.LogError("HSS key in slotId {slotId}, object id {objectId} can not be used for certificate or CSR signing.", request.SlotId, request.PrivateKeyId);
+            return new DomainResult<Guid>.InvalidInput("HSS keys can not be used for certificate or CSR signing.");
         }
 
         StorageObject? pubSo = await this.persistentRepository.TryLoadObject(request.SlotId, request.PublicKeyId, cancellationToken);
@@ -402,7 +414,21 @@ public class PkcsFacade : IPkcsFacade
 
         foreach (StorageObject foundObject in foundObjects)
         {
-            await this.persistentRepository.DestroyObject(slotId, foundObject, cancellationToken);
+            StorageObject? currentObject = foundObject;
+
+            using IDisposable? writeLock = await ObjectWriteLocks.Acquire(foundObject, cancellationToken);
+            if (writeLock != null)
+            {
+                // Stateful key: re-load inside the lock; it could have been destroyed meanwhile.
+                currentObject = await this.persistentRepository.TryLoadObject(slotId, foundObject.Id, cancellationToken);
+                if (currentObject == null)
+                {
+                    this.logger.LogDebug("Object with id {objectId} no longer exists, skipping delete.", foundObject.Id);
+                    continue;
+                }
+            }
+
+            await this.persistentRepository.DestroyObject(slotId, currentObject, cancellationToken);
             this.logger.LogInformation("Delete object with id {objectId}.", foundObject.Id);
         }
 

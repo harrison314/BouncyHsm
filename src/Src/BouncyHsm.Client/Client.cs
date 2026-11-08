@@ -114,6 +114,13 @@ namespace BouncyHsm.Client
         System.Threading.Tasks.Task<GeneratedKeyPairIdsDto> GenerateSlhDsaKeyPairAsync(int slotId, GenerateSlhDsaKeyPairRequestDto model, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GeneratedKeyPairIdsDto> GenerateHssKeyPairAsync(int slotId, GenerateHssKeyPairRequestDto model);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GeneratedKeyPairIdsDto> GenerateHssKeyPairAsync(int slotId, GenerateHssKeyPairRequestDto model, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GeneratedKeyPairIdsDto> GenerateMlKemKeyPairAsync(int slotId, GenerateMlKemKeyPairRequestDto model);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1515,6 +1522,114 @@ namespace BouncyHsm.Client
                     urlBuilder_.Append("KeyGeneration/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(slotId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/GenerateSlhDsaKeyPair");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GeneratedKeyPairIdsDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiBouncyHsmException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiBouncyHsmException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiBouncyHsmException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<GeneratedKeyPairIdsDto> GenerateHssKeyPairAsync(int slotId, GenerateHssKeyPairRequestDto model)
+        {
+            return GenerateHssKeyPairAsync(slotId, model, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiBouncyHsmException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GeneratedKeyPairIdsDto> GenerateHssKeyPairAsync(int slotId, GenerateHssKeyPairRequestDto model, System.Threading.CancellationToken cancellationToken)
+        {
+            if (slotId == null)
+                throw new System.ArgumentNullException("slotId");
+
+            if (model == null)
+                throw new System.ArgumentNullException("model");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(model, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "KeyGeneration/{slotId}/GenerateHssKeyPair"
+                    urlBuilder_.Append("KeyGeneration/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(slotId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/GenerateHssKeyPair");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -4851,6 +4966,10 @@ namespace BouncyHsm.Client
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<string> SlhDsaKeys { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
+        [System.Text.Json.Serialization.JsonPropertyName("HssKeys")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> HssKeys { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+
         [System.Text.Json.Serialization.JsonPropertyName("MlKemKeys")]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<string> MlKemKeys { get; set; } = new System.Collections.ObjectModel.Collection<string>();
@@ -5190,6 +5309,27 @@ namespace BouncyHsm.Client
 
         [System.Runtime.Serialization.EnumMember(Value = @"CKP_SLH_DSA_SHAKE_256F")]
         CKP_SLH_DSA_SHAKE_256F = 11,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GenerateHssKeyPairRequestDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Levels")]
+        public int Levels { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LmsTypes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> LmsTypes { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("LmotsTypes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> LmotsTypes { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("KeyAttributes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GenerateKeyAttributesDto KeyAttributes { get; set; } = new GenerateKeyAttributesDto();
 
     }
 

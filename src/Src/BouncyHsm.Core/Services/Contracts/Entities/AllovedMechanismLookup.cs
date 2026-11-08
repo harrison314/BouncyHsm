@@ -208,6 +208,11 @@ internal static class AllovedMechanismLookup
          CKM.CKM_SALSA20,
     };
 
+    public static readonly CKM[] HssKeyObject = new CKM[]
+    {
+        CKM.CKM_HSS,
+    };
+
     public static readonly CKM[] SlhDsaKeyObject = new CKM[]
     {
         CKM.CKM_SLH_DSA,

@@ -433,6 +433,96 @@ public class KeysGenerationFacadeTests
     }
 
     [TestMethod]
+    public async Task GenerateHssKeyPair_Call_Success()
+    {
+        List<StorageObject> stored = new List<StorageObject>();
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.StoreObject(12U, It.Is<StorageObject>(q => q is PrivateKeyObject || q is PublicKeyObject), It.IsAny<CancellationToken>()))
+            .Callback<uint, StorageObject, CancellationToken>((_, o, _) => stored.Add(o))
+            .Returns(new ValueTask())
+            .Verifiable();
+
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(this.GetClotEnity())
+            .Verifiable();
+
+        KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
+
+        GenerateHssKeyPairRequest request = new GenerateHssKeyPairRequest()
+        {
+            Levels = 1,
+            LmsTypes = new[] { Core.Services.Contracts.P11.CK_LMS_TYPE.LMS_SHA256_M32_H5 },
+            LmotsTypes = new[] { Core.Services.Contracts.P11.CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8 },
+            KeyAttributes = new GenerateKeyAttributes()
+            {
+                CkaId = null,
+                CkaLabel = "test1",
+                Exportable = true,
+                ForDerivation = false,
+                ForEncryption = false,
+                ForSigning = true,
+                ForWrap = false,
+                Sensitive = false,
+            }
+        };
+
+        DomainResult<GeneratedKeyPairIds> result = await pkcsFacade.GenerateHssKeyPair(12U, request, default);
+        Assert.IsTrue(result.MatchOk(_ => true, () => false));
+
+        HssPrivateKeyObject privateKey = stored.OfType<HssPrivateKeyObject>().Single();
+        Assert.IsFalse(privateKey.CkaExtractable);
+        Assert.IsTrue(privateKey.CkaSensitive);
+        Assert.IsFalse(privateKey.CkaCopyable);
+        Assert.AreEqual(1, stored.OfType<HssPublicKeyObject>().Count());
+    }
+
+    [TestMethod]
+    [DataRow(0U, 0)]
+    [DataRow(9U, 0)]
+    [DataRow(1U, 1)]
+    public async Task GenerateHssKeyPair_InvalidParameters_InvalidInput(uint levels, int badKind)
+    {
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(this.GetClotEnity());
+
+        KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
+
+        GenerateHssKeyPairRequest request = new GenerateHssKeyPairRequest()
+        {
+            Levels = levels,
+            LmsTypes = Enumerable.Repeat(badKind == 1 ? (Core.Services.Contracts.P11.CK_LMS_TYPE)0x19 : Core.Services.Contracts.P11.CK_LMS_TYPE.LMS_SHA256_M32_H5, (int)levels).ToArray(),
+            LmotsTypes = Enumerable.Repeat(Core.Services.Contracts.P11.CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8, (int)levels).ToArray(),
+        };
+
+        DomainResult<GeneratedKeyPairIds> result = await pkcsFacade.GenerateHssKeyPair(12U, request, default);
+        Assert.IsInstanceOfType<DomainResult<GeneratedKeyPairIds>.InvalidInput>(result);
+        repository.Verify(t => t.StoreObject(It.IsAny<uint>(), It.IsAny<StorageObject>(), It.IsAny<CancellationToken>()), Times.Never());
+    }
+
+    [TestMethod]
+    public async Task GenerateHssKeyPair_CountMismatch_InvalidInput()
+    {
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.GetSlot(12U, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(this.GetClotEnity())
+            .Verifiable();
+
+        KeysGenerationFacade pkcsFacade = new KeysGenerationFacade(repository.Object, new NullLoggerFactory(), new NullLogger<KeysGenerationFacade>());
+
+        GenerateHssKeyPairRequest request = new GenerateHssKeyPairRequest()
+        {
+            Levels = 2,
+            LmsTypes = new[] { Core.Services.Contracts.P11.CK_LMS_TYPE.LMS_SHA256_M32_H5 },
+            LmotsTypes = new[] { Core.Services.Contracts.P11.CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8 },
+        };
+
+        DomainResult<GeneratedKeyPairIds> result = await pkcsFacade.GenerateHssKeyPair(12U, request, default);
+        Assert.IsInstanceOfType<DomainResult<GeneratedKeyPairIds>.InvalidInput>(result);
+        repository.Verify(t => t.StoreObject(It.IsAny<uint>(), It.IsAny<StorageObject>(), It.IsAny<CancellationToken>()), Times.Never());
+    }
+
+    [TestMethod]
     [DataRow(Core.Services.Contracts.P11.CK_ML_KEM_PARAMETER_SET.CKP_ML_KEM_1024)]
     [DataRow(Core.Services.Contracts.P11.CK_ML_KEM_PARAMETER_SET.CKP_ML_KEM_768)]
     [DataRow(Core.Services.Contracts.P11.CK_ML_KEM_PARAMETER_SET.CKP_ML_KEM_512)]

@@ -89,6 +89,18 @@ public class StorageObjectsFacade : IStorageObjectsFacade
             return new VoidDomainResult.NotFound();
         }
 
+        using IDisposable? writeLock = await ObjectWriteLocks.Acquire(storageObject, cancellationToken);
+        if (writeLock != null)
+        {
+            // Stateful key: re-load inside the lock so a concurrent signature can not re-create it.
+            storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
+            if (storageObject == null)
+            {
+                this.logger.LogError("Storage object with id {id} not found.", id);
+                return new VoidDomainResult.NotFound();
+            }
+        }
+
         await this.persistentRepository.DestroyObject(slotId, storageObject, cancellationToken);
         return new VoidDomainResult.Ok();
     }
@@ -144,6 +156,18 @@ public class StorageObjectsFacade : IStorageObjectsFacade
             return new VoidDomainResult.NotFound();
         }
 
+        using IDisposable? writeLock = await ObjectWriteLocks.Acquire(storageObject, cancellationToken);
+        if (writeLock != null)
+        {
+            // Stateful key: re-load inside the lock so we never persist a stale key state.
+            storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
+            if (storageObject == null)
+            {
+                this.logger.LogError("Storage object with id {id} not found.", id);
+                return new VoidDomainResult.NotFound();
+            }
+        }
+
         if (!Enum.TryParse<CKA>(attributeName, out CKA attributeType))
         {
             this.logger.LogError("Attribute {attributeName} is not a valid CKA.", attributeName);
@@ -197,6 +221,12 @@ public class StorageObjectsFacade : IStorageObjectsFacade
 
         try
         {
+            if (newStorageObject is HssPrivateKeyObject)
+            {
+                // Keep CKA_HSS_KEYS_REMAINING consistent with an admin-edited CKA_VALUE.
+                newStorageObject.ReComputeAttributes();
+            }
+
             newStorageObject.Validate();
         }
         catch (Exception ex)

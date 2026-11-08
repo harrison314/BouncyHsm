@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Net.Pkcs11Interop.Common;
 using Net.Pkcs11Interop.HighLevelAPI;
+using Pkcs11Interop.Ext.Common;
 using System.Security.Cryptography;
 
 namespace BouncyHsm.Pkcs11IntegrationTests;
@@ -780,5 +781,83 @@ public class T17_GenerateKeyPair
 
         Assert.AreEqual(alwaisSesitive, readAttributes[0].GetValueAsBool(), "Failed CKA_ALWAYS_SENSITIVE");
         Assert.AreEqual(neverExtractable, readAttributes[1].GetValueAsBool(), "Failed CKA_NEVER_EXTRACTABLE");
+    }
+
+    [TestMethod]
+    [DataRow(1UL, new uint[] { 5 }, new uint[] { 4 }, 32UL)]
+    [DataRow(1UL, new uint[] { 0x0f }, new uint[] { 0x0c }, 32UL)]
+    [DataRow(1UL, new uint[] { 0x0a }, new uint[] { 0x08 }, 32UL)]
+    [DataRow(2UL, new uint[] { 5, 5 }, new uint[] { 4, 1 }, 1024UL)]
+    public void GenerateKeyPair_Hss_Success(ulong levels, uint[] lmsTypes, uint[] lmotsTypes, ulong expectedRemaining)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = T20_SignHss.LoadLibrary(factories);
+        using ISession session = T20_SignHss.OpenLoggedSession(library);
+
+        T20_SignHss.CreateHssKeyPair(factories, session, levels,
+            lmsTypes.Select(t => (ulong)t).ToArray(),
+            lmotsTypes.Select(t => (ulong)t).ToArray(),
+            false,
+            out IObjectHandle publicKey,
+            out IObjectHandle privateKey);
+
+        List<IObjectAttribute> privateAttributes = session.GetAttributeValue(privateKey, new List<CKA>()
+        {
+            CKA_V3_2.CKA_HSS_KEYS_REMAINING,
+            CKA.CKA_SENSITIVE,
+            CKA.CKA_EXTRACTABLE,
+            CKA.CKA_COPYABLE,
+        });
+        Assert.AreEqual(expectedRemaining, privateAttributes[0].GetValueAsUlong());
+        Assert.IsTrue(privateAttributes[1].GetValueAsBool(), "CKA_SENSITIVE");
+        Assert.IsFalse(privateAttributes[2].GetValueAsBool(), "CKA_EXTRACTABLE");
+        Assert.IsFalse(privateAttributes[3].GetValueAsBool(), "CKA_COPYABLE");
+
+        List<IObjectAttribute> publicAttributes = session.GetAttributeValue(publicKey, new List<CKA>()
+        {
+            CKA_V3_2.CKA_HSS_LEVELS,
+            CKA_V3_2.CKA_HSS_LMS_TYPE,
+            CKA_V3_2.CKA_HSS_LMOTS_TYPE,
+        });
+        Assert.AreEqual(levels, publicAttributes[0].GetValueAsUlong());
+        Assert.AreEqual((ulong)lmsTypes[0], publicAttributes[1].GetValueAsUlong());
+        Assert.AreEqual((ulong)lmotsTypes[0], publicAttributes[2].GetValueAsUlong());
+
+        // Pkcs11Interop maps CKR_ATTRIBUTE_SENSITIVE of a single attribute to CannotBeRead.
+        IObjectAttribute valueAttribute = session.GetAttributeValue(privateKey, new List<CKA>() { CKA.CKA_VALUE })[0];
+        Assert.IsTrue(valueAttribute.CannotBeRead, "CKA_VALUE must be sensitive.");
+    }
+
+    [TestMethod]
+    public void GenerateKeyPair_HssExtractable_TemplateInconsistent()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = T20_SignHss.LoadLibrary(factories);
+        using ISession session = T20_SignHss.OpenLoggedSession(library);
+
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => T20_SignHss.CreateHssKeyPair(factories, session, 1,
+            new ulong[] { CK_LMS_TYPE.LMS_SHA256_M32_H5 },
+            new ulong[] { CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8 },
+            false,
+            out _,
+            out _,
+            extractable: true));
+        Assert.AreEqual(CKR.CKR_TEMPLATE_INCONSISTENT, ex.RV);
+    }
+
+    [TestMethod]
+    public void GenerateKeyPair_HssCountMismatch_TemplateInconsistent()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = T20_SignHss.LoadLibrary(factories);
+        using ISession session = T20_SignHss.OpenLoggedSession(library);
+
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => T20_SignHss.CreateHssKeyPair(factories, session, 2,
+            new ulong[] { CK_LMS_TYPE.LMS_SHA256_M32_H5 },
+            new ulong[] { CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8, CK_LMOTS_TYPE.LMOTS_SHA256_N32_W8 },
+            false,
+            out _,
+            out _));
+        Assert.AreEqual(CKR.CKR_TEMPLATE_INCONSISTENT, ex.RV);
     }
 }

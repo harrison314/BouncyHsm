@@ -15,12 +15,18 @@ internal class VerifyState : ISessionState
     private readonly bool acceptEmptyData;
     private bool isEmpty;
 
-    public VerifyState(ISigner signer, bool acceptEmptyData)
+    public bool IsSinglePartOnly
+    {
+        get;
+    }
+
+    public VerifyState(ISigner signer, bool acceptEmptyData, bool isSinglePartOnly)
     {
         System.Diagnostics.Debug.Assert(signer != null);
 
         this.signer = signer;
         this.acceptEmptyData = acceptEmptyData;
+        this.IsSinglePartOnly = isSinglePartOnly;
         this.isEmpty = true;
     }
 

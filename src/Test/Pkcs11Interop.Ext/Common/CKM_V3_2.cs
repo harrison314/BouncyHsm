@@ -34,4 +34,7 @@ public static class CKM_V3_2
 
     public const CKM CKM_ML_KEM_KEY_PAIR_GEN = (CKM)0x0000000f;
     public const CKM CKM_ML_KEM = (CKM)0x00000017;
+
+    public const CKM CKM_HSS_KEY_PAIR_GEN = (CKM)0x00004032;
+    public const CKM CKM_HSS = (CKM)0x00004033;
 }

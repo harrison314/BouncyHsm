@@ -1253,4 +1253,31 @@ public class T27_UnwrapKey
 
         return privateKeyAttributes;
     }
+
+    [TestMethod]
+    public void UnwrapKey_HssPrivateTemplate_TemplateInconsistent()
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = T20_SignHss.LoadLibrary(factories);
+        using ISession session = T20_SignHss.OpenLoggedSession(library);
+
+        (IObjectHandle privateKey, IObjectHandle publicKey) = this.GenerateRsa(session);
+
+        IObjectHandle key = this.GenerateAesKey(session, 32);
+        using IMechanism mechanism = session.Factories.MechanismFactory.Create(CKM.CKM_AES_CBC_PAD, Utils.GetRandomBytes(16));
+        byte[] wrappedKey = session.WrapKey(mechanism, key, privateKey);
+
+        List<IObjectAttribute> template = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_PRIVATE_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, Pkcs11Interop.Ext.Common.CKK_V3_0.CKK_HSS),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SIGN, true),
+        };
+
+        // CKR_TEMPLATE_INCONSISTENT comes from the HSS arm of UnwrapKeyHandler.SetKeyValues, after the key has been unwrapped.
+        Pkcs11Exception ex = Assert.Throws<Pkcs11Exception>(() => session.UnwrapKey(mechanism, key, wrappedKey, template));
+        Assert.AreEqual(CKR.CKR_TEMPLATE_INCONSISTENT, ex.RV);
+    }
 }
