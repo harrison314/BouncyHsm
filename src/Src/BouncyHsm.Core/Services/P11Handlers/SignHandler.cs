@@ -77,7 +77,18 @@ public partial class SignHandler : IRpcRequestHandler<SignRequest, SignEnvelope>
             state.Update(request.Data);
             this.logger.LogDebug("Updating signature with data length: {dataLength}.", request.Data.Length);
 
-            byte[] signature = state.GetSignature();
+            byte[] signature;
+            try
+            {
+                signature = await state.GetSignatureAsync(cancellationToken);
+            }
+            catch when (state.IsSinglePartOnly)
+            {
+                // A failed stateful (HSS) signature terminates the operation.
+                p11Session.ClearState();
+                throw;
+            }
+
             p11Session.ClearState();
 
             return new SignEnvelope()

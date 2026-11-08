@@ -46,13 +46,26 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         WrapperSignerFactory signerFactory = new WrapperSignerFactory(this.loggerFactory);
 
         IWrapperSigner signerWrapper = signerFactory.CreateSignatureAlgorithm(request.Mechanism);
-        AuthenticatedSigner signer = signerWrapper.IntoSigningSigner(objectInstance, p11Session.SecureRandom);
 
-        p11Session.State = new SignState(signer.Signer,
-            objectInstance.Id,
-            signer.RequireSignaturePin,
-            objectInstance.CkaPrivate,
-            signerWrapper.AcceptEmptyData);
+        if (signerWrapper is IStatefulWrapperSigner statefulSignerWrapper)
+        {
+            IStatefulSigner statefulSigner = statefulSignerWrapper.IntoStatefulSigner(objectInstance, this.hwServices, p11Session);
+
+            p11Session.State = new SignState(statefulSigner,
+                objectInstance.Id,
+                ((PrivateKeyObject)objectInstance).CkaAlwaysAuthenticate,
+                objectInstance.CkaPrivate);
+        }
+        else
+        {
+            AuthenticatedSigner signer = signerWrapper.IntoSigningSigner(objectInstance, p11Session.SecureRandom);
+
+            p11Session.State = new SignState(signer.Signer,
+                objectInstance.Id,
+                signer.RequireSignaturePin,
+                objectInstance.CkaPrivate,
+                signerWrapper.AcceptEmptyData);
+        }
 
         return new SignInitEnvelope()
         {

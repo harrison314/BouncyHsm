@@ -32,6 +32,12 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
 
         SignState state = p11Session.State.Ensure<SignState>();
 
+        if (state.IsSinglePartOnly)
+        {
+            p11Session.ClearState();
+            throw new RpcPkcs11Exception(CKR.CKR_FUNCTION_NOT_SUPPORTED, "Mechanism supports only single-part signing.");
+        }
+
         if (state.RequiredUserLogin && !memorySession.IsUserLogged(p11Session.SlotId))
         {
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "User is not login.");
@@ -74,7 +80,7 @@ public partial class SignFinalHandler : IRpcRequestHandler<SignFinalRequest, Sig
                 throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, "Invalid object loaded - internal error.");
             }
 
-            byte[] signature = state.GetSignature();
+            byte[] signature = await state.GetSignatureAsync(cancellationToken);
             p11Session.ClearState();
 
             return new SignFinalEnvelope()

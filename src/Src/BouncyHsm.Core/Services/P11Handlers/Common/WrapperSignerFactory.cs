@@ -157,6 +157,9 @@ internal class WrapperSignerFactory
             CKM.CKM_HASH_SLH_DSA_SHAKE128 => this.CreateHashedSlhDsaWrapperSigner(mechanism, new ShakeDigest(128)),
             CKM.CKM_HASH_SLH_DSA_SHAKE256 => this.CreateHashedSlhDsaWrapperSigner(mechanism, new ShakeDigest(256)),
 
+            // HSS
+            CKM.CKM_HSS => new HssWrapperSigner(this.loggerFactory.CreateLogger<HssWrapperSigner>()),
+
 
             // AES Signers
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for signing or validation.")
