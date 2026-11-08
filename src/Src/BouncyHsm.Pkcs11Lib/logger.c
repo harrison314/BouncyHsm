@@ -118,6 +118,31 @@ static void send_log_message_syslog(int level, const char* levelText, const char
 #endif
 }
 
+static void send_log_message_syslog_plain(int level, const char* levelText, const char* message)
+{
+#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+    USE_VARIABLE(levelText);
+
+    int syslogLevel = LOG_DEBUG;
+    if (level == LOG_LEVEL_INFO)
+    {
+        syslogLevel = LOG_INFO;
+    }
+    else if (level == LOG_LEVEL_ERROR)
+    {
+        syslogLevel = LOG_ERR;
+    }
+
+    syslog(syslogLevel, "%s", message);
+
+#else
+    USE_VARIABLE(level);
+    USE_VARIABLE(levelText);
+    USE_VARIABLE(message);
+#endif
+}
+
+
 static int globalLogLevelLevel = LOG_LEVEL_NONE;
 static send_log_message_ptr globalLogLevelTarget = send_log_message_None;
 
@@ -178,6 +203,10 @@ bool logger_init(const char* level, const char* target)
 	{
 		localTarget = send_log_message_syslog;
 	}
+    else if (strcmp(target, LOG_TARGET_LINUX_SYSLOG_PLAIN) == 0)
+    {
+        localTarget = send_log_message_syslog_plain;
+    }
 	else
 	{
 		fprintf(stderr, "Error - The target is not valid in function logger_init." NEW_LINE_STR);

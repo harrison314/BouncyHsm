@@ -18,6 +18,7 @@
 #define LOG_TARGET_ERR_CONSOLE "ErrorConsole"
 #define LOG_TARGET_WIN_DEBUG "WinDebugOut"
 #define LOG_TARGET_LINUX_SYSLOG "LinuxSyslog"
+#define LOG_TARGET_LINUX_SYSLOG_PLAIN "LinuxSyslogPlain"
 
 typedef void (*send_log_message_ptr)(int level, const char* levelText, const char* message);
 

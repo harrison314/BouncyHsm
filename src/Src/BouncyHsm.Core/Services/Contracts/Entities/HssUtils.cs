@@ -44,7 +44,7 @@ public static class HssUtils
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"Value {(uint)lmOtsType:x} is not defined LM-OTS type.");
         }
 
-        LMOtsParameters? lmotsParams = LMOtsParameters.GetParametersByID((int)lmOtsType)
+        LMOtsParameters? lmotsParams = LMOtsParameters.GetParametersByID((int)lmOtsType);
         if (lmotsParams == null)
         {
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT, $"LM-OTS type {lmOtsType} is not supported.");

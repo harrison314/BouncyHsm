@@ -6,5 +6,6 @@ public enum BouncyHsmLogTarget
     Console,
     ErrorConsole,
     WinDebugOut,
-    LinuxSyslog
+    LinuxSyslog,
+    LinuxSyslogPlain,
 }
