@@ -14,14 +14,17 @@ namespace BouncyHsm.Core.Services.Contracts;
 /// The class of an object never changes, so deciding on the first (unlocked) load is safe.
 /// </para>
 /// <para>
+/// A semaphore exists only while its object is locked or waited for: it is created by the first
+/// <c>Acquire</c> and removed when the last holder or waiter is done. When no stateful key is in use,
+/// nothing is allocated.
+/// </para>
+/// <para>
 /// No code path holds two object locks at the same time; keep it that way when adding new callers.
 /// </para>
 /// </remarks>
 public static class ObjectWriteLocks
 {
-    private const int StripeCount = 256;
-
-    private static readonly SemaphoreSlim[] stripes = CreateStripes();
+    private static readonly Dictionary<Guid, LockEntry> entries = new Dictionary<Guid, LockEntry>();
 
     /// <summary>
     /// Acquires the write lock for <paramref name="storageObject"/> when it is a stateful key object.
@@ -45,14 +48,41 @@ public static class ObjectWriteLocks
     /// </summary>
     internal static async ValueTask<IDisposable> Acquire(Guid objectId, CancellationToken cancellationToken)
     {
-        SemaphoreSlim semaphore = stripes[GetStripeIndex(objectId)];
-        await semaphore.WaitAsync(cancellationToken);
-        return new Releaser(semaphore);
+        LockEntry entry;
+        lock (entries)
+        {
+            if (!entries.TryGetValue(objectId, out LockEntry? existing))
+            {
+                existing = new LockEntry();
+                entries.Add(objectId, existing);
+            }
+
+            existing.RefCount++;
+            entry = existing;
+        }
+
+        try
+        {
+            await entry.Semaphore.WaitAsync(cancellationToken);
+        }
+        catch
+        {
+            ReleaseReference(objectId, entry);
+            throw;
+        }
+
+        return new Releaser(objectId, entry);
     }
 
-    internal static int GetStripeIndex(Guid objectId)
+    /// <summary>
+    /// True while the object is locked or has waiters (for tests).
+    /// </summary>
+    internal static bool IsTracked(Guid objectId)
     {
-        return (int)((uint)objectId.GetHashCode() & (StripeCount - 1));
+        lock (entries)
+        {
+            return entries.ContainsKey(objectId);
+        }
     }
 
     private static async ValueTask<IDisposable?> AcquireNullable(Guid objectId, CancellationToken cancellationToken)
@@ -60,31 +90,53 @@ public static class ObjectWriteLocks
         return await Acquire(objectId, cancellationToken);
     }
 
-    private static SemaphoreSlim[] CreateStripes()
+    private static void ReleaseReference(Guid objectId, LockEntry entry)
     {
-        System.Diagnostics.Debug.Assert((StripeCount & (StripeCount - 1)) == 0, "StripeCount must be a power of two.");
-
-        SemaphoreSlim[] result = new SemaphoreSlim[StripeCount];
-        for (int i = 0; i < result.Length; i++)
+        lock (entries)
         {
-            result[i] = new SemaphoreSlim(1, 1);
+            entry.RefCount--;
+            if (entry.RefCount == 0)
+            {
+                entries.Remove(objectId);
+                entry.Semaphore.Dispose();
+            }
         }
+    }
 
-        return result;
+    private sealed class LockEntry
+    {
+        public SemaphoreSlim Semaphore
+        {
+            get;
+        } = new SemaphoreSlim(1, 1);
+
+        // Holder plus waiters; guarded by the entries dictionary lock.
+        public int RefCount
+        {
+            get;
+            set;
+        }
     }
 
     private sealed class Releaser : IDisposable
     {
-        private SemaphoreSlim? semaphore;
+        private readonly Guid objectId;
+        private LockEntry? entry;
 
-        public Releaser(SemaphoreSlim semaphore)
+        public Releaser(Guid objectId, LockEntry entry)
         {
-            this.semaphore = semaphore;
+            this.objectId = objectId;
+            this.entry = entry;
         }
 
         public void Dispose()
         {
-            Interlocked.Exchange(ref this.semaphore, null)?.Release();
+            LockEntry? lockEntry = Interlocked.Exchange(ref this.entry, null);
+            if (lockEntry != null)
+            {
+                lockEntry.Semaphore.Release();
+                ReleaseReference(this.objectId, lockEntry);
+            }
         }
     }
 }

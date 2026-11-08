@@ -2,6 +2,7 @@
 using BouncyHsm.Core.Services.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,46 +27,87 @@ public class ObjectWriteLocksTests
     }
 
     [TestMethod]
-    public async Task Acquire_DifferentStripes_Independent()
+    public async Task Acquire_DifferentIds_Independent()
     {
-        Guid firstId = Guid.NewGuid();
-        Guid secondId;
-        do
-        {
-            secondId = Guid.NewGuid();
-        }
-        while (ObjectWriteLocks.GetStripeIndex(secondId) == ObjectWriteLocks.GetStripeIndex(firstId));
+        using IDisposable first = await ObjectWriteLocks.Acquire(Guid.NewGuid(), CancellationToken.None);
 
-        using IDisposable first = await ObjectWriteLocks.Acquire(firstId, CancellationToken.None);
-
-        Task<IDisposable> second = ObjectWriteLocks.Acquire(secondId, CancellationToken.None).AsTask();
-        using IDisposable secondLock = await second.WaitAsync(TimeSpan.FromSeconds(10));
-        Assert.IsTrue(second.IsCompleted);
+        using IDisposable second = await ObjectWriteLocks.Acquire(Guid.NewGuid(), CancellationToken.None)
+            .AsTask()
+            .WaitAsync(TimeSpan.FromSeconds(10));
     }
 
     [TestMethod]
-    public async Task Acquire_DifferentIdsSameStripe_SerializeAndBothComplete()
+    public async Task Release_LastHolder_RemovesEntry()
     {
-        Guid firstId = Guid.NewGuid();
-        Guid secondId;
-        do
-        {
-            secondId = Guid.NewGuid();
-        }
-        while (secondId == firstId || ObjectWriteLocks.GetStripeIndex(secondId) != ObjectWriteLocks.GetStripeIndex(firstId));
+        Guid id = Guid.NewGuid();
+        Assert.IsFalse(ObjectWriteLocks.IsTracked(id));
 
-        IDisposable first = await ObjectWriteLocks.Acquire(firstId, CancellationToken.None);
+        IDisposable first = await ObjectWriteLocks.Acquire(id, CancellationToken.None);
+        Assert.IsTrue(ObjectWriteLocks.IsTracked(id));
 
-        Task<IDisposable> second = ObjectWriteLocks.Acquire(secondId, CancellationToken.None).AsTask();
-        await Task.Delay(100);
-        Assert.IsFalse(second.IsCompleted);
+        first.Dispose();
+        Assert.IsFalse(ObjectWriteLocks.IsTracked(id));
+    }
+
+    [TestMethod]
+    public async Task Release_WithWaiter_KeepsEntryUntilWaiterReleases()
+    {
+        Guid id = Guid.NewGuid();
+        IDisposable first = await ObjectWriteLocks.Acquire(id, CancellationToken.None);
+        Task<IDisposable> second = ObjectWriteLocks.Acquire(id, CancellationToken.None).AsTask();
+        await Task.Delay(50);
 
         first.Dispose();
         IDisposable secondLock = await second.WaitAsync(TimeSpan.FromSeconds(10));
-        secondLock.Dispose();
+        Assert.IsTrue(ObjectWriteLocks.IsTracked(id));
 
-        // The stripe is free again.
-        using IDisposable third = await ObjectWriteLocks.Acquire(firstId, CancellationToken.None).AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+        secondLock.Dispose();
+        Assert.IsFalse(ObjectWriteLocks.IsTracked(id));
+    }
+
+    [TestMethod]
+    public async Task Acquire_CancelledWhileWaiting_RemovesEntryAfterRelease()
+    {
+        Guid id = Guid.NewGuid();
+        IDisposable first = await ObjectWriteLocks.Acquire(id, CancellationToken.None);
+
+        using CancellationTokenSource cts = new CancellationTokenSource();
+        Task<IDisposable> waiting = ObjectWriteLocks.Acquire(id, cts.Token).AsTask();
+        await Task.Delay(50);
+        cts.Cancel();
+        await Assert.ThrowsAsync<OperationCanceledException>(async () => await waiting);
+
+        first.Dispose();
+        Assert.IsFalse(ObjectWriteLocks.IsTracked(id));
+    }
+
+    [TestMethod]
+    public async Task Acquire_ManyConcurrentWaiters_SerializeAndCleanUp()
+    {
+        Guid id = Guid.NewGuid();
+        int inside = 0;
+        int maxInside = 0;
+
+        await Task.WhenAll(Enumerable.Range(0, 50).Select(_ => Task.Run(async () =>
+        {
+            using IDisposable writeLock = await ObjectWriteLocks.Acquire(id, CancellationToken.None);
+            int now = Interlocked.Increment(ref inside);
+            InterlockedMax(ref maxInside, now);
+            await Task.Yield();
+            Interlocked.Decrement(ref inside);
+        }))).WaitAsync(TimeSpan.FromSeconds(30));
+
+        Assert.AreEqual(1, maxInside);
+        Assert.IsFalse(ObjectWriteLocks.IsTracked(id));
+    }
+
+    private static void InterlockedMax(ref int target, int value)
+    {
+        int current;
+        while ((current = Volatile.Read(ref target)) < value
+            && Interlocked.CompareExchange(ref target, value, current) != current)
+        {
+        }
     }
 
     [TestMethod]
