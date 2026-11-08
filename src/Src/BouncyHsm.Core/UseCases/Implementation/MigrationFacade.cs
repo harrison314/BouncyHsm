@@ -103,6 +103,7 @@ public class MigrationFacade : IMigrationFacade
 
         StorageObjectMemento memento = storageObject.ToMemento();
         StorageObject prototype = StorageObjectFactory.CreateEmpty(memento.Values);
+        prototype.Id = memento.Id;
 
         bool attributesAdded = false;
         foreach ((CKA attrType, IAttributeValue attrValue) in prototype.ToMemento().Values)
