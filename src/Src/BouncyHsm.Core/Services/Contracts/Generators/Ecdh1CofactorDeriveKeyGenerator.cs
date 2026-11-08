@@ -27,6 +27,11 @@ internal class Ecdh1CofactorDeriveKeyGenerator : Ecdh1DeriveKeyGenerator
         throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, "Mongomery keys is not supported in cofactor.");
     }
 
+    protected override CKM GetKeyGenMechanism()
+    {
+        return CKM.CKM_ECDH1_COFACTOR_DERIVE;
+    }
+
     public override string ToString()
     {
         return "Ecdh1CofactorDeriveKeyGenerator";

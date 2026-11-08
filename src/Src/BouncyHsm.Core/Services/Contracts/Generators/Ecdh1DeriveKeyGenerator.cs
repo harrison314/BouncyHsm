@@ -47,6 +47,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         PrivateKeyObject sBaseKey = (PrivateKeyObject)baseKey;
 
         SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(this.template);
+        generalSecretKeyObject.CkaKeyGenMechanism = this.GetKeyGenMechanism();
         generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
         generalSecretKeyObject.CkaExtractable = sBaseKey.CkaExtractable;
 
@@ -228,6 +229,11 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
               $"Combination {CKA.CKA_KEY_TYPE} {CKK.CKK_GENERIC_SECRET} without defined {CKA.CKA_VALUE_LEN} is not allowed.");
         }
+    }
+
+    protected virtual CKM GetKeyGenMechanism()
+    {
+        return CKM.CKM_ECDH1_DERIVE;
     }
 
     private void TryUpdateValueLen(SecretKeyObject generalSecretKeyObject, int requestdValueLen)
