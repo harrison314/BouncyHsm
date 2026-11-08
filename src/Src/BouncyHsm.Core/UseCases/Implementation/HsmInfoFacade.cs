@@ -35,6 +35,7 @@ public class HsmInfoFacade : IHsmInfoFacade
             MontgomeryCurves = MontgomeryEcUtils.GetCurveNames().ToList(),
             MlDsaKeys = MlDsaUtils.GetSupportedKeys(),
             SlhDsaKeys = SlhDsaUtils.GetSupportedKeys(),
+            HssKeys = HssUtils.GetSupportedKeys(),
             MlKemKeys = MlKemUtils.GetSupportedKeys(),
         };
     }

@@ -52,6 +52,7 @@ public static class Program
                     generate.AddCommand<GenerateMongomeryKeyPairCommand>("mongomery").WithDescription("Generate Mongomery EC key pair.");
                     generate.AddCommand<GenerateMlDsaKeyPairCommand>("mldsa").WithDescription("Generate ML-DSA key pair.");
                     generate.AddCommand<GenerateSlhDsaKeyPairCommand>("slhdsa").WithDescription("Generate SLH-DSA key pair.");
+                    generate.AddCommand<GenerateHssKeyPairCommand>("hss").WithDescription("Generate HSS (LMS) key pair.");
                     generate.AddCommand<GenerateMlKemKeyPairCommand>("mlkem").WithDescription("Generate ML-KEM key pair.");
                     generate.AddCommand<GenerateAesKeyCommand>("aes").WithDescription("Generate AES key.");
                     generate.AddCommand<GenerateCamelliaKeyCommand>("camellia").WithDescription("Generate CAMELLIA key.");

@@ -1,4 +1,5 @@
-﻿using BouncyHsm.Core.UseCases.Contracts;
+﻿using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Models.KeyGeneration;
 using Riok.Mapperly.Abstractions;
 
@@ -36,6 +37,37 @@ internal static partial class KeyGenerationControllerMapper
     public static partial GenerateMLDsaKeyPairRequest MapFromDto(GenerateMLDsaKeyPairRequestDto model);
 
     public static partial GenerateSlhDsaKeyPairRequest MapFromDto(GenerateSlhDsaKeyPairRequestDto model);
+
+    /// <summary>
+    /// Maps HSS request. LMS and LM-OTS types are transferred as names; unknown names throw <see cref="ArgumentException"/>.
+    /// </summary>
+    public static GenerateHssKeyPairRequest MapFromDto(GenerateHssKeyPairRequestDto model)
+    {
+        return new GenerateHssKeyPairRequest()
+        {
+            Levels = model.Levels,
+            LmsTypes = ParseEnumNames<CK_LMS_TYPE>(model.LmsTypes, nameof(model.LmsTypes)),
+            LmotsTypes = ParseEnumNames<CK_LMOTS_TYPE>(model.LmotsTypes, nameof(model.LmotsTypes)),
+            KeyAttributes = MapFromDto(model.KeyAttributes),
+        };
+    }
+
+    private static T[] ParseEnumNames<T>(string[] names, string propertyName)
+        where T : struct, Enum
+    {
+        T[] result = new T[names.Length];
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (!Enum.TryParse(names[i], false, out T value) || !Enum.IsDefined(value))
+            {
+                throw new ArgumentException($"Value '{names[i]}' in {propertyName} is not valid.");
+            }
+
+            result[i] = value;
+        }
+
+        return result;
+    }
 
     public static partial GenerateMLKemKeyPairRequest MapFromDto(GenerateMlKemKeyPairRequestDto model);
 

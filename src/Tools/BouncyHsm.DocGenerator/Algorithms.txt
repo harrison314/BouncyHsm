@@ -85,6 +85,27 @@ _Bouncy Hsm_ supports {{ SlhDsaCount }} different SLH-DSA key parameters.
 | {{ e }} |
 {{~ end ~}}
 
+## HSS keys
+_Bouncy Hsm_ supports {{ HssLmsCount }} different LMS types and {{ HssLmotsCount }} different LM-OTS types for HSS (RFC 8554) keys. Each level of an HSS key uses one LMS type and one LM-OTS type; 1 to 8 levels are supported.
+
+**Note:** HSS private keys are stateful; `CKA_VALUE` holds the BouncyCastle encoding including the current index. Importing the same private key twice (one or several slots) creates independent copies that will reuse one-time keys - avoiding this is the caller's responsibility.
+
+**Note:** In a multi-level HSS key, the LMS hash size (m) of a level must not be larger than the LM-OTS hash size (n) of the level above it (BouncyCastle limitation). Such combinations are rejected with `CKR_TEMPLATE_INCONSISTENT`.
+
+**Note:** `C_CreateObject` of an HSS private key requires `CKA_HSS_LMS_TYPES` and `CKA_HSS_LMOTS_TYPES` matching `CKA_VALUE`, and `CKA_HSS_LEVELS` matching `CKA_VALUE` (it defaults to 1, so it can be omitted only for a one-level key); otherwise it fails with `CKR_ATTRIBUTE_VALUE_INVALID`. `CKA_HSS_KEYS_REMAINING` supplied in a template is ignored and recomputed from `CKA_VALUE`. For an HSS public key, `CKA_HSS_LEVELS`, `CKA_HSS_LMS_TYPE` and `CKA_HSS_LMOTS_TYPE` may be omitted (they are derived from `CKA_VALUE`); when supplied they must match `CKA_VALUE`, otherwise `CKR_ATTRIBUTE_VALUE_INVALID` is returned.
+
+| LMS type |
+| ---  |
+{{~ for e in HssLms ~}}
+| {{ e }} |
+{{~ end ~}}
+
+| LM-OTS type |
+| ---  |
+{{~ for e in HssLmots ~}}
+| {{ e }} |
+{{~ end ~}}
+
 ## ML-KEM keys
 _Bouncy Hsm_ supports {{ MlKemCount }} different ML-KEM key parameters.
 

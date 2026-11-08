@@ -39,6 +39,7 @@ else
                         <option value="@GeneratedKeyType.Mongomery">Mongomery curve key pair</option>
                         <option value="@GeneratedKeyType.MlDsa">ML-DSA key pair</option>
                         <option value="@GeneratedKeyType.SlhDsa">SLH-DSA key pair</option>
+                        <option value="@GeneratedKeyType.Hss">HSS (LMS) key pair</option>
                         <option value="@GeneratedKeyType.MlKem">ML-KEM key pair</option>
                         <option value="@GeneratedKeyType.Aes">AES key</option>
                         <option value="@GeneratedKeyType.Camellia">CAMELLIA key</option>
@@ -75,6 +76,10 @@ else
             else if (this.KeyType == GeneratedKeyType.SlhDsa)
             {
                 <GenerateSlhDsaKeys SlotId="@this.SlotId" OnLoadingChanged="e => this.isInLoading = e" />
+            }
+            else if (this.KeyType == GeneratedKeyType.Hss)
+            {
+                <GenerateHssKeys SlotId="@this.SlotId" OnLoadingChanged="e => this.isInLoading = e" />
             }
             else if (this.KeyType == GeneratedKeyType.MlKem)
             {
@@ -118,6 +123,7 @@ else
         Mongomery,
         MlDsa,
         SlhDsa,
+        Hss,
         MlKem,
         Aes,
         Camellia,

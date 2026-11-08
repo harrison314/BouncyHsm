@@ -3,7 +3,7 @@
 Supported algorithms for _Bouncy Hsm_ version 2.3.4.0 (commit _b7b1c3040fa5b1d596cc5767d5c70912917db5fa_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 210 mechanisms.
+_Bouncy Hsm_ supports 212 mechanisms.
 
 BouncyHsm provides PKCS#11 interfaces for versions [2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf),
 [3.1](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf),
@@ -225,6 +225,8 @@ The mechanism can also be used in older versions of the native API.
 | `CKM_CHACHA20_POLY1305` <sub>v3.1</sub> | 32  | 32 |   |   |   |   | ✓ |   |   |   |   |
 | `CKM_HKDF_DERIVE` <sub>v3.1</sub> | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |   |
 | `CKM_SALSA20_KEY_GEN` <sub>v3.1</sub> | 32  | 32 |   |   |   |   |   |   | ✓ |   |   |
+| `CKM_HSS_KEY_PAIR_GEN` <sub>v3.1</sub> | 0  | 0 |   |   |   |   |   | ✓ |   |   |   |
+| `CKM_HSS` <sub>v3.1</sub> | 0  | 0 |   | ✓ |   |   | ✓ |   |   |   |   |
 
 ## Elliptic curves
 _Bouncy Hsm_ supports 84 different named elliptic curves.
@@ -375,6 +377,57 @@ _Bouncy Hsm_ supports 12 different SLH-DSA key parameters.
 | SLH-DSA-SHAKE-256S |
 | SLH-DSA-SHA2-256F |
 | SLH-DSA-SHAKE-256F |
+
+## HSS keys
+_Bouncy Hsm_ supports 20 different LMS types and 16 different LM-OTS types for HSS (RFC 8554) keys. Each level of an HSS key uses one LMS type and one LM-OTS type; 1 to 8 levels are supported.
+
+**Note:** HSS private keys are stateful; `CKA_VALUE` holds the BouncyCastle encoding including the current index. Importing the same private key twice (one or several slots) creates independent copies that will reuse one-time keys - avoiding this is the caller's responsibility.
+
+**Note:** In a multi-level HSS key, the LMS hash size (m) of a level must not be larger than the LM-OTS hash size (n) of the level above it (BouncyCastle limitation). Such combinations are rejected with `CKR_TEMPLATE_INCONSISTENT`.
+
+**Note:** `C_CreateObject` of an HSS private key requires `CKA_HSS_LMS_TYPES` and `CKA_HSS_LMOTS_TYPES` matching `CKA_VALUE`, and `CKA_HSS_LEVELS` matching `CKA_VALUE` (it defaults to 1, so it can be omitted only for a one-level key); otherwise it fails with `CKR_ATTRIBUTE_VALUE_INVALID`. `CKA_HSS_KEYS_REMAINING` supplied in a template is ignored and recomputed from `CKA_VALUE`. For an HSS public key, `CKA_HSS_LEVELS`, `CKA_HSS_LMS_TYPE` and `CKA_HSS_LMOTS_TYPE` may be omitted (they are derived from `CKA_VALUE`); when supplied they must match `CKA_VALUE`, otherwise `CKR_ATTRIBUTE_VALUE_INVALID` is returned.
+
+| LMS type |
+| ---  |
+| LMS_SHA256_M32_H5 |
+| LMS_SHA256_M32_H10 |
+| LMS_SHA256_M32_H15 |
+| LMS_SHA256_M32_H20 |
+| LMS_SHA256_M32_H25 |
+| LMS_SHA256_M24_H5 |
+| LMS_SHA256_M24_H10 |
+| LMS_SHA256_M24_H15 |
+| LMS_SHA256_M24_H20 |
+| LMS_SHA256_M24_H25 |
+| LMS_SHAKE_M32_H5 |
+| LMS_SHAKE_M32_H10 |
+| LMS_SHAKE_M32_H15 |
+| LMS_SHAKE_M32_H20 |
+| LMS_SHAKE_M32_H25 |
+| LMS_SHAKE_M24_H5 |
+| LMS_SHAKE_M24_H10 |
+| LMS_SHAKE_M24_H15 |
+| LMS_SHAKE_M24_H20 |
+| LMS_SHAKE_M24_H25 |
+
+| LM-OTS type |
+| ---  |
+| LMOTS_SHA256_N32_W1 |
+| LMOTS_SHA256_N32_W2 |
+| LMOTS_SHA256_N32_W4 |
+| LMOTS_SHA256_N32_W8 |
+| LMOTS_SHA256_N24_W1 |
+| LMOTS_SHA256_N24_W2 |
+| LMOTS_SHA256_N24_W4 |
+| LMOTS_SHA256_N24_W8 |
+| LMOTS_SHAKE_N32_W1 |
+| LMOTS_SHAKE_N32_W2 |
+| LMOTS_SHAKE_N32_W4 |
+| LMOTS_SHAKE_N32_W8 |
+| LMOTS_SHAKE_N24_W1 |
+| LMOTS_SHAKE_N24_W2 |
+| LMOTS_SHAKE_N24_W4 |
+| LMOTS_SHAKE_N24_W8 |
 
 ## ML-KEM keys
 _Bouncy Hsm_ supports 3 different ML-KEM key parameters.

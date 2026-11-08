@@ -64,6 +64,87 @@ public class PkcsFacadeTests
     }
 
     [TestMethod]
+    public async Task GetObjects_HssPrivateKey_CanNotSignOrCreateCsr()
+    {
+        HssPrivateKeyObject hss = new HssPrivateKeyObject() { Id = Guid.NewGuid(), CkaLabel = "hss", CkaId = new byte[] { 1 } };
+        MlDsaPrivateKeyObject mlDsa = new MlDsaPrivateKeyObject() { Id = Guid.NewGuid(), CkaLabel = "mldsa", CkaId = new byte[] { 2 } };
+
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.FindObjects(12U, It.IsNotNull<FindObjectSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<StorageObject>() { hss, mlDsa });
+
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, TimeProvider.System, new NullLogger<PkcsFacade>());
+
+        DomainResult<PkcsObjects> result = await pkcsFacade.GetObjects(12U, default);
+        PkcsObjects objects = result.AssertOkValue();
+
+        PkcsObjectInfo hssInfo = objects.Objects.Single(t => t.CkaLabel == "hss");
+        Assert.IsFalse(hssInfo.CanSign);
+        Assert.IsFalse(hssInfo.CanCreateCsr);
+
+        PkcsObjectInfo mlDsaInfo = objects.Objects.Single(t => t.CkaLabel == "mldsa");
+        Assert.IsTrue(mlDsaInfo.CanSign);
+        Assert.IsTrue(mlDsaInfo.CanCreateCsr);
+    }
+
+    [TestMethod]
+    public async Task GeneratePkcs10_HssKey_InvalidInput()
+    {
+        HssPrivateKeyObject key = new HssPrivateKeyObject() { Id = Guid.NewGuid() };
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, key.Id, It.IsAny<CancellationToken>())).ReturnsAsync(key);
+
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, TimeProvider.System, new NullLogger<PkcsFacade>());
+
+        DomainResult<byte[]> result = await pkcsFacade.GeneratePkcs10(new GeneratePkcs10Request() { SlotId = 12U, PrivateKeyId = key.Id, PublicKeyId = Guid.NewGuid() }, default);
+        Assert.IsInstanceOfType<DomainResult<byte[]>.InvalidInput>(result);
+    }
+
+    [TestMethod]
+    public async Task GenerateSelfSignedCert_HssKey_InvalidInput()
+    {
+        HssPrivateKeyObject key = new HssPrivateKeyObject() { Id = Guid.NewGuid() };
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, key.Id, It.IsAny<CancellationToken>())).ReturnsAsync(key);
+
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, TimeProvider.System, new NullLogger<PkcsFacade>());
+
+        DomainResult<Guid> result = await pkcsFacade.GenerateSelfSignedCert(new GenerateSelfSignedCertRequest() { SlotId = 12U, PrivateKeyId = key.Id, PublicKeyId = Guid.NewGuid(), Validity = TimeSpan.FromDays(1) }, default);
+        Assert.IsInstanceOfType<DomainResult<Guid>.InvalidInput>(result);
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public async Task DeleteAssociatedObjects_TakesLockAndReloads(bool stillExists)
+    {
+        Guid objectId = Guid.NewGuid();
+        X509CertificateObject cert = new X509CertificateObject() { Id = objectId, CkaId = new byte[] { 0x45, 0x55 }, CkaLabel = "certificate1" };
+
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.SetupSequence(t => t.TryLoadObject(12U, objectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(cert)
+            .ReturnsAsync(stillExists ? cert : null);
+        repository.Setup(t => t.FindObjects(12U, It.IsNotNull<FindObjectSpecification>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<StorageObject>() { cert });
+        repository.Setup(t => t.DestroyObject(12U, cert, It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
+
+        PkcsFacade pkcsFacade = new PkcsFacade(repository.Object, TimeProvider.System, new NullLogger<PkcsFacade>());
+
+        IDisposable held = await ObjectWriteLocks.Acquire(objectId, default);
+        Task<VoidDomainResult> task = pkcsFacade.DeleteAssociatedObjects(12U, objectId, default).AsTask();
+        await Task.Delay(100);
+        Assert.IsFalse(task.IsCompleted);
+
+        held.Dispose();
+        VoidDomainResult result = await task.WaitAsync(TimeSpan.FromSeconds(10));
+        result.AssertOk();
+
+        repository.Verify(t => t.DestroyObject(12U, cert, It.IsAny<CancellationToken>()), stillExists ? Times.Once() : Times.Never());
+    }
+
+    [TestMethod]
     [Ignore]
     public async Task GetObjects_Call_Success()
     {
