@@ -31,6 +31,14 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
+        StorageObject foundObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession,
+            p11Session,
+            request.ObjectHandle,
+            cancellationToken);
+
+        using IDisposable writeLock = await ObjectWriteLocks.Acquire(foundObject.Id, cancellationToken);
+
+        // Re-load inside the lock so all checks use the current object state.
         StorageObject storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession,
             p11Session,
             request.ObjectHandle,

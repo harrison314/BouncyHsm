@@ -5,6 +5,9 @@ using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Core.UseCases.Implementation;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
+using Org.BouncyCastle.Security;
 
 namespace BouncyHsm.Core.Tests.UseCases.Implementation;
 
@@ -199,5 +202,92 @@ public class StorageObjectsFacadeTests
         domainResult.AssertOk();
 
         repository.VerifyAll();
+    }
+
+    [TestMethod]
+    public async Task SetObjectAttribute_ObjectLocked_WaitsForLock()
+    {
+        Guid objectId = Guid.NewGuid();
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, objectId, It.IsAny<CancellationToken>()))
+           .ReturnsAsync(new DataObject() { Id = objectId, CkaLabel = "label", CkaValue = new byte[32], CkaModifiable = false });
+        repository.Setup(t => t.UpdateObject(12U, It.IsNotNull<StorageObject>(), It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
+
+        StorageObjectsFacade storageObjectFacade = new StorageObjectsFacade(repository.Object, new NullLogger<StorageObjectsFacade>());
+        HighLevelAttributeValue value = new HighLevelAttributeValue() { TypeTag = AttrTypeTag.CkBool, ValueAsBool = true };
+
+        IDisposable held = await ObjectWriteLocks.Acquire(objectId, default);
+        Task<VoidDomainResult> task = storageObjectFacade.SetObjectAttribute(12U, objectId, CKA.CKA_MODIFIABLE.ToString(), value, default).AsTask();
+        await Task.Delay(100);
+        Assert.IsFalse(task.IsCompleted);
+
+        held.Dispose();
+        VoidDomainResult result = await task.WaitAsync(TimeSpan.FromSeconds(10));
+        result.AssertOk();
+    }
+
+    [TestMethod]
+    public async Task DeleteStorageObject_ObjectLocked_WaitsForLock()
+    {
+        Guid objectId = Guid.NewGuid();
+        StorageObject storageObject = new DataObject() { Id = objectId, CkaLabel = "label", CkaValue = new byte[32], CkaDestroyable = true };
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, objectId, It.IsAny<CancellationToken>()))
+           .ReturnsAsync(storageObject);
+        repository.Setup(t => t.DestroyObject(12U, storageObject, It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
+
+        StorageObjectsFacade storageObjectFacade = new StorageObjectsFacade(repository.Object, new NullLogger<StorageObjectsFacade>());
+
+        IDisposable held = await ObjectWriteLocks.Acquire(objectId, default);
+        Task<VoidDomainResult> task = storageObjectFacade.DeleteStorageObject(12U, objectId, default).AsTask();
+        await Task.Delay(100);
+        Assert.IsFalse(task.IsCompleted);
+
+        held.Dispose();
+        VoidDomainResult result = await task.WaitAsync(TimeSpan.FromSeconds(10));
+        result.AssertOk();
+    }
+
+    [TestMethod]
+    public async Task SetObjectAttribute_HssPrivateKeyValue_RecomputesKeysRemaining()
+    {
+        HssKeyPairGenerator generator = new HssKeyPairGenerator();
+        generator.Init(new HssKeyGenerationParameters(
+            new[] { new LmsParameters(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w8) },
+            new SecureRandom()));
+        AsymmetricCipherKeyPair pair = generator.GenerateKeyPair();
+        byte[] freshEncoding = ((HssPrivateKeyParameters)pair.Private).GetEncoded();
+
+        HssSigner signer = new HssSigner();
+        signer.Init(true, pair.Private);
+        signer.GenerateSignature(new byte[] { 1 });
+
+        Guid objectId = Guid.NewGuid();
+        HssPrivateKeyObject stored = new HssPrivateKeyObject();
+        stored.Id = objectId;
+        stored.CkaLabel = "hss";
+        stored.SetPrivateKey(pair.Private);
+        Assert.AreEqual(31u, stored.CkaHssKeysRemaining);
+
+        StorageObject? updated = null;
+        Mock<IPersistentRepository> repository = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        repository.Setup(t => t.TryLoadObject(12U, objectId, It.IsAny<CancellationToken>()))
+           .ReturnsAsync(stored);
+        repository.Setup(t => t.UpdateObject(12U, It.IsNotNull<StorageObject>(), It.IsAny<CancellationToken>()))
+            .Callback((uint _, StorageObject so, CancellationToken _) => updated = so)
+            .Returns(ValueTask.CompletedTask);
+
+        StorageObjectsFacade storageObjectFacade = new StorageObjectsFacade(repository.Object, new NullLogger<StorageObjectsFacade>());
+        HighLevelAttributeValue value = new HighLevelAttributeValue() { TypeTag = AttrTypeTag.ByteArray, ValueAsByteArray = freshEncoding };
+
+        VoidDomainResult result = await storageObjectFacade.SetObjectAttribute(12U, objectId, CKA.CKA_VALUE.ToString(), value, default);
+        result.AssertOk();
+
+        Assert.IsNotNull(updated);
+        HssPrivateKeyObject updatedKey = (HssPrivateKeyObject)updated;
+        CollectionAssert.AreEqual(freshEncoding, updatedKey.CkaValue);
+        Assert.AreEqual(32u, updatedKey.CkaHssKeysRemaining);
     }
 }

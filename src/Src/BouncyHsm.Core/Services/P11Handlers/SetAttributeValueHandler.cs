@@ -28,6 +28,11 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
+        StorageObject foundObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession, p11Session, request.ObjectHandle, cancellationToken);
+
+        using IDisposable writeLock = await ObjectWriteLocks.Acquire(foundObject.Id, cancellationToken);
+
+        // Re-load inside the lock so we never persist a stale object state.
         StorageObject storageObject = await this.hwServices.FindObjectByHandle<StorageObject>(memorySession, p11Session, request.ObjectHandle, cancellationToken);
         if (!storageObject.CkaModifiable)
         {

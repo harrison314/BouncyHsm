@@ -41,11 +41,22 @@ public class MigrationFacade : IMigrationFacade
 
             IReadOnlyList<StorageObject> objects = await this.hwServices.Persistence.FindObjects(slot.SlotId, specification, cancellationToken);
 
-            foreach (StorageObject storageObject in objects)
+            foreach (StorageObject foundObject in objects)
             {
                 this.logger.LogTrace("Process object with id {ObjectId} and label <{ObjectLabel}>",
-                    storageObject.Id,
-                    storageObject.CkaLabel);
+                    foundObject.Id,
+                    foundObject.CkaLabel);
+
+                // Lock and re-load so that a concurrent update (e.g. a persisted HSS signature state)
+                // is never overwritten with the stale state loaded by FindObjects.
+                using IDisposable writeLock = await ObjectWriteLocks.Acquire(foundObject.Id, cancellationToken);
+
+                StorageObject? storageObject = await this.hwServices.Persistence.TryLoadObject(slot.SlotId, foundObject.Id, cancellationToken);
+                if (storageObject == null)
+                {
+                    this.logger.LogDebug("Object with id {ObjectId} was removed during migration, skipping.", foundObject.Id);
+                    continue;
+                }
 
                 try
                 {

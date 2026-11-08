@@ -82,6 +82,8 @@ public class StorageObjectsFacade : IStorageObjectsFacade
     {
         this.logger.LogTrace("Entering to DeleteStorageObject with slotId {slotId}, id {id}.", slotId, id);
 
+        using IDisposable writeLock = await ObjectWriteLocks.Acquire(id, cancellationToken);
+
         StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
         if (storageObject == null)
         {
@@ -137,6 +139,9 @@ public class StorageObjectsFacade : IStorageObjectsFacade
     public async ValueTask<VoidDomainResult> SetObjectAttribute(uint slotId, Guid id, string attributeName, HighLevelAttributeValue value, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to SetObjectAttribute with slotId {slotId}, id {id}, attributeName {attributeName}.", slotId, id, attributeName);
+
+        using IDisposable writeLock = await ObjectWriteLocks.Acquire(id, cancellationToken);
+
         StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
         if (storageObject == null)
         {
@@ -197,6 +202,12 @@ public class StorageObjectsFacade : IStorageObjectsFacade
 
         try
         {
+            if (newStorageObject is HssPrivateKeyObject)
+            {
+                // Keep CKA_HSS_KEYS_REMAINING consistent with an admin-edited CKA_VALUE.
+                newStorageObject.ReComputeAttributes();
+            }
+
             newStorageObject.Validate();
         }
         catch (Exception ex)
