@@ -1,4 +1,5 @@
-﻿using BouncyHsm.Core.Services.Contracts;
+﻿using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
@@ -94,5 +95,32 @@ public class ObjectWriteLocksTests
         cts.Cancel();
 
         await Assert.ThrowsAsync<OperationCanceledException>(async () => await ObjectWriteLocks.Acquire(id, cts.Token));
+    }
+
+    [TestMethod]
+    public async Task Acquire_NonStatefulObject_ReturnsNullWithoutLocking()
+    {
+        DataObject dataObject = new DataObject() { Id = Guid.NewGuid() };
+
+        using IDisposable held = await ObjectWriteLocks.Acquire(dataObject.Id, CancellationToken.None);
+        IDisposable? writeLock = await ObjectWriteLocks.Acquire(dataObject, CancellationToken.None).AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.IsNull(writeLock);
+    }
+
+    [TestMethod]
+    public async Task Acquire_StatefulObject_LocksById()
+    {
+        HssPrivateKeyObject key = new HssPrivateKeyObject() { Id = Guid.NewGuid() };
+
+        IDisposable? first = await ObjectWriteLocks.Acquire(key, CancellationToken.None);
+        Assert.IsNotNull(first);
+
+        Task<IDisposable> second = ObjectWriteLocks.Acquire(key.Id, CancellationToken.None).AsTask();
+        await Task.Delay(50);
+        Assert.IsFalse(second.IsCompleted, "Lock by object and lock by id must be the same lock.");
+
+        first.Dispose();
+        using IDisposable secondLock = await second.WaitAsync(TimeSpan.FromSeconds(10));
     }
 }

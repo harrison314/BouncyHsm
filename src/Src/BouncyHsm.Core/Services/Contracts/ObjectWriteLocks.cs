@@ -1,16 +1,21 @@
-﻿namespace BouncyHsm.Core.Services.Contracts;
+﻿using BouncyHsm.Core.Services.Contracts.Entities;
+
+namespace BouncyHsm.Core.Services.Contracts;
 
 /// <summary>
-/// Process-wide per-object write lock. Writers must acquire, then (re)load the object,
-/// modify, persist and release.
+/// Process-wide write lock for stateful key objects (<see cref="IStatefulKeyObject"/>, e.g. HSS private keys).
 /// </summary>
 /// <remarks>
-/// Locks are striped: a fixed array of semaphores is shared by all objects, so memory use is bounded.
-/// Two object ids mapped to the same stripe only serialize each other. This can not deadlock because
-/// no code path holds an object lock while acquiring another one (each caller - SetAttributeValueHandler,
-/// DestroyObjectHandler, HssStatefulSigner, StorageObjectsFacade, MigrationFacade and PkcsFacade -
-/// takes a single lock, works on a single object and releases it before taking the next one).
-/// Keep it that way when adding new callers.
+/// Only stateful objects are locked: for them, persisting a stale copy would rewind the key state
+/// and reuse a one-time key. Other objects are written without a lock, as before.
+/// <para>
+/// Usage: load the object, call <see cref="Acquire(StorageObject, CancellationToken)"/>, and when
+/// a lock is returned, reload the object inside it before modifying, persisting or destroying it.
+/// The class of an object never changes, so deciding on the first (unlocked) load is safe.
+/// </para>
+/// <para>
+/// No code path holds two object locks at the same time; keep it that way when adding new callers.
+/// </para>
 /// </remarks>
 public static class ObjectWriteLocks
 {
@@ -18,7 +23,27 @@ public static class ObjectWriteLocks
 
     private static readonly SemaphoreSlim[] stripes = CreateStripes();
 
-    public static async ValueTask<IDisposable> Acquire(Guid objectId, CancellationToken cancellationToken)
+    /// <summary>
+    /// Acquires the write lock for <paramref name="storageObject"/> when it is a stateful key object.
+    /// </summary>
+    /// <returns>The lock to dispose, or <c>null</c> when the object does not need one.</returns>
+    public static ValueTask<IDisposable?> Acquire(StorageObject storageObject, CancellationToken cancellationToken)
+    {
+        System.Diagnostics.Debug.Assert(storageObject != null);
+
+        if (storageObject is not IStatefulKeyObject)
+        {
+            return new ValueTask<IDisposable?>((IDisposable?)null);
+        }
+
+        return AcquireNullable(storageObject.Id, cancellationToken);
+    }
+
+    /// <summary>
+    /// Acquires the write lock by object id. For callers that already know the object is stateful
+    /// (e.g. the HSS signer, which must lock before it loads the key).
+    /// </summary>
+    internal static async ValueTask<IDisposable> Acquire(Guid objectId, CancellationToken cancellationToken)
     {
         SemaphoreSlim semaphore = stripes[GetStripeIndex(objectId)];
         await semaphore.WaitAsync(cancellationToken);
@@ -28,6 +53,11 @@ public static class ObjectWriteLocks
     internal static int GetStripeIndex(Guid objectId)
     {
         return (int)((uint)objectId.GetHashCode() & (StripeCount - 1));
+    }
+
+    private static async ValueTask<IDisposable?> AcquireNullable(Guid objectId, CancellationToken cancellationToken)
+    {
+        return await Acquire(objectId, cancellationToken);
     }
 
     private static SemaphoreSlim[] CreateStripes()

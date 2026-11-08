@@ -6,6 +6,9 @@ using BouncyHsm.Core.Services.P11Handlers;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
+using Org.BouncyCastle.Security;
 using System.Text;
 
 namespace BouncyHsm.Core.Tests.Services.P11Handlers;
@@ -19,6 +22,15 @@ public class ObjectWriteLockHandlerTests
 
     private static readonly AppIdentification AppId = new AppIdentification() { AppName = "test", AppNonce = "nonce", Pid = 1 };
 
+    private static readonly Lazy<AsymmetricCipherKeyPair> hssKeyPair = new Lazy<AsymmetricCipherKeyPair>(() =>
+    {
+        HssKeyPairGenerator generator = new HssKeyPairGenerator();
+        generator.Init(new HssKeyGenerationParameters(
+            new[] { new LmsParameters(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w8) },
+            new SecureRandom()));
+        return generator.GenerateKeyPair();
+    });
+
     private static DataObject CreateTokenObject(Guid id, string label)
     {
         return new DataObject()
@@ -29,6 +41,17 @@ public class ObjectWriteLockHandlerTests
             CkaToken = true,
             CkaPrivate = false
         };
+    }
+
+    private static HssPrivateKeyObject CreateHssTokenKey(Guid id, string label)
+    {
+        HssPrivateKeyObject key = new HssPrivateKeyObject();
+        key.Id = id;
+        key.SetPrivateKey(hssKeyPair.Value.Private);
+        key.CkaLabel = label;
+        key.CkaToken = true;
+        key.CkaPrivate = false;
+        return key;
     }
 
     private static Mock<IP11HwServices> CreateHwServices(Guid objectId, Mock<IPersistentRepository> persistence, out Mock<IMemorySession> memorySession)
@@ -67,11 +90,11 @@ public class ObjectWriteLockHandlerTests
     }
 
     [TestMethod]
-    public async Task SetAttributeValue_WaitsForObjectLock_AndPersistsObjectReloadedInsideLock()
+    public async Task SetAttributeValue_HssKey_WaitsForObjectLock_AndPersistsObjectReloadedInsideLock()
     {
         Guid objectId = Guid.NewGuid();
-        DataObject firstLoad = CreateTokenObject(objectId, "first");
-        DataObject secondLoad = CreateTokenObject(objectId, "second");
+        HssPrivateKeyObject firstLoad = CreateHssTokenKey(objectId, "first");
+        HssPrivateKeyObject secondLoad = CreateHssTokenKey(objectId, "second");
 
         Mock<IPersistentRepository> persistence = new Mock<IPersistentRepository>(MockBehavior.Strict);
         persistence.SetupSequence(t => t.TryLoadObject(SlotId, objectId, It.IsAny<CancellationToken>()))
@@ -126,11 +149,11 @@ public class ObjectWriteLockHandlerTests
     }
 
     [TestMethod]
-    public async Task DestroyObject_WaitsForObjectLock_AndDestroysObjectReloadedInsideLock()
+    public async Task DestroyObject_HssKey_WaitsForObjectLock_AndDestroysObjectReloadedInsideLock()
     {
         Guid objectId = Guid.NewGuid();
-        DataObject firstLoad = CreateTokenObject(objectId, "first");
-        DataObject secondLoad = CreateTokenObject(objectId, "second");
+        HssPrivateKeyObject firstLoad = CreateHssTokenKey(objectId, "first");
+        HssPrivateKeyObject secondLoad = CreateHssTokenKey(objectId, "second");
 
         Mock<IPersistentRepository> persistence = new Mock<IPersistentRepository>(MockBehavior.Strict);
         persistence.SetupSequence(t => t.TryLoadObject(SlotId, objectId, It.IsAny<CancellationToken>()))
@@ -173,5 +196,75 @@ public class ObjectWriteLockHandlerTests
         Assert.AreSame(secondLoad, destroyed, "The object reloaded inside the lock must be destroyed.");
         memorySession.Verify(t => t.DestroyObjectHandle(objectId), Times.Once);
         persistence.Verify(t => t.TryLoadObject(SlotId, objectId, It.IsAny<CancellationToken>()), Times.Exactly(2));
+    }
+
+    [TestMethod]
+    public async Task SetAttributeValue_NonStatefulObject_DoesNotTakeObjectLock()
+    {
+        Guid objectId = Guid.NewGuid();
+        DataObject storedObject = CreateTokenObject(objectId, "first");
+
+        Mock<IPersistentRepository> persistence = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        persistence.Setup(t => t.TryLoadObject(SlotId, objectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(storedObject);
+        persistence.Setup(t => t.UpdateObject(SlotId, storedObject, It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
+
+        Mock<IP11HwServices> hw = CreateHwServices(objectId, persistence, out _);
+        SetAttributeValueHandler handler = new SetAttributeValueHandler(hw.Object, new NullLogger<SetAttributeValueHandler>());
+
+        SetAttributeValueRequest request = new SetAttributeValueRequest()
+        {
+            AppId = AppId,
+            SessionId = SessionId,
+            ObjectHandle = ObjectHandle,
+            Template = new AttrValueFromNative[]
+            {
+                new AttrValueFromNative()
+                {
+                    AttributeType = (uint)CKA.CKA_LABEL,
+                    ValueTypeHint = NativeAttributeValue.AttrValueFromNativeTypeByteArray,
+                    ValueRawBytes = Encoding.UTF8.GetBytes("updated")
+                }
+            }
+        };
+
+        using IDisposable held = await ObjectWriteLocks.Acquire(objectId, CancellationToken.None);
+        SetAttributeValueEnvelope envelope = await handler.Handle(request, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.AreEqual((uint)CKR.CKR_OK, envelope.Rv);
+        Assert.AreEqual("updated", storedObject.CkaLabel);
+        persistence.Verify(t => t.TryLoadObject(SlotId, objectId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task DestroyObject_NonStatefulObject_DoesNotTakeObjectLock()
+    {
+        Guid objectId = Guid.NewGuid();
+        DataObject storedObject = CreateTokenObject(objectId, "first");
+
+        Mock<IPersistentRepository> persistence = new Mock<IPersistentRepository>(MockBehavior.Strict);
+        persistence.Setup(t => t.TryLoadObject(SlotId, objectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(storedObject);
+        persistence.Setup(t => t.DestroyObject(SlotId, storedObject, It.IsAny<CancellationToken>()))
+            .Returns(ValueTask.CompletedTask);
+
+        Mock<IP11HwServices> hw = CreateHwServices(objectId, persistence, out Mock<IMemorySession> memorySession);
+        memorySession.Setup(t => t.DestroyObjectHandle(objectId));
+
+        DestroyObjectHandler handler = new DestroyObjectHandler(hw.Object, new NullLoggerFactory(), new NullLogger<DestroyObjectHandler>());
+        DestroyObjectRequest request = new DestroyObjectRequest()
+        {
+            AppId = AppId,
+            SessionId = SessionId,
+            ObjectHandle = ObjectHandle
+        };
+
+        using IDisposable held = await ObjectWriteLocks.Acquire(objectId, CancellationToken.None);
+        DestroyObjectEnvelope envelope = await handler.Handle(request, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.AreEqual((uint)CKR.CKR_OK, envelope.Rv);
+        persistence.Verify(t => t.DestroyObject(SlotId, storedObject, It.IsAny<CancellationToken>()), Times.Once);
+        persistence.Verify(t => t.TryLoadObject(SlotId, objectId, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

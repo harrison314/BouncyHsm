@@ -414,14 +414,18 @@ public class PkcsFacade : IPkcsFacade
 
         foreach (StorageObject foundObject in foundObjects)
         {
-            using IDisposable writeLock = await ObjectWriteLocks.Acquire(foundObject.Id, cancellationToken);
+            StorageObject? currentObject = foundObject;
 
-            // Re-load inside the lock; the object could have been destroyed or changed meanwhile.
-            StorageObject? currentObject = await this.persistentRepository.TryLoadObject(slotId, foundObject.Id, cancellationToken);
-            if (currentObject == null)
+            using IDisposable? writeLock = await ObjectWriteLocks.Acquire(foundObject, cancellationToken);
+            if (writeLock != null)
             {
-                this.logger.LogDebug("Object with id {objectId} no longer exists, skipping delete.", foundObject.Id);
-                continue;
+                // Stateful key: re-load inside the lock; it could have been destroyed meanwhile.
+                currentObject = await this.persistentRepository.TryLoadObject(slotId, foundObject.Id, cancellationToken);
+                if (currentObject == null)
+                {
+                    this.logger.LogDebug("Object with id {objectId} no longer exists, skipping delete.", foundObject.Id);
+                    continue;
+                }
             }
 
             await this.persistentRepository.DestroyObject(slotId, currentObject, cancellationToken);

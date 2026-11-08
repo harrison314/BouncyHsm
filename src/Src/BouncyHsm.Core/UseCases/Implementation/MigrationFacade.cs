@@ -47,15 +47,19 @@ public class MigrationFacade : IMigrationFacade
                     foundObject.Id,
                     foundObject.CkaLabel);
 
-                // Lock and re-load so that a concurrent update (e.g. a persisted HSS signature state)
-                // is never overwritten with the stale state loaded by FindObjects.
-                using IDisposable writeLock = await ObjectWriteLocks.Acquire(foundObject.Id, cancellationToken);
+                StorageObject? storageObject = foundObject;
 
-                StorageObject? storageObject = await this.hwServices.Persistence.TryLoadObject(slot.SlotId, foundObject.Id, cancellationToken);
-                if (storageObject == null)
+                using IDisposable? writeLock = await ObjectWriteLocks.Acquire(foundObject, cancellationToken);
+                if (writeLock != null)
                 {
-                    this.logger.LogDebug("Object with id {ObjectId} was removed during migration, skipping.", foundObject.Id);
-                    continue;
+                    // Stateful key: re-load inside the lock so a concurrently persisted state
+                    // (e.g. after an HSS signature) is never overwritten with the stale copy from FindObjects.
+                    storageObject = await this.hwServices.Persistence.TryLoadObject(slot.SlotId, foundObject.Id, cancellationToken);
+                    if (storageObject == null)
+                    {
+                        this.logger.LogDebug("Object with id {ObjectId} was removed during migration, skipping.", foundObject.Id);
+                        continue;
+                    }
                 }
 
                 try
@@ -139,4 +143,4 @@ public class MigrationFacade : IMigrationFacade
             return storageObject;
         }
     }
-}
+}

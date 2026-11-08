@@ -4,7 +4,7 @@ using Org.BouncyCastle.Pqc.Crypto.Lms;
 
 namespace BouncyHsm.Core.Services.Contracts.Entities;
 
-public class HssPrivateKeyObject : PrivateKeyObject
+public class HssPrivateKeyObject : PrivateKeyObject, IStatefulKeyObject
 {
     public uint CkaHssLevels
     {

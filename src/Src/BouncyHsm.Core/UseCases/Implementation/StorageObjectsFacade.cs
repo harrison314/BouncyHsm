@@ -82,13 +82,23 @@ public class StorageObjectsFacade : IStorageObjectsFacade
     {
         this.logger.LogTrace("Entering to DeleteStorageObject with slotId {slotId}, id {id}.", slotId, id);
 
-        using IDisposable writeLock = await ObjectWriteLocks.Acquire(id, cancellationToken);
-
         StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
         if (storageObject == null)
         {
             this.logger.LogError("Storage object with id {id} not found.", id);
             return new VoidDomainResult.NotFound();
+        }
+
+        using IDisposable? writeLock = await ObjectWriteLocks.Acquire(storageObject, cancellationToken);
+        if (writeLock != null)
+        {
+            // Stateful key: re-load inside the lock so a concurrent signature can not re-create it.
+            storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
+            if (storageObject == null)
+            {
+                this.logger.LogError("Storage object with id {id} not found.", id);
+                return new VoidDomainResult.NotFound();
+            }
         }
 
         await this.persistentRepository.DestroyObject(slotId, storageObject, cancellationToken);
@@ -139,14 +149,23 @@ public class StorageObjectsFacade : IStorageObjectsFacade
     public async ValueTask<VoidDomainResult> SetObjectAttribute(uint slotId, Guid id, string attributeName, HighLevelAttributeValue value, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to SetObjectAttribute with slotId {slotId}, id {id}, attributeName {attributeName}.", slotId, id, attributeName);
-
-        using IDisposable writeLock = await ObjectWriteLocks.Acquire(id, cancellationToken);
-
         StorageObject? storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
         if (storageObject == null)
         {
             this.logger.LogError("Storage object with id {id} not found.", id);
             return new VoidDomainResult.NotFound();
+        }
+
+        using IDisposable? writeLock = await ObjectWriteLocks.Acquire(storageObject, cancellationToken);
+        if (writeLock != null)
+        {
+            // Stateful key: re-load inside the lock so we never persist a stale key state.
+            storageObject = await this.persistentRepository.TryLoadObject(slotId, id, cancellationToken);
+            if (storageObject == null)
+            {
+                this.logger.LogError("Storage object with id {id} not found.", id);
+                return new VoidDomainResult.NotFound();
+            }
         }
 
         if (!Enum.TryParse<CKA>(attributeName, out CKA attributeType))
