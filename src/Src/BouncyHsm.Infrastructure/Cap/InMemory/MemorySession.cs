@@ -4,6 +4,7 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using Org.BouncyCastle.Security;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Remoting;
 
 namespace BouncyHsm.Infrastructure.Cap.InMemory;
 
@@ -354,6 +355,34 @@ public sealed class MemorySession : IMemorySession, IDisposable
             {
                 return null;
             }
+        }
+        finally
+        {
+            this.rwObjectLock.ExitReadLock();
+        }
+    }
+
+    public IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)
+    {
+        this.rwObjectLock.EnterReadLock();
+        try
+        {
+            return this.sessions.SelectMany(q => q.Value.FindObjects(specification))
+                  .ToList();
+        }
+        finally
+        {
+            this.rwObjectLock.ExitReadLock();
+        }
+    }
+
+    public StorageObject? TryLoadObject(Guid id)
+    {
+        this.rwObjectLock.EnterReadLock();
+        try
+        {
+            return this.sessions.Select(t => t.Value.TryLoadObject(id))
+                .FirstOrDefault(t => t != null);
         }
         finally
         {

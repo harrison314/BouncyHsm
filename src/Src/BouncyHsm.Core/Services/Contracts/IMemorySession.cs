@@ -52,4 +52,8 @@ public interface IMemorySession
     void DestroyObjectHandle(Guid id);
 
     uint? GetLastSlotEvent();
+
+    IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
+
+    StorageObject? TryLoadObject(Guid id);
 }

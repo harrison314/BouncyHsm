@@ -55,11 +55,17 @@ public class P11Session : IP11Session
         this.IsContextSpecificLogged = false;
     }
 
-    public IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)
+    //internal IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)
+    //{
+    //    return this.objects.Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
+    //        .Select(t => StorageObjectFactory.CreateFromMemento(t))
+    //        .ToList();
+    //}
+
+    internal IEnumerable<StorageObject> FindObjects(FindObjectSpecification specification)
     {
         return this.objects.Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
-            .Select(t => StorageObjectFactory.CreateFromMemento(t))
-            .ToList();
+            .Select(t => StorageObjectFactory.CreateFromMemento(t));
     }
 
     public void StoreObject(StorageObject storageObject)
@@ -79,7 +85,7 @@ public class P11Session : IP11Session
         this.objects.Add(storageObject.ToMemento());
     }
 
-    public StorageObject? TryLoadObject(Guid id)
+    internal StorageObject? TryLoadObject(Guid id)
     {
         StorageObjectMemento? memento = this.objects.FirstOrDefault(t => t.Id == id);
         return (memento != null) ? StorageObjectFactory.CreateFromMemento(memento) : null;

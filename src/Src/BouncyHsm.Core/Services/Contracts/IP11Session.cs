@@ -32,13 +32,13 @@ public interface IP11Session
         set;
     }
 
-    IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
+    //IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
 
     void StoreObject(StorageObject storageObject);
 
     void UpdateObject(StorageObject storageObject);
 
-    StorageObject? TryLoadObject(Guid id);
+    /*StorageObject? TryLoadObject(Guid id);*/
 
     void DestroyObject(StorageObject storageObject);
 }

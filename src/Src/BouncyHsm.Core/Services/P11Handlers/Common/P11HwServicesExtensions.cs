@@ -36,7 +36,7 @@ internal static class P11HwServicesExtensions
             throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_OBJECT_HANDLE_INVALID, $"Can not resolve {objectHandle} as object handle.");
         }
 
-        StorageObject? storageObject = session.TryLoadObject(storageObjectId.Value);
+        StorageObject? storageObject = memorySession.TryLoadObject(storageObjectId.Value);
         if (storageObject == null)
         {
             storageObject = await hwServices.Persistence.TryLoadObject(session.SlotId, storageObjectId.Value, cancellationToken);
