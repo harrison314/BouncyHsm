@@ -10,10 +10,12 @@ namespace BouncyHsm.Infrastructure.Cap.InMemory;
 
 public sealed class MemorySession : IMemorySession, IDisposable
 {
+    private record struct StorageObjectData(uint OwnedSessionId, StorageObjectMemento Memento);
     private readonly Dictionary<uint, P11Session> sessions;
     private readonly Dictionary<uint, SlotState> slotToSessions;
-    private readonly Dictionary<Guid, uint> objectHandlesToGuid;
-    private readonly Dictionary<uint, Guid> objectHandlesToHandles;
+    private readonly Dictionary<Guid, uint> objectIdToHandles;
+    private readonly Dictionary<uint, Guid> objectHandlesToObjectId;
+    private readonly Dictionary<Guid, StorageObjectData> storageObjects;
     private readonly HashSet<uint> slotEvents;
     private readonly Lock slotEventsLock;
     private readonly ReaderWriterLockSlim rwSessionLock;
@@ -51,8 +53,9 @@ public sealed class MemorySession : IMemorySession, IDisposable
     {
         this.sessions = new Dictionary<uint, P11Session>();
         this.slotToSessions = new Dictionary<uint, SlotState>();
-        this.objectHandlesToGuid = new Dictionary<Guid, uint>();
-        this.objectHandlesToHandles = new Dictionary<uint, Guid>();
+        this.objectIdToHandles = new Dictionary<Guid, uint>();
+        this.objectHandlesToObjectId = new Dictionary<uint, Guid>();
+        this.storageObjects = new Dictionary<Guid, StorageObjectData>();
         this.slotEvents = new HashSet<uint>();
         this.Id = Guid.NewGuid();
         this.Data = sessionData;
@@ -115,6 +118,8 @@ public sealed class MemorySession : IMemorySession, IDisposable
                     }
                 }
 
+                this.RemoveSessionObjects(sessionId);
+
                 return true;
             }
             else
@@ -145,6 +150,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
             foreach (uint sessionId in sessionsToRemove)
             {
                 this.sessions.Remove(sessionId, out _);
+                this.RemoveSessionObjects(sessionId);
             }
 
             this.slotToSessions.Remove(slotId);
@@ -250,7 +256,6 @@ public sealed class MemorySession : IMemorySession, IDisposable
                 }
             }
 
-
             return new MemorySessionStatus(roSessions, rwSessions);
         }
         finally
@@ -310,16 +315,16 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwObjectLock.EnterWriteLock();
         try
         {
-            if (this.objectHandlesToGuid.TryGetValue(storageObject.Id, out uint handle))
+            if (this.objectIdToHandles.TryGetValue(storageObject.Id, out uint handle))
             {
                 return handle;
             }
 
             for (uint handleId = 1000; handleId < 5_000_000; handleId++)
             {
-                if (this.objectHandlesToHandles.TryAdd(handleId, storageObject.Id))
+                if (this.objectHandlesToObjectId.TryAdd(handleId, storageObject.Id))
                 {
-                    this.objectHandlesToGuid.TryAdd(storageObject.Id, handleId);
+                    this.objectIdToHandles.TryAdd(storageObject.Id, handleId);
                     return handleId;
                 }
             }
@@ -337,7 +342,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwObjectLock.EnterReadLock();
         try
         {
-            if (this.objectHandlesToHandles.TryGetValue(objectHandle, out Guid id))
+            if (this.objectHandlesToObjectId.TryGetValue(objectHandle, out Guid id))
             {
                 return id;
             }
@@ -357,8 +362,9 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwObjectLock.EnterReadLock();
         try
         {
-            return this.sessions.SelectMany(q => q.Value.FindObjects(specification))
-                  .ToList();
+            return this.storageObjects.Values.Where(t => (specification.IsUserLogged || !t.Memento.GetCkaPrivate()) && t.Memento.IsMatch(specification.Template))
+                 .Select(t => StorageObjectFactory.CreateFromMemento(t.Memento))
+                 .ToList();
         }
         finally
         {
@@ -371,8 +377,14 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwObjectLock.EnterReadLock();
         try
         {
-            return this.sessions.Select(t => t.Value.TryLoadObject(id))
-                .FirstOrDefault(t => t != null);
+            if (this.storageObjects.TryGetValue(id, out StorageObjectData data))
+            {
+                return StorageObjectFactory.CreateFromMemento(data.Memento);
+            }
+            else
+            {
+                return null;
+            }
         }
         finally
         {
@@ -385,15 +397,8 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwObjectLock.EnterWriteLock();
         try
         {
-            foreach (P11Session session in this.sessions.Values)
-            {
-                if (session.TryDestroyObject(storageObject))
-                {
-                    return;
-                }
-            }
-
-            System.Diagnostics.Debug.Fail("Storage object not found.");
+            bool success = this.storageObjects.Remove(storageObject.Id);
+            System.Diagnostics.Debug.Assert(success, "Object not exists.");
         }
         finally
         {
@@ -403,16 +408,41 @@ public sealed class MemorySession : IMemorySession, IDisposable
 
     public void StoreObject(IP11Session session, StorageObject storageObject)
     {
-        ((P11Session)session).StoreObject(storageObject);
+        this.rwObjectLock.EnterWriteLock();
+        try
+        {
+            if (storageObject.Id == Guid.Empty)
+            {
+                storageObject.Id = Guid.CreateVersion7();
+            }
+
+            this.storageObjects.Add(storageObject.Id,
+                new StorageObjectData(session.SessionId, storageObject.ToMemento()));
+        }
+        finally
+        {
+            this.rwObjectLock.ExitWriteLock();
+        }
     }
 
     public void UpdateObject(StorageObject storageObject)
     {
-        //TODO: refactor this method
-       P11Session session = this.sessions.Values.Where(t => t.TryLoadObject(storageObject.Id) != null)
-            .Single();
-
-        session.UpdateObject(storageObject);
+        this.rwObjectLock.EnterWriteLock();
+        try
+        {
+            if (this.storageObjects.TryGetValue(storageObject.Id, out StorageObjectData data))
+            {
+                this.storageObjects[storageObject.Id] = new StorageObjectData(data.OwnedSessionId, storageObject.ToMemento());
+            }
+            else
+            {
+                System.Diagnostics.Debug.Fail("Storage object does not exists.");
+            }
+        }
+        finally
+        {
+            this.rwObjectLock.ExitWriteLock();
+        }
     }
 
     public void DestroyObjectHandle(Guid id)
@@ -420,9 +450,9 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwObjectLock.EnterWriteLock();
         try
         {
-            if (this.objectHandlesToGuid.Remove(id, out uint handle))
+            if (this.objectIdToHandles.Remove(id, out uint handle))
             {
-                this.objectHandlesToHandles.Remove(handle, out _);
+                this.objectHandlesToObjectId.Remove(handle, out _);
             }
         }
         finally
@@ -451,6 +481,22 @@ public sealed class MemorySession : IMemorySession, IDisposable
     {
         this.rwSessionLock.Dispose();
         this.rwObjectLock.Dispose();
+    }
+
+    private void RemoveSessionObjects(uint sessionId)
+    {
+        List<Guid> sessionObjects = this.storageObjects.Where(t => t.Value.OwnedSessionId == sessionId)
+            .Select(t => t.Key)
+            .ToList();
+
+        foreach (Guid objectId in sessionObjects)
+        {
+            this.storageObjects.Remove(objectId);
+            if (this.objectIdToHandles.Remove(objectId, out uint handleId))
+            {
+                this.objectHandlesToObjectId.Remove(handleId);
+            }
+        }
     }
 
     internal void NotifySlotEvent(uint slotId)
