@@ -46,8 +46,8 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
             };
         }
 
-        if ((userType == CKU.CKU_SO && memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER))
-            || (userType == CKU.CKU_USER && memorySession.IsLogged(p11Session.SessionId, CKU.CKU_SO)))
+        if ((userType == CKU.CKU_SO && memorySession.IsLogged(p11Session, CKU.CKU_USER))
+            || (userType == CKU.CKU_USER && memorySession.IsLogged(p11Session, CKU.CKU_SO)))
         {
             this.logger.LogError("Another user type already logged in in session {SessionId} for actual user type {UserType}.",
                 p11Session.SessionId,
@@ -98,7 +98,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
         }
         else
         {
-            if (memorySession.IsLogged(p11Session.SessionId, userType))
+            if (memorySession.IsLogged(p11Session, userType))
             {
                 this.logger.LogDebug("User already logged in sessionId {SessionId}.", request.SessionId);
                 return new LoginEnvelope()
@@ -116,7 +116,7 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
                 };
             }
 
-            memorySession.SetLoginStatus(p11Session.SessionId, userType, true);
+            memorySession.SetLoginStatus(p11Session, userType, true);
 
             this.logger.LogInformation("Successfully logged to slot {slotId} with token {TokenSerial}.", slot.SlotId, slot.Token.SerialNumber);
             return new LoginEnvelope()

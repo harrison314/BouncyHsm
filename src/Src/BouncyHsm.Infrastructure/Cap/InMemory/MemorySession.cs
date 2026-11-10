@@ -63,7 +63,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwObjectLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
     }
 
-    public uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom)
+    public IP11Session CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom)
     {
         P11Session newSession = new P11Session(slotId, isRwSession, secureRandom);
 
@@ -87,7 +87,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
                         this.slotToSessions.Add(slotId, newSlotState);
                     }
 
-                    return sessionId;
+                    return newSession;
                 }
             }
 
@@ -157,16 +157,11 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
-    public bool IsLogged(uint sessionId, CKU userType)
+    public bool IsLogged(IP11Session session, CKU userType)
     {
         this.rwSessionLock.EnterReadLock();
         try
         {
-            if (!this.sessions.TryGetValue(sessionId, out P11Session? session))
-            {
-                throw new RpcPkcs11Exception(CKR.CKR_SESSION_HANDLE_INVALID, $"Session {sessionId} does not exist.");
-            }
-
             LoggedUser loggedUser = this.slotToSessions[session.SlotId].LoggedState;
             return userType switch
             {
@@ -182,16 +177,11 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
-    public void SetLoginStatus(uint sessionId, CKU userType, bool isLogged)
+    public void SetLoginStatus(IP11Session session, CKU userType, bool isLogged)
     {
         this.rwSessionLock.EnterWriteLock();
         try
         {
-            if (!this.sessions.TryGetValue(sessionId, out P11Session? session))
-            {
-                throw new RpcPkcs11Exception(CKR.CKR_SESSION_HANDLE_INVALID, $"Session {sessionId} does not exist.");
-            }
-
             if (userType == CKU.CKU_CONTEXT_SPECIFIC)
             {
                 session.IsContextSpecificLogged = isLogged;
