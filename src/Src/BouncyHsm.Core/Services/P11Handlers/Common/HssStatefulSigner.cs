@@ -83,7 +83,7 @@ internal class HssStatefulSigner : IStatefulSigner
         }
         else
         {
-            this.session.UpdateObject(keyObject);
+            this.memorySession.UpdateObject(keyObject);
         }
 
         this.logger.LogDebug("HSS key {KeyId} state persisted, keys remaining {KeysRemaining}.", this.keyId, keyObject.CkaHssKeysRemaining);

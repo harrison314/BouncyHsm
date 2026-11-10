@@ -390,6 +390,41 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
+    public void DestroyObject(StorageObject storageObject)
+    {
+        this.rwObjectLock.EnterWriteLock();
+        try
+        {
+            foreach (P11Session session in this.sessions.Values)
+            {
+                if (session.TryDestroyObject(storageObject))
+                {
+                    return;
+                }
+            }
+
+            System.Diagnostics.Debug.Fail("Storage object not found.");
+        }
+        finally
+        {
+            this.rwObjectLock.ExitWriteLock();
+        }
+    }
+
+    public void StoreObject(IP11Session session, StorageObject storageObject)
+    {
+        ((P11Session)session).StoreObject(storageObject);
+    }
+
+    public void UpdateObject(StorageObject storageObject)
+    {
+        //TODO: refactor this method
+       P11Session session = this.sessions.Values.Where(t => t.TryLoadObject(storageObject.Id) != null)
+            .Single();
+
+        session.UpdateObject(storageObject);
+    }
+
     public void DestroyObjectHandle(Guid id)
     {
         this.rwObjectLock.EnterWriteLock();

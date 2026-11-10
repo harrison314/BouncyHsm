@@ -111,7 +111,7 @@ internal static class P11HwServicesExtensions
         }
         else
         {
-            p11Session.StoreObject(storageObject);
+            memorySession.StoreObject(p11Session, storageObject);
             handle = memorySession.CreateHandle(storageObject);
         }
 

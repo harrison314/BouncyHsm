@@ -56,4 +56,10 @@ public interface IMemorySession
     IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
 
     StorageObject? TryLoadObject(Guid id);
+
+    void DestroyObject(StorageObject storageObject);
+
+    void StoreObject(IP11Session session, StorageObject storageObject);
+
+    void UpdateObject(StorageObject storageObject);
 }

@@ -23,7 +23,7 @@ internal class HssWrapperSigner : IStatefulWrapperSigner
         this.logger = logger;
     }
 
-    public AuthenticatedStatefulSigner IntoStatefulSigner(KeyObject keyObject, IP11HwServices hwServices, IP11Session session)
+    public AuthenticatedStatefulSigner IntoStatefulSigner(KeyObject keyObject, IMemorySession memorySession, IP11HwServices hwServices, IP11Session session)
     {
         this.logger.LogTrace("Entering to IntoStatefulSigner.");
 
@@ -43,6 +43,7 @@ internal class HssWrapperSigner : IStatefulWrapperSigner
             }
 
             HssStatefulSigner signer = new HssStatefulSigner(hwServices,
+                memorySession,
                 session,
                 hssPrivateKeyObject.Id,
                 hssPrivateKeyObject.CkaToken,

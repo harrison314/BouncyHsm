@@ -34,11 +34,11 @@ public interface IP11Session
 
     //IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
 
-    void StoreObject(StorageObject storageObject);
+   // void StoreObject(StorageObject storageObject);
 
-    void UpdateObject(StorageObject storageObject);
+   // void UpdateObject(StorageObject storageObject);
 
     /*StorageObject? TryLoadObject(Guid id);*/
 
-    void DestroyObject(StorageObject storageObject);
+    //void DestroyObject(StorageObject storageObject);
 }

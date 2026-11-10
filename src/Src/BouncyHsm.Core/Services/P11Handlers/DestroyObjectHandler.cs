@@ -80,7 +80,7 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         else
         {
             memorySession.DestroyObjectHandle(storageObject.Id);
-            p11Session.DestroyObject(storageObject);
+            memorySession.DestroyObject(storageObject);
         }
 
         this.logger.LogInformation("Destroy object <Id: {objectKeyId}, CK_LABEL: {objectKeyCkLabel}>.",
@@ -92,4 +92,4 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             Rv = (uint)CKR.CKR_OK
         };
     }
-}
+}

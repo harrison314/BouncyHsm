@@ -7,7 +7,6 @@ namespace BouncyHsm.Infrastructure.Cap.InMemory;
 
 public class P11Session : IP11Session
 {
-  
     private List<StorageObjectMemento> objects;
 
     public uint SlotId
@@ -55,20 +54,13 @@ public class P11Session : IP11Session
         this.IsContextSpecificLogged = false;
     }
 
-    //internal IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)
-    //{
-    //    return this.objects.Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
-    //        .Select(t => StorageObjectFactory.CreateFromMemento(t))
-    //        .ToList();
-    //}
-
     internal IEnumerable<StorageObject> FindObjects(FindObjectSpecification specification)
     {
         return this.objects.Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
             .Select(t => StorageObjectFactory.CreateFromMemento(t));
     }
 
-    public void StoreObject(StorageObject storageObject)
+    internal void StoreObject(StorageObject storageObject)
     {
         if (storageObject.Id == Guid.Empty)
         {
@@ -78,7 +70,7 @@ public class P11Session : IP11Session
         this.objects.Add(storageObject.ToMemento());
     }
 
-    public void UpdateObject(StorageObject storageObject)
+    internal void UpdateObject(StorageObject storageObject)
     {
         int count = this.objects.RemoveAll(t => t.Id == storageObject.Id);
         System.Diagnostics.Debug.Assert(count == 1);
@@ -91,9 +83,9 @@ public class P11Session : IP11Session
         return (memento != null) ? StorageObjectFactory.CreateFromMemento(memento) : null;
     }
 
-    public void DestroyObject(StorageObject storageObject)
+    internal bool TryDestroyObject(StorageObject storageObject)
     {
         int count = this.objects.RemoveAll(t => t.Id == storageObject.Id);
-        System.Diagnostics.Debug.Assert(count == 1);
+        return count == 1;
     }
 }
