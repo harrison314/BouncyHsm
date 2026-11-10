@@ -16,7 +16,7 @@ internal class UintArrayAttributeValue : IAttributeValue
 
     public bool IsEmpty
     {
-        get => this.value.Length != 0;
+        get => this.value.Length == 0;
     }
 
     public UintArrayAttributeValue(uint[] value)

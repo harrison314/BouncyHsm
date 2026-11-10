@@ -15,7 +15,7 @@ internal class ByteArrayAttributeValue : IAttributeValue
 
     public bool IsEmpty
     {
-        get => this.value.Length != 0;
+        get => this.value.Length == 0;
     }
 
     public ByteArrayAttributeValue(byte[] value)

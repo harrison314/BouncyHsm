@@ -23,7 +23,7 @@ internal class CkAttributeArrayValue : IAttributeValue
 
     public bool IsEmpty
     {
-        get => this.value.Count != 0;
+        get => this.value.Count == 0;
     }
 
     public CkAttributeArrayValue(IReadOnlyDictionary<CKA, IAttributeValue> template)

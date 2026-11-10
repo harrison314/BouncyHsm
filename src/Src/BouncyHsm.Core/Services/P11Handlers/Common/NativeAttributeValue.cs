@@ -41,13 +41,13 @@ internal class NativeAttributeValue : IAttributeValue
         {
             return this.TypeTag switch
             {
-                AttrTypeTag.ByteArray => this.value.ValueRawBytes.Length != 0,
+                AttrTypeTag.ByteArray => this.value.ValueRawBytes.Length == 0,
                 AttrTypeTag.CkBool => false,
                 AttrTypeTag.CkUint => false,
                 AttrTypeTag.DateTime => !this.AsDate().HasValue,
-                AttrTypeTag.String => this.value.ValueRawBytes.Length != 0,
-                AttrTypeTag.UintArray => this.value.ValueUintArray?.Array.Length != 0,
-                AttrTypeTag.CkAttributeArray => this.value.ValueTemplate?.Value.Length != 0,
+                AttrTypeTag.String => this.value.ValueRawBytes.Length == 0,
+                AttrTypeTag.UintArray => this.value.ValueUintArray?.Array.Length == 0,
+                AttrTypeTag.CkAttributeArray => this.value.ValueTemplate?.Value.Length == 0,
                 _ => throw new InvalidProgramException($"Enum value {this.TypeTag} is not supported.")
             };
         }
