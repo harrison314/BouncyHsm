@@ -25,12 +25,25 @@ internal class VerifyWithRecoveryState : ISessionState
         }
 
         this.signer.Reset();
-        if (this.signer.VerifySignature(signature))
+        try
         {
-            recoveredMessage = this.signer.GetRecoveredMessage();
-            return true;
+            if (this.signer.VerifySignature(signature))
+            {
+                recoveredMessage = this.signer.GetRecoveredMessage();
+                return true;
+            }
+            else
+            {
+                recoveredMessage = null;
+                return false;
+            }
         }
-        else
+        catch (Org.BouncyCastle.Crypto.InvalidCipherTextException)
+        {
+            recoveredMessage = null;
+            return false;
+        }
+        catch (Org.BouncyCastle.Crypto.DataLengthException)
         {
             recoveredMessage = null;
             return false;
