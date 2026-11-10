@@ -41,30 +41,6 @@ cd build_linux
 make CC=gcc
 ```
 
-## Example compilation for Rocky Linux 9/AlmaLinux OS 9
-The native library for _AlmaLinux 9_ (RHEL like distributions) is already connected to BouncyHsm, the following procedure serves as a demonstration.
-
-Install prerequisites:
-
-```
-dnf install make gcc clang git -y
-```
-
-Clone repository:
-```
-git clone https://github.com/harrison314/BouncyHsm.git
-```
-
-Build:
-```
-cd BouncyHsm
-# git checkout <last tag>
-cd build_linux
-make
-```
-
-The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
-
 ## Example compilation for Raspberry Pi OS
 Install prerequisites:
 
