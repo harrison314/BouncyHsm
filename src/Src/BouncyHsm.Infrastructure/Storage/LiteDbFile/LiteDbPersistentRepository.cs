@@ -286,7 +286,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         if (hashModel == null)
         {
-            return new ValueTask<bool>(true);
+            return new ValueTask<bool>(false);
         }
 
         return new ValueTask<bool>(this.VerifyHashPassword(hashModel, pin));
