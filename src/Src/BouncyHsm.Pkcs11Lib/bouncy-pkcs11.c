@@ -1612,6 +1612,12 @@ CK_DEFINE_FUNCTION(CK_RV, C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_H
         return CKR_ARGUMENTS_BAD;
     }
 
+    if (ulMaxObjectCount >= LIMIT_CSHARP_INT32_MAX)
+    {
+        log_message(LOG_LEVEL_ERROR, "ulMaxObjectCount has an excessively large value in the function %s", __FUNCTION__);
+        return CKR_ARGUMENTS_BAD;
+    }
+
     FindObjectsRequest request;
     FindObjectsEnvelope envelope;
 

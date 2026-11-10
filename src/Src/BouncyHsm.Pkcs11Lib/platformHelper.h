@@ -40,4 +40,6 @@ const char* GetPlatformName();
 bool getProgramArgs(const char*** args, int* argc);
 bool freeProgramArgs(const char*** args, int* argc);
 
+#define LIMIT_CSHARP_INT32_MAX 2147483647
+
 #endif //PLATFORM_HELPER_H
