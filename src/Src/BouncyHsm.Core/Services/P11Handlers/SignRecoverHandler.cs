@@ -32,7 +32,7 @@ public partial class SignRecoverHandler : IRpcRequestHandler<SignRecoverRequest,
 
         SignWithRecoverState state = p11Session.State.Ensure<SignWithRecoverState>();
 
-        if (state.RequiredUserLogin && !memorySession.IsUserLogged(p11Session.SlotId))
+        if (state.RequiredUserLogin && !memorySession.IsLogged(p11Session, CKU.CKU_USER))
         {
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "User is not login.");
         }

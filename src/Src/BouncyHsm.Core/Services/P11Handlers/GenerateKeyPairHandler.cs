@@ -53,7 +53,7 @@ public partial class GenerateKeyPairHandler : IRpcRequestHandler<GenerateKeyPair
             throw new RpcPkcs11Exception(CKR.CKR_SESSION_READ_ONLY, "A read-write session is required to write to the token.");
         }
 
-        if (!memorySession.IsUserLogged(p11Session.SlotId))
+        if (!memorySession.IsLogged(p11Session, CKU.CKU_USER))
         {
             if (publicKeyObject.CkaPrivate || privateKeyObject.CkaPrivate)
             {

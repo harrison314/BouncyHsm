@@ -31,7 +31,7 @@ public partial class GetObjectSizeHandler : IRpcRequestHandler<GetObjectSizeRequ
              request.ObjectHandle,
              cancellationToken);
 
-        uint? objectSize = pkcs11Object.TryGetSize(memorySession.IsUserLogged(p11Session.SlotId));
+        uint? objectSize = pkcs11Object.TryGetSize(memorySession.IsLogged(p11Session, CKU.CKU_USER) || memorySession.IsLogged(p11Session, CKU.CKU_SO));
 
         return new GetObjectSizeEnvelope()
         {
@@ -44,7 +44,7 @@ public partial class GetObjectSizeHandler : IRpcRequestHandler<GetObjectSizeRequ
     {
         if (size.HasValue)
         {
-            return CkSpecialUint.Create(size.Value); 
+            return CkSpecialUint.Create(size.Value);
         }
         else
         {

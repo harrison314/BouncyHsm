@@ -287,24 +287,6 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
-    public bool IsUserLogged(uint slotId)
-    {
-        this.rwSessionLock.EnterReadLock();
-        try
-        {
-            if (!this.slotToSessions.TryGetValue(slotId, out SlotState? slotState))
-            {
-                throw new RpcPkcs11Exception(CKR.CKR_SLOT_ID_INVALID, $"Slot {slotId} does not exist.");
-            }
-
-            return slotState.LoggedState.HasFlag(LoggedUser.User) || slotState.LoggedState.HasFlag(LoggedUser.So);
-        }
-        finally
-        {
-            this.rwSessionLock.ExitReadLock();
-        }
-    }
-
     public uint CreateHandle(StorageObject storageObject)
     {
         if (storageObject.Id == Guid.Empty)

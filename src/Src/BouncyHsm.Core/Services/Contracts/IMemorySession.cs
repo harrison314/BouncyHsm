@@ -42,9 +42,6 @@ public interface IMemorySession
 
     void SetLoginStatus(IP11Session session, CKU userType, bool isLogged);
 
-    [Obsolete("Use IsLogged")]
-    bool IsUserLogged(uint slotId);
-
     uint CreateHandle(StorageObject storageObject);
 
     Guid? FindObjectHandle(uint objectHandle);
