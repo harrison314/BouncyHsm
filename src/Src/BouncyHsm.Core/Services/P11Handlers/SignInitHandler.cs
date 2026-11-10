@@ -5,11 +5,7 @@ using BouncyHsm.Core.Services.Contracts.P11;
 using BouncyHsm.Core.Services.P11Handlers.Common;
 using BouncyHsm.Core.Services.P11Handlers.States;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Security;
+
 
 namespace BouncyHsm.Core.Services.P11Handlers;
 
@@ -46,7 +42,7 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         WrapperSignerFactory signerFactory = new WrapperSignerFactory(this.loggerFactory);
 
         IWrapperSigner signerWrapper = signerFactory.CreateSignatureAlgorithm(request.Mechanism);
-        p11Session.State = this.CreateSessionState(p11Session, objectInstance, signerWrapper);
+        p11Session.State = this.CreateSessionState(memorySession, p11Session, objectInstance, signerWrapper);
 
         return new SignInitEnvelope()
         {
@@ -54,11 +50,11 @@ public partial class SignInitHandler : IRpcRequestHandler<SignInitRequest, SignI
         };
     }
 
-    private ISessionState CreateSessionState(IP11Session p11Session, KeyObject objectInstance, IWrapperSigner signerWrapper)
+    private ISessionState CreateSessionState(IMemorySession memorySession, IP11Session p11Session, KeyObject objectInstance, IWrapperSigner signerWrapper)
     {
         if (signerWrapper is IStatefulWrapperSigner statefulSignerWrapper)
         {
-            AuthenticatedStatefulSigner statefulSigner = statefulSignerWrapper.IntoStatefulSigner(objectInstance, this.hwServices, p11Session);
+            AuthenticatedStatefulSigner statefulSigner = statefulSignerWrapper.IntoStatefulSigner(objectInstance, memorySession, this.hwServices, p11Session);
 
             return new SignStateWithStatefulSigner(statefulSigner.Signer,
                 objectInstance.Id,

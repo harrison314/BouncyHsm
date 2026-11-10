@@ -35,9 +35,9 @@ public partial class FindObjectsInitHandler : IRpcRequestHandler<FindObjectsInit
         IReadOnlyList<uint> hwFeatures = await this.FindHwFeatures(p11Session.SlotId, searchTemplate);
 
         FindObjectSpecification findObjectSpecification = new FindObjectSpecification(searchTemplate,
-            memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER));
+            memorySession.IsLogged(p11Session, CKU.CKU_USER));
 
-        IReadOnlyList<StorageObject> memoryObjects = p11Session.FindObjects(findObjectSpecification, cancellationToken);
+        IReadOnlyList<StorageObject> memoryObjects = memorySession.FindObjects(findObjectSpecification, cancellationToken);
         IReadOnlyList<StorageObject> persistenceObjects = await this.hwServices.Persistence.FindObjects(p11Session.SlotId, findObjectSpecification, cancellationToken);
 
         List<uint> handlers = new List<uint>(hwFeatures.Count + memoryObjects.Count + persistenceObjects.Count);

@@ -30,7 +30,7 @@ public interface IMemorySession
 
     MemorySessionStatus GetStatus(uint? slotIdSpecification);
 
-    uint CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom);
+    IP11Session CreateSession(uint slotId, bool isRwSession, SecureRandom secureRandom);
 
     bool DestroySession(uint sessionId);
 
@@ -38,9 +38,9 @@ public interface IMemorySession
 
     bool TryGetSession(uint sessionId, [NotNullWhen(true)] out IP11Session? session);
 
-    bool IsLogged(uint sessionId, CKU userType);
+    bool IsLogged(IP11Session session, CKU userType);
 
-    void SetLoginStatus(uint sessionId, CKU userType, bool isLogged);
+    void SetLoginStatus(IP11Session session, CKU userType, bool isLogged);
 
     [Obsolete("Use IsLogged")]
     bool IsUserLogged(uint slotId);
@@ -52,4 +52,14 @@ public interface IMemorySession
     void DestroyObjectHandle(Guid id);
 
     uint? GetLastSlotEvent();
+
+    IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
+
+    StorageObject? TryLoadObject(Guid id);
+
+    void DestroyObject(StorageObject storageObject);
+
+    void StoreObject(IP11Session session, StorageObject storageObject);
+
+    void UpdateObject(StorageObject storageObject);
 }

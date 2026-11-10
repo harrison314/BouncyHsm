@@ -44,7 +44,7 @@ public partial class InitPINHandler : IRpcRequestHandler<InitPinRequest, InitPin
 
         SlotEntity slot = await this.hwServices.Persistence.EnsureSlot(p11Session.SlotId, true, cancellationToken);
 
-        if (!memorySession.IsLogged(p11Session.SessionId, CKU.CKU_SO))
+        if (!memorySession.IsLogged(p11Session, CKU.CKU_SO))
         {
             this.logger.LogError("PIN initialized for slot {SlotId} with session {SessionId}.", slot.SlotId, request.SessionId);
             return new InitPinEnvelope()

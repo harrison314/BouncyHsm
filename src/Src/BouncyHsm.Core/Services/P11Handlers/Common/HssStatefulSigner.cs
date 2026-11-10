@@ -13,6 +13,7 @@ namespace BouncyHsm.Core.Services.P11Handlers.Common;
 internal class HssStatefulSigner : IStatefulSigner
 {
     private readonly IP11HwServices hwServices;
+    private readonly IMemorySession memorySession;
     private readonly IP11Session session;
     private readonly Guid keyId;
     private readonly bool isToken;
@@ -23,13 +24,14 @@ internal class HssStatefulSigner : IStatefulSigner
         get;
     }
 
-    public HssStatefulSigner(IP11HwServices hwServices, IP11Session session, Guid keyId, bool isToken, uint signatureSize, ILogger logger)
+    public HssStatefulSigner(IP11HwServices hwServices, IMemorySession memorySession, IP11Session session, Guid keyId, bool isToken, uint signatureSize, ILogger logger)
     {
         System.Diagnostics.Debug.Assert(hwServices != null);
         System.Diagnostics.Debug.Assert(session != null);
         System.Diagnostics.Debug.Assert(keyId != Guid.Empty);
 
         this.hwServices = hwServices;
+        this.memorySession = memorySession;
         this.session = session;
         this.keyId = keyId;
         this.isToken = isToken;
@@ -45,7 +47,7 @@ internal class HssStatefulSigner : IStatefulSigner
 
         StorageObject? storageObject = this.isToken
             ? await this.hwServices.Persistence.TryLoadObject(this.session.SlotId, this.keyId, cancellationToken)
-            : this.session.TryLoadObject(this.keyId);
+            : this.memorySession.TryLoadObject(this.keyId);
 
         if (storageObject is not HssPrivateKeyObject keyObject)
         {
@@ -81,7 +83,7 @@ internal class HssStatefulSigner : IStatefulSigner
         }
         else
         {
-            this.session.UpdateObject(keyObject);
+            this.memorySession.UpdateObject(keyObject);
         }
 
         this.logger.LogDebug("HSS key {KeyId} state persisted, keys remaining {KeysRemaining}.", this.keyId, keyObject.CkaHssKeysRemaining);

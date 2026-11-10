@@ -46,12 +46,12 @@ public partial class OpenSessionHandler : IRpcRequestHandler<OpenSessionRequest,
             ? BouncyHsm.Core.Services.Bc.HwRandomGenerator.SecureRandom
             : new SecureRandom();
 
-        uint sessionId = memorySession.CreateSession(request.SlotId, isRwSession, random);
+        IP11Session session = memorySession.CreateSession(request.SlotId, isRwSession, random);
 
         return new OpenSessionEnvelope()
         {
             Rv = (uint)CKR.CKR_OK,
-            SessionId = sessionId
+            SessionId = session.SessionId
         };
     }
 }

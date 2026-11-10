@@ -51,12 +51,12 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             throw new RpcPkcs11Exception(CKR.CKR_ACTION_PROHIBITED, $"Object with id {storageObject.Id} is not destroyable.");
         }
 
-        if (!memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER) && storageObject.CkaPrivate)
+        if (!memorySession.IsLogged(p11Session, CKU.CKU_USER) && storageObject.CkaPrivate)
         {
             throw new RpcPkcs11Exception(CKR.CKR_USER_NOT_LOGGED_IN, "A logged in user is required to work with private objects (CKA_PRIVATE = true).");
         }
 
-        if (!(memorySession.IsLogged(p11Session.SessionId, CKU.CKU_USER) || memorySession.IsLogged(p11Session.SessionId, CKU.CKU_SO)))
+        if (!(memorySession.IsLogged(p11Session, CKU.CKU_USER) || memorySession.IsLogged(p11Session, CKU.CKU_SO)))
         {
             if (storageObject.CkaToken)
             {
@@ -80,7 +80,7 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
         else
         {
             memorySession.DestroyObjectHandle(storageObject.Id);
-            p11Session.DestroyObject(storageObject);
+            memorySession.DestroyObject(storageObject);
         }
 
         this.logger.LogInformation("Destroy object <Id: {objectKeyId}, CK_LABEL: {objectKeyCkLabel}>.",
@@ -92,4 +92,4 @@ public partial class DestroyObjectHandler : IRpcRequestHandler<DestroyObjectRequ
             Rv = (uint)CKR.CKR_OK
         };
     }
-}
+}
