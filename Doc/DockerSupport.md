@@ -6,6 +6,11 @@ docker pull ghcr.io/harrison314/bouncyhsm:latest
 docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest
 ```
 
+Important information about the container:
+* The container exposes port _8080_ as an HTTP port for the web interface and API.
+* The container exposes port _8765_ for TCP connections to the native PKCS#11 library.
+* The database is stored in the _/var/BouncyHsm/_ directory, making it a suitable location to map a persistent volume.
+
 ## Use wslc
 To use WSL containers:
 
