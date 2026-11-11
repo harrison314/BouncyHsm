@@ -663,6 +663,7 @@ Messages:
     Fields:
       Array: uint32[]
 
+# TODO: issue #136
   AttrValueFromNative:
     Summary: Transport attribute value from native code to dotnet, with type hinting 1 - byte array, 2 - CK_BBOOL, 4 - CK_UINT, 8 - CK_DATE, 16 - CK_ULONG[], 32 - CK_ATTRIBUTE[]
     Fields:
