@@ -54,13 +54,14 @@ public class VerifyHssHandlerTests
         session.SetupProperty(t => t.State, initialState);
 
         Guid keyId = keyObject?.Id ?? Guid.NewGuid();
-        session.Setup(t => t.TryLoadObject(keyId)).Returns(keyObject);
 
         IP11Session? sessionObject = session.Object;
         Mock<IMemorySession> memorySession = new Mock<IMemorySession>(MockBehavior.Strict);
         memorySession.Setup(t => t.TryGetSession(SessionId, out sessionObject)).Returns(true);
         memorySession.Setup(t => t.FindObjectHandle(KeyHandle)).Returns(keyId);
-        memorySession.Setup(t => t.IsLogged(SessionId, It.IsAny<CKU>())).Returns(true);
+        IP11Session p11Session = session.Object;
+        memorySession.Setup(t => t.TryLoadObject(p11Session, keyId)).Returns(keyObject);
+        memorySession.Setup(t => t.IsLogged(It.IsNotNull<IP11Session>(), CKU.CKU_USER)).Returns(true);
 
         IMemorySession? memorySessionObject = memorySession.Object;
         Mock<IClientApplicationContext> appCtx = new Mock<IClientApplicationContext>(MockBehavior.Strict);

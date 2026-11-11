@@ -63,7 +63,7 @@ public partial class SignRecoverHandler : IRpcRequestHandler<SignRecoverRequest,
             StorageObject? storageObject = await this.hwServices.Persistence.TryLoadObject(p11Session.SlotId, state.PrivateKeyId, cancellationToken);
             if (storageObject == null)
             {
-                storageObject = memorySession.TryLoadObject(state.PrivateKeyId);
+                storageObject = memorySession.TryLoadObject(p11Session, state.PrivateKeyId);
             }
 
             if (storageObject is KeyObject privateKeyObject)

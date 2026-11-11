@@ -2,15 +2,13 @@
 using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
 using Org.BouncyCastle.Security;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Remoting;
 
 namespace BouncyHsm.Infrastructure.Cap.InMemory;
 
 public sealed class MemorySession : IMemorySession, IDisposable
 {
-    private record struct StorageObjectData(uint OwnedSessionId, StorageObjectMemento Memento);
+    private record struct StorageObjectData(uint OwnedSessionId, uint SlotId, StorageObjectMemento Memento);
     private readonly Dictionary<uint, P11Session> sessions;
     private readonly Dictionary<uint, SlotState> slotToSessions;
     private readonly Dictionary<Guid, uint> objectIdToHandles;
@@ -339,12 +337,14 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
-    public IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken)
+    public IReadOnlyList<StorageObject> FindObjects(IP11Session session, FindObjectSpecification specification, CancellationToken cancellationToken)
     {
         this.rwObjectLock.EnterReadLock();
         try
         {
-            return this.storageObjects.Values.Where(t => (specification.IsUserLogged || !t.Memento.GetCkaPrivate()) && t.Memento.IsMatch(specification.Template))
+            return this.storageObjects.Values.Where(t => t.SlotId == session.SlotId
+            && (specification.IsUserLogged || !t.Memento.GetCkaPrivate())
+            && t.Memento.IsMatch(specification.Template))
                  .Select(t => StorageObjectFactory.CreateFromMemento(t.Memento))
                  .ToList();
         }
@@ -354,13 +354,18 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
-    public StorageObject? TryLoadObject(Guid id)
+    public StorageObject? TryLoadObject(IP11Session session, Guid id)
     {
         this.rwObjectLock.EnterReadLock();
         try
         {
             if (this.storageObjects.TryGetValue(id, out StorageObjectData data))
             {
+                if (data.SlotId != session.SlotId)
+                {
+                    throw new ArgumentException($"The session with ID {session.SessionId} ​​does not belong to the slot in which the session object {data.Memento.Id} was created.");
+                }
+
                 return StorageObjectFactory.CreateFromMemento(data.Memento);
             }
             else
@@ -374,13 +379,24 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
-    public void DestroyObject(StorageObject storageObject)
+    public void DestroyObject(IP11Session session, StorageObject storageObject)
     {
         this.rwObjectLock.EnterWriteLock();
         try
         {
-            bool success = this.storageObjects.Remove(storageObject.Id);
-            System.Diagnostics.Debug.Assert(success, "Object not exists.");
+            if (this.storageObjects.TryGetValue(storageObject.Id, out StorageObjectData data))
+            {
+                if (data.SlotId != session.SlotId)
+                {
+                    throw new ArgumentException($"The session with ID {session.SessionId} ​​does not belong to the slot in which the session object {storageObject.Id} was created.");
+                }
+
+                this.storageObjects.Remove(storageObject.Id);
+            }
+            else
+            {
+                System.Diagnostics.Debug.Fail("Object not exists.");
+            }
         }
         finally
         {
@@ -399,7 +415,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
             }
 
             this.storageObjects.Add(storageObject.Id,
-                new StorageObjectData(session.SessionId, storageObject.ToMemento()));
+                new StorageObjectData(session.SessionId, session.SlotId, storageObject.ToMemento()));
         }
         finally
         {
@@ -407,14 +423,21 @@ public sealed class MemorySession : IMemorySession, IDisposable
         }
     }
 
-    public void UpdateObject(StorageObject storageObject)
+    public void UpdateObject(IP11Session session, StorageObject storageObject)
     {
         this.rwObjectLock.EnterWriteLock();
         try
         {
             if (this.storageObjects.TryGetValue(storageObject.Id, out StorageObjectData data))
             {
-                this.storageObjects[storageObject.Id] = new StorageObjectData(data.OwnedSessionId, storageObject.ToMemento());
+                if (session.SlotId != data.SlotId)
+                {
+                    throw new ArgumentException($"The session with ID {session.SessionId} ​​does not belong to the slot in which the session object {storageObject.Id} was created.");
+                }
+
+                this.storageObjects[storageObject.Id] = new StorageObjectData(data.OwnedSessionId,
+                    data.SlotId,
+                    storageObject.ToMemento());
             }
             else
             {

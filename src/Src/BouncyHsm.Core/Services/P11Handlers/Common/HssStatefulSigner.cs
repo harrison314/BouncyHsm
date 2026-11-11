@@ -47,7 +47,7 @@ internal class HssStatefulSigner : IStatefulSigner
 
         StorageObject? storageObject = this.isToken
             ? await this.hwServices.Persistence.TryLoadObject(this.session.SlotId, this.keyId, cancellationToken)
-            : this.memorySession.TryLoadObject(this.keyId);
+            : this.memorySession.TryLoadObject(this.session, this.keyId);
 
         if (storageObject is not HssPrivateKeyObject keyObject)
         {
@@ -83,7 +83,7 @@ internal class HssStatefulSigner : IStatefulSigner
         }
         else
         {
-            this.memorySession.UpdateObject(keyObject);
+            this.memorySession.UpdateObject(this.session, keyObject);
         }
 
         this.logger.LogDebug("HSS key {KeyId} state persisted, keys remaining {KeysRemaining}.", this.keyId, keyObject.CkaHssKeysRemaining);

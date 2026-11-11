@@ -87,7 +87,7 @@ public partial class SetAttributeValueHandler : IRpcRequestHandler<SetAttributeV
         }
         else
         {
-            memorySession.UpdateObject(storageObject);
+            memorySession.UpdateObject(p11Session, storageObject);
             this.logger.LogInformation("Update object with id {objectId} in session {sessionId}.", storageObject.Id, p11Session.SessionId);
         }
 

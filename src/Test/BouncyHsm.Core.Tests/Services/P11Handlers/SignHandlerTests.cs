@@ -46,7 +46,7 @@ public class SignHandlerTests
         IP11Session? sessionObject = session.Object;
         Mock<IMemorySession> memorySession = new Mock<IMemorySession>(MockBehavior.Strict);
         memorySession.Setup(t => t.TryGetSession(SessionId, out sessionObject)).Returns(true);
-        memorySession.Setup(t => t.IsUserLogged(SlotId)).Returns(true);
+        memorySession.Setup(t => t.IsLogged(sessionObject, CKU.CKU_USER)).Returns(true);
 
         IMemorySession? memorySessionObject = memorySession.Object;
         Mock<IClientApplicationContext> appCtx = new Mock<IClientApplicationContext>(MockBehavior.Strict);

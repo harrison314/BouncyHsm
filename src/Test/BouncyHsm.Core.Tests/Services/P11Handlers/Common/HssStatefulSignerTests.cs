@@ -103,7 +103,10 @@ public class HssStatefulSignerTests
         return obj;
     }
 
-    private static (Mock<IP11HwServices> hw, Mock<IPersistentRepository> persistence, Mock<IP11Session> session) CreateMocks(FakeStore store)
+    private static (Mock<IP11HwServices> hw,
+        Mock<IPersistentRepository> persistence,
+        Mock<IP11Session> session,
+        Mock<IMemorySession>) CreateMocks(FakeStore store)
     {
         Mock<IPersistentRepository> persistence = new Mock<IPersistentRepository>(MockBehavior.Strict);
         persistence.Setup(t => t.TryLoadObject(SlotId, It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -116,10 +119,15 @@ public class HssStatefulSignerTests
 
         Mock<IP11Session> session = new Mock<IP11Session>(MockBehavior.Strict);
         session.SetupGet(t => t.SlotId).Returns(SlotId);
-        session.Setup(t => t.TryLoadObject(It.IsAny<Guid>())).Returns((Guid _) => store.Load());
-        session.Setup(t => t.UpdateObject(It.IsAny<StorageObject>())).Callback((StorageObject so) => store.Update(so));
 
-        return (hw, persistence, session);
+
+        Mock<IMemorySession> memorySession = new Mock<IMemorySession>(MockBehavior.Strict);
+        memorySession.Setup(t => t.TryLoadObject(It.IsNotNull<IP11Session>(), It.IsAny<Guid>()))
+            .Returns((IP11Session _, Guid _) => store.Load());
+        memorySession.Setup(t => t.UpdateObject(It.IsNotNull<IP11Session>(), It.IsAny<StorageObject>()))
+            .Callback((IP11Session _, StorageObject so) => store.Update(so));
+
+        return (hw, persistence, session, memorySession);
     }
 
     private static bool Verify(HssPublicKeyParameters publicKey, byte[] data, byte[] signature)
@@ -160,14 +168,14 @@ public class HssStatefulSignerTests
     {
         HssPrivateKeyObject key = CreateKey(true, out HssPublicKeyParameters publicKey);
         FakeStore store = new FakeStore(key);
-        var (hw, persistence, session) = CreateMocks(store);
+        var (hw, persistence, session, memorySession) = CreateMocks(store);
         byte[] data = new byte[] { 1, 2, 3, 4 };
 
-        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
         byte[] signature = await signer.Sign(data, CancellationToken.None);
 
         persistence.Verify(t => t.UpdateObject(SlotId, It.IsAny<StorageObject>(), It.IsAny<CancellationToken>()), Times.Once);
-        session.Verify(t => t.UpdateObject(It.IsAny<StorageObject>()), Times.Never);
+        memorySession.Verify(t => t.UpdateObject(It.IsNotNull<IP11Session>(), It.IsAny<StorageObject>()), Times.Never);
         Assert.AreEqual(31u, store.Stored().CkaHssKeysRemaining);
         Assert.AreEqual(SignatureLength, signature.Length);
         Assert.AreEqual((uint)signature.Length, signer.SignatureSize);
@@ -179,13 +187,13 @@ public class HssStatefulSignerTests
     {
         HssPrivateKeyObject key = CreateKey(false, out HssPublicKeyParameters publicKey);
         FakeStore store = new FakeStore(key);
-        var (hw, persistence, session) = CreateMocks(store);
+        var (hw, persistence, session, memorySession) = CreateMocks(store);
         byte[] data = new byte[] { 5, 6, 7 };
 
-        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, session.Object, key.Id, false, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, false, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
         byte[] signature = await signer.Sign(data, CancellationToken.None);
 
-        session.Verify(t => t.UpdateObject(It.IsAny<StorageObject>()), Times.Once);
+        memorySession.Verify(t => t.UpdateObject(It.IsNotNull<IP11Session>(), It.IsAny<StorageObject>()), Times.Once);
         persistence.Verify(t => t.UpdateObject(It.IsAny<uint>(), It.IsAny<StorageObject>(), It.IsAny<CancellationToken>()), Times.Never);
         Assert.AreEqual(31u, store.Stored().CkaHssKeysRemaining);
         Assert.IsTrue(Verify(publicKey, data, signature));
@@ -196,11 +204,11 @@ public class HssStatefulSignerTests
     {
         HssPrivateKeyObject key = CreateKey(true, out HssPublicKeyParameters publicKey);
         FakeStore store = new FakeStore(key);
-        var (hw, _, session) = CreateMocks(store);
+        var (hw, _, session, memorySession) = CreateMocks(store);
         byte[] data = new byte[] { 9, 9, 9 };
 
-        HssStatefulSigner a = new HssStatefulSigner(hw.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
-        HssStatefulSigner b = new HssStatefulSigner(hw.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner a = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner b = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
 
         byte[][] signatures = await Task.WhenAll(
             Task.Run(async () => await a.Sign(data, CancellationToken.None)),
@@ -217,10 +225,10 @@ public class HssStatefulSignerTests
     {
         HssPrivateKeyObject key = CreateKey(false, out HssPublicKeyParameters publicKey);
         FakeStore store = new FakeStore(key);
-        var (hw, _, session) = CreateMocks(store);
+        var (hw, persistence, session, memorySession) = CreateMocks(store);
         byte[] data = new byte[] { 1 };
 
-        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, session.Object, key.Id, false, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, false, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
         HashSet<uint> indexes = new HashSet<uint>();
         for (int i = 0; i < 32; i++)
         {
@@ -233,7 +241,7 @@ public class HssStatefulSignerTests
         RpcPkcs11Exception ex = await Assert.ThrowsExactlyAsync<RpcPkcs11Exception>(async () => await signer.Sign(data, CancellationToken.None));
         Assert.AreEqual(CKR.CKR_KEY_EXHAUSTED, ex.ReturnValue);
         Assert.AreEqual(32, store.UpdateCount);
-        session.Verify(t => t.UpdateObject(It.IsAny<StorageObject>()), Times.Exactly(32));
+        memorySession.Verify(t => t.UpdateObject(It.IsNotNull<IP11Session>(), It.IsAny<StorageObject>()), Times.Exactly(32));
     }
 
     [TestMethod]
@@ -241,11 +249,11 @@ public class HssStatefulSignerTests
     {
         HssPrivateKeyObject key = CreateKey(true, out _);
         FakeStore store = new FakeStore(key);
-        var (hw, persistence, session) = CreateMocks(store);
+        var (hw, persistence, session, memorySession) = CreateMocks(store);
         persistence.Setup(t => t.UpdateObject(SlotId, It.IsAny<StorageObject>(), It.IsAny<CancellationToken>()))
             .Returns(ValueTask.FromException(new IOException("disk full")));
 
-        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
 
         await Assert.ThrowsExactlyAsync<IOException>(async () => await signer.Sign(new byte[] { 1 }, CancellationToken.None));
         Assert.AreEqual(32u, store.Stored().CkaHssKeysRemaining);
@@ -257,9 +265,9 @@ public class HssStatefulSignerTests
         HssPrivateKeyObject key = CreateKey(true, out _);
         FakeStore store = new FakeStore(key);
         store.Deleted = true;
-        var (hw, persistence, session) = CreateMocks(store);
+        var (hw, persistence, session, memorySession) = CreateMocks(store);
 
-        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
 
         RpcPkcs11Exception ex = await Assert.ThrowsExactlyAsync<RpcPkcs11Exception>(async () => await signer.Sign(new byte[] { 1 }, CancellationToken.None));
         Assert.AreEqual(CKR.CKR_KEY_HANDLE_INVALID, ex.ReturnValue);
@@ -272,9 +280,9 @@ public class HssStatefulSignerTests
         HssPrivateKeyObject key = CreateKey(true, 2, out HssPublicKeyParameters publicKey);
         Assert.AreEqual(1024u, key.CkaHssKeysRemaining);
         FakeStore store = new FakeStore(key);
-        var (hw, _, session) = CreateMocks(store);
+        var (hw, persistence, session, memorySession) = CreateMocks(store);
 
-        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
+        HssStatefulSigner signer = new HssStatefulSigner(hw.Object, memorySession.Object, session.Object, key.Id, true, HssUtils.GetSignatureLength(key.CkaHssLmsTypes, key.CkaHssLmotsTypes), NullLogger.Instance);
         HashSet<(uint, string, uint)> oneTimeKeys = new HashSet<(uint, string, uint)>();
         List<(uint topQ, string lowerI, uint lowerQ)> ordered = new List<(uint, string, uint)>();
 

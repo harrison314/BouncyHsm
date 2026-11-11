@@ -50,13 +50,13 @@ public interface IMemorySession
 
     uint? GetLastSlotEvent();
 
-    IReadOnlyList<StorageObject> FindObjects(FindObjectSpecification specification, CancellationToken cancellationToken);
+    IReadOnlyList<StorageObject> FindObjects(IP11Session session, FindObjectSpecification specification, CancellationToken cancellationToken);
 
-    StorageObject? TryLoadObject(Guid id);
+    StorageObject? TryLoadObject(IP11Session session, Guid id);
 
-    void DestroyObject(StorageObject storageObject);
+    void DestroyObject(IP11Session session, StorageObject storageObject);
 
     void StoreObject(IP11Session session, StorageObject storageObject);
 
-    void UpdateObject(StorageObject storageObject);
+    void UpdateObject(IP11Session session, StorageObject storageObject);
 }

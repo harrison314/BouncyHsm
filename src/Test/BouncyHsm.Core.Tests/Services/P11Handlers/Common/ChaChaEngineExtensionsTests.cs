@@ -39,7 +39,7 @@ public class ChaChaEngineExtensionsTests
     public void ChaChaEngineExtensions_ValueChaCha7539_SetCounter(uint counter)
     {
         byte[] key = RandomNumberGenerator.GetBytes(32);
-        byte[] nonce = RandomNumberGenerator.GetBytes(8);
+        byte[] nonce = RandomNumberGenerator.GetBytes(12);
         ChaCha7539Engine chacha = new ChaCha7539Engine();
 
         chacha.Init(

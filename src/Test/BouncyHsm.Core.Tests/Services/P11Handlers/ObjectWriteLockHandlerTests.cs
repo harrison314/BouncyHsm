@@ -60,13 +60,13 @@ public class ObjectWriteLockHandlerTests
         session.SetupGet(t => t.SlotId).Returns(SlotId);
         session.SetupGet(t => t.SessionId).Returns(SessionId);
         session.SetupGet(t => t.IsRwSession).Returns(true);
-        session.Setup(t => t.TryLoadObject(objectId)).Returns((StorageObject?)null);
 
         IP11Session? sessionObject = session.Object;
         memorySession = new Mock<IMemorySession>(MockBehavior.Strict);
         memorySession.Setup(t => t.TryGetSession(SessionId, out sessionObject)).Returns(true);
         memorySession.Setup(t => t.FindObjectHandle(ObjectHandle)).Returns(objectId);
-        memorySession.Setup(t => t.IsLogged(SessionId, It.IsAny<CKU>())).Returns(true);
+        memorySession.Setup(t => t.TryLoadObject(session.Object, objectId)).Returns((StorageObject?)null);
+        memorySession.Setup(t => t.IsLogged(session.Object, It.IsAny<CKU>())).Returns(true);
 
         IMemorySession? memorySessionObject = memorySession.Object;
         Mock<IClientApplicationContext> appCtx = new Mock<IClientApplicationContext>(MockBehavior.Strict);

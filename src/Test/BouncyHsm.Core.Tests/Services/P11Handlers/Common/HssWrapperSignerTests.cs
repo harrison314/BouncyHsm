@@ -22,6 +22,7 @@ public class HssWrapperSignerTests
 
         HssWrapperSigner wrapper = new HssWrapperSigner(NullLogger<HssWrapperSigner>.Instance);
         AuthenticatedStatefulSigner result = wrapper.IntoStatefulSigner(key,
+            new Mock<IMemorySession>(MockBehavior.Strict).Object,
             new Mock<IP11HwServices>(MockBehavior.Strict).Object,
             new Mock<IP11Session>(MockBehavior.Strict).Object);
 
