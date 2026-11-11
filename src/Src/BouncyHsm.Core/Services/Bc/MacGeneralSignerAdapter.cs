@@ -93,6 +93,6 @@ internal class MacGeneralSignerAdapter : ISigner
             return signature.Length == 0;
         }
 
-        return buffer.Slice(0, this.generalParameter).SequenceEqual(signature);
+        return System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(buffer.Slice(0, this.generalParameter), signature);
     }
 }

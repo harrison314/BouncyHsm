@@ -80,6 +80,6 @@ internal class MacSignerAdapter : ISigner
         Span<byte> buffer = (hmacSize > 512) ? new byte[hmacSize] : stackalloc byte[hmacSize];
         this.hmac.DoFinal(buffer);
 
-        return buffer.SequenceEqual(signature);
+        return System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(buffer, signature);
     }
 }
