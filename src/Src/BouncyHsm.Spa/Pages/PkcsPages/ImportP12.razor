@@ -41,14 +41,14 @@
                 <ValidationSummary class="text-danger" />
 
                 <div class="mb-1">
-                    <label for="i-ckalabel" class="form-label">CKA Label</label>
+                    <label for="i-ckalabel" class="form-label">CKA_LABEL</label>
                     <InputText id="i-ckalabel" class="form-control" @bind-Value="this.model.CkaLabel" />
                     <div class="form-text">Value of CKA_LABEL.</div>
                     <ValidationMessage For="() => this.model.CkaLabel" />
                 </div>
 
                 <div class="row mb-1">
-                    <label for="i-ckaid" class="form-label">CKA ID</label>
+                    <label for="i-ckaid" class="form-label">CKA_ID</label>
 
                     <div class="row">
                         <div class="col-9">
@@ -159,7 +159,7 @@
 
         if (this.file == null)
         {
-            this.errorMessage = "File is not set";
+            this.errorMessage = "No file selected";
             return;
         }
 

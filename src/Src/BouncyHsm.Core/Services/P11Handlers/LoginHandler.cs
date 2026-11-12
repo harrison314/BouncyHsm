@@ -140,16 +140,16 @@ public partial class LoginHandler : IRpcRequestHandler<LoginRequest, LoginEnvelo
 
                 if (utf8Pin == null)
                 {
-                    this.logger.LogError("Login canceled using protected authorization path.");
-                    throw new RpcPkcs11Exception(CKR.CKR_FUNCTION_CANCELED, "Login canceled using protected authorization path.");
+                    this.logger.LogError("Login canceled using protected authentication path.");
+                    throw new RpcPkcs11Exception(CKR.CKR_FUNCTION_CANCELED, "Login canceled using protected authentication path.");
                 }
             }
             else
             {
-                this.logger.LogError("Protected authorization path is not enabled in slot id {slotId} and token {tokenLabel}.",
+                this.logger.LogError("Protected authentication path is not enabled in slot id {slotId} and token {tokenLabel}.",
                     slot.SlotId,
                     slot.Token.Label);
-                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"Protected authorization path is not enabled in slot id {slot.SlotId} and token {slot.Token.Label}.");
+                throw new RpcPkcs11Exception(CKR.CKR_GENERAL_ERROR, $"Protected authentication path is not enabled in slot id {slot.SlotId} and token {slot.Token.Label}.");
             }
         }
 

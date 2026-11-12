@@ -65,8 +65,8 @@ public class PapLoginMemoryContext : IPapLoginMemoryContext
         }
         else
         {
-            this.logger.LogError("Log session {logSession} not found for protected authorization path.", logSession);
-            throw new BouncyHsmException($"Log session {logSession} not found for protected authorization path.");
+            this.logger.LogError("Log session {logSession} not found for protected authentication path.", logSession);
+            throw new BouncyHsmException($"Log session {logSession} not found for protected authentication path.");
         }
     }
 
@@ -81,8 +81,8 @@ public class PapLoginMemoryContext : IPapLoginMemoryContext
         }
         else
         {
-            this.logger.LogError("Log session {logSession} not found for protected authorization path.", logSession);
-            throw new BouncyHsmException($"Log session {logSession} not found for protected authorization path.");
+            this.logger.LogError("Log session {logSession} not found for protected authentication path.", logSession);
+            throw new BouncyHsmException($"Log session {logSession} not found for protected authentication path.");
         }
     }
 
