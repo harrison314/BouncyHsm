@@ -2,7 +2,7 @@
 @using BouncyHsm.Client
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
-@inject ILogger<GenerateMlDsaKeys> logger
+@inject ILogger<GenerateMlKemKeys> logger
 
 @if (this.isInLoading)
 {
@@ -81,8 +81,8 @@ else
             <ValidationMessage For="() => this.model.ForDerivation" />
         </div>
         <div class="mb-1 form-check">
-            <InputCheckbox class="form-check-input" id="i-wrap" @bind-Value="this.model.Sensitive" />
-            <label class="form-check-label" for="i-wrap">Private key is sensitive</label>
+            <InputCheckbox class="form-check-input" id="i-sensitive" @bind-Value="this.model.Sensitive" />
+            <label class="form-check-label" for="i-sensitive">Private key is sensitive</label>
             <ValidationMessage For="() => this.model.Sensitive" />
         </div>
         <div class="mb-1 form-check">
