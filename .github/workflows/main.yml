@@ -139,6 +139,7 @@ jobs:
   Publish-GHCR:
     name: Publish-GHCR
     runs-on: ubuntu-latest
+    if: ${{ inputs.publish-ghcr }} 
   
     permissions:
       contents: read
