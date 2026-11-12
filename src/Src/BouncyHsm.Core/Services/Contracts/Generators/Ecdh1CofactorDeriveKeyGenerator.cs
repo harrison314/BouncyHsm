@@ -23,8 +23,8 @@ internal class Ecdh1CofactorDeriveKeyGenerator : Ecdh1DeriveKeyGenerator
 
     protected override IRawAgreement CreateAgreement(IRawAgreement basicAgreement, CKD kdfFunction, byte[]? sharedData)
     {
-        this.logger.LogError("Mongomery keys is not supported in cofactor.");
-        throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, "Mongomery keys is not supported in cofactor.");
+        this.logger.LogError("Montgomery keys is not supported in cofactor.");
+        throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID, "Montgomery keys is not supported in cofactor.");
     }
 
     protected override CKM GetKeyGenMechanism()

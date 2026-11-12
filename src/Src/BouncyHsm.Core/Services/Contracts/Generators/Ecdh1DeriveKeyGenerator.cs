@@ -64,7 +64,7 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         byte[] secret = sBaseKey switch
         {
             EcdsaPrivateKeyObject ecdsaPrivateKey => this.DeriveSecret(generalSecretKeyObject, ecdsaPrivateKey, this.template),
-            MontgomeryPrivateKeyObject mongomeryPrivateKey => this.DeriveSecretFroMongomeryKey(generalSecretKeyObject, mongomeryPrivateKey, this.template),
+            MontgomeryPrivateKeyObject mongomeryPrivateKey => this.DeriveSecretFroMontgomeryKey(generalSecretKeyObject, mongomeryPrivateKey, this.template),
             _ => throw new RpcPkcs11Exception(CKR.CKR_KEY_HANDLE_INVALID,
                 $"Base key handle is invalid, is not EcdsaPrivateKeyObject or MontgomeryPrivateKeyObject.")
         };
@@ -115,9 +115,9 @@ internal class Ecdh1DeriveKeyGenerator : IDeriveKeyGenerator
         return secret;
     }
 
-    private byte[] DeriveSecretFroMongomeryKey(SecretKeyObject generalSecretKeyObject, MontgomeryPrivateKeyObject sBaseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
+    private byte[] DeriveSecretFroMontgomeryKey(SecretKeyObject generalSecretKeyObject, MontgomeryPrivateKeyObject sBaseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
-        this.logger.LogTrace("Entering to DeriveSecretFroMongomeryKey");
+        this.logger.LogTrace("Entering to DeriveSecretFroMontgomeryKey");
 
         uint minKeySize = template.GetAttributeUint(CKA.CKA_VALUE_LEN, generalSecretKeyObject.GetMinimalSecretLen());
         AsymmetricKeyParameter privateKey = sBaseKey.GetPrivateKey();

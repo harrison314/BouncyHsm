@@ -36,7 +36,7 @@ else
                         <option value="@GeneratedKeyType.Rsa">RSA key pair</option>
                         <option value="@GeneratedKeyType.Ec">EC key pair</option>
                         <option value="@GeneratedKeyType.Edwards">Edwards curve key pair</option>
-                        <option value="@GeneratedKeyType.Mongomery">Mongomery curve key pair</option>
+                        <option value="@GeneratedKeyType.Montgomery">Montgomery curve key pair</option>
                         <option value="@GeneratedKeyType.MlDsa">ML-DSA key pair</option>
                         <option value="@GeneratedKeyType.SlhDsa">SLH-DSA key pair</option>
                         <option value="@GeneratedKeyType.Hss">HSS (LMS) key pair</option>
@@ -65,9 +65,9 @@ else
             {
                 <GenerateEdwardsKeys SlotId="@this.SlotId" OnLoadingChanged="e => this.isInLoading = e" />
             }
-            else if (this.KeyType == GeneratedKeyType.Mongomery)
+            else if (this.KeyType == GeneratedKeyType.Montgomery)
             {
-                <GenerateMongomeryKeys SlotId="@this.SlotId" OnLoadingChanged="e => this.isInLoading = e" />
+                <GenerateMontgomeryKeys SlotId="@this.SlotId" OnLoadingChanged="e => this.isInLoading = e" />
             }
             else if (this.KeyType == GeneratedKeyType.MlDsa)
             {
@@ -120,7 +120,7 @@ else
         Rsa,
         Ec,
         Edwards,
-        Mongomery,
+        Montgomery,
         MlDsa,
         SlhDsa,
         Hss,

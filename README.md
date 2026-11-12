@@ -37,7 +37,7 @@ _Bouncy Hsm_ implementig PKCS#11 interface from standard version 2.40, 3.1 and v
 * Supports RSA keys (with size 2-6K).
 * Supports [80 named elliptic curves](/Doc/SupportedAlgorithms.md#elliptic-curves) and user-defined elliptic curves.
 * Edwards curves (Ed25519, Ed448).
-* Mongomery curves (X25519, X448).
+* Montgomery curves (X25519, X448).
 * Post-Quantum Cryptography (ML-DSA, SLH-DSA, HSS, ML-KEM)
 * Supports secrets (HMAC, derive,...)
 * Supports AES keys.

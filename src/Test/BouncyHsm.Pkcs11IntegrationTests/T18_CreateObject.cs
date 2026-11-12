@@ -733,7 +733,7 @@ TnCoPhVFsVeDjQwg");
     }
 
     [TestMethod]
-    public void CreateObject_MongomeryPublicKey_Success()
+    public void CreateObject_MontgomeryPublicKey_Success()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,

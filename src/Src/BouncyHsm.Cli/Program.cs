@@ -49,7 +49,7 @@ public static class Program
                     generate.AddCommand<GenerateRsaKeyPairCommand>("rsa").WithDescription("Generate RSA key pair.");
                     generate.AddCommand<GenerateEcKeyPairCommand>("ec").WithDescription("Generate EC key pair.");
                     generate.AddCommand<GenerateEdwardsKeyPairCommand>("edwards").WithDescription("Generate Edwards EC key pair.");
-                    generate.AddCommand<GenerateMongomeryKeyPairCommand>("mongomery").WithDescription("Generate Mongomery EC key pair.");
+                    generate.AddCommand<GenerateMontgomeryKeyPairCommand>("montgomery").WithDescription("Generate Montgomery EC key pair.");
                     generate.AddCommand<GenerateMlDsaKeyPairCommand>("mldsa").WithDescription("Generate ML-DSA key pair.");
                     generate.AddCommand<GenerateSlhDsaKeyPairCommand>("slhdsa").WithDescription("Generate SLH-DSA key pair.");
                     generate.AddCommand<GenerateHssKeyPairCommand>("hss").WithDescription("Generate HSS (LMS) key pair.");
