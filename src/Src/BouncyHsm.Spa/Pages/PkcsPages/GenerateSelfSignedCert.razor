@@ -1,10 +1,8 @@
 ﻿@page "/Slots/{SlotId:int}/Pkcs/GenerateSelfSignedCert/{PrivateKeyId:guid}/{PublicKeyId:guid}"
 @rendermode InteractiveWebAssembly
-@using BouncyHsm.Spa.Pages.Pkcs;
 @using BouncyHsm.Client
-@using BouncyHsm.Spa.Utils;
 @inject IBouncyHsmClient bouncyHsmClient
-@inject ILogger<GenerateCsr> logger
+@inject ILogger<GenerateSelfSignedCert> logger
 @inject NavigationManager Navigation
 
 <PageTitle>Generate self-signed certificate</PageTitle>

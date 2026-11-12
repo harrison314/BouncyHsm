@@ -54,7 +54,7 @@ else
                 </div>
                 <div class="mb-1">
                     <label for="i-newPin" class="form-label">New PIN</label>
-                    <InputText id="i-newPin" class="form-control" @bind-Value="this.model.NewPin" />
+                    <InputText id="i-newPin" class="form-control" type="password" @bind-Value="this.model.NewPin" />
                     <ValidationMessage For="() => this.model.NewPin" />
                 </div>
                 <div class="justify-content-end pt-4">

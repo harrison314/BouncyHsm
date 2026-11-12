@@ -12,7 +12,7 @@
 
 <div class="justify-content-end pt-4">
     <button type="button"
-            class="btn btn-primary @(this.IsValidByteArray(this.value, out _))"
+            class="btn btn-primary @(this.IsValidByteArray(this.value, out _) ? "" : "disabled")"
             @onclick="@this.UpdateValue">
         <span class="icon-Edit icon-1x"></span> Update
     </button>
@@ -54,7 +54,7 @@
         byte[] bytes = this.AttributeValue.ValueAsByteArray ?? Array.Empty<byte>();
         if (bytes.Length > 40)
         {
-            return Convert.ToHexString(bytes, 0, 66) + "......";
+            return Convert.ToHexString(bytes, 0, 40) + "......";
         }
         else
         {

@@ -163,15 +163,17 @@
             return;
         }
 
-        using (MemoryStream ms = new MemoryStream())
+        try
         {
-            using Stream fs = this.file.OpenReadStream();
-            await fs.CopyToAsync(ms);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using Stream fs = this.file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+                await fs.CopyToAsync(ms);
 
-            p12Content = ms.ToArray();
-        }
-
-        ImportP12RequestDto request = new ImportP12RequestDto()
+                p12Content = ms.ToArray();
+            }
+        
+            ImportP12RequestDto request = new ImportP12RequestDto()
             {
                 CkaLabel = this.model.CkaLabel.Trim(),
                 CkaId = this.model.CkaIdForm.GetCkaId(this.model.CkaIdText.Trim()),
@@ -181,8 +183,6 @@
                 Pkcs12Content = p12Content
             };
 
-        try
-        {
             await this.bouncyHsmClient.ImportP12Async(this.SlotId, request);
             this.Navigation.NavigateTo($"Slots/{this.SlotId}/Pkcs");
         }

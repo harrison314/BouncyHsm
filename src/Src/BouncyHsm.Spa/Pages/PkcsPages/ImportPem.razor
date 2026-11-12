@@ -5,7 +5,7 @@
 @using BouncyHsm.Spa.Utils;
 @inject IBouncyHsmClient bouncyHsmClient
 @inject NavigationManager Navigation
-@inject ILogger<ImportP12> logger
+@inject ILogger<ImportPem> logger
 
 <PageTitle>Import PEM object</PageTitle>
 
@@ -254,7 +254,7 @@ W4lThm/Ii+bRe5LPUsWiND6uHNYaobZKHJr0QC9au+o=
         catch (ApiBouncyHsmException<ProblemDetails> ex)
         {
             this.errorMessage = ex.Result.Detail ?? "Unexpected error.";
-            this.logger.LogError(ex, "Error during call ImportP12Async.");
+            this.logger.LogError(ex, "Error during call ImportPemAsync.");
         }
     }
 }

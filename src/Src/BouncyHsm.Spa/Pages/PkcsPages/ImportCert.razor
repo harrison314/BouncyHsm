@@ -99,7 +99,7 @@
 
             using (MemoryStream ms = new MemoryStream())
             {
-                using Stream fs = this.file.OpenReadStream();
+                using Stream fs = this.file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
                 await fs.CopyToAsync(ms);
 
                 certContent = ms.ToArray();
