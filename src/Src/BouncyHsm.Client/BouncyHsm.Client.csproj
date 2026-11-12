@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netstandard2.1'">
-    <PackageReference Include="System.Text.Json" Version="10.0.13" />
+    <PackageReference Include="System.Text.Json" Version="[10.0,)" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
@@ -43,11 +43,11 @@
     </None>
     <None Include="..\..\..\artifacts\.tmp\native\Linux-x64\BouncyHsm.Pkcs11Lib.so" Condition="Exists('..\..\..\artifacts\.tmp\native\Linux-x64\BouncyHsm.Pkcs11Lib.so')">
       <Pack>True</Pack>
-      <PackagePath>runtimes/linux-x64/native/</PackagePath>
+      <PackagePath>runtimes/linux-x64/native/BouncyHsm.Pkcs11Lib.so</PackagePath>
     </None>
     <None Include="..\..\..\artifacts\.tmp\native\Rhel-x64\BouncyHsm.Pkcs11Lib.so" Condition="Exists('..\..\..\artifacts\.tmp\native\Rhel-x64\BouncyHsm.Pkcs11Lib.so')">
       <Pack>True</Pack>
-      <PackagePath>runtimes/rhel-x64/native/</PackagePath>
+      <PackagePath>runtimes/linux-x64/native/BouncyHsm.Pkcs11Lib.rhel.so</PackagePath>
     </None>
   </ItemGroup>
 

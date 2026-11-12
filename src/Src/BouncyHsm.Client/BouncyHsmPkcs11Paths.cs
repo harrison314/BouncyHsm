@@ -9,7 +9,9 @@ public static class BouncyHsmPkcs11Paths
     public const string WindowsX64 = @"runtimes\win-x64\native\BouncyHsm.Pkcs11Lib.dll";
     public const string WindowsX86 = @"runtimes\win-x86\native\BouncyHsm.Pkcs11Lib.dll";
     public const string LinuxX64 = @"runtimes/linux-x64/native/BouncyHsm.Pkcs11Lib.so";
-    public const string RhelX64 = @"runtimes/rhel-x64/native/BouncyHsm.Pkcs11Lib.so";
+    public const string RhelX64 = @"runtimes/linux-x64/native/BouncyHsm.Pkcs11Lib.rhel.so";
+
+    private static Lazy<string?> linuxDistroId = new Lazy<string?>(() => GetLinuDistroId());
 
 #if !NET8_0_OR_GREATER
     [Obsolete("For the .netstandard2.1 this property does not give correct results for RHEL like distributions.")]
@@ -37,8 +39,8 @@ public static class BouncyHsmPkcs11Paths
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Environment.Is64BitProcess)
         {
 #if NET8_0_OR_GREATER
-            string rid = RuntimeInformation.RuntimeIdentifier;
-            if (IsRhelLike(rid))
+            string? linuxId = linuxDistroId.Value;
+            if (!string.IsNullOrEmpty(linuxId) && IsRhelLike(linuxId))
             {
                 return RhelX64;
             }
@@ -54,20 +56,34 @@ public static class BouncyHsmPkcs11Paths
 #endif
     }
 
-    private static bool IsRuntimeIdentifierPrefix(string rid, string prefix)
-    {
-        return string.Equals(prefix, rid, StringComparison.OrdinalIgnoreCase)
-            || rid.StartsWith(string.Concat(prefix, "."), StringComparison.OrdinalIgnoreCase)
-            || rid.StartsWith(string.Concat(prefix, "-"), StringComparison.OrdinalIgnoreCase);
-    }
-
-    // See: https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json
     private static bool IsRhelLike(string rid)
     {
-        return IsRuntimeIdentifierPrefix(rid, "rhel")
-            || IsRuntimeIdentifierPrefix(rid, "rocky")
-            || IsRuntimeIdentifierPrefix(rid, "ol")
-            || IsRuntimeIdentifierPrefix(rid, "miraclelinux")
-            || IsRuntimeIdentifierPrefix(rid, "centos");
+        return string.Equals(rid, "rhel", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(rid, "almalinux", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(rid, "rocky", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(rid, "centos", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static string? GetLinuDistroId()
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            return null;
+        }
+
+        if (!File.Exists("/etc/os-release"))
+        {
+            return null;
+        }
+
+        foreach (string line in File.ReadLines("/etc/os-release"))
+        {
+            if (line.StartsWith("ID="))
+            {
+                return line[3..].Trim('"');
+            }
+        }
+
+        return null;
     }
 }
