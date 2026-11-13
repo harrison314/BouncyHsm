@@ -18,6 +18,7 @@ public sealed class ApiExampleTests
              .CreateAsync<Projects.AspireExample_AppHost>();
 
         app = await appHost.BuildAsync(context.CancellationToken);
+        await app.ResourceNotifications.WaitForResourceHealthyAsync("exampleapi", context.CancellationToken);
     }
 
     [ClassCleanup]
