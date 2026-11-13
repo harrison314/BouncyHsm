@@ -20,6 +20,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
     private readonly ConcurrentDictionary<StorageObjectId, StorageObjectMemento> storageObjects;
     private readonly ReaderWriterLockSlim readerWriterLock;
     private bool disposedValue;
+    private uint slotCounter;
 
     public MemoryPersistentRepository(ILogger<MemoryPersistentRepository> logger)
     {
@@ -27,13 +28,14 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
         this.storageObjects = new ConcurrentDictionary<StorageObjectId, StorageObjectMemento>();
         this.readerWriterLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         this.disposedValue = false;
+        this.slotCounter = 100;
 
         this.slots = new List<SlotEntity>()
         {
             new SlotEntity()
             {
                 Id = Guid.NewGuid(),
-                SlotId = 101,
+                SlotId = this.GetNewSlotId(),
                 Description = "Example token with PIN 123456",
                 IsHwDevice = false,
                 IsPlugged = true,
@@ -73,11 +75,11 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             SlotEntity slotEntity = new SlotEntity()
             {
                 Id = Guid.NewGuid(),
-                SlotId = this.slots.Any() ? (this.slots.Max(t => t.SlotId) + 1) : 1,
+                SlotId = this.GetNewSlotId(),
                 Description = slot.Description,
                 IsHwDevice = slot.IsHwDevice,
                 IsRemovableDevice = slot.IsRemovableDevice,
-                IsPlugged = true,
+                IsPlugged = slot.IsPlugged,
                 Token = new InMemoryTokenInfo()
                 {
                     Label = slot.Token.Label,
@@ -138,12 +140,17 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
         this.readerWriterLock.EnterWriteLock();
         try
         {
-            this.slots.RemoveAll(t => t.SlotId == slotId);
+            int deletedCount = this.slots.RemoveAll(t => t.SlotId == slotId);
 
             List<StorageObjectId> internalIds = this.storageObjects.Keys.Where(t => t.SlotId == slotId).ToList();
             foreach (StorageObjectId internalId in internalIds)
             {
                 this.storageObjects.TryRemove(internalId, out _);
+            }
+
+            if (deletedCount == 0)
+            {
+                throw new BouncyHsmNotFoundException($"Slot with slotId {slotId} not found.");
             }
 
             return new ValueTask();
@@ -189,7 +196,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             if (slot == null)
             {
                 this.logger.LogError("Slot with id {slotId} does not exists.", slotId);
-                throw new BouncyHsmStorageException($"Slot with id {slotId} does not exists.");
+                throw new BouncyHsmNotFoundException($"Slot with id {slotId} does not exists.");
             }
 
             bool changed = command.UpdateSlot(slot);
@@ -215,7 +222,15 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             storageObject.Id = Guid.NewGuid();
         }
 
-        this.storageObjects[new StorageObjectId(storageObject.Id, slotId)] = storageObject.ToMemento();
+        this.readerWriterLock.EnterWriteLock();
+        try
+        {
+            this.storageObjects[new StorageObjectId(storageObject.Id, slotId)] = storageObject.ToMemento();
+        }
+        finally
+        {
+            this.readerWriterLock.ExitWriteLock();
+        }
 
         return new ValueTask();
     }
@@ -225,12 +240,21 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
         this.logger.LogTrace("Entering to UpdateObject with slotId {slotId}.", slotId);
 
         StorageObjectId id = new StorageObjectId(storageObject.Id, slotId);
-        if (!this.storageObjects.ContainsKey(id))
-        {
-            throw new BouncyHsmStorageException($"Object with id {storageObject.Id} in slot {slotId} not found.");
-        }
 
-        this.storageObjects[id] = storageObject.ToMemento();
+        this.readerWriterLock.EnterWriteLock();
+        try
+        {
+            if (!this.storageObjects.ContainsKey(id))
+            {
+                throw new BouncyHsmNotFoundException($"Object with id {storageObject.Id} in slot {slotId} not found.");
+            }
+
+            this.storageObjects[id] = storageObject.ToMemento();
+        }
+        finally
+        {
+            this.readerWriterLock.ExitWriteLock();
+        }
 
         return new ValueTask();
     }
@@ -239,74 +263,111 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
     {
         this.logger.LogTrace("Entering to FindObjects with slotId {slotId}.", slotId);
 
-        List<StorageObject> result = this.storageObjects
+        this.readerWriterLock.EnterReadLock();
+        try
+        {
+            List<StorageObject> result = this.storageObjects
             .Where(t => t.Key.SlotId == slotId)
             .Select(t => t.Value)
             .Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
             .Select(t => StorageObjectFactory.CreateFromMemento(t))
             .ToList();
 
-        return new ValueTask<IReadOnlyList<StorageObject>>(result);
+            return new ValueTask<IReadOnlyList<StorageObject>>(result);
+        }
+        finally
+        {
+            this.readerWriterLock.ExitReadLock();
+        }
     }
 
     public ValueTask<bool> ValidatePin(SlotEntity slot, CKU userType, string pin, object? context, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to ValidatePin with slotId {slotId}, userType {userType}.", slot.Id, userType);
 
-        if (userType == CKU.CKU_USER)
+        this.readerWriterLock.EnterReadLock();
+        try
         {
-            return new ValueTask<bool>(StringOperations.FixedTimeEquals(((InMemoryTokenInfo)slot.Token).UserPin, pin));
+            if (userType == CKU.CKU_USER)
+            {
+                return new ValueTask<bool>(StringOperations.FixedTimeEquals(((InMemoryTokenInfo)slot.Token).UserPin, pin));
+            }
+
+            if (userType == CKU.CKU_SO)
+            {
+                return new ValueTask<bool>(StringOperations.FixedTimeEquals(((InMemoryTokenInfo)slot.Token).SoPin, pin));
+            }
+
+            if (userType == CKU.CKU_CONTEXT_SPECIFIC)
+            {
+                if (((InMemoryTokenInfo)slot.Token).SignaturePin == null)
+                {
+                    return new ValueTask<bool>(false);
+                }
+
+                return new ValueTask<bool>(StringOperations.FixedTimeEquals(((InMemoryTokenInfo)slot.Token).SignaturePin, pin));
+            }
+        }
+        finally
+        {
+            this.readerWriterLock.ExitReadLock();
         }
 
-        if (userType == CKU.CKU_SO)
-        {
-            return new ValueTask<bool>(StringOperations.FixedTimeEquals(((InMemoryTokenInfo)slot.Token).SoPin, pin));
-        }
-
-        if (userType == CKU.CKU_CONTEXT_SPECIFIC)
-        {
-            return new ValueTask<bool>(StringOperations.FixedTimeEquals(((InMemoryTokenInfo)slot.Token).SignaturePin, pin));
-        }
-
-        throw new NotSupportedException($"User type {userType} is not supported.");
+        throw new InvalidProgramException($"Enum value {userType} is not supported.");
     }
 
     public ValueTask SetPin(SlotEntity slot, CKU userType, string newPin, object? context, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to SetPin with slotId {slotId}, userType {userType}.", slot.Id, userType);
 
-        if (userType == CKU.CKU_USER)
+        this.readerWriterLock.EnterWriteLock();
+        try
         {
-            ((InMemoryTokenInfo)slot.Token).UserPin = newPin;
-            return new ValueTask();
+            if (userType == CKU.CKU_USER)
+            {
+                ((InMemoryTokenInfo)slot.Token).UserPin = newPin;
+                return new ValueTask();
+            }
+
+            if (userType == CKU.CKU_SO)
+            {
+                ((InMemoryTokenInfo)slot.Token).SoPin = newPin;
+                return new ValueTask();
+            }
+
+            if (userType == CKU.CKU_CONTEXT_SPECIFIC)
+            {
+                ((InMemoryTokenInfo)slot.Token).SignaturePin = newPin;
+                return new ValueTask();
+            }
+        }
+        finally
+        {
+            this.readerWriterLock.ExitWriteLock();
         }
 
-        if (userType == CKU.CKU_SO)
-        {
-            ((InMemoryTokenInfo)slot.Token).SoPin = newPin;
-            return new ValueTask();
-        }
-
-        if (userType == CKU.CKU_CONTEXT_SPECIFIC)
-        {
-            ((InMemoryTokenInfo)slot.Token).SignaturePin = newPin;
-            return new ValueTask();
-        }
-
-        throw new NotSupportedException($"User type {userType} is not supported.");
+        throw new InvalidProgramException($"Enum value {userType} is not supported.");
     }
 
     public ValueTask<StorageObject?> TryLoadObject(uint slotId, Guid id, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to TryLoadObject with slotId {slotId}, object id {objectId}.", slotId, id);
 
-        if (this.storageObjects.TryGetValue(new StorageObjectId(id, slotId), out StorageObjectMemento? storageObjectMemento))
+        this.readerWriterLock.EnterReadLock();
+        try
         {
-            return new ValueTask<StorageObject?>(StorageObjectFactory.CreateFromMemento(storageObjectMemento, false));
+            if (this.storageObjects.TryGetValue(new StorageObjectId(id, slotId), out StorageObjectMemento? storageObjectMemento))
+            {
+                return new ValueTask<StorageObject?>(StorageObjectFactory.CreateFromMemento(storageObjectMemento));
+            }
+            else
+            {
+                return new ValueTask<StorageObject?>(null as StorageObject);
+            }
         }
-        else
+        finally
         {
-            return new ValueTask<StorageObject?>(null as StorageObject);
+            this.readerWriterLock.ExitReadLock();
         }
     }
 
@@ -314,9 +375,17 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
     {
         this.logger.LogTrace("Entering to DestroyObject with slotId {slotId}, object id {objectId}.", slotId, storageObject.Id);
 
-        if (!this.storageObjects.TryRemove(new StorageObjectId(storageObject.Id, slotId), out _))
+        this.readerWriterLock.EnterWriteLock();
+        try
         {
-            throw new BouncyHsmNotFoundException($"Object with id {storageObject.Id} in slot {slotId} not found.");
+            if (!this.storageObjects.TryRemove(new StorageObjectId(storageObject.Id, slotId), out _))
+            {
+                throw new BouncyHsmNotFoundException($"Object with id {storageObject.Id} in slot {slotId} not found.");
+            }
+        }
+        finally
+        {
+            this.readerWriterLock.ExitWriteLock();
         }
 
         return new ValueTask();
@@ -369,6 +438,14 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             }
 
             this.disposedValue = true;
+        }
+    }
+
+    private uint GetNewSlotId()
+    {
+        unchecked
+        {
+            return ++this.slotCounter;
         }
     }
 }

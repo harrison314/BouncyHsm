@@ -378,12 +378,12 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         {
             if (!collection.Delete(storageObject.Id))
             {
-                throw new BouncyHsmStorageException($"Not found object with id {storageObject.Id}");
+                throw new BouncyHsmNotFoundException($"Not found object with id {storageObject.Id}");
             }
 
             if (!this.database.GetStorage<Guid>().Delete(storageObject.Id))
             {
-                throw new BouncyHsmStorageException($"Not found object with id {storageObject.Id}");
+                throw new BouncyHsmNotFoundException($"Not found object with id {storageObject.Id}");
             }
 
             using (MemoryStream ms = new MemoryStream(memento.ToByteArray(), false))
@@ -411,12 +411,12 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         {
             if (!collection.Delete(storageObject.Id))
             {
-                throw new BouncyHsmStorageException($"Not found object with id {storageObject.Id}");
+                throw new BouncyHsmNotFoundException($"Not found object with id {storageObject.Id}");
             }
 
             if (!this.database.GetStorage<Guid>().Delete(storageObject.Id))
             {
-                throw new BouncyHsmStorageException($"Not found object with id {storageObject.Id}");
+                throw new BouncyHsmNotFoundException($"Not found object with id {storageObject.Id}");
             }
         });
 
@@ -432,14 +432,9 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         ILiteCollection<StorageObjectInfo> collection = this.database.GetCollection<StorageObjectInfo>();
 
         StorageObjectInfo? info = collection.FindOne(t => t.Id == id);
-        if (info == null)
+        if (info == null || info.SlotId != slotId)
         {
             return new ValueTask<StorageObject?>(null as StorageObject);
-        }
-
-        if (info.SlotId != slotId)
-        {
-            throw new InvalidProgramException("Mishmash slotId in load object.");
         }
 
         using MemoryStream ms = new MemoryStream();
