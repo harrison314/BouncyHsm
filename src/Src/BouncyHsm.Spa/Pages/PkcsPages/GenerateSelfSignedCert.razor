@@ -33,7 +33,7 @@
             <div class="mb-1">
                 <label for="i-ckalabel" class="form-label">Subject</label>
                 <InputText id="i-ckalabel" class="form-control" @bind-Value="this.model.Subject" />
-                <div class="form-text">Subject value eg. <code>CN=common name, C=SK, SERIALNUMBER=458965</code>.</div>
+                <div class="form-text">Subject value e.g. <code>CN=common name, C=SK, SERIALNUMBER=458965</code>.</div>
                 <ValidationMessage For="() => this.model.Subject" />
             </div>
 
@@ -52,7 +52,7 @@
             <div class="mb-1">
                 <label for="i-validity" class="form-label">Validity</label>
                 <InputSelect class="form-select" @bind-Value="this.model.ValidityInDays" id="i-validity">
-                    <option value="1">1 dayt</option>
+                    <option value="1">1 day</option>
                     <option value="3">3 days</option>
                     <option value="7">7 days</option>
                     <option value="31">31 days</option>

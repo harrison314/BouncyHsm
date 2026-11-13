@@ -112,7 +112,7 @@ public class CreateSlotViewModel : IValidatableObject
         {
             if (string.IsNullOrEmpty(this.TokenSignaturePin))
             {
-                yield return new ValidationResult("TokenSignaturePin is required if is TokenSimulateQualifiedArea is set.", new string[] { nameof(this.TokenSignaturePin) });
+                yield return new ValidationResult("TokenSignaturePin is required if TokenSimulateQualifiedArea is set.", new string[] { nameof(this.TokenSignaturePin) });
             }
             else
             {

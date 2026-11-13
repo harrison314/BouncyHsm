@@ -35,7 +35,7 @@ internal class GenerateCsrCommand : AsyncCommand<GenerateCsrCommand.Settings>
         }
 
         [CommandArgument(3, "[SubjectName]")]
-        [Description("Text represents X509 subject name. (eg. CN=Test cert, C=SK, 2.5.4.7=MyCity)")]
+        [Description("Text represents X509 subject name. (e.g. CN=Test cert, C=SK, 2.5.4.7=MyCity)")]
         public string? SubjectName
         {
             get;

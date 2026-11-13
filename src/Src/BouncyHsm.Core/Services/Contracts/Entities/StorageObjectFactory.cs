@@ -304,7 +304,7 @@ public static class StorageObjectFactory
         //TODO: Implement other object types.
 
         throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
-            $"No match create object pattern (eg. CKA_CLASS, CKA_KEY_TYPE, CKA_CERTIFICATE_TYPE).");
+            $"No match create object pattern (e.g. CKA_CLASS, CKA_KEY_TYPE, CKA_CERTIFICATE_TYPE).");
     }
 
     private static StorageObject CreateSecretCore(IReadOnlyDictionary<CKA, IAttributeValue> template, IStorageObjectInternalFactory factory)

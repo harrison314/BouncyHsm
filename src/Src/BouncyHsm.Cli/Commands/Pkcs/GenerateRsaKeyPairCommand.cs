@@ -39,7 +39,7 @@ internal class GenerateRsaKeyPairCommand : AsyncCommand<GenerateRsaKeyPairComman
         }
 
         [CommandArgument(3, "[KeySize]")]
-        [Description("RSA key size (eg. 2048).")]
+        [Description("RSA key size (e.g. 2048).")]
         public required int KeySize
         {
             get;

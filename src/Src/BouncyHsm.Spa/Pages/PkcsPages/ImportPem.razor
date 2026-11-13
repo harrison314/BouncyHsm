@@ -112,7 +112,7 @@
                 </div>
                 <div class="mb-1 form-check">
                     <InputCheckbox class="form-check-input" id="i-derivation" @bind-Value="this.model.ForDerivation" />
-                    <label class="form-check-label" for="i-derivation">Private key can use for derivation</label>
+                    <label class="form-check-label" for="i-derivation">Private key can used for derivation</label>
                     <ValidationMessage For="() => this.model.ForDerivation" />
                 </div>
 
@@ -146,10 +146,10 @@
             </p>
 
             <p>Other objects can also be imported:</p>
-            <p><code>AES SECRET KEY</code> - for AES key (content is key value).</p>
-            <p><code>POLY1305 SECRET KEY</code> - for POLY1305 key (content is key value).</p>
-            <p><code>CHACHA20 SECRET KEY</code> - for ChaCha20 key (content is key value).</p>
-            <p><code>SALSA20 SECRET KEY</code> - for Salsa20 key (content is key value).</p>
+            <p><code>AES SECRET KEY</code> - for AES key (the content is the key value).</p>
+            <p><code>POLY1305 SECRET KEY</code> - for POLY1305 key (the content is the key value).</p>
+            <p><code>CHACHA20 SECRET KEY</code> - for ChaCha20 key (the content is the key value).</p>
+            <p><code>SALSA20 SECRET KEY</code> - for Salsa20 key (the content is the key value).</p>
             <p>
                 <code>GENERIC SECRET</code> - for generic secret, it is possible to specify the key type using the <em>KeyType</em> header (allowed values are: <em>CKK_GENERIC_SECRET</em>,
                 <em>CKK_MD5_HMAC</em>,
@@ -161,7 +161,7 @@
                 <em>CKK_RIPEMD128_HMAC</em>,
                 <em>CKK_RIPEMD160_HMAC</em>)
             </p>
-            <p><code>DATA OBJECT</code> - for data object,it is possible to specify the application using the <em>Application</em> header.</p>
+            <p><code>DATA OBJECT</code> - for data object, it is possible to specify the application using the <em>Application</em> header.</p>
 
             <hr />
             <p>Examples:</p>
