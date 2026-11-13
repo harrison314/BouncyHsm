@@ -39,3 +39,5 @@ builder.AddProject<Projects.ExampleApi>("exampleapi")
 
 builder.Build().Run();
 ```
+
+A complete demonstration of Aspire usage can be found at <https://github.com/harrison314/BouncyHsm/tree/main/Examples/AspireExample>.
