@@ -41,5 +41,6 @@ bool getProgramArgs(const char*** args, int* argc);
 bool freeProgramArgs(const char*** args, int* argc);
 
 #define LIMIT_CSHARP_INT32_MAX 2147483647
+#define LIMIT_CSHARP_UINT32_MAX 4294967295
 
 #endif //PLATFORM_HELPER_H

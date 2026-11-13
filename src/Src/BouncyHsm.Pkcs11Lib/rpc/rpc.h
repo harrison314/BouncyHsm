@@ -900,6 +900,7 @@ typedef struct _AttrValueFromNative
 {
     uint32_t AttributeType;
     int32_t ValueTypeHint;
+    int32_t ValueOverflowHint;
     Binary ValueRawBytes;
     bool ValueBool;
     uint32_t ValueCkUlong;

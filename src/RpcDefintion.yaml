@@ -668,6 +668,7 @@ Messages:
     Fields:
       AttributeType: uint32
       ValueTypeHint: int32
+      ValueOverflowHint: int32
       ValueRawBytes: binary
       ValueBool: bool
       ValueCkUlong: uint32
