@@ -1503,41 +1503,48 @@ public partial class AttrValueFromNative
     }
 
     [Key(2)]
+    public int ValueOverflowHint
+    {
+        get;
+        set;
+    }
+
+    [Key(3)]
     public byte[] ValueRawBytes
     {
         get;
         set;
     } = global::System.Array.Empty<byte>();
 
-    [Key(3)]
+    [Key(4)]
     public bool ValueBool
     {
         get;
         set;
     }
 
-    [Key(4)]
+    [Key(5)]
     public uint ValueCkUlong
     {
         get;
         set;
     }
 
-    [Key(5)]
+    [Key(6)]
     public string? ValueCkDate
     {
         get;
         set;
     }
 
-    [Key(6)]
+    [Key(7)]
     public UintArrayData? ValueUintArray
     {
         get;
         set;
     }
 
-    [Key(7)]
+    [Key(8)]
     public AttrTemplateValueFromNative? ValueTemplate
     {
         get;

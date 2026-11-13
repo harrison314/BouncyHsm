@@ -132,6 +132,7 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
 
         ptr[i].AttributeType = (uint32_t)pTemplate[i].type;
         ptr[i].ValueTypeHint = AttrValueFromNative_TypeHint_Binary;
+        ptr[i].ValueOverflowHint = 0;
         ptr[i].ValueRawBytes.data = (uint8_t*)pTemplate[i].pValue;
         ptr[i].ValueRawBytes.size = (size_t)pTemplate[i].ulValueLen;
         ptr[i].ValueBool = false;
@@ -162,11 +163,26 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
                 return CKR_GENERAL_ERROR;
             }
 
-            CopyCkUlongArrayToUint32Array(&uintArrayData->Array, (CK_ULONG_PTR)pTemplate[i].pValue);
+            CK_ULONG_PTR ulongArrayValues = (CK_ULONG_PTR)pTemplate[i].pValue;
+            CopyCkUlongArrayToUint32Array(&uintArrayData->Array, ulongArrayValues);
 
             ptr[i].ValueUintArray = uintArrayData;
             ptr[i].ValueRawBytes.size = 0;
             ptr[i].ValueTypeHint |= AttrValueFromNative_TypeHint_UintArray;
+
+            if ((sizeof(CK_ULONG) > sizeof(uint32_t)))
+            {
+                size_t ulongArrayCount = (pTemplate[i].ulValueLen / sizeof(CK_ULONG));
+                size_t uai;
+                for (uai = 0; uai < ulongArrayCount; uai++)
+                {
+                    if (ulongArrayValues[uai] > LIMIT_CSHARP_UINT32_MAX)
+                    {
+                        ptr[i].ValueOverflowHint |= AttrValueFromNative_TypeHint_UintArray;
+                        break;
+                    }
+                }
+            }
 
             continue;
         }
@@ -217,6 +233,11 @@ CK_RV ConvertToAttrValueFromNative(CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount,
 
             CK_ULONG* ulongValue = (CK_ULONG*)pTemplate[i].pValue;
             ptr[i].ValueCkUlong = (uint32_t)(*ulongValue);
+
+            if ((sizeof(CK_ULONG) > sizeof(uint32_t)) && *ulongValue > LIMIT_CSHARP_UINT32_MAX)
+            {
+                ptr[i].ValueOverflowHint |= AttrValueFromNative_TypeHint_CkUlong;
+            }
         }
 
         if (ptr[i].ValueRawBytes.size == 0)

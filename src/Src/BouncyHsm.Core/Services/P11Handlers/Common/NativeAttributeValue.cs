@@ -57,6 +57,7 @@ internal class NativeAttributeValue : IAttributeValue
     {
         this.TypeTag = AttrTypeUtils.GetTypeTag((CKA)value.AttributeType);
         this.CheckValueType(this.TypeTag, value);
+        this.CheckValueOverflow(this.TypeTag, value);
         this.value = value;
     }
 
@@ -149,6 +150,27 @@ internal class NativeAttributeValue : IAttributeValue
         if (typeTag == AttrTypeTag.CkAttributeArray && !((value.ValueTypeHint & AttrValueFromNativeTypeCkAttributeArray) == AttrValueFromNativeTypeCkAttributeArray))
         {
             throw new InvalidAttributeTypeCastException($"Attribute type {(CKA)value.AttributeType} requires type Template - mishmash type.");
+        }
+    }
+
+    private void CheckValueOverflow(AttrTypeTag typeTag, AttrValueFromNative value)
+    {
+        if (typeTag == AttrTypeTag.CkUint && ((value.ValueOverflowHint & AttrValueFromNativeTypeCkUint) == AttrValueFromNativeTypeCkUint))
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                $"Attribute value {(CKA)value.AttributeType} is invalid – value overflows data type uint32_t.");
+        }
+
+        if (typeTag == AttrTypeTag.UintArray && ((value.ValueOverflowHint & AttrValueFromNativeTypeUintArray) == AttrValueFromNativeTypeUintArray))
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                $"Attribute value {(CKA)value.AttributeType} is invalid – any value in array overflows data type uint32_t.");
+        }
+
+        if (typeTag == AttrTypeTag.CkAttributeArray && ((value.ValueOverflowHint & AttrValueFromNativeTypeCkAttributeArray) == AttrValueFromNativeTypeCkAttributeArray))
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                $"Attribute value {(CKA)value.AttributeType} is invalid – any value in attribute array overflows data type uint32_t.");
         }
     }
 
