@@ -239,7 +239,10 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
     {
         this.logger.LogTrace("Entering to FindObjects with slotId {slotId}.", slotId);
 
-        List<StorageObject> result = this.storageObjects.Values.Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
+        List<StorageObject> result = this.storageObjects
+            .Where(t => t.Key.SlotId == slotId)
+            .Select(t => t.Value)
+            .Where(t => (specification.IsUserLogged || !t.GetCkaPrivate()) && t.IsMatch(specification.Template))
             .Select(t => StorageObjectFactory.CreateFromMemento(t))
             .ToList();
 
