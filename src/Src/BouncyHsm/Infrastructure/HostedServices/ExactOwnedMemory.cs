@@ -30,6 +30,7 @@ internal struct ExactOwnedMemory : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
+        System.Diagnostics.Debug.Assert(this.bytes != null);
         ArrayPool<byte>.Shared.Return(this.bytes, false);
     }
 }
