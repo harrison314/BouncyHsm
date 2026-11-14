@@ -2,7 +2,7 @@
 
 internal struct LogEvent
 {
-    public DateTimeOffset Timespamt
+    public DateTimeOffset Timestamp
     {
         get;
         set;

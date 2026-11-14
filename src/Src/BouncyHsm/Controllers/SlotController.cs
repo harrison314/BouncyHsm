@@ -46,7 +46,7 @@ public class SlotController : Controller
     [ProducesResponseType(typeof(SlotDto), 200)]
     public async Task<IActionResult> GetSlot(int slotId)
     {
-        this.logger.LogTrace("Entering to GetAllSlots with slotId {slotId}.", slotId);
+        this.logger.LogTrace("Entering to GetSlot with slotId {slotId}.", slotId);
 
         DomainResult<Core.Services.Contracts.Entities.SlotEntity> result = await this.slotFacade.GetSlotById((uint)slotId, this.HttpContext.RequestAborted);
 
@@ -81,7 +81,7 @@ public class SlotController : Controller
     [ProducesResponseType(typeof(void), 200)]
     public async Task<IActionResult> SetTokenPinForSlot(int slotId, [FromBody] SetTokenPinDataDto setTokenPinDataDto)
     {
-        this.logger.LogTrace("Entering to SetSlotPluggedState with {slotId}, userType {userType}", slotId, setTokenPinDataDto.UserType);
+        this.logger.LogTrace("Entering to SetTokenPinForSlot with {slotId}, userType {userType}", slotId, setTokenPinDataDto.UserType);
 
         SetTokenPinData data = SlotControllerMapper.MapFromDto(setTokenPinDataDto);
         VoidDomainResult result = await this.slotFacade.SetTokenPin((uint)slotId,

@@ -1,4 +1,5 @@
 using BouncyHsm.Core.Services.Contracts;
+using BouncyHsm.Core.UseCases.Implementation;
 using BouncyHsm.Infrastructure;
 using BouncyHsm.Infrastructure.Application;
 using BouncyHsm.Services.Configuration;
@@ -57,10 +58,11 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApiDocument(cfg =>
         {
+            HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
             cfg.Title = "Bouncy Hsm REST API";
             cfg.Description = "Management API for Bouncy Hsm.";
             cfg.UseRouteNameAsOperationId = true;
-            cfg.Version = "2.3.4";
+            cfg.Version = hsmInfoFacade.GetVersions().Version;
         });
 
         builder.Host.UseWindowsService();
@@ -103,8 +105,8 @@ public class Program
         builder.TryUseProfileFromConfiguration();
 
         builder.Services.AddHealthChecks()
-            .AddCheck<Infrastructure.HealthChecks.PersistentRepozitoryHealthCheck>("PersistentRepozitoryHealthCheck",
-            tags: ["perzistence"],
+            .AddCheck<Infrastructure.HealthChecks.PersistentRepositoryHealthCheck>("PersistentRepositoryHealthCheck",
+            tags: ["persistence"],
             timeout: TimeSpan.FromSeconds(10.0));
 
         WebApplication app = builder.Build();

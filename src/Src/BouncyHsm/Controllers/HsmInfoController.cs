@@ -51,7 +51,7 @@ public class HsmInfoController : Controller
     [ProducesResponseType(typeof(IEnumerable<FunctionImplStateDto>), 200)]
     public IActionResult GetFunctionsState()
     {
-        this.logger.LogTrace("Entering to GetMechanism");
+        this.logger.LogTrace("Entering to GetFunctionsState");
 
         return this.Ok(HsmInfoControllerMapper.ToDto(this.infoFacade.GetFunctionsState()));
     }

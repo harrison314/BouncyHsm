@@ -23,7 +23,7 @@ public class SignalrProtectedAuthPathProvider : IProtectedAuthPathProvider
             userType,
             slot.SlotId);
 
-        string tolkenInfo = windowType switch
+        string tokenInfo = windowType switch
         {
             ProtectedAuthPathWindowType.SetPin => $"Set PIN for: {slot.Token.Label}",
             ProtectedAuthPathWindowType.Login => $"Login to: {slot.Token.Label}",
@@ -34,7 +34,7 @@ public class SignalrProtectedAuthPathProvider : IProtectedAuthPathProvider
 
         byte[]? loginValue = await this.context.PerformLogin(
             userType.ToString(),
-            tolkenInfo,
+            tokenInfo,
             cancellationToken);
 
         return loginValue;

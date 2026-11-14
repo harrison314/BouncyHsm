@@ -77,7 +77,7 @@ internal class GenerateSelfSignedCertCommand : AsyncCommand<GenerateSelfSignedCe
         await AnsiConsole.Status()
            .StartAsync("Creating...", async ctx =>
            {
-               _ = await client.Pkcs_GenerateSelfSignedCertAsync(settings.SlotId, new GenerateSelfSignedCertRequestDto()
+               _ = await client.GenerateSelfSignedCertAsync(settings.SlotId, new GenerateSelfSignedCertRequestDto()
                {
                    PrivateKeyId = settings.PrivateKeyId,
                    PublicKeyId = settings.PublicKeyId,

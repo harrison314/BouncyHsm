@@ -2,7 +2,6 @@
 using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Models.Stats;
 using Microsoft.AspNetCore.Mvc;
-using System.Security;
 
 namespace BouncyHsm.Controllers;
 
@@ -24,7 +23,7 @@ public class StatsController : Controller
     [ProducesResponseType(typeof(OverviewStatsDto), 200)]
     public async Task<IActionResult> GetOverviewStats()
     {
-        this.logger.LogTrace("Entering to GetAllSlots");
+        this.logger.LogTrace("Entering to GetOverviewStats");
 
         DomainResult<OverviewStats> result = await this.statsFacade.GetOverviewStats(this.HttpContext.RequestAborted);
 

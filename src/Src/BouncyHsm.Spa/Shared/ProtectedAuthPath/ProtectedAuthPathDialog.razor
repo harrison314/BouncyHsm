@@ -121,7 +121,7 @@
         if (this.activeLogSession == null) throw new InvalidOperationException("Log session must be set.");
         if (this.hubConnection == null) throw new InvalidProgramException("Hub must be connected.");
 
-        await this.hubConnection.InvokeAsync("CancellLogin", this.activeLogSession);
+        await this.hubConnection.InvokeAsync("CancelLogin", this.activeLogSession);
     }
 
     private async Task Ignore()

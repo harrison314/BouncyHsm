@@ -33,7 +33,7 @@ internal static partial class PkcsControllerMapper
         return request;
     }
 
-    [MapperIgnoreTarget(nameof(ImportP12Request.SlotId))]
+    [MapperIgnoreTarget(nameof(GeneratePkcs10Request.SlotId))]
     private static partial GeneratePkcs10Request FromDto(GeneratePkcs10RequestDto dto);
 
     public static GenerateSelfSignedCertRequest FromDto(GenerateSelfSignedCertRequestDto dto, uint slotId)
@@ -72,7 +72,7 @@ internal static partial class PkcsControllerMapper
         return request;
     }
 
-    [MapperIgnoreTarget(nameof(ImportP12Request.SlotId))]
+    [MapperIgnoreTarget(nameof(ImportX509CertificateRequest.SlotId))]
     private static partial ImportX509CertificateRequest FromDto(ImportX509CertificateRequestDto dto);
 
     public static partial CertificateDetailDto ToDto(CertificateDetail detail);

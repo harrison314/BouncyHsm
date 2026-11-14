@@ -126,7 +126,7 @@ public class KeyGenerationController : Controller
     }
 
     [HttpPost("{slotId}/GenerateAesKey", Name = nameof(GenerateAesKey))]
-    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    [ProducesResponseType(typeof(GeneratedSecretIdDto), 200)]
     public async Task<IActionResult> GenerateAesKey(uint slotId, [FromBody] GenerateAesKeyRequestDto model)
     {
         this.logger.LogTrace("Entering to GenerateAesKey with slotId {slotId}.", slotId);
@@ -138,7 +138,7 @@ public class KeyGenerationController : Controller
     }
 
     [HttpPost("{slotId}/GeneratePoly1305Key", Name = nameof(GeneratePoly1305Key))]
-    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    [ProducesResponseType(typeof(GeneratedSecretIdDto), 200)]
     public async Task<IActionResult> GeneratePoly1305Key(uint slotId, [FromBody] GeneratePoly1305KeyRequestDto model)
     {
         this.logger.LogTrace("Entering to GeneratePoly1305Key with slotId {slotId}.", slotId);
@@ -150,7 +150,7 @@ public class KeyGenerationController : Controller
     }
 
     [HttpPost("{slotId}/GenerateChaCha20Key", Name = nameof(GenerateChaCha20Key))]
-    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    [ProducesResponseType(typeof(GeneratedSecretIdDto), 200)]
     public async Task<IActionResult> GenerateChaCha20Key(uint slotId, [FromBody] GenerateChaCha20KeyRequestDto model)
     {
         this.logger.LogTrace("Entering to GenerateChaCha20Key with slotId {slotId}.", slotId);
@@ -162,7 +162,7 @@ public class KeyGenerationController : Controller
     }
 
     [HttpPost("{slotId}/GenerateSalsa20Key", Name = nameof(GenerateSalsa20Key))]
-    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    [ProducesResponseType(typeof(GeneratedSecretIdDto), 200)]
     public async Task<IActionResult> GenerateSalsa20Key(uint slotId, [FromBody] GenerateSalsa20KeyRequestDto model)
     {
         this.logger.LogTrace("Entering to GenerateSalsa20Key with slotId {slotId}.", slotId);
@@ -174,7 +174,7 @@ public class KeyGenerationController : Controller
     }
 
     [HttpPost("{slotId}/GenerateSecretKey", Name = nameof(GenerateSecretKey))]
-    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    [ProducesResponseType(typeof(GeneratedSecretIdDto), 200)]
     public async Task<IActionResult> GenerateSecretKey(uint slotId, [FromBody] GenerateSecretKeyRequestDto model)
     {
         this.logger.LogTrace("Entering to GenerateSecretKey with slotId {slotId}.", slotId);
@@ -186,7 +186,7 @@ public class KeyGenerationController : Controller
     }
 
     [HttpPost("{slotId}/GenerateCamelliaKey", Name = nameof(GenerateCamelliaKey))]
-    [ProducesResponseType(typeof(GeneratedKeyPairIdsDto), 200)]
+    [ProducesResponseType(typeof(GeneratedSecretIdDto), 200)]
     public async Task<IActionResult> GenerateCamelliaKey(uint slotId, [FromBody] GenerateCamelliaKeyRequestDto model)
     {
         this.logger.LogTrace("Entering to GenerateCamelliaKey with slotId {slotId}.", slotId);

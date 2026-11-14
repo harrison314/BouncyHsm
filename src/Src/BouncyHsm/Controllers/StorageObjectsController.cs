@@ -47,7 +47,7 @@ public class StorageObjectsController : Controller
     [ProducesResponseType(typeof(void), 200)]
     public async Task<IActionResult> RemoveStorageObject(uint slotId, Guid objectId)
     {
-        this.logger.LogTrace("Entering to GetStorageObject with slotId {slotId}, objectId {objectId}.", slotId, objectId);
+        this.logger.LogTrace("Entering to RemoveStorageObject with slotId {slotId}, objectId {objectId}.", slotId, objectId);
 
         VoidDomainResult result = await this.storageObjectsFacade.DeleteStorageObject(slotId, objectId, this.HttpContext.RequestAborted);
 

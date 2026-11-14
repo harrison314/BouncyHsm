@@ -44,7 +44,7 @@ public class LogDto
     internal LogDto(LogEvent logEvent)
     {
 
-        this.Timestamp = logEvent.Timespamt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffff");
+        this.Timestamp = logEvent.Timestamp.ToString(ShowSortableDateTimeFormat);
         this.Level = logEvent.LogLevel;
         this.Message = logEvent.Message;
         this.Exception = logEvent.Exception?.ToString();

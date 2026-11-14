@@ -22,10 +22,10 @@ public class PapHub : Hub<IPapClient>
         return Task.CompletedTask;
     }
 
-    public Task CancellLogin(string logSession)
+    public Task CancelLogin(string logSession)
     {
-        this.logger.LogTrace("Entering to CancellLogin with logSession {logSession}.", logSession);
-        this.papLoginMemoryContext.CancellLogin(logSession);
+        this.logger.LogTrace("Entering to CancelLogin with logSession {logSession}.", logSession);
+        this.papLoginMemoryContext.CancelLogin(logSession);
 
         return Task.CompletedTask;
     }

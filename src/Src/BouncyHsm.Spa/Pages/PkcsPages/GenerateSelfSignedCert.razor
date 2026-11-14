@@ -123,7 +123,7 @@
 
         try
         {
-            _ = await this.bouncyHsmClient.Pkcs_GenerateSelfSignedCertAsync(this.SlotId, new GenerateSelfSignedCertRequestDto()
+            _ = await this.bouncyHsmClient.GenerateSelfSignedCertAsync(this.SlotId, new GenerateSelfSignedCertRequestDto()
             {
                 PrivateKeyId = this.PrivateKeyId,
                 PublicKeyId = this.PublicKeyId,

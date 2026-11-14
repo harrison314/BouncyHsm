@@ -27,7 +27,7 @@ public class SignalrLogEventSink : ILogEventSink
                 {
                     LogLevel = this.Translate(logEvent.Level),
                     Message = message,
-                    Timespamt = logEvent.Timestamp,
+                    Timestamp = logEvent.Timestamp,
                     Tag = tagValue,
                     Context = categoryName.ToString()
                 };

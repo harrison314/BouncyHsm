@@ -25,7 +25,7 @@ public class PapLoginMemoryContext : IPapLoginMemoryContext
 
     public async Task<byte[]?> PerformLogin(string loginType, string tokenInfo, CancellationToken cancellationToken)
     {
-        this.logger.LogTrace("Enering to PerformLogin.");
+        this.logger.LogTrace("Entering to PerformLogin.");
 
         string logSession = this.CreateSessionId();
         this.logger.LogTrace("Create a new logSession {logSession}.", logSession);
@@ -55,9 +55,9 @@ public class PapLoginMemoryContext : IPapLoginMemoryContext
         }
     }
 
-    public void CancellLogin(string logSession)
+    public void CancelLogin(string logSession)
     {
-        this.logger.LogTrace("Entering to CancellLogin with logSession {logSession}.", logSession);
+        this.logger.LogTrace("Entering to CancelLogin with logSession {logSession}.", logSession);
         if (this.loginSessions.TryGetValue(logSession, out TaskCompletionSource<byte[]?>? result))
         {
             result.SetResult(null);

@@ -19,7 +19,7 @@ public class PkcsController : Controller
         this.logger = logger;
     }
 
-    [HttpPost("{slotId}/GeneratePkcs10")]
+    [HttpPost("{slotId}/GeneratePkcs10", Name = nameof(GeneratePkcs10))]
     [ProducesResponseType(typeof(Pkcs10Dto), 200)]
     public async Task<IActionResult> GeneratePkcs10(uint slotId, [FromBody] GeneratePkcs10RequestDto model)
     {
@@ -31,7 +31,7 @@ public class PkcsController : Controller
         return result.MapOk(t => new Pkcs10Dto(t)).ToActionResult();
     }
 
-    [HttpPost("{slotId}/GenerateSelfSignedCert")]
+    [HttpPost("{slotId}/GenerateSelfSignedCert", Name = nameof(GenerateSelfSignedCert))]
     [ProducesResponseType(typeof(GenerateSelfSignedCertResponseDto), 200)]
     public async Task<IActionResult> GenerateSelfSignedCert(uint slotId, [FromBody] GenerateSelfSignedCertRequestDto model)
     {
