@@ -49,9 +49,19 @@ internal class GenericSecretHmacKeyGenerator : IKeyGenerator
             generalSecretKeyObject.SetValue(kvp.Key, kvp.Value, false);
         }
 
-        this.CheckLength(generalSecretKeyObject);
-        
-        byte[] value = new byte[generalSecretKeyObject.CkaValueLen];
+        uint length;
+        if (this.template.TryGetValue(CKA.CKA_VALUE_LEN, out IAttributeValue? ckaLength))
+        {
+            length = ckaLength.AsUint();
+        }
+        else
+        {
+            length = generalSecretKeyObject.GetMinimalSecretLen();
+        }
+
+        this.CheckLength(length);
+
+        byte[] value = new byte[length];
         secureRandom.NextBytes(value);
         generalSecretKeyObject.SetSecret(value);
 
@@ -67,12 +77,12 @@ internal class GenericSecretHmacKeyGenerator : IKeyGenerator
         return "GenericSecretHmacKeyGenerator";
     }
 
-    private void CheckLength(GenericSecretKeyObject generalSecretKeyObject)
+    private void CheckLength(uint lengthInBytes)
     {
         bool mechanismFound = MechanismUtils.TryGetMechanismInfo(this.generatingMechanism, out P11Handlers.Common.MechanismInfo info);
         System.Diagnostics.Debug.Assert(mechanismFound);
 
-        uint keySizeInBits = generalSecretKeyObject.CkaValueLen * 8;
+        uint keySizeInBits = lengthInBytes * 8;
         if (info.MinKeySize > keySizeInBits || info.MaxKeySize < keySizeInBits)
         {
             this.logger.LogError("Invalid key size for {Mechanism} actual key size {KeySizeInBits} bits (The permitted range is between {MinKeySize} and {MaxKeySize} bits).",
@@ -94,7 +104,8 @@ internal class GenericSecretHmacKeyGenerator : IKeyGenerator
               $"Attribute {CKA.CKA_VALUE} can not use in C_GenerateKey.");
         }
 
-        if (template.GetRequiredAttributeUint(CKA.CKA_VALUE_LEN) < 1)
+        if (template.TryGetValue(CKA.CKA_VALUE_LEN, out IAttributeValue? ckaLength)
+            && ckaLength.AsUint() < 1)
         {
             throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
               $"Attribute {CKA.CKA_VALUE_LEN} is less than 1.");
