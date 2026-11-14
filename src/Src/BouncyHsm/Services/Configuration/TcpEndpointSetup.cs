@@ -21,6 +21,18 @@ public class TcpEndpointSetup
         set;
     }
 
+    public int MaxRequestHeaderSize
+    {
+        get;
+        set;
+    }
+
+    public int MaxRequestBodySize
+    {
+        get;
+        set;
+    }
+
     public TcpEndpointSetup()
     {
         this.Endpoint = string.Empty;

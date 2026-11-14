@@ -68,6 +68,7 @@ internal sealed class TcpHostedService : BackgroundService
             await this.ReceiveExact(clientConnection, headBuffer.Memory, stoppingToken);
 
             (int headerSize, int bodySize) = HeadEncoder.Decode(headBuffer.Memory.Span.Slice(0, 8));
+            this.CheckRequestLimits(headerSize, bodySize);
 
             using ExactOwnedMemory requestHeader = ExactOwnedMemory.Rent(headerSize);
             using ExactOwnedMemory requestBody = ExactOwnedMemory.Rent(bodySize);
@@ -123,6 +124,24 @@ internal sealed class TcpHostedService : BackgroundService
             }
 
             totalRead += bytesRead;
+        }
+    }
+
+    private void CheckRequestLimits(int headerSize, int bodySize)
+    {
+        int maxHeaderSize = this.bouncyHsmSetup.Value.TcpEndpoint!.MaxRequestHeaderSize;
+        int maxBodySize = this.bouncyHsmSetup.Value.TcpEndpoint!.MaxRequestBodySize;
+
+        if (maxHeaderSize != 0 && headerSize > maxHeaderSize)
+        {
+            this.logger.LogError("Request header size {HeaderSize} B exceeds limit {MaxHeaderSize} B.", headerSize, maxHeaderSize);
+            throw new System.IO.InvalidDataException($"Request header size {headerSize} B exceeds limit {maxHeaderSize} B.");
+        }
+
+        if (maxBodySize != 0 && bodySize > maxBodySize)
+        {
+            this.logger.LogError("Request header size {bodySize} B exceeds limit {maxBodySize} B.", bodySize, maxBodySize);
+            throw new System.IO.InvalidDataException($"Request header size {bodySize} B exceeds limit {maxBodySize} B.");
         }
     }
 }
