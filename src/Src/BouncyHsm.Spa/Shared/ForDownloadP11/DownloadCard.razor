@@ -4,29 +4,27 @@
         @this.Platform @this.Architecture
     </div>
     <div class="card-body">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+            <div class="flex-shrink-0">
+                @if (this.Platform == DownloadPlatform.Windows)
+                {
+                    <span class="icon-windows8 icon-4x"></span>
+                }
+                else if (this.Platform == DownloadPlatform.Linux || this.Platform == DownloadPlatform.RHEL)
+                {
+                    <span class="icon-tux icon-4x"></span>
+                }
+            </div>
 
-            <div class="col-1 d-flex align-items-center">
-                <div class="align-self-center">
-                    @if (this.Platform == DownloadPlatform.Windows)
-                    {
-                        <span class="icon-windows8 icon-4x"></span>
-                    }
-                    else if (this.Platform == DownloadPlatform.Linux || this.Platform == DownloadPlatform.RHEL)
-                    {
-                        <span class="icon-tux icon-4x"></span>
-                    }
-                </div>
+            <div class="flex-grow-1">
+                <p class="mb-0">@this.Description</p>
             </div>
-            <div class="col-9">
-                <p>@this.Description</p>
-            </div>
-            <div class="col-2 align-items-center">
-                <a href="@GetDownloadLink()" class="btn btn-sm btn-outline-primary pe-4" download>
+
+            <div class="flex-shrink-0">
+                <a href="@GetDownloadLink()" class="btn btn-sm btn-outline-primary" download>
                     <span class="icon-cloud-download icon-1x"></span> Download
                 </a>
             </div>
-
         </div>
     </div>
 </div>
