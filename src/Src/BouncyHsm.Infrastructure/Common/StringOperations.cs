@@ -10,15 +10,10 @@ internal static class StringOperations
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
     public static bool FixedTimeEquals(ReadOnlySpan<char> a, ReadOnlySpan<char> b)
     {
-        if (a.Length != b.Length)
-        {
-            return false;
-        }
-
-        bool result = true;
+        bool result = a.Length == b.Length;
         for (int i = 0; i < a.Length; i++)
         {
-            result &= a[i] == b[i];
+            result &= a[i] == b[i % b.Length];
         }
 
         return result;

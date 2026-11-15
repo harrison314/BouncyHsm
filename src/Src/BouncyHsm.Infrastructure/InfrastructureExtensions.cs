@@ -7,11 +7,13 @@ namespace BouncyHsm.Infrastructure;
 
 public static class InfrastructureExtensions
 {
-    public static void RegisterCommonServices(this IServiceCollection serviceDescriptors)
+    public static IServiceCollection RegisterCommonServices(this IServiceCollection serviceDescriptors)
     {
         serviceDescriptors.AddTransient<IProtectedAuthPathProvider, NullProtectedAuthPathProvider>();
         serviceDescriptors.AddSingleton(System.TimeProvider.System);
         serviceDescriptors.AddTransient<IP11HwServices, BouncyHsm.Infrastructure.Common.P11HwServices>();
+
+        return serviceDescriptors;
     }
 
     public static IServiceCollection RegisterInMemoryPersistence(this IServiceCollection serviceDescriptors)

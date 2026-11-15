@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace BouncyHsm.Infrastructure.Storage.LiteDbFile;
 
@@ -59,14 +57,14 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
     public ValueTask<SlotIds> CreateSlot(SlotEntity slot, TokenPins? pins, CancellationToken cancellationToken)
     {
+        if (pins == null) throw new ArgumentNullException(nameof(pins));
+        if (slot == null) throw new ArgumentNullException(nameof(slot));
+
         this.logger.LogTrace("Entering CreateSlot with description {Description}.", slot.Description);
 
         ILiteCollection<SlotModel> collection = this.database.GetCollection<SlotModel>();
         ILiteCollection<PasswordsModel> passwordCollection = this.database.GetCollection<PasswordsModel>();
         ILiteCollection<SlotSequence> slotSequence = this.database.GetCollection<SlotSequence>();
-
-        if (pins == null) throw new ArgumentNullException(nameof(pins));
-        if (slot == null) throw new ArgumentNullException(nameof(slot));
 
         SlotMapper mapper = new SlotMapper();
         SlotModel slotModel = mapper.MapSlot(slot);
@@ -168,7 +166,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
 
         if (specification.WithTokenPresent)
         {
-            IReadOnlyList<SlotEntity> list = collection.Find(t => !(t.IsRemovableDevice && !t.IsPlugged!.Value)).Select(t => mapper.MapSlot(t)).ToList();
+            IReadOnlyList<SlotEntity> list = collection.Find(t => !(t.IsRemovableDevice && !(t.IsPlugged == null || t.IsPlugged.Value))).Select(t => mapper.MapSlot(t)).ToList();
             return new ValueTask<IReadOnlyList<SlotEntity>>(list);
         }
         else

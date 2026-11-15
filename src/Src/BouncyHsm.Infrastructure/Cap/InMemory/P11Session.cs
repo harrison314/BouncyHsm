@@ -10,7 +10,7 @@ public class P11Session : IP11Session
     public uint SlotId
     {
         get;
-        set;
+        private set;
     }
 
     public bool IsRwSession

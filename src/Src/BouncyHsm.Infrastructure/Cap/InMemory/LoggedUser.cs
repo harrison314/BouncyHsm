@@ -3,7 +3,9 @@
 [Flags]
 internal enum LoggedUser
 {
-    None,
-    User,
-    So
+    None = 0,
+
+    User = 1,
+
+    So = 2
 }
