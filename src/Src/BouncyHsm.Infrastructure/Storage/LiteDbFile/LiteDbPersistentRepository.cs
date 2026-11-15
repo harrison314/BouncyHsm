@@ -250,6 +250,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
              if (changed)
              {
                  SlotModel updatedModel = mapper.MapSlot(entity);
+                 updatedModel.Created = model.Created;
+
                  collection.Update(updatedModel);
              }
 
