@@ -95,15 +95,15 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             {
                 passwordCollection.Insert(passwords);
                 this.logger.LogDebug("Inserted passwords {Id}.", passwords.Id);
+
+                collection.Insert(slotModel);
+                this.logger.LogDebug("Inserted slot model {Id}.", slotModel.Id);
             }
             catch (LiteException ex) when (ex.Message.Contains("IX_SlotEntity_TokenSerial"))
             {
                 this.logger.LogError(ex, "Token serial {TokenSerial} already exists.", slot.Token.SerialNumber);
                 throw new BouncyHsmStorageException($"Token serial {slot.Token.SerialNumber} already exists.", ex);
             }
-
-            collection.Insert(slotModel);
-            this.logger.LogDebug("Inserted slot model {Id}.", slotModel.Id);
         });
 
         return new ValueTask<SlotIds>(new SlotIds(slotModel.Id, slotModel.SlotId));
