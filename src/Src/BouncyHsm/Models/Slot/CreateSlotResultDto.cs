@@ -9,7 +9,7 @@ public class CreateSlotResultDto
         set;
     }
 
-    public int SlotId
+    public uint SlotId
     {
         get;
         set;

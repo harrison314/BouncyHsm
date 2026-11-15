@@ -23,8 +23,6 @@ internal sealed class TcpHostedService : BackgroundService
         this.serviceProvider = serviceProvider;
         this.bouncyHsmSetup = bouncyHsmSetup;
         this.logger = logger;
-
-        System.Diagnostics.Debug.Assert(this.bouncyHsmSetup.Value.TcpEndpoint != null);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,8 +45,15 @@ internal sealed class TcpHostedService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            Socket clientConnection = await socket.AcceptAsync(stoppingToken);
-            _ = this.ProcessClientConnection(clientConnection, stoppingToken);
+            try
+            {
+                Socket clientConnection = await socket.AcceptAsync(stoppingToken);
+                _ = this.ProcessClientConnection(clientConnection, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error during accept client connection.");
+            }
         }
     }
 

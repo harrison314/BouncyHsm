@@ -1,4 +1,5 @@
-﻿using BouncyHsm.Core.UseCases.Contracts;
+﻿using BouncyHsm.Core.Services.Contracts;
+using BouncyHsm.Core.UseCases.Contracts;
 using BouncyHsm.Models.Pkcs;
 using Riok.Mapperly.Abstractions;
 
@@ -59,7 +60,7 @@ internal static partial class PkcsControllerMapper
             return new SubjectName.Text(dto.DirName);
         }
 
-        throw new InvalidDataException("");
+        throw new BouncyHsmInvalidInputException("SubjectName must contain OidValuePairs or DirName.");
     }
 
     private static partial List<SubjectNameEntry> FromSubjectNameDtos(List<SubjectNameEntryDto> subjectNames);

@@ -4,6 +4,7 @@ using BouncyHsm.Models.HsmInfo;
 using BouncyHsm.Models.StorageObjects;
 using Microsoft.AspNetCore.Mvc;
 using BouncyHsm.Core.Infrastructure.Extensions;
+using System.ComponentModel.DataAnnotations;
 
 namespace BouncyHsm.Controllers;
 
@@ -23,7 +24,7 @@ public class StorageObjectsController : Controller
 
     [HttpGet("{slotId}", Name = nameof(GetStorageObjects))]
     [ProducesResponseType(typeof(StorageObjectsListDto), 200)]
-    public async Task<IActionResult> GetStorageObjects(uint slotId, int skip = 0, int? take = null)
+    public async Task<IActionResult> GetStorageObjects(uint slotId, [Range(0, int.MaxValue)] int skip = 0, [Range(0, int.MaxValue)] int? take = null)
     {
         this.logger.LogTrace("Entering to GetStorageObjects");
 

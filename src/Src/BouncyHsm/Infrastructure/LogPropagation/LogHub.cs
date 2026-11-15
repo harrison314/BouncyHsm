@@ -22,9 +22,10 @@ public class LogHub : Hub<ILogHubClient>
 
         try
         {
-            Channel<LogDto> buffer = Channel.CreateUnbounded<LogDto>(new UnboundedChannelOptions()
+            Channel<LogDto> buffer = Channel.CreateBounded<LogDto>(new BoundedChannelOptions(350)
             {
                 AllowSynchronousContinuations = true,
+                FullMode = BoundedChannelFullMode.DropOldest,
             });
 
             EventHandler<LogEvent> handler = (_, log) =>

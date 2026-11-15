@@ -44,11 +44,11 @@ public class SlotController : Controller
 
     [HttpGet("{slotId}", Name = nameof(GetSlot))]
     [ProducesResponseType(typeof(SlotDto), 200)]
-    public async Task<IActionResult> GetSlot(int slotId)
+    public async Task<IActionResult> GetSlot(uint slotId)
     {
         this.logger.LogTrace("Entering to GetSlot with slotId {slotId}.", slotId);
 
-        DomainResult<Core.Services.Contracts.Entities.SlotEntity> result = await this.slotFacade.GetSlotById((uint)slotId, this.HttpContext.RequestAborted);
+        DomainResult<Core.Services.Contracts.Entities.SlotEntity> result = await this.slotFacade.GetSlotById(slotId, this.HttpContext.RequestAborted);
 
         return result.MapOk(SlotControllerMapper.ToDto).ToActionResult();
     }
@@ -66,11 +66,11 @@ public class SlotController : Controller
 
     [HttpPost("{slotId}/PluggedState", Name = nameof(SetSlotPluggedState))]
     [ProducesResponseType(typeof(void), 200)]
-    public async Task<IActionResult> SetSlotPluggedState(int slotId, [FromBody] SetPluggedStateDto setPluggedStateDto)
+    public async Task<IActionResult> SetSlotPluggedState(uint slotId, [FromBody] SetPluggedStateDto setPluggedStateDto)
     {
         this.logger.LogTrace("Entering to SetSlotPluggedState with {slotId}, plugged {plugged}", slotId, setPluggedStateDto.Plugged);
 
-        VoidDomainResult result = await this.slotFacade.SetPluggedState((uint)slotId,
+        VoidDomainResult result = await this.slotFacade.SetPluggedState(slotId,
             setPluggedStateDto.Plugged,
             this.HttpContext.RequestAborted);
 
@@ -79,12 +79,12 @@ public class SlotController : Controller
 
     [HttpPost("{slotId}/TokenPin", Name = nameof(SetTokenPinForSlot))]
     [ProducesResponseType(typeof(void), 200)]
-    public async Task<IActionResult> SetTokenPinForSlot(int slotId, [FromBody] SetTokenPinDataDto setTokenPinDataDto)
+    public async Task<IActionResult> SetTokenPinForSlot(uint slotId, [FromBody] SetTokenPinDataDto setTokenPinDataDto)
     {
         this.logger.LogTrace("Entering to SetTokenPinForSlot with {slotId}, userType {userType}", slotId, setTokenPinDataDto.UserType);
 
         SetTokenPinData data = SlotControllerMapper.MapFromDto(setTokenPinDataDto);
-        VoidDomainResult result = await this.slotFacade.SetTokenPin((uint)slotId,
+        VoidDomainResult result = await this.slotFacade.SetTokenPin(slotId,
             data,
             this.HttpContext.RequestAborted);
 
