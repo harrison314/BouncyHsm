@@ -49,7 +49,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         this.timeProvider = timeProvider;
         this.logger = logger;
 
-        this.InitAllIndex();
+        this.InitAllIndexes();
         this.InitVersionRecord();
     }
 
@@ -73,7 +73,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         slotModel.Token.MonotonicCounterHasReset = false;
 
         int insertedId = slotSequence.Insert(new SlotSequence());
-        this.logger.LogDebug("Create new slotId using slot sequence {insertedId}.", insertedId);
+        this.logger.LogDebug("Created new slot ID {insertedId} from the slot sequence.", insertedId);
 
         slotModel.Id = Guid.CreateVersion7();
         slotModel.SlotId = (uint)insertedId;
@@ -194,24 +194,24 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             this.logger.LogWarning("Password for slotId {slotId} not found in database.", slotId);
         }
 
-        this.logger.LogDebug("Slot with slotId {slotId} has removed from database.", slotId);
+        this.logger.LogDebug("Slot with slotId {slotId} has been removed from the database.", slotId);
 
         ILiteCollection<StorageObjectInfo> objectCollection = this.database.GetCollection<StorageObjectInfo>();
 
         const int pageSize = 100;
-        List<Guid> objectsIds = new List<Guid>(pageSize);
+        List<Guid> objectIds = new List<Guid>(pageSize);
         for (; ; )
         {
-            objectsIds.Clear();
+            objectIds.Clear();
             IEnumerable<Guid> ids = objectCollection.Find(t => t.SlotId == slotId, 0, pageSize).Select(t => t.Id);
-            objectsIds.AddRange(ids);
+            objectIds.AddRange(ids);
 
-            if (objectsIds.Count == 0)
+            if (objectIds.Count == 0)
             {
                 break;
             }
 
-            foreach (Guid objectId in objectsIds)
+            foreach (Guid objectId in objectIds)
             {
                 this.database.ExecuteInTransaction(db =>
                 {
@@ -378,7 +378,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         {
             if (!collection.Delete(storageObject.Id))
             {
-                throw new BouncyHsmNotFoundException($"Not found object with id {storageObject.Id}");
+                throw new BouncyHsmNotFoundException($"Object with id {storageObject.Id} was not found.");
             }
 
             if (!this.database.GetStorage<Guid>().Delete(storageObject.Id))
@@ -478,7 +478,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         {
             Id = storageObject.Id,
             CkaClass = (uint)storageObject.CkaClass,
-            LabelHash = this.CalculateXxxHash(storageObject.CkaLabel),
+            LabelHash = this.CalculateXxHash(storageObject.CkaLabel),
             IsPrivate = storageObject.CkaPrivate,
             SlotId = slotId,
             Created = this.timeProvider.GetUtcNow().UtcDateTime
@@ -519,7 +519,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         string? label = specification.TryGetStringValue(CKA.CKA_LABEL);
         if (label != null)
         {
-            ulong labelHash = this.CalculateXxxHash(label);
+            ulong labelHash = this.CalculateXxHash(label);
             expressions.Add(Query.EQ(nameof(StorageObjectInfo.LabelHash), (long)labelHash));
         }
 
@@ -544,9 +544,9 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         return Query.And(queries: expressions.ToArray());
     }
 
-    private void InitAllIndex()
+    private void InitAllIndexes()
     {
-        this.logger.LogTrace("Entering to InitAllIndex");
+        this.logger.LogTrace("Entering to InitAllIndexes");
 
         ILiteCollection<StorageObjectInfo> collection = this.database.GetCollection<StorageObjectInfo>();
         if (collection.EnsureIndex("IX_StorageObjectInfo_LabelHash", t => t.LabelHash))
@@ -596,7 +596,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             };
 
             collection.Insert(currentVersion);
-            this.logger.LogInformation("Insert new version record with version {version}.", version);
+            this.logger.LogInformation("Inserted new version record {version}.", version);
         }
     }
 
@@ -610,11 +610,11 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
                 {
                     this.database.Checkpoint();
                     this.database.Dispose();
-                    this.logger.LogDebug("Close database.");
+                    this.logger.LogDebug("Database closed.");
                 }
                 catch (Exception ex)
                 {
-                    this.logger.LogError(ex, "Error during close database.");
+                    this.logger.LogError(ex, "Error while closing the database.");
                 }
             }
 
@@ -664,9 +664,9 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         return BitConverter.ToUInt64(hashValue);
     }
 
-    private ulong CalculateXxxHash(ReadOnlySpan<char> data)
+    private ulong CalculateXxHash(ReadOnlySpan<char> data)
     {
-        this.logger.LogTrace("Entering to CalculateXxxHash.");
+        this.logger.LogTrace("Entering to CalculateXxHash.");
 
         Span<byte> hashValue = stackalloc byte[8];
         int encodedSize = Encoding.UTF8.GetByteCount(data);

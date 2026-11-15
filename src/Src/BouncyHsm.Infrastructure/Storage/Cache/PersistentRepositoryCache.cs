@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BouncyHsm.Infrastructure.Storage.Cache;
 
-[Obsolete("use after test functionality.", true)]
+[Obsolete("Do not use until the functionality is tested.", true)]
 public class PersistentRepositoryCache : IPersistentRepository
 {
     private readonly IMemoryCache memoryCache;
@@ -62,7 +62,7 @@ public class PersistentRepositoryCache : IPersistentRepository
 
         if (slots == null)
         {
-            throw new InvalidProgramException("slot is null response");
+            throw new InvalidProgramException("The slot list response is null.");
         }
 
         return slots;

@@ -108,7 +108,7 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
 
             this.slots.Add(slotEntity);
 
-            this.logger.LogDebug("Create a new slot.");
+            this.logger.LogDebug("Created a new slot.");
             return new ValueTask<SlotIds>(new SlotIds(slotEntity.Id, slotEntity.SlotId));
         }
         finally
@@ -195,14 +195,14 @@ internal class MemoryPersistentRepository : IPersistentRepository, IDisposable
             SlotEntity? slot = this.slots.SingleOrDefault(t => t.SlotId == slotId);
             if (slot == null)
             {
-                this.logger.LogError("Slot with id {slotId} does not exists.", slotId);
-                throw new BouncyHsmNotFoundException($"Slot with id {slotId} does not exists.");
+                this.logger.LogError("Slot with id {slotId} does not exist.", slotId);
+                throw new BouncyHsmNotFoundException($"Slot with id {slotId} does not exist.");
             }
 
             bool changed = command.UpdateSlot(slot);
             if (changed)
             {
-                this.logger.LogInformation("Slot with id {slotId} chaned using command {command}.", slotId, command);
+                this.logger.LogInformation("Slot with id {slotId} changed using command {command}.", slotId, command);
             }
 
             return new ValueTask<bool>(changed);

@@ -27,7 +27,7 @@ public class ClientApplicationContext : IClientApplicationContext
 
         return this.apps.AddOrUpdate(key,
             new MemorySession(sessionData, this.timeProvider.GetUtcNow()),
-            (_, _) => throw new RpcPkcs11Exception(Core.Services.Contracts.P11.CKR.CKR_CRYPTOKI_ALREADY_INITIALIZED, $"Application with key {key} already registred."));
+            (_, _) => throw new RpcPkcs11Exception(Core.Services.Contracts.P11.CKR.CKR_CRYPTOKI_ALREADY_INITIALIZED, $"Application with key {key} is already registered."));
     }
 
     public void ReleaseMemorySession(string key)
@@ -49,7 +49,7 @@ public class ClientApplicationContext : IClientApplicationContext
 
         if (selectedKey == null)
         {
-            throw new BouncyHsmInvalidInputException($"Not found memory session with id {applicationSessionId}.");
+            throw new BouncyHsmInvalidInputException($"Memory session with id {applicationSessionId} was not found.");
         }
 
         if (!this.apps.Remove(selectedKey, out _))

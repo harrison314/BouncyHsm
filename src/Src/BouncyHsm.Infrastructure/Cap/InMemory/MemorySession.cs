@@ -10,7 +10,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
 {
     private record struct StorageObjectData(uint OwnedSessionId, uint SlotId, StorageObjectMemento Memento);
     private readonly Dictionary<uint, P11Session> sessions;
-    private readonly Dictionary<uint, SlotState> slotToSessions;
+    private readonly Dictionary<uint, SlotState> slotToStates;
     private readonly Dictionary<Guid, uint> objectIdToHandles;
     private readonly Dictionary<uint, Guid> objectHandlesToObjectId;
     private readonly Dictionary<Guid, StorageObjectData> storageObjects;
@@ -50,7 +50,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
     public MemorySession(MemorySessionData sessionData, DateTimeOffset startAt)
     {
         this.sessions = new Dictionary<uint, P11Session>();
-        this.slotToSessions = new Dictionary<uint, SlotState>();
+        this.slotToStates = new Dictionary<uint, SlotState>();
         this.objectIdToHandles = new Dictionary<Guid, uint>();
         this.objectHandlesToObjectId = new Dictionary<uint, Guid>();
         this.storageObjects = new Dictionary<Guid, StorageObjectData>();
@@ -77,7 +77,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
                 {
                     newSession.SessionId = sessionId;
 
-                    if (this.slotToSessions.TryGetValue(slotId, out SlotState? slotState))
+                    if (this.slotToStates.TryGetValue(slotId, out SlotState? slotState))
                     {
                         slotState.Sessions.Add(sessionId);
                     }
@@ -85,7 +85,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
                     {
                         SlotState newSlotState = new SlotState();
                         newSlotState.Sessions.Add(sessionId);
-                        this.slotToSessions.Add(slotId, newSlotState);
+                        this.slotToStates.Add(slotId, newSlotState);
                     }
 
                     return newSession;
@@ -107,12 +107,12 @@ public sealed class MemorySession : IMemorySession, IDisposable
         {
             if (this.sessions.Remove(sessionId, out P11Session? p11Session))
             {
-                if (this.slotToSessions.TryGetValue(p11Session.SlotId, out SlotState? slotState))
+                if (this.slotToStates.TryGetValue(p11Session.SlotId, out SlotState? slotState))
                 {
                     slotState.Sessions.Remove(sessionId);
                     if (slotState.Sessions.Count == 0)
                     {
-                        this.slotToSessions.Remove(p11Session.SlotId);
+                        this.slotToStates.Remove(p11Session.SlotId);
                     }
                 }
 
@@ -151,7 +151,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
                 this.RemoveSessionObjects(sessionId);
             }
 
-            this.slotToSessions.Remove(slotId);
+            this.slotToStates.Remove(slotId);
 
             return sessionsToRemove.Count;
         }
@@ -166,7 +166,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
         this.rwSessionLock.EnterReadLock();
         try
         {
-            LoggedUser loggedUser = this.slotToSessions[session.SlotId].LoggedState;
+            LoggedUser loggedUser = this.slotToStates[session.SlotId].LoggedState;
             return userType switch
             {
                 CKU.CKU_SO => loggedUser.HasFlag(LoggedUser.So),
@@ -202,11 +202,11 @@ public sealed class MemorySession : IMemorySession, IDisposable
 
             if (isLogged)
             {
-                this.slotToSessions[session.SlotId].LoggedState |= userFlagType;
+                this.slotToStates[session.SlotId].LoggedState |= userFlagType;
             }
             else
             {
-                this.slotToSessions[session.SlotId].LoggedState &= ~userFlagType;
+                this.slotToStates[session.SlotId].LoggedState &= ~userFlagType;
             }
         }
         finally
@@ -395,7 +395,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
             }
             else
             {
-                System.Diagnostics.Debug.Fail("Object not exists.");
+                System.Diagnostics.Debug.Fail("Object does not exist.");
             }
         }
         finally
@@ -441,7 +441,7 @@ public sealed class MemorySession : IMemorySession, IDisposable
             }
             else
             {
-                System.Diagnostics.Debug.Fail("Storage object does not exists.");
+                System.Diagnostics.Debug.Fail("Storage object does not exist.");
             }
         }
         finally
