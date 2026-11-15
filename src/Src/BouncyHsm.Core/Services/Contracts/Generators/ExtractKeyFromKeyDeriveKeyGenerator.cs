@@ -32,7 +32,18 @@ internal class ExtractKeyFromKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
                 $"Can not extract {this.extractParams} bit from key with start bit {baseSeecret.Length}.");
         }
 
-        return this.Extract(baseSeecret, this.extractParams);
+        int length;
+        if (template.TryGetValue(CKA.CKA_VALUE_LEN, out IAttributeValue? ckaValueLen))
+        {
+            length = Convert.ToInt32(ckaValueLen.AsUint());
+        }
+        else
+        {
+            int totalBits = baseSeecret.Length * 8 - this.extractParams;
+            length = (totalBits + 7) / 8;
+        }
+
+        return this.Extract(baseSeecret, this.extractParams, length);
     }
 
     protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
@@ -46,25 +57,22 @@ internal class ExtractKeyFromKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
         return $"ExtractKeyFromKey with {this.extractParams} bits";
     }
 
-    private byte[] Extract(byte[] value, int startBit)
+    public byte[] Extract(byte[] value, int startBit, int length)
     {
-        int totalBits = value.Length * 8 - startBit;
-        int resultLength = (totalBits + 7) / 8;
-        byte[] result = new byte[resultLength];
+        int totalBits = value.Length * 8;
+        byte[] result = new byte[length];
 
-        for (int i = 0; i < totalBits; i++)
+        int bitCount = length * 8;
+        for (int i = 0; i < bitCount; i++)
         {
-            int sourceBit = startBit + i;
-            int sourceByte = sourceBit / 8;
-            int sourceOffset = sourceBit % 8;
+            int srcBit = (startBit + i) % totalBits;
 
-            int bit = (value[sourceByte] >> sourceOffset) & 1;
+            int srcByte = srcBit >> 3;
+            int srcShift = 7 - (srcBit & 7);
 
-            int targetByte = i / 8;
-            int targetOffset = i % 8;
-            if (bit == 1)
+            if ((value[srcByte] & (1 << srcShift)) != 0)
             {
-                result[targetByte] |= (byte)(1 << targetOffset);
+                result[i >> 3] |= (byte)(0x80 >> (int)(i & 7));
             }
         }
 

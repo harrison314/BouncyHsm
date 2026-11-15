@@ -171,8 +171,8 @@ public class T23_DeriveKey
     [DataRow("1202030405060708", 0U, "1202030405060708")]
     [DataRow("1202030405060708", 8U, "02030405060708")]
     [DataRow("1202030405060708", 32U, "05060708")]
-    [DataRow("120203A405060708", 35U, "C0E00001")]
-    [DataRow("120203FFFFFFFFFF", 39U, "FFFFFF01")]
+    [DataRow("120203A405060708", 35U, "28303840")]
+    [DataRow("120203FFFFFFFFFF", 39U, "FFFFFF89")]
     public void Derive_ExtractKey_Success(string baseHex, uint extract, string resultHex)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -202,6 +202,56 @@ public class T23_DeriveKey
             factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true)
+        };
+
+        using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkExtractParams mechanismParam = factories.MechanismParamsFactory.CreateCkExtractParams(extract);
+        using IMechanism mechanism = factories.MechanismFactory.Create(CKM.CKM_EXTRACT_KEY_FROM_KEY, mechanismParam);
+        IObjectHandle derivedHandle = session.DeriveKey(mechanism, handle, newKeyAttributes);
+
+        byte[] result = this.GetValue(session, derivedHandle);
+        byte[] exceptedResult = HexConvertor.GetBytes(resultHex);
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+
+        Assert.AreEqual(Convert.ToHexString(exceptedResult), Convert.ToHexString(result));
+    }
+
+    [TestMethod]
+    [DataRow("329F84A9", 0U, 4U, "329F84A9")]
+    [DataRow("329F84A9", 8U, 4U, "9F84A932")]
+    [DataRow("329F84A9", 16U, 2U, "84A9")]
+    [DataRow("329F84A9", 21U, 2U, "9526")]
+    public void Derive_ExtractKeyWithlen_Success(string baseHex, uint extract, uint valueLen, string resultHex)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, HexConvertor.GetBytes(baseHex));
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, valueLen),
         };
 
         using Net.Pkcs11Interop.HighLevelAPI.MechanismParams.ICkExtractParams mechanismParam = factories.MechanismParamsFactory.CreateCkExtractParams(extract);
