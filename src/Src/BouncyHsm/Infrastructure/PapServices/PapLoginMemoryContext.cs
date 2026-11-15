@@ -60,7 +60,7 @@ public class PapLoginMemoryContext : IPapLoginMemoryContext
         this.logger.LogTrace("Entering to CancelLogin with logSession {logSession}.", logSession);
         if (this.loginSessions.TryGetValue(logSession, out TaskCompletionSource<byte[]?>? result))
         {
-            result.SetResult(null);
+            result.TrySetResult(null);
             this.logger.LogDebug("LogSession {logSession} was cancelled.", logSession);
         }
         else
@@ -76,7 +76,7 @@ public class PapLoginMemoryContext : IPapLoginMemoryContext
 
         if (this.loginSessions.TryGetValue(logSession, out TaskCompletionSource<byte[]?>? result))
         {
-            result.SetResult(login);
+            result.TrySetResult(login);
             this.logger.LogDebug("LogSession {logSession} has set as login.", logSession);
         }
         else

@@ -45,7 +45,7 @@ public class Program
         })
             .ConfigureApiBehaviorOptions(cfg =>
             {
-                cfg.SuppressModelStateInvalidFilter = true;
+                cfg.SuppressModelStateInvalidFilter = false;
             })
             .AddJsonOptions(cfg =>
             {
