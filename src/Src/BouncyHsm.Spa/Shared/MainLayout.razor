@@ -13,7 +13,7 @@
 
         <BSToaster Position="BlazorStrap.Position.Fixed" />
         <article class="content px-4">
-            <ErrorBoundary>
+            <ErrorBoundary @ref="errorBoundary">
                 <ChildContent>
                     @Body
                 </ChildContent>
@@ -34,3 +34,12 @@
     </main>
     <SectionOutlet SectionName="bottom-area" />
 </div>
+
+@code {
+    private ErrorBoundary? errorBoundary;
+
+    protected override void OnParametersSet()
+    {
+        this.errorBoundary?.Recover();
+    }
+}

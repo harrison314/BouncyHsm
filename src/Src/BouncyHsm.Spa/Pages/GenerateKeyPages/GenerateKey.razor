@@ -19,6 +19,13 @@
 @if (this.slot == null)
 {
     <LoadingIndicator />
+
+    @if (this.errorMessage != null)
+    {
+        <div class="mb-6">
+            <BouncyHsm.Spa.Shared.Common.ErrorAlert Message="@this.errorMessage" />
+        </div>
+    }
 }
 else
 {
@@ -143,6 +150,7 @@ else
     private GeneratedKeyType KeyType = GeneratedKeyType.None;
     private SlotDto? slot = null;
     private bool isInLoading = false;
+    private string? errorMessage = null;
 
     protected override async Task OnInitializedAsync()
     {

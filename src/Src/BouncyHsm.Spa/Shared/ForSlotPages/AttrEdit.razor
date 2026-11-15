@@ -76,7 +76,7 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        if (this.Context != null && this.Context != this.lastContext)
+        if (this.Context != null && !object.ReferenceEquals(this.Context, this.lastContext))
         {
             this.lastContext = this.Context;
             this.attributeValue = await this.bouncyHsmClient.GetAttributeAsync(this.Context.SlotId,
