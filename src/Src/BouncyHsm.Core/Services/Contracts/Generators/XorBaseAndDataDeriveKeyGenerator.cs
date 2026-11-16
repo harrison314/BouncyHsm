@@ -36,6 +36,12 @@ internal class XorBaseAndDataDeriveKeyGenerator : DeriveKeyGeneratorBase
         }
         else
         {
+            if (generatedKey.CkaKeyType == CKK.CKK_GENERIC_SECRET)
+            {
+                this.logger.LogError("Missing CKA_VALUE_LEN in template for CKK_GENERIC_SECRET key.");
+                throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCOMPLETE, "Missing CKA_VALUE_LEN in template for CKK_GENERIC_SECRET key.");
+            }
+
             newSecretLen = (int)generatedKey.GetMinimalSecretLen();
             this.logger.LogTrace("Set secred length {SecretLength} as minimal length of genrated key.", newSecretLen);
         }
