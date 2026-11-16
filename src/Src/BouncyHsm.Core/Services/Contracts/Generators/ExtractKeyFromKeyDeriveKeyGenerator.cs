@@ -1,5 +1,6 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
 using BouncyHsm.Core.Services.Contracts.P11;
+using BouncyHsm.Core.Services.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
@@ -59,21 +60,13 @@ internal class ExtractKeyFromKeyDeriveKeyGenerator : DeriveKeyGeneratorBase
 
     public byte[] Extract(byte[] value, int startBit, int length)
     {
-        int totalBits = value.Length * 8;
         byte[] result = new byte[length];
+        BitSpan destination = new BitSpan(result);
+        BitSpan src = new BitSpan(value);
 
-        int bitCount = length * 8;
-        for (int i = 0; i < bitCount; i++)
+        for (int i = 0; i < length * 8; i++)
         {
-            int srcBit = (startBit + i) % totalBits;
-
-            int srcByte = srcBit >> 3;
-            int srcShift = 7 - (srcBit & 7);
-
-            if ((value[srcByte] & (1 << srcShift)) != 0)
-            {
-                result[i >> 3] |= (byte)(0x80 >> (int)(i & 7));
-            }
+            destination[i] = src[(startBit + i) % src.BitLength];
         }
 
         return result;
