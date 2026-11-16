@@ -16,7 +16,7 @@ public class T99_Issue151
     }
 
     [TestMethod]
-    public void DeriveKey_XorBaseAndData_()
+    public void DeriveKey_XorBaseAndData_ThrowsTemplateIncomplete()
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
