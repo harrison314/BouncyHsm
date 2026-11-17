@@ -13,11 +13,13 @@ namespace BouncyHsm.Core.Services.Contracts.Generators;
 internal class DigestDeriveKeyGenerator : DeriveKeyGeneratorBase
 {
     private readonly IDigest digest;
+    private readonly CKM mchanism;
 
-    public DigestDeriveKeyGenerator(IDigest digest, ILogger<DigestDeriveKeyGenerator> logger)
-        :base(logger)
+    public DigestDeriveKeyGenerator(IDigest digest, CKM mchanism, ILogger<DigestDeriveKeyGenerator> logger)
+        : base(logger)
     {
         this.digest = digest;
+        this.mchanism = mchanism;
     }
 
     protected override byte[] DeriveSecret(SecretKeyObject generatedKey, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
@@ -31,6 +33,12 @@ internal class DigestDeriveKeyGenerator : DeriveKeyGeneratorBase
         this.digest.DoFinal(digestValue);
 
         return digestValue;
+    }
+
+    protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        base.UpdatePropertiesAfterCeate(generalSecretKeyObject, baseKey, template);
+        generalSecretKeyObject.CkaKeyGenMechanism = this.mchanism;
     }
 
     public override string ToString()

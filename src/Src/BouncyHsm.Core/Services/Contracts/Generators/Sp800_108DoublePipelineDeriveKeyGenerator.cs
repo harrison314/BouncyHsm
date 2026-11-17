@@ -31,6 +31,11 @@ internal class Sp800_108DoublePipelineDeriveKeyGenerator : Sp800_108DeriveKeyGen
         return kdf.Derive(requestedValueLen, this.DataParams);
     }
 
+    protected override CKM GetKeyGenMechanism()
+    {
+        return CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF;
+    }
+
     public override string ToString()
     {
         return $"Sp800_108DoublePipelineDeriveKeyGenerator with KDF {this.KdfMechanism}";

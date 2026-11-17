@@ -10,14 +10,16 @@ internal abstract class BufferedCipherDeriveKeyGenerator<TKeyObject> : IDeriveKe
     where TKeyObject : SecretKeyObject
 {
     protected readonly IBufferedCipher bufferedCipher;
+    private readonly CKM generatingMechanism;
     protected readonly byte[] data;
     protected readonly byte[]? iv;
     protected readonly ILogger logger;
     protected IReadOnlyDictionary<CKA, IAttributeValue>? template;
 
-    public BufferedCipherDeriveKeyGenerator(IBufferedCipher bufferedCipher, byte[] data, byte[]? iv, ILogger logger)
+    public BufferedCipherDeriveKeyGenerator(IBufferedCipher bufferedCipher, CKM generatingMechanism, byte[] data, byte[]? iv, ILogger logger)
     {
         this.bufferedCipher = bufferedCipher;
+        this.generatingMechanism = generatingMechanism;
         this.data = data;
         this.iv = iv;
         this.logger = logger;
@@ -77,8 +79,25 @@ internal abstract class BufferedCipherDeriveKeyGenerator<TKeyObject> : IDeriveKe
             this.TryUpdateValueLen(generalSecretKeyObject, (int)requestdValueLen);
         }
 
-        generalSecretKeyObject.CkaAlwaysSensitive = sBaseKey.CkaAlwaysSensitive;
-        generalSecretKeyObject.CkaNewerExtractable = sBaseKey.CkaNewerExtractable;
+        generalSecretKeyObject.CkaKeyGenMechanism = this.generatingMechanism;
+        if (sBaseKey.CkaAlwaysSensitive)
+        {
+            generalSecretKeyObject.CkaAlwaysSensitive = generalSecretKeyObject.CkaSensitive;
+        }
+        else
+        {
+            generalSecretKeyObject.CkaAlwaysSensitive = false;
+        }
+
+        if (sBaseKey.CkaNewerExtractable)
+        {
+            generalSecretKeyObject.CkaNewerExtractable = generalSecretKeyObject.CkaExtractable;
+        }
+        else
+        {
+            generalSecretKeyObject.CkaNewerExtractable = false;
+        }
+
         generalSecretKeyObject.CkaLocal = false;
 
         return generalSecretKeyObject;

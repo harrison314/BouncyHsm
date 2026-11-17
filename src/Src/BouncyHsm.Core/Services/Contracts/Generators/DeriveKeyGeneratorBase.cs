@@ -60,10 +60,6 @@ internal abstract class DeriveKeyGeneratorBase : IDeriveKeyGenerator
             this.TryUpdateValueLen(generalSecretKeyObject, (int)requestdValueLen);
         }
 
-        generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
-        generalSecretKeyObject.CkaExtractable = sBaseKey.CkaExtractable;
-        generalSecretKeyObject.CkaAlwaysSensitive = sBaseKey.CkaAlwaysSensitive;
-        generalSecretKeyObject.CkaNewerExtractable = sBaseKey.CkaNewerExtractable;
         generalSecretKeyObject.CkaLocal = false;
 
         this.UpdatePropertiesAfterCeate(generalSecretKeyObject, sBaseKey, this.template);
@@ -96,7 +92,23 @@ internal abstract class DeriveKeyGeneratorBase : IDeriveKeyGenerator
 
     protected virtual void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
     {
-        //NOP
+        if (baseKey.CkaAlwaysSensitive)
+        {
+            generalSecretKeyObject.CkaAlwaysSensitive = generalSecretKeyObject.CkaSensitive;
+        }
+        else
+        {
+            generalSecretKeyObject.CkaAlwaysSensitive = false;
+        }
+
+        if (baseKey.CkaNewerExtractable)
+        {
+            generalSecretKeyObject.CkaNewerExtractable = generalSecretKeyObject.CkaExtractable;
+        }
+        else
+        {
+            generalSecretKeyObject.CkaNewerExtractable = false;
+        }
     }
 
     private void TryUpdateValueLen(SecretKeyObject generalSecretKeyObject, int requestdValueLen)

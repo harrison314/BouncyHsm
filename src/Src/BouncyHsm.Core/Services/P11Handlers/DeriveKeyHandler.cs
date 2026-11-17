@@ -108,25 +108,25 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
 
         return ckMechanism switch
         {
-            CKM.CKM_MD2_KEY_DERIVATION => new DigestDeriveKeyGenerator(new MD2Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_MD5_KEY_DERIVATION => new DigestDeriveKeyGenerator(new MD5Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA1_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha1Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha224Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha256Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA384_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha384Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA512_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512Digest(), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA512_224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512tDigest(224), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA512_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512tDigest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA3_224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(224), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA3_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA3_384_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(384), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHA3_512_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(512), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_BLAKE2B_160_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(160), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_BLAKE2B_256_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_BLAKE2B_384_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(384), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_BLAKE2B_512_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(512), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHAKE_128_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(128), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHAKE_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(256), this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_MD2_KEY_DERIVATION => new DigestDeriveKeyGenerator(new MD2Digest(), CKM.CKM_MD2_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_MD5_KEY_DERIVATION => new DigestDeriveKeyGenerator(new MD5Digest(), CKM.CKM_MD5_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA1_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha1Digest(), CKM.CKM_SHA1_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha224Digest(), CKM.CKM_SHA224_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha256Digest(), CKM.CKM_SHA256_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA384_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha384Digest(), CKM.CKM_SHA384_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA512_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512Digest(), CKM.CKM_SHA512_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA512_224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512tDigest(224), CKM.CKM_SHA512_224_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA512_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha512tDigest(256), CKM.CKM_SHA512_256_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_224_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(224), CKM.CKM_SHA3_224_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(256), CKM.CKM_SHA3_256_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_384_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(384), CKM.CKM_SHA3_384_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHA3_512_KEY_DERIVATION => new DigestDeriveKeyGenerator(new Sha3Digest(512), CKM.CKM_SHA3_512_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_BLAKE2B_160_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(160), CKM.CKM_BLAKE2B_160_KEY_DERIVE, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_BLAKE2B_256_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(256), CKM.CKM_BLAKE2B_256_KEY_DERIVE, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_BLAKE2B_384_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(384), CKM.CKM_BLAKE2B_384_KEY_DERIVE, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_BLAKE2B_512_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(512), CKM.CKM_BLAKE2B_512_KEY_DERIVE, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHAKE_128_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(128), CKM.CKM_SHAKE_128_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHAKE_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(256), CKM.CKM_SHAKE_256_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
 
             CKM.CKM_CONCATENATE_BASE_AND_DATA => new ConcatBaseAndDataDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatBaseAndDataDeriveKeyGenerator>()),
             CKM.CKM_CONCATENATE_DATA_AND_BASE => new ConcatDataAndBaseDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatDataAndBaseDeriveKeyGenerator>()),
@@ -137,16 +137,16 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             CKM.CKM_ECDH1_DERIVE => this.CreateEcdh1DeriveGenerator(mechanism),
             CKM.CKM_ECDH1_COFACTOR_DERIVE => this.CreateEcdh1DeriveGenerator(mechanism),
 
-            CKM.CKM_AES_ECB_ENCRYPT_DATA => new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>()),
+            CKM.CKM_AES_ECB_ENCRYPT_DATA => new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/ECB/NOPADDING"), CKM.CKM_AES_ECB_ENCRYPT_DATA, this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>()),
             CKM.CKM_AES_CBC_ENCRYPT_DATA => this.CreateAesCbcEncryptionGenerator(mechanism),
 
             CKM.CKM_HKDF_DERIVE => await this.CreateHkdfGenerator(mechanism, memorySession, p11Session, cancellationToken),
 
-            CKM.CKM_CAMELLIA_ECB_ENCRYPT_DATA => new CamelliaDeriveKeyGenerator(CipherUtilities.GetCipher("CAMELLIA/ECB/NOPADDING"), this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<CamelliaDeriveKeyGenerator>()),
+            CKM.CKM_CAMELLIA_ECB_ENCRYPT_DATA => new CamelliaDeriveKeyGenerator(CipherUtilities.GetCipher("CAMELLIA/ECB/NOPADDING"), CKM.CKM_CAMELLIA_ECB_ENCRYPT_DATA, this.GetRawDataParameter(mechanism), null, this.loggerFactory.CreateLogger<CamelliaDeriveKeyGenerator>()),
             CKM.CKM_CAMELLIA_CBC_ENCRYPT_DATA => this.CreateCamelliaCbcEncryptionGenerator(mechanism),
 
-            CKM.CKM_SP800_108_COUNTER_KDF => await this.CreateS800_108CounterKdf(mechanism, memorySession, p11Session, cancellationToken),
-            CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF => await this.CreateS800_108DoublePipelineKdf(mechanism, memorySession, p11Session, cancellationToken),
+            CKM.CKM_SP800_108_COUNTER_KDF => await this.CreateSp800_108CounterKdf(mechanism, memorySession, p11Session, cancellationToken),
+            CKM.CKM_SP800_108_DOUBLE_PIPELINE_KDF => await this.CreateSp800_108DoublePipelineKdf(mechanism, memorySession, p11Session, cancellationToken),
             CKM.CKM_SP800_108_FEEDBACK_KDF => await this.CreateSp800_108FeedbackKdf(mechanism, memorySession, p11Session, cancellationToken),
 
             _ => throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_INVALID, $"Invalid mechanism {ckMechanism} for derive key.")
@@ -214,6 +214,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             Ckp_CkAesCbcEnryptDataParams cbcEncryptData = MessagePack.MessagePackSerializer.Deserialize<Ckp_CkAesCbcEnryptDataParams>(mechanism.MechanismParamMp, MessagepackBouncyHsmResolver.GetOptions());
 
             return new AesDeriveKeyGenerator(CipherUtilities.GetCipher("AES/CBC/NOPADDING"),
+                CKM.CKM_AES_CBC_ENCRYPT_DATA,
                 cbcEncryptData.Data,
                 cbcEncryptData.Iv,
                 this.loggerFactory.CreateLogger<AesDeriveKeyGenerator>());
@@ -343,6 +344,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             }
 
             return new CamelliaDeriveKeyGenerator(CipherUtilities.GetCipher("CAMELLIA/CBC/NOPADDING"),
+                CKM.CKM_CAMELLIA_CBC_ENCRYPT_DATA,
                 cbcEncryptData.Data,
                 cbcEncryptData.Iv,
                 this.loggerFactory.CreateLogger<CamelliaDeriveKeyGenerator>());
@@ -358,7 +360,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         }
     }
 
-    private async Task<Sp800_108CounterDeriveKeyGenerator> CreateS800_108CounterKdf(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session, CancellationToken cancellationToken)
+    private async Task<Sp800_108CounterDeriveKeyGenerator> CreateSp800_108CounterKdf(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to CreateS800_108CounterKdf.");
 
@@ -403,7 +405,7 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
         }
     }
 
-    private async Task<Sp800_108DoublePipelineDeriveKeyGenerator> CreateS800_108DoublePipelineKdf(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session, CancellationToken cancellationToken)
+    private async Task<Sp800_108DoublePipelineDeriveKeyGenerator> CreateSp800_108DoublePipelineKdf(MechanismValue mechanism, IMemorySession memorySession, IP11Session p11Session, CancellationToken cancellationToken)
     {
         this.logger.LogTrace("Entering to CreateS800_108DoublePipelineKdf.");
 

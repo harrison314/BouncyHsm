@@ -141,4 +141,10 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
         throw new RpcPkcs11Exception(CKR.CKR_MECHANISM_PARAM_INVALID,
                     $"Invalid value of ulSaltType in CK_HKDF_PARAMS.");
     }
+
+    protected override void UpdatePropertiesAfterCeate(SecretKeyObject generalSecretKeyObject, SecretKeyObject baseKey, IReadOnlyDictionary<CKA, IAttributeValue> template)
+    {
+        base.UpdatePropertiesAfterCeate(generalSecretKeyObject, baseKey, template);
+        generalSecretKeyObject.CkaKeyGenMechanism = CKM.CKM_HKDF_DERIVE;
+    }
 }

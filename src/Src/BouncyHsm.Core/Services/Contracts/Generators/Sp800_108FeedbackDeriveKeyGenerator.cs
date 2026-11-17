@@ -37,6 +37,11 @@ internal class Sp800_108FeedbackDeriveKeyGenerator : Sp800_108DeriveKeyGenerator
         return kdf.Derive(requestedValueLen, this.DataParams);
     }
 
+    protected override CKM GetKeyGenMechanism()
+    {
+        return CKM.CKM_SP800_108_FEEDBACK_KDF;
+    }
+
     public override string ToString()
     {
         return $"Sp800_108FeedbackDeriveKeyGenerator with KDF {this.KdfMechanism}, IV len {this.iv.Length}";

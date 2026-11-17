@@ -37,6 +37,11 @@ internal class Sp800_108CounterDeriveKeyGenerator : Sp800_108DeriveKeyGenerator
         return kdf.Derive(requestedValueLen, this.DataParams);
     }
 
+    protected override CKM GetKeyGenMechanism()
+    {
+        return CKM.CKM_SP800_108_COUNTER_KDF;
+    }
+
     public override string ToString()
     {
         return $"Sp800_108CounterDeriveKeyGenerator with KDF {this.KdfMechanism}";

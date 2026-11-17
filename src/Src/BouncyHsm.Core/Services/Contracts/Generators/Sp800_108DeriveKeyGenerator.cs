@@ -58,8 +58,6 @@ internal abstract class Sp800_108DeriveKeyGenerator : IDeriveKeyGenerator
         SecretKeyObject sBaseKey = (SecretKeyObject)baseKey;
 
         SecretKeyObject generalSecretKeyObject = StorageObjectFactory.CreateSecret(this.template);
-        generalSecretKeyObject.CkaSensitive = sBaseKey.CkaSensitive;
-        generalSecretKeyObject.CkaExtractable = sBaseKey.CkaExtractable;
 
         foreach (KeyValuePair<CKA, IAttributeValue> kvp in this.template)
         {
@@ -78,8 +76,25 @@ internal abstract class Sp800_108DeriveKeyGenerator : IDeriveKeyGenerator
 
         generalSecretKeyObject.SetSecret(secret);
 
-        generalSecretKeyObject.CkaAlwaysSensitive = sBaseKey.CkaAlwaysSensitive;
-        generalSecretKeyObject.CkaNewerExtractable = sBaseKey.CkaNewerExtractable;
+        if (sBaseKey.CkaAlwaysSensitive)
+        {
+            generalSecretKeyObject.CkaAlwaysSensitive = generalSecretKeyObject.CkaSensitive;
+        }
+        else
+        {
+            generalSecretKeyObject.CkaAlwaysSensitive = false;
+        }
+
+        if (sBaseKey.CkaNewerExtractable)
+        {
+            generalSecretKeyObject.CkaNewerExtractable = generalSecretKeyObject.CkaExtractable;
+        }
+        else
+        {
+            generalSecretKeyObject.CkaNewerExtractable = false;
+        }
+
+        generalSecretKeyObject.CkaKeyGenMechanism = this.GetKeyGenMechanism();
         generalSecretKeyObject.CkaLocal = false;
 
         return generalSecretKeyObject;
@@ -130,4 +145,6 @@ internal abstract class Sp800_108DeriveKeyGenerator : IDeriveKeyGenerator
               $"Attribute {CKA.CKA_CLASS} must be {CKO.CKO_SECRET_KEY}.");
         }
     }
+
+    protected abstract CKM GetKeyGenMechanism();
 }

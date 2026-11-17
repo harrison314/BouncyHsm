@@ -1,4 +1,5 @@
 ﻿using BouncyHsm.Core.Services.Contracts.Entities;
+using BouncyHsm.Core.Services.Contracts.P11;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto;
 using System;
@@ -11,10 +12,10 @@ namespace BouncyHsm.Core.Services.Contracts.Generators;
 
 internal class AesDeriveKeyGenerator : BufferedCipherDeriveKeyGenerator<AesKeyObject>
 {
-    public AesDeriveKeyGenerator(IBufferedCipher bufferedCipher, byte[] data, byte[]? iv, ILogger<AesDeriveKeyGenerator> logger)
-        :base(bufferedCipher, data, iv, logger)
+    public AesDeriveKeyGenerator(IBufferedCipher bufferedCipher, CKM generatingMechanism, byte[] data, byte[]? iv, ILogger<AesDeriveKeyGenerator> logger)
+        : base(bufferedCipher, generatingMechanism, data, iv, logger)
     {
-       
+
     }
 
     public override string ToString()
