@@ -1,6 +1,6 @@
 # BouncyHsm Aspire Hosting
 
-The BouncyHsm Nuget package for Aspire Hosting provides easy integration of the BouncyHsm system into applications built on [Aspire](https://aspire.dev/). It allows developers to declaratively create and manage BouncyHsm instances as native Aspire resources, thereby simplifying the development, testing, and operation of applications that use cryptographic services.
+The BouncyHsm Nuget package for Aspire (v. 17) provides easy integration of the BouncyHsm system into applications built on [Aspire](https://aspire.dev/). It allows developers to declaratively create and manage BouncyHsm instances as native Aspire resources, thereby simplifying the development, testing, and operation of applications that use cryptographic services.
 
 This package allows you to configure the BouncyHsm environment at startup and create new tokens (and slots) within it, and then import cryptographic objects in PEM and P12/PFX formats into them.
 
@@ -32,7 +32,7 @@ var bouncyHsm = builder.AddBouncyHsm("bouncyhsm")
             ckaId: Encoding.UTF8.GetBytes("AES-key"), ckaLabel: "AES-key",
             hints: BouncyHsmPemHint.ForEncryption | BouncyHsmPemHint.ForWrap); // import PEM objects
 
-builder.AddProject<Projects.ExampleApi>("exampleapi")
+builder.AddDotnetProject("exampleapi", "../ExampleApi/ExampleApi.csproj")
      .WaitForStart(bouncyHsm)
      .WithBouncyHsmApiReference(bouncyHsm) // reference HTTP endpoint for BouncyHSM API
      .WithBouncyHsmNativeLibEndpointReference(bouncyHsm, BouncyHsmLogTarget.NONE, BouncyHsmLogLevel.NONE, tag: "exampleapi"); // reference environment variable from PKCS#11 native library

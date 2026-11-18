@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.Testing" Version="13.6.5" />
+    <PackageReference Include="Aspire.Hosting.Testing" Version="17.0.0" />
     <PackageReference Include="MSTest" Version="4.5.3" />
   </ItemGroup>
 

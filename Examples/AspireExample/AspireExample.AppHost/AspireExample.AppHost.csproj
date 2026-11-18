@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.6.4">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,11 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Dotnet" Version="17.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="../ExampleApi/ExampleApi.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="Exists('../../../src/Src/BouncyHsm.Aspire.Hosting/BouncyHsm.Aspire.Hosting.csproj')">
     <ProjectReference Include="../../../src/Src/BouncyHsm.Aspire.Hosting/BouncyHsm.Aspire.Hosting.csproj" IsAspireProjectResource="false" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!Exists('../../../src/Src/BouncyHsm.Aspire.Hosting/BouncyHsm.Aspire.Hosting.csproj')">
+    <PackageReference Include="BouncyHsm.Aspire.Hosting" Version="2.4" />
   </ItemGroup>
 
 </Project>

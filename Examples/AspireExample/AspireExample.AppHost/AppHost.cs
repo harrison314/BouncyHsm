@@ -18,7 +18,7 @@ var bouncyHsm = builder
     .WithHttpHealthCheck("/health");
 
 
-builder.AddProject<Projects.ExampleApi>("exampleapi")
+builder.AddDotnetProject("exampleapi", "../ExampleApi/ExampleApi.csproj")
      .WithReference(bouncyHsm.GetEndpoint("http")).WaitForStart(bouncyHsm)
      .WithEnvironment("BOUNCY_HSM_CFG_STRING", () =>
      {
@@ -46,7 +46,7 @@ var bouncyHsm = builder.AddBouncyHsm("bouncyhsm")
             ckaId: Encoding.UTF8.GetBytes("AES-key"), ckaLabel: "AES-key",
             hints: BouncyHsmPemHint.ForEncryption | BouncyHsmPemHint.ForWrap); // import PEM objects
 
-builder.AddProject<Projects.ExampleApi>("exampleapi")
+builder.AddDotnetProject("exampleapi", "../ExampleApi/ExampleApi.csproj")
      .WaitForStart(bouncyHsm)
      .WithBouncyHsmApiReference(bouncyHsm) // reference HTTP endpoint for BouncyHSM API
      .WithBouncyHsmNativeLibEndpointReference(bouncyHsm, BouncyHsmLogTarget.NONE, BouncyHsmLogLevel.NONE, tag: "exampleapi"); // reference environment variable from PKCS#11 native library
