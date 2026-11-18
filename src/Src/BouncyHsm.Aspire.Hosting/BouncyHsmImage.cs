@@ -9,6 +9,9 @@ public record BouncyHsmImage(string Image, string? Tag)
 {
     private const string BaseImage = "ghcr.io/harrison314/bouncyhsm";
 
-    public static BouncyHsmImage Current = new BouncyHsmImage(BaseImage, "v2.3.2");
+    public static BouncyHsmImage Current = new BouncyHsmImage(BaseImage, "v2.4.0");
+
+    public static BouncyHsmImage V2_4_0 = new BouncyHsmImage(BaseImage, "v2.4.0");
+
     public static BouncyHsmImage V2_3_2 = new BouncyHsmImage(BaseImage, "v2.3.2");
 }
