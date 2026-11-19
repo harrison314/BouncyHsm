@@ -125,8 +125,8 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             CKM.CKM_BLAKE2B_256_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(256), CKM.CKM_BLAKE2B_256_KEY_DERIVE, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
             CKM.CKM_BLAKE2B_384_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(384), CKM.CKM_BLAKE2B_384_KEY_DERIVE, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
             CKM.CKM_BLAKE2B_512_KEY_DERIVE => new DigestDeriveKeyGenerator(new Blake2bDigest(512), CKM.CKM_BLAKE2B_512_KEY_DERIVE, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHAKE_128_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(128), CKM.CKM_SHAKE_128_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
-            CKM.CKM_SHAKE_256_KEY_DERIVATION => new DigestDeriveKeyGenerator(new ShakeDigest(256), CKM.CKM_SHAKE_256_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHAKE_128_KEY_DERIVATION => new DigestXofDeriveKeyGenerator(new ShakeDigest(128), CKM.CKM_SHAKE_128_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
+            CKM.CKM_SHAKE_256_KEY_DERIVATION => new DigestXofDeriveKeyGenerator(new ShakeDigest(256), CKM.CKM_SHAKE_256_KEY_DERIVATION, this.loggerFactory.CreateLogger<DigestDeriveKeyGenerator>()),
 
             CKM.CKM_CONCATENATE_BASE_AND_DATA => new ConcatBaseAndDataDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatBaseAndDataDeriveKeyGenerator>()),
             CKM.CKM_CONCATENATE_DATA_AND_BASE => new ConcatDataAndBaseDeriveKeyGenerator(this.GetRawDataParameter(mechanism), this.loggerFactory.CreateLogger<ConcatDataAndBaseDeriveKeyGenerator>()),

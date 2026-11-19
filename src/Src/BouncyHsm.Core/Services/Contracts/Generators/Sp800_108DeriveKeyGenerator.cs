@@ -121,7 +121,7 @@ internal abstract class Sp800_108DeriveKeyGenerator : IDeriveKeyGenerator
             return (int)this.template.GetRequiredAttributeUint(CKA.CKA_VALUE_LEN);
         }
 
-        throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCONSISTENT,
+        throw new RpcPkcs11Exception(CKR.CKR_TEMPLATE_INCOMPLETE,
             $"Attribute {CKA.CKA_VALUE_LEN} is reqired for this key type in C_DeriveKey.");
     }
 

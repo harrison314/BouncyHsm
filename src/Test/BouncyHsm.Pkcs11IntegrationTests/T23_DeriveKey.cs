@@ -25,8 +25,6 @@ public class T23_DeriveKey
     [DataRow(CKM.CKM_SHA512_KEY_DERIVATION)]
     [DataRow(CKM.CKM_SHA512_224_KEY_DERIVATION)]
     [DataRow(CKM.CKM_SHA512_256_KEY_DERIVATION)]
-    [DataRow(CKM_V3_0.CKM_SHAKE_128_KEY_DERIVATION)]
-    [DataRow(CKM_V3_0.CKM_SHAKE_256_KEY_DERIVATION)]
     public void Derive_Digest_Success(CKM mechanismType)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
@@ -56,6 +54,100 @@ public class T23_DeriveKey
             factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
             factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
             factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true)
+        };
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(mechanismType);
+        IObjectHandle derivedHandle = session.DeriveKey(mechanism, handle, newKeyAttributes);
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
+    [TestMethod]
+    [DataRow(CKM.CKM_SHA224_KEY_DERIVATION, CKK.CKK_SHA224_HMAC)]
+    [DataRow(CKM.CKM_SHA256_KEY_DERIVATION, CKK.CKK_SHA256_HMAC)]
+    [DataRow(CKM.CKM_SHA384_KEY_DERIVATION, CKK.CKK_SHA384_HMAC)]
+    [DataRow(CKM.CKM_SHA512_KEY_DERIVATION, CKK.CKK_SHA512_HMAC)]
+    [DataRow(CKM.CKM_SHA512_224_KEY_DERIVATION, CKK.CKK_SHA512_HMAC)]
+    [DataRow(CKM.CKM_SHA512_256_KEY_DERIVATION, CKK.CKK_SHA512_HMAC)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_128_KEY_DERIVATION, CKK_V3_0.CKK_CHACHA20)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_256_KEY_DERIVATION, CKK_V3_0.CKK_POLY1305)]
+    public void Derive_TypedObjectDigest_Success(CKM mechanismType, CKK keyType)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_CLASS, CKO.CKO_SECRET_KEY),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_KEY_TYPE, keyType),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true)
+        };
+
+        using IMechanism mechanism = factories.MechanismFactory.Create(mechanismType);
+        IObjectHandle derivedHandle = session.DeriveKey(mechanism, handle, newKeyAttributes);
+
+        session.DestroyObject(handle);
+        session.DestroyObject(derivedHandle);
+    }
+
+    [TestMethod]
+    [DataRow(CKM_V3_0.CKM_SHAKE_128_KEY_DERIVATION, 16)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_128_KEY_DERIVATION, 64)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_256_KEY_DERIVATION, 32)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_256_KEY_DERIVATION, 64)]
+    [DataRow(CKM_V3_0.CKM_SHAKE_256_KEY_DERIVATION, 8)]
+    public void Derive_DigestXof_Success(CKM mechanismType, int requestLength)
+    {
+        Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
+        using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
+            AssemblyTestConstants.P11LibPath,
+            AppType.SingleThreaded);
+
+        List<ISlot> slots = library.GetSlotList(SlotsType.WithTokenPresent);
+        ISlot slot = slots.SelectTestSlot();
+
+        using ISession session = slot.OpenSession(SessionType.ReadWrite);
+        session.Login(CKU.CKU_USER, AssemblyTestConstants.UserPin);
+
+        IObjectHandle handle = this.CreateSecret(session, new byte[] { 1, 4, 5, 8, 7, 4, 1, 5, 6, 3, 2, 5, 8, 5, 4, 5, 84, 6, 99, 12, 5, 241, 111, 123, 0, 0, 0, 7 });
+
+        string label = $"Seecret-{DateTime.UtcNow}-{Random.Shared.Next(100, 999)}";
+        byte[] ckId = Utils.GetRandomBytes(32, true);
+        List<IObjectAttribute> newKeyAttributes = new List<IObjectAttribute>()
+        {
+            factories.ObjectAttributeFactory.Create(CKA.CKA_TOKEN, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_PRIVATE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_LABEL, label),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ID, ckId),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DERIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_ENCRYPT, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VERIFY, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_SENSITIVE, false),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_EXTRACTABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_DESTROYABLE, true),
+            factories.ObjectAttributeFactory.Create(CKA.CKA_VALUE_LEN, (uint)requestLength),
         };
 
         using IMechanism mechanism = factories.MechanismFactory.Create(mechanismType);
