@@ -74,7 +74,38 @@ internal static class P11HwServicesExtensions
         }
         else
         {
-            throw new RpcPkcs11Exception(Contracts.P11.CKR.CKR_OBJECT_HANDLE_INVALID, $"Object handle {objectHandle} with object id {cryptoApiObject} is not type {typeof(T).Name}.");
+            CKR ckrForInvalidKeyType = typeof(T) switch
+            {
+                Type t when typeof(KeyObject).IsAssignableFrom(t) => CKR.CKR_KEY_HANDLE_INVALID,
+                Type t when typeof(StorageObject).IsAssignableFrom(t) => CKR.CKR_OBJECT_HANDLE_INVALID,
+                _ => CKR.CKR_OBJECT_HANDLE_INVALID
+            };
+
+            throw new RpcPkcs11Exception(ckrForInvalidKeyType, $"Object handle {objectHandle} with object id {cryptoApiObject} is not type {typeof(T).Name}.");
+        }
+    }
+
+    public static async ValueTask<T> FindObjectByHandle<T>(this IP11HwServices hwServices,
+        IMemorySession memorySession,
+        IP11Session session,
+        uint objectHandle,
+        CKR ckrForInvalidKeyType,
+        CancellationToken cancellationToken)
+        where T : ICryptoApiObject
+    {
+        ICryptoApiObject cryptoApiObject = await FindObjectByHandle(hwServices,
+            memorySession,
+            session,
+            objectHandle,
+            cancellationToken);
+
+        if (cryptoApiObject is T value)
+        {
+            return value;
+        }
+        else
+        {
+            throw new RpcPkcs11Exception(ckrForInvalidKeyType, $"Object handle {objectHandle} with object id {cryptoApiObject} is not type {typeof(T).Name}.");
         }
     }
 

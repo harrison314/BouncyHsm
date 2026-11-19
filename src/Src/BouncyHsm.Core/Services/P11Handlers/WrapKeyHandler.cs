@@ -35,8 +35,8 @@ public partial class WrapKeyHandler : IRpcRequestHandler<WrapKeyRequest, WrapKey
         await memorySession.CheckIsSlotPlugged(request.SessionId, this.hwServices, cancellationToken);
         IP11Session p11Session = memorySession.EnsureSession(request.SessionId);
 
-        KeyObject wrappingKey = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.WrappingKeyHandle, cancellationToken);
-        KeyObject key = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyHandle, cancellationToken);
+        KeyObject wrappingKey = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.WrappingKeyHandle, CKR.CKR_WRAPPING_KEY_HANDLE_INVALID, cancellationToken);
+        KeyObject key = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession, p11Session, request.KeyHandle, CKR.CKR_KEY_HANDLE_INVALID, cancellationToken);
 
         MechanismUtils.CheckMechanism(request.Mechanism, MechanismCkf.CKF_WRAP);
         wrappingKey.CheckAllowedMechanism((CKM)request.Mechanism.MechanismType, this.logger);

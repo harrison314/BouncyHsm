@@ -288,10 +288,20 @@ public partial class DeriveKeyHandler : IRpcRequestHandler<DeriveKeyRequest, Der
             SecretKeyObject? keyObject = null;
             if (hkdfParams.SaltType == HkdfDeriveKeyGenerator.CKF_HKDF_SALT_KEY)
             {
-                keyObject = await this.hwServices.FindObjectByHandle<SecretKeyObject>(memorySession,
+                KeyObject plyinKeyObject = await this.hwServices.FindObjectByHandle<KeyObject>(memorySession,
                             p11Session,
                             hkdfParams.SaltKey,
                             cancellationToken);
+
+                if (plyinKeyObject is SecretKeyObject secretKeyObject)
+                {
+                    keyObject = secretKeyObject;
+                }
+                else
+                {
+                    throw new RpcPkcs11Exception(CKR.CKR_KEY_TYPE_INCONSISTENT,
+                        $"Salt key with handle {hkdfParams.SaltKey} is not secret key.");
+                }
             }
 
             IDigest? digest = DigestUtils.TryGetDigest((CKM)hkdfParams.HashMechanism);
