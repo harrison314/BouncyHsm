@@ -68,10 +68,26 @@ internal class HkdfDeriveKeyGenerator : DeriveKeyGeneratorBase
 
         uint minKeySize = template.GetAttributeUint(CKA.CKA_VALUE_LEN, generatedKey.GetMinimalSecretLen());
         this.CheckLength(minKeySize);
-        byte[] bytes = new byte[minKeySize];
-        hkdfBytesGenerator.GenerateBytes(bytes, 0, bytes.Length);
 
-        return bytes;
+        try
+        {
+            byte[] bytes = new byte[minKeySize];
+            hkdfBytesGenerator.GenerateBytes(bytes, 0, bytes.Length);
+
+            return bytes;
+        }
+        catch (DataLengthException ex)
+        {
+            this.logger.LogError(ex,
+                "HKDF-Expand with {DigestAlgorithmName} gives at most {MaxBytes} bytes, requested {RequestedBytes} bytes.",
+                this.digetAlgorithm.AlgorithmName,
+                255 * this.digetAlgorithm.GetDigestSize(),
+                minKeySize);
+
+            throw new RpcPkcs11Exception(CKR.CKR_KEY_SIZE_RANGE,
+                 $"HKDF-Expand with {this.digetAlgorithm.AlgorithmName} gives at most {255 * this.digetAlgorithm.GetDigestSize()} bytes.",
+                ex);
+        }
     }
 
     private void CheckLength(uint minKeySize)
