@@ -67,10 +67,26 @@ public class MlDsaPublicKeyObject : PublicKeyObject
         base.Validate();
         CryptoObjectValueChecker.CheckEnumIsDefined<CK_ML_DSA_PARAMETER_SET>(CKA.CKA_PARAMETER_SET, this.CkaParameterSet);
         CryptoObjectValueChecker.CheckNotEmpty(CKA.CKA_VALUE, this.CkaValue);
+        if (this.CkaValue.Length != this.GetExceptedValueLength())
+        {
+            throw new RpcPkcs11Exception(CKR.CKR_ATTRIBUTE_VALUE_INVALID,
+                $"Length of the CKA_VALUE is not valid. Expected length for {this.CkaParameterSet} is {this.GetExceptedValueLength()} actual is {this.CkaValue.Length}.");
+        }
     }
 
     protected override CKM[] GetAllovedMechanism()
     {
         return AllovedMechanismLookup.MlDsaKeyObject;
+    }
+
+    private int GetExceptedValueLength()
+    {
+        return this.CkaParameterSet switch
+        {
+            CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_44 => 1312,
+            CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_65 => 1952,
+            CK_ML_DSA_PARAMETER_SET.CKP_ML_DSA_87 => 2592,
+            _ => throw new InvalidProgramException($"Enum value {this.CkaParameterSet} is not supported.")
+        };
     }
 }
