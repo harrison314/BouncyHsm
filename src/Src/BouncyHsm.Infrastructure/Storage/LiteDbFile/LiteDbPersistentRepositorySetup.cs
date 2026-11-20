@@ -8,12 +8,6 @@ public class LiteDbPersistentRepositorySetup
         set;
     }
 
-    public bool ReadOnly
-    {
-        get;
-        set;
-    }
-
     public bool ReduceLogFileSize
     {
         get;

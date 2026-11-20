@@ -33,7 +33,7 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
             Upgrade = false,
             Filename = persistenceSetup.Value.DbFilePath,
             Password = null,
-            ReadOnly = persistenceSetup.Value.ReadOnly
+            ReadOnly = false
         };
 
         this.database = new LiteDatabase(connectionString);
