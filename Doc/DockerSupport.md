@@ -7,9 +7,9 @@ docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest
 ```
 
 Important information about the container:
-* The container exposes port _8080_ as an HTTP port for the web interface and API.
-* The container exposes port _8765_ for TCP connections to the native PKCS#11 library.
-* The database is stored in the _/var/BouncyHsm/_ directory, making it a suitable location to map a persistent volume.
+* the container exposes port _8080_ as an HTTP port for the web interface and API,
+* the container exposes port _8765_ for TCP connections to the native PKCS#11 library,
+* the database is stored in the _/var/BouncyHsm/_ directory, making it a suitable location to map a persistent volume.
 
 ## Use wslc
 To use WSL containers:
@@ -69,7 +69,7 @@ the `BOUNCY_HSM_CFG_STRING` environment variable is set in the container, which 
 For example, for a server on the *bouncy_hsm_server* domain, the `BOUNCY_HSM_CFG_STRING` variable is set as follows: `Server=bouncy_hsm_server; Port=8765;`,
 to add logging to the console, use: `Server=bouncy_hsm_server; Port=8765; LogTarget=Console; LogLevel=TRACE;`.
 
-The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in the Bouncy Hsm web interface under _Configure PKCS#11 lib_.
+The value of the environment variable `BOUNCY_HSM_CFG_STRING` can be called in the _Bouncy Hsm_ web interface under _Configure PKCS#11 lib_.
 
 ### Docker compose example
 In folder [/Examples/DockerComposeExample](/Examples/DockerComposeExample) there is a demonstration of using Docker compose.

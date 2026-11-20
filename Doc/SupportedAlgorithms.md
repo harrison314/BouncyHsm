@@ -1,11 +1,11 @@
 ﻿# Supported algorithms
 
-Supported algorithms for _Bouncy Hsm_ version 2.3.4.0 (commit _b7b1c3040fa5b1d596cc5767d5c70912917db5fa_).
+Supported algorithms for _Bouncy Hsm_ version 2.4.0.0 (commit _b42b99eb6c7b894142b7ca04e8e7f287086f6bc0_).
 
 ## Mechanisms
-_Bouncy Hsm_ supports 212 mechanisms.
+_Bouncy Hsm_ supports 211 mechanisms.
 
-BouncyHsm provides PKCS#11 interfaces for versions [2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf),
+_Bouncy Hsm_ provides PKCS#11 interfaces for versions [2.40](https://docs.oasis-open.org/pkcs11/pkcs11-curr/v2.40/os/pkcs11-curr-v2.40-os.pdf),
 [3.1](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/os/pkcs11-spec-v3.1-os.pdf),
 and [3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.pdf),
 these versions are backward compatible.
@@ -183,15 +183,14 @@ The mechanism can also be used in older versions of the native API.
 | `CKM_AES_CBC_ENCRYPT_DATA`  | 16  | 32 |   |   |   | ✓ |   |   |   |   |   |
 | `CKM_GOSTR3411`  | 0  | 0 | ✓ |   |   |   |   |   |   |   |   |
 | `CKM_GOSTR3411_HMAC`  | 1  | 10485760 |   | ✓ |   |   | ✓ |   |   |   |   |
-| `CKM_CHACHA20_KEY_GEN` <sub>v3.1</sub> | 32  | 32 |   |   |   |   |   |   | ✓ |   |   |
-| `CKM_CHACHA20` <sub>v3.1</sub> | 32  | 32 |   |   |   |   | ✓ |   |   | ✓ |   |
-| `CKM_POLY1305_KEY_GEN` <sub>v3.1</sub> | 32  | 32 |   |   |   |   |   |   | ✓ |   |   |
-| `CKM_POLY1305` <sub>v3.1</sub> | 32  | 32 |   | ✓ |   |   | ✓ |   |   |   |   |
+| `CKM_CHACHA20_KEY_GEN` <sub>v3.1</sub> | 256  | 256 |   |   |   |   |   |   | ✓ |   |   |
+| `CKM_CHACHA20` <sub>v3.1</sub> | 256  | 256 |   |   |   |   | ✓ |   |   | ✓ |   |
+| `CKM_POLY1305_KEY_GEN` <sub>v3.1</sub> | 256  | 256 |   |   |   |   |   |   | ✓ |   |   |
+| `CKM_POLY1305` <sub>v3.1</sub> | 256  | 256 |   | ✓ |   |   | ✓ |   |   |   |   |
 | `CKM_AES_OFB`  | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |   |
 | `CKM_AES_CFB64`  | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |   |
 | `CKM_AES_CFB8`  | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |   |
 | `CKM_AES_CFB128`  | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |   |
-| `CKM_AES_CFB1`  | 16  | 32 |   |   |   |   | ✓ |   |   | ✓ |   |
 | `CKM_AES_KEY_WRAP_PAD`  | 16  | 32 |   |   |   |   |   |   |   | ✓ |   |
 | `CKM_SHA_1_KEY_GEN` <sub>v3.1</sub> | 1  | 10485760 |   |   |   |   |   |   | ✓ |   |   |
 | `CKM_SHA224_KEY_GEN` <sub>v3.1</sub> | 1  | 10485760 |   |   |   |   |   |   | ✓ |   |   |
@@ -221,10 +220,10 @@ The mechanism can also be used in older versions of the native API.
 | `CKM_BLAKE2B_512_HMAC_GENERAL` <sub>v3.1</sub> | 1  | 10485760 |   | ✓ |   |   | ✓ |   |   |   |   |
 | `CKM_BLAKE2B_512_KEY_DERIVE` <sub>v3.1</sub> | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |   |
 | `CKM_BLAKE2B_512_KEY_GEN` <sub>v3.1</sub> | 1  | 10485760 |   |   |   |   |   |   | ✓ |   |   |
-| `CKM_SALSA20` <sub>v3.1</sub> | 32  | 32 |   |   |   |   | ✓ |   |   | ✓ |   |
-| `CKM_CHACHA20_POLY1305` <sub>v3.1</sub> | 32  | 32 |   |   |   |   | ✓ |   |   |   |   |
+| `CKM_SALSA20` <sub>v3.1</sub> | 256  | 256 |   |   |   |   | ✓ |   |   | ✓ |   |
+| `CKM_CHACHA20_POLY1305` <sub>v3.1</sub> | 256  | 256 |   |   |   |   | ✓ |   |   |   |   |
 | `CKM_HKDF_DERIVE` <sub>v3.1</sub> | 1  | 10485760 |   |   |   | ✓ |   |   |   |   |   |
-| `CKM_SALSA20_KEY_GEN` <sub>v3.1</sub> | 32  | 32 |   |   |   |   |   |   | ✓ |   |   |
+| `CKM_SALSA20_KEY_GEN` <sub>v3.1</sub> | 256  | 256 |   |   |   |   |   |   | ✓ |   |   |
 | `CKM_HSS_KEY_PAIR_GEN` <sub>v3.1</sub> | 0  | 0 |   |   |   |   |   | ✓ |   |   |   |
 | `CKM_HSS` <sub>v3.1</sub> | 0  | 0 |   | ✓ |   |   | ✓ |   |   |   |   |
 
@@ -338,7 +337,7 @@ _Bouncy Hsm_ supports 84 different named elliptic curves.
 ## Edwards curves
 _Bouncy Hsm_ supports 2 different named edwards curves.
 
-| Kind | Curve | Curve Name | OID |
+| Kind | Curve | Curve name | OID |
 | ---  | --- | --- | --- |
 | Edwards | Ed25519 | `id-Ed25519` | `1.3.101.112` |
 | Edwards | Ed448 | `id-Ed448` | `1.3.101.113` |
@@ -346,7 +345,7 @@ _Bouncy Hsm_ supports 2 different named edwards curves.
 ## Montgomery curves
 _Bouncy Hsm_ supports 2 different named montgomery curves.
 
-| Kind | Curve | Curve Name | OID |
+| Kind | Curve | Curve name | OID |
 | ---  | --- | --- | --- |
 | Montgomery | X25519 | `id-X25519` | `1.3.101.110` |
 | Montgomery | X448 | `id-X448` | `1.3.101.111` |

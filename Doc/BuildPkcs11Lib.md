@@ -2,18 +2,18 @@
 Due to the mutual incompatibility of some Linux distributions, it will be necessary to make a separate build `BouncyHsm.Pkcs11Lib`.
 
 ## Prerequisites
-- _clang_ compiler or _gcc_
-- _make_
-- _git_
+* _clang_ compiler or _gcc_
+* _make_
+* _git_
 
 
 The compiled library is named `BouncyHsm.Pkcs11Lib-x64.so`.
 
 ## Makefile parameters
 To facilitate building for other platforms, it is possible to parameterize the makefile:
-- `CC` - for compiler, default is `clang`,
-- `ARCH_FLAGS` - for architecture, default is `-m64`,
-- `EXTRA_FLAGS` - for extra compilation flags.
+* `CC` - for compiler, default is `clang`,
+* `ARCH_FLAGS` - for architecture, default is `-m64`,
+* `EXTRA_FLAGS` - for extra compilation flags.
 
 Example build command for _ARM_ with _gcc_:
 ```
