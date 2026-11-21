@@ -3,7 +3,7 @@ The _BouncyHsm_ Docker image is available on _ghcr_, and you can download and ru
 
 ```
 docker pull ghcr.io/harrison314/bouncyhsm:latest
-docker run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest
+docker run -d -p 8080:8080 -p 8765:8765 ghcr.io/harrison314/bouncyhsm:latest
 ```
 
 Important information about the container:
@@ -16,7 +16,7 @@ To use WSL containers:
 
 ```
 wslc pull ghcr.io/harrison314/bouncyhsm:latest
-wslc run -d -p 8080:8080 -p 8765:8765 bouncyhsm:latest
+wslc run -d -p 8080:8080 -p 8765:8765 ghcr.io/harrison314/bouncyhsm:latest
 ```
 
 ## Advanced
