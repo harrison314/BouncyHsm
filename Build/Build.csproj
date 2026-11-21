@@ -7,11 +7,5 @@
   <ItemGroup>
     <PackageReference Include="Cake.Git" Version="5.0.1" />
   </ItemGroup>
-
-  <!--<ItemGroup>
-    <PackageReference Update="Cake.Generator" Version="7.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>-->
+  
 </Project>

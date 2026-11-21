@@ -26,7 +26,7 @@ public static class Program
                 slot.AddCommand<UnplugTokenCommand>("unplug").WithDescription("Unplug token from slot.");
                 slot.AddCommand<SetPinCommand>("setPin").WithDescription("Set PIN for token.");
 
-                slot.SetDescription("Slot manipulation.");
+                slot.SetDescription("Slot and token manipulation.");
             });
 
             config.AddBranch("objects", slot =>

@@ -277,6 +277,14 @@ Task(BuildTarget.BuildAll)
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/libman.json"));
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/.gitkeep"));
         DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/**/appsettings.Development.json"));
+        DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/css/icon-moon/selection.*"));
+        DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/css/icon-moon/demo.*"));
+        DeleteFiles(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/css/icon-moon/Read Me.*"));
+        DeleteDirectory(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm/wwwroot/css/icon-moon/demo-files"), new DeleteDirectorySettings()
+        {
+            Force = true,
+            Recursive = true
+        });
 
         CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm"), data);
         CopyLicenses(JoinPaths(ArtifactsTmpDirectory, "BouncyHsm.Cli"), data);
