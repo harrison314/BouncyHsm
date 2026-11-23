@@ -215,6 +215,6 @@ public class SlotFacade : ISlotFacade
         Span<byte> data = (serialLen <= 512) ? stackalloc byte[serialLen] : new byte[serialLen];
         RandomNumberGenerator.Fill(data);
 
-        return HexConvertor.GetString(data);
+        return Convert.ToHexString(data);
     }
 }

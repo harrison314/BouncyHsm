@@ -14,6 +14,6 @@ public static class X509CertificateExtensions
         Span<byte> thumbprint = stackalloc byte[20];
         sha1.DoFinal(thumbprint);
 
-        return HexConvertor.GetString(thumbprint);
+        return Convert.ToHexString(thumbprint);
     }
 }

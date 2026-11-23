@@ -68,7 +68,7 @@ internal struct LabelIdPair : IEquatable<LabelIdPair>
 
     public override string ToString()
     {
-        return $"LabelIdPair {{ CkaLabel: {this.CkaLabel}, CkaId: {HexConvertor.GetString(this.CkaId)}, IsCaCert: {this.IsCaCert} }}";
+        return $"LabelIdPair {{ CkaLabel: {this.CkaLabel}, CkaId: {Convert.ToHexString(this.CkaId)}, IsCaCert: {this.IsCaCert} }}";
     }
 
     private static int GetHashCodeInternal(ReadOnlySpan<byte> data)
