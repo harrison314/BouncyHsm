@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BouncyHsm.Core.Services.Profiles;
@@ -21,12 +22,7 @@ public static class ProfileUpdater
         try
         {
             profile = System.Text.Json.JsonSerializer.Deserialize<Profile>(stream,
-                new System.Text.Json.JsonSerializerOptions()
-                {
-                    Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() },
-                    ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip,
-                    UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow
-                });
+                 ProfileJsonContext.Default.Profile);
         }
         catch (Exception ex)
         {
