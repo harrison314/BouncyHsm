@@ -76,7 +76,7 @@ public static partial class RequestProcessor
         {
             logger.LogTrace("Executing operation {operationName} with parameters {request}.",
                operation,
-               System.Text.Json.JsonSerializer.Serialize<TRequest>(request));
+               request?.ToString());
         }
 
         try

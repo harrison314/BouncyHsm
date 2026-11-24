@@ -17,7 +17,7 @@ namespace BouncyHsm.Core.Rpc;
 #nullable enable
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class AppIdentification
 {
     [Key(0)]
@@ -41,10 +41,14 @@ public partial class AppIdentification
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<AppIdentification>(this, RpcMessagesJsonContext.Default.AppIdentification);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class ExtendedClientInfo
 {
     [Key(0)]
@@ -89,10 +93,14 @@ public partial class ExtendedClientInfo
         set;
     } = string.Empty;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<ExtendedClientInfo>(this, RpcMessagesJsonContext.Default.ExtendedClientInfo);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class PingRequest : IRpcRequest
 {
     [Key(0)]
@@ -102,10 +110,14 @@ public partial class PingRequest : IRpcRequest
         set;
     } = default!;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<PingRequest>(this, RpcMessagesJsonContext.Default.PingRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class PingEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -115,10 +127,14 @@ public partial class PingEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<PingEnvelope>(this, RpcMessagesJsonContext.Default.PingEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class InitializeRequest : IRpcRequest
 {
     [Key(0)]
@@ -163,10 +179,14 @@ public partial class InitializeRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<InitializeRequest>(this, RpcMessagesJsonContext.Default.InitializeRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class InitializeEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -176,10 +196,14 @@ public partial class InitializeEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<InitializeEnvelope>(this, RpcMessagesJsonContext.Default.InitializeEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FinalizeRequest : IRpcRequest
 {
     [Key(0)]
@@ -196,10 +220,14 @@ public partial class FinalizeRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FinalizeRequest>(this, RpcMessagesJsonContext.Default.FinalizeRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FinalizeEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -209,10 +237,14 @@ public partial class FinalizeEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FinalizeEnvelope>(this, RpcMessagesJsonContext.Default.FinalizeEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -222,10 +254,14 @@ public partial class GetInfoRequest : IRpcRequest
         set;
     } = default!;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetInfoRequest>(this, RpcMessagesJsonContext.Default.GetInfoRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -242,10 +278,14 @@ public partial class GetInfoEnvelope : IRpcResponse
         set;
     } = string.Empty;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetInfoEnvelope>(this, RpcMessagesJsonContext.Default.GetInfoEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSlotListRequest : IRpcRequest
 {
     [Key(0)]
@@ -276,10 +316,14 @@ public partial class GetSlotListRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSlotListRequest>(this, RpcMessagesJsonContext.Default.GetSlotListRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSlotListEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -303,10 +347,14 @@ public partial class GetSlotListEnvelope : IRpcResponse
         set;
     } = global::System.Array.Empty<uint>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSlotListEnvelope>(this, RpcMessagesJsonContext.Default.GetSlotListEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSlotInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -323,10 +371,14 @@ public partial class GetSlotInfoRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSlotInfoRequest>(this, RpcMessagesJsonContext.Default.GetSlotInfoRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkVersion
 {
     [Key(0)]
@@ -343,10 +395,14 @@ public partial class CkVersion
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkVersion>(this, RpcMessagesJsonContext.Default.CkVersion);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkSpecialUint
 {
     [Key(0)]
@@ -377,10 +433,14 @@ public partial class CkSpecialUint
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkSpecialUint>(this, RpcMessagesJsonContext.Default.CkSpecialUint);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SlotInfo
 {
     [Key(0)]
@@ -432,10 +492,14 @@ public partial class SlotInfo
         set;
     } = default!;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SlotInfo>(this, RpcMessagesJsonContext.Default.SlotInfo);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSlotInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -452,10 +516,14 @@ public partial class GetSlotInfoEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSlotInfoEnvelope>(this, RpcMessagesJsonContext.Default.GetSlotInfoEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetTokenInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -472,10 +540,14 @@ public partial class GetTokenInfoRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetTokenInfoRequest>(this, RpcMessagesJsonContext.Default.GetTokenInfoRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class TokenInfo
 {
     [Key(0)]
@@ -604,10 +676,14 @@ public partial class TokenInfo
         set;
     } = string.Empty;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<TokenInfo>(this, RpcMessagesJsonContext.Default.TokenInfo);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetTokenInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -624,10 +700,14 @@ public partial class GetTokenInfoEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetTokenInfoEnvelope>(this, RpcMessagesJsonContext.Default.GetTokenInfoEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetMechanismListRequest : IRpcRequest
 {
     [Key(0)]
@@ -658,10 +738,14 @@ public partial class GetMechanismListRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetMechanismListRequest>(this, RpcMessagesJsonContext.Default.GetMechanismListRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class MechanismList
 {
     [Key(0)]
@@ -678,10 +762,14 @@ public partial class MechanismList
         set;
     } = global::System.Array.Empty<uint>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<MechanismList>(this, RpcMessagesJsonContext.Default.MechanismList);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetMechanismListEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -698,10 +786,14 @@ public partial class GetMechanismListEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetMechanismListEnvelope>(this, RpcMessagesJsonContext.Default.GetMechanismListEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetMechanismInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -725,10 +817,14 @@ public partial class GetMechanismInfoRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetMechanismInfoRequest>(this, RpcMessagesJsonContext.Default.GetMechanismInfoRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class MechanismInfo
 {
     [Key(0)]
@@ -759,10 +855,14 @@ public partial class MechanismInfo
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<MechanismInfo>(this, RpcMessagesJsonContext.Default.MechanismInfo);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetMechanismInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -779,10 +879,14 @@ public partial class GetMechanismInfoEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetMechanismInfoEnvelope>(this, RpcMessagesJsonContext.Default.GetMechanismInfoEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SetPinRequest : IRpcRequest
 {
     [Key(0)]
@@ -813,10 +917,14 @@ public partial class SetPinRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SetPinRequest>(this, RpcMessagesJsonContext.Default.SetPinRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SetPinEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -826,10 +934,14 @@ public partial class SetPinEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SetPinEnvelope>(this, RpcMessagesJsonContext.Default.SetPinEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class OpenSessionRequest : IRpcRequest
 {
     [Key(0)]
@@ -867,10 +979,14 @@ public partial class OpenSessionRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<OpenSessionRequest>(this, RpcMessagesJsonContext.Default.OpenSessionRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class OpenSessionEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -887,10 +1003,14 @@ public partial class OpenSessionEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<OpenSessionEnvelope>(this, RpcMessagesJsonContext.Default.OpenSessionEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CloseSessionRequest : IRpcRequest
 {
     [Key(0)]
@@ -907,10 +1027,14 @@ public partial class CloseSessionRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CloseSessionRequest>(this, RpcMessagesJsonContext.Default.CloseSessionRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CloseSessionEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -920,10 +1044,14 @@ public partial class CloseSessionEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CloseSessionEnvelope>(this, RpcMessagesJsonContext.Default.CloseSessionEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CloseAllSessionsRequest : IRpcRequest
 {
     [Key(0)]
@@ -940,10 +1068,14 @@ public partial class CloseAllSessionsRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CloseAllSessionsRequest>(this, RpcMessagesJsonContext.Default.CloseAllSessionsRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CloseAllSessionsEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -953,10 +1085,14 @@ public partial class CloseAllSessionsEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CloseAllSessionsEnvelope>(this, RpcMessagesJsonContext.Default.CloseAllSessionsEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSessionInfoRequest : IRpcRequest
 {
     [Key(0)]
@@ -973,10 +1109,14 @@ public partial class GetSessionInfoRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSessionInfoRequest>(this, RpcMessagesJsonContext.Default.GetSessionInfoRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SessionInfoData
 {
     [Key(0)]
@@ -1007,10 +1147,14 @@ public partial class SessionInfoData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SessionInfoData>(this, RpcMessagesJsonContext.Default.SessionInfoData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSessionInfoEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1027,10 +1171,14 @@ public partial class GetSessionInfoEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSessionInfoEnvelope>(this, RpcMessagesJsonContext.Default.GetSessionInfoEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class LoginRequest : IRpcRequest
 {
     [Key(0)]
@@ -1061,10 +1209,14 @@ public partial class LoginRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<LoginRequest>(this, RpcMessagesJsonContext.Default.LoginRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class LoginEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1074,10 +1226,14 @@ public partial class LoginEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<LoginEnvelope>(this, RpcMessagesJsonContext.Default.LoginEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class LogoutRequest : IRpcRequest
 {
     [Key(0)]
@@ -1094,10 +1250,14 @@ public partial class LogoutRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<LogoutRequest>(this, RpcMessagesJsonContext.Default.LogoutRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class LogoutEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1107,10 +1267,14 @@ public partial class LogoutEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<LogoutEnvelope>(this, RpcMessagesJsonContext.Default.LogoutEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SeedRandomRequest : IRpcRequest
 {
     [Key(0)]
@@ -1134,10 +1298,14 @@ public partial class SeedRandomRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SeedRandomRequest>(this, RpcMessagesJsonContext.Default.SeedRandomRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SeedRandomEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1147,10 +1315,14 @@ public partial class SeedRandomEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SeedRandomEnvelope>(this, RpcMessagesJsonContext.Default.SeedRandomEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateRandomRequest : IRpcRequest
 {
     [Key(0)]
@@ -1174,10 +1346,14 @@ public partial class GenerateRandomRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateRandomRequest>(this, RpcMessagesJsonContext.Default.GenerateRandomRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateRandomEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1194,10 +1370,14 @@ public partial class GenerateRandomEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateRandomEnvelope>(this, RpcMessagesJsonContext.Default.GenerateRandomEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class MechanismValue
 {
     [Key(0)]
@@ -1214,10 +1394,14 @@ public partial class MechanismValue
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<MechanismValue>(this, RpcMessagesJsonContext.Default.MechanismValue);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -1241,10 +1425,14 @@ public partial class DigestInitRequest : IRpcRequest
         set;
     } = default!;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestInitRequest>(this, RpcMessagesJsonContext.Default.DigestInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1254,10 +1442,14 @@ public partial class DigestInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestInitEnvelope>(this, RpcMessagesJsonContext.Default.DigestInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestRequest : IRpcRequest
 {
     [Key(0)]
@@ -1295,10 +1487,14 @@ public partial class DigestRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestRequest>(this, RpcMessagesJsonContext.Default.DigestRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestValue
 {
     [Key(0)]
@@ -1315,10 +1511,14 @@ public partial class DigestValue
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestValue>(this, RpcMessagesJsonContext.Default.DigestValue);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1335,10 +1535,14 @@ public partial class DigestEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestEnvelope>(this, RpcMessagesJsonContext.Default.DigestEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -1362,10 +1566,14 @@ public partial class DigestUpdateRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestUpdateRequest>(this, RpcMessagesJsonContext.Default.DigestUpdateRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1375,10 +1583,14 @@ public partial class DigestUpdateEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestUpdateEnvelope>(this, RpcMessagesJsonContext.Default.DigestUpdateEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -1402,10 +1614,14 @@ public partial class DigestKeyRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestKeyRequest>(this, RpcMessagesJsonContext.Default.DigestKeyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1415,10 +1631,14 @@ public partial class DigestKeyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestKeyEnvelope>(this, RpcMessagesJsonContext.Default.DigestKeyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -1449,10 +1669,14 @@ public partial class DigestFinalRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestFinalRequest>(this, RpcMessagesJsonContext.Default.DigestFinalRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DigestFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1469,10 +1693,14 @@ public partial class DigestFinalEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DigestFinalEnvelope>(this, RpcMessagesJsonContext.Default.DigestFinalEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class UintArrayData
 {
     [Key(0)]
@@ -1482,10 +1710,14 @@ public partial class UintArrayData
         set;
     } = global::System.Array.Empty<uint>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<UintArrayData>(this, RpcMessagesJsonContext.Default.UintArrayData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class AttrValueFromNative
 {
     [Key(0)]
@@ -1551,10 +1783,14 @@ public partial class AttrValueFromNative
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<AttrValueFromNative>(this, RpcMessagesJsonContext.Default.AttrValueFromNative);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class AttrTemplateValueFromNative
 {
     [Key(0)]
@@ -1564,10 +1800,14 @@ public partial class AttrTemplateValueFromNative
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<AttrTemplateValueFromNative>(this, RpcMessagesJsonContext.Default.AttrTemplateValueFromNative);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CreateObjectRequest : IRpcRequest
 {
     [Key(0)]
@@ -1591,10 +1831,14 @@ public partial class CreateObjectRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CreateObjectRequest>(this, RpcMessagesJsonContext.Default.CreateObjectRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CreateObjectEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1611,10 +1855,14 @@ public partial class CreateObjectEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CreateObjectEnvelope>(this, RpcMessagesJsonContext.Default.CreateObjectEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DestroyObjectRequest : IRpcRequest
 {
     [Key(0)]
@@ -1638,10 +1886,14 @@ public partial class DestroyObjectRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DestroyObjectRequest>(this, RpcMessagesJsonContext.Default.DestroyObjectRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DestroyObjectEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1651,10 +1903,14 @@ public partial class DestroyObjectEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DestroyObjectEnvelope>(this, RpcMessagesJsonContext.Default.DestroyObjectEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FindObjectsInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -1678,10 +1934,14 @@ public partial class FindObjectsInitRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FindObjectsInitRequest>(this, RpcMessagesJsonContext.Default.FindObjectsInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FindObjectsInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1691,10 +1951,14 @@ public partial class FindObjectsInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FindObjectsInitEnvelope>(this, RpcMessagesJsonContext.Default.FindObjectsInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FindObjectsRequest : IRpcRequest
 {
     [Key(0)]
@@ -1718,10 +1982,14 @@ public partial class FindObjectsRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FindObjectsRequest>(this, RpcMessagesJsonContext.Default.FindObjectsRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FindObjectsData
 {
     [Key(0)]
@@ -1738,10 +2006,14 @@ public partial class FindObjectsData
         set;
     } = global::System.Array.Empty<uint>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FindObjectsData>(this, RpcMessagesJsonContext.Default.FindObjectsData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FindObjectsEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1758,10 +2030,14 @@ public partial class FindObjectsEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FindObjectsEnvelope>(this, RpcMessagesJsonContext.Default.FindObjectsEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FindObjectsFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -1778,10 +2054,14 @@ public partial class FindObjectsFinalRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FindObjectsFinalRequest>(this, RpcMessagesJsonContext.Default.FindObjectsFinalRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class FindObjectsFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1791,10 +2071,14 @@ public partial class FindObjectsFinalEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<FindObjectsFinalEnvelope>(this, RpcMessagesJsonContext.Default.FindObjectsFinalEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetObjectSizeRequest : IRpcRequest
 {
     [Key(0)]
@@ -1818,10 +2102,14 @@ public partial class GetObjectSizeRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetObjectSizeRequest>(this, RpcMessagesJsonContext.Default.GetObjectSizeRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetObjectSizeEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -1838,10 +2126,14 @@ public partial class GetObjectSizeEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetObjectSizeEnvelope>(this, RpcMessagesJsonContext.Default.GetObjectSizeEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetAttributeInputValues
 {
     [Key(0)]
@@ -1865,10 +2157,14 @@ public partial class GetAttributeInputValues
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetAttributeInputValues>(this, RpcMessagesJsonContext.Default.GetAttributeInputValues);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetAttributeValueRequest : IRpcRequest
 {
     [Key(0)]
@@ -1899,10 +2195,14 @@ public partial class GetAttributeValueRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<GetAttributeInputValues>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetAttributeValueRequest>(this, RpcMessagesJsonContext.Default.GetAttributeValueRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetAttributeOutValue
 {
     [Key(0)]
@@ -1961,10 +2261,14 @@ public partial class GetAttributeOutValue
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetAttributeOutValue>(this, RpcMessagesJsonContext.Default.GetAttributeOutValue);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetAttributeOutTemplateValues
 {
     [Key(0)]
@@ -1981,10 +2285,14 @@ public partial class GetAttributeOutTemplateValues
         set;
     } = global::System.Array.Empty<GetAttributeOutValue>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetAttributeOutTemplateValues>(this, RpcMessagesJsonContext.Default.GetAttributeOutTemplateValues);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetAttributeOutValues
 {
     [Key(0)]
@@ -1994,10 +2302,14 @@ public partial class GetAttributeOutValues
         set;
     } = global::System.Array.Empty<GetAttributeOutValue>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetAttributeOutValues>(this, RpcMessagesJsonContext.Default.GetAttributeOutValues);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetAttributeValueEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2014,10 +2326,14 @@ public partial class GetAttributeValueEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetAttributeValueEnvelope>(this, RpcMessagesJsonContext.Default.GetAttributeValueEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateKeyPairRequest : IRpcRequest
 {
     [Key(0)]
@@ -2055,10 +2371,14 @@ public partial class GenerateKeyPairRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateKeyPairRequest>(this, RpcMessagesJsonContext.Default.GenerateKeyPairRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateKeyPairData
 {
     [Key(0)]
@@ -2075,10 +2395,14 @@ public partial class GenerateKeyPairData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateKeyPairData>(this, RpcMessagesJsonContext.Default.GenerateKeyPairData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateKeyPairEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2095,10 +2419,14 @@ public partial class GenerateKeyPairEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateKeyPairEnvelope>(this, RpcMessagesJsonContext.Default.GenerateKeyPairEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2129,10 +2457,14 @@ public partial class SignInitRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignInitRequest>(this, RpcMessagesJsonContext.Default.SignInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2142,10 +2474,14 @@ public partial class SignInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignInitEnvelope>(this, RpcMessagesJsonContext.Default.SignInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignRequest : IRpcRequest
 {
     [Key(0)]
@@ -2183,10 +2519,14 @@ public partial class SignRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignRequest>(this, RpcMessagesJsonContext.Default.SignRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignatureData
 {
     [Key(0)]
@@ -2203,10 +2543,14 @@ public partial class SignatureData
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignatureData>(this, RpcMessagesJsonContext.Default.SignatureData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2223,10 +2567,14 @@ public partial class SignEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignEnvelope>(this, RpcMessagesJsonContext.Default.SignEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -2250,10 +2598,14 @@ public partial class SignUpdateRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignUpdateRequest>(this, RpcMessagesJsonContext.Default.SignUpdateRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2263,10 +2615,14 @@ public partial class SignUpdateEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignUpdateEnvelope>(this, RpcMessagesJsonContext.Default.SignUpdateEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -2297,10 +2653,14 @@ public partial class SignFinalRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignFinalRequest>(this, RpcMessagesJsonContext.Default.SignFinalRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2317,10 +2677,14 @@ public partial class SignFinalEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignFinalEnvelope>(this, RpcMessagesJsonContext.Default.SignFinalEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2351,10 +2715,14 @@ public partial class VerifyInitRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyInitRequest>(this, RpcMessagesJsonContext.Default.VerifyInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2364,10 +2732,14 @@ public partial class VerifyInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyInitEnvelope>(this, RpcMessagesJsonContext.Default.VerifyInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyRequest : IRpcRequest
 {
     [Key(0)]
@@ -2398,10 +2770,14 @@ public partial class VerifyRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyRequest>(this, RpcMessagesJsonContext.Default.VerifyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2411,10 +2787,14 @@ public partial class VerifyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyEnvelope>(this, RpcMessagesJsonContext.Default.VerifyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -2438,10 +2818,14 @@ public partial class VerifyUpdateRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyUpdateRequest>(this, RpcMessagesJsonContext.Default.VerifyUpdateRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2451,10 +2835,14 @@ public partial class VerifyUpdateEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyUpdateEnvelope>(this, RpcMessagesJsonContext.Default.VerifyUpdateEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -2478,10 +2866,14 @@ public partial class VerifyFinalRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyFinalRequest>(this, RpcMessagesJsonContext.Default.VerifyFinalRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2491,10 +2883,14 @@ public partial class VerifyFinalEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyFinalEnvelope>(this, RpcMessagesJsonContext.Default.VerifyFinalEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -2525,10 +2921,14 @@ public partial class GenerateKeyRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateKeyRequest>(this, RpcMessagesJsonContext.Default.GenerateKeyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateKeyData
 {
     [Key(0)]
@@ -2538,10 +2938,14 @@ public partial class GenerateKeyData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateKeyData>(this, RpcMessagesJsonContext.Default.GenerateKeyData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GenerateKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2558,10 +2962,14 @@ public partial class GenerateKeyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GenerateKeyEnvelope>(this, RpcMessagesJsonContext.Default.GenerateKeyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DeriveKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -2599,10 +3007,14 @@ public partial class DeriveKeyRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DeriveKeyRequest>(this, RpcMessagesJsonContext.Default.DeriveKeyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DeriveKeyData
 {
     [Key(0)]
@@ -2612,10 +3024,14 @@ public partial class DeriveKeyData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DeriveKeyData>(this, RpcMessagesJsonContext.Default.DeriveKeyData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DeriveKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2632,10 +3048,14 @@ public partial class DeriveKeyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DeriveKeyEnvelope>(this, RpcMessagesJsonContext.Default.DeriveKeyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2666,10 +3086,14 @@ public partial class EncryptInitRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptInitRequest>(this, RpcMessagesJsonContext.Default.EncryptInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2679,10 +3103,14 @@ public partial class EncryptInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptInitEnvelope>(this, RpcMessagesJsonContext.Default.EncryptInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptRequest : IRpcRequest
 {
     [Key(0)]
@@ -2720,10 +3148,14 @@ public partial class EncryptRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptRequest>(this, RpcMessagesJsonContext.Default.EncryptRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptData
 {
     [Key(0)]
@@ -2740,10 +3172,14 @@ public partial class EncryptData
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptData>(this, RpcMessagesJsonContext.Default.EncryptData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2760,10 +3196,14 @@ public partial class EncryptEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptEnvelope>(this, RpcMessagesJsonContext.Default.EncryptEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -2801,10 +3241,14 @@ public partial class EncryptUpdateRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptUpdateRequest>(this, RpcMessagesJsonContext.Default.EncryptUpdateRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2821,10 +3265,14 @@ public partial class EncryptUpdateEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptUpdateEnvelope>(this, RpcMessagesJsonContext.Default.EncryptUpdateEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -2855,10 +3303,14 @@ public partial class EncryptFinalRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptFinalRequest>(this, RpcMessagesJsonContext.Default.EncryptFinalRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncryptFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2875,10 +3327,14 @@ public partial class EncryptFinalEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncryptFinalEnvelope>(this, RpcMessagesJsonContext.Default.EncryptFinalEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -2909,10 +3365,14 @@ public partial class DecryptInitRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptInitRequest>(this, RpcMessagesJsonContext.Default.DecryptInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -2922,10 +3382,14 @@ public partial class DecryptInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptInitEnvelope>(this, RpcMessagesJsonContext.Default.DecryptInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptRequest : IRpcRequest
 {
     [Key(0)]
@@ -2963,10 +3427,14 @@ public partial class DecryptRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptRequest>(this, RpcMessagesJsonContext.Default.DecryptRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptData
 {
     [Key(0)]
@@ -2983,10 +3451,14 @@ public partial class DecryptData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptData>(this, RpcMessagesJsonContext.Default.DecryptData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3003,10 +3475,14 @@ public partial class DecryptEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptEnvelope>(this, RpcMessagesJsonContext.Default.DecryptEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptUpdateRequest : IRpcRequest
 {
     [Key(0)]
@@ -3044,10 +3520,14 @@ public partial class DecryptUpdateRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptUpdateRequest>(this, RpcMessagesJsonContext.Default.DecryptUpdateRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptUpdateEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3064,10 +3544,14 @@ public partial class DecryptUpdateEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptUpdateEnvelope>(this, RpcMessagesJsonContext.Default.DecryptUpdateEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptFinalRequest : IRpcRequest
 {
     [Key(0)]
@@ -3098,10 +3582,14 @@ public partial class DecryptFinalRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptFinalRequest>(this, RpcMessagesJsonContext.Default.DecryptFinalRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecryptFinalEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3118,10 +3606,14 @@ public partial class DecryptFinalEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecryptFinalEnvelope>(this, RpcMessagesJsonContext.Default.DecryptFinalEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class WrapKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -3173,10 +3665,14 @@ public partial class WrapKeyRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<WrapKeyRequest>(this, RpcMessagesJsonContext.Default.WrapKeyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class WrapKeyData
 {
     [Key(0)]
@@ -3193,10 +3689,14 @@ public partial class WrapKeyData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<WrapKeyData>(this, RpcMessagesJsonContext.Default.WrapKeyData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class WrapKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3213,10 +3713,14 @@ public partial class WrapKeyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<WrapKeyEnvelope>(this, RpcMessagesJsonContext.Default.WrapKeyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class UnwrapKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -3261,10 +3765,14 @@ public partial class UnwrapKeyRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<UnwrapKeyRequest>(this, RpcMessagesJsonContext.Default.UnwrapKeyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class UnwrapKeyData
 {
     [Key(0)]
@@ -3274,10 +3782,14 @@ public partial class UnwrapKeyData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<UnwrapKeyData>(this, RpcMessagesJsonContext.Default.UnwrapKeyData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class UnwrapKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3294,10 +3806,14 @@ public partial class UnwrapKeyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<UnwrapKeyEnvelope>(this, RpcMessagesJsonContext.Default.UnwrapKeyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SetAttributeValueRequest : IRpcRequest
 {
     [Key(0)]
@@ -3328,10 +3844,14 @@ public partial class SetAttributeValueRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SetAttributeValueRequest>(this, RpcMessagesJsonContext.Default.SetAttributeValueRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SetAttributeValueEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3341,10 +3861,14 @@ public partial class SetAttributeValueEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SetAttributeValueEnvelope>(this, RpcMessagesJsonContext.Default.SetAttributeValueEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CopyObjectRequest : IRpcRequest
 {
     [Key(0)]
@@ -3375,10 +3899,14 @@ public partial class CopyObjectRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<AttrValueFromNative>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CopyObjectRequest>(this, RpcMessagesJsonContext.Default.CopyObjectRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CopyObjectData
 {
     [Key(0)]
@@ -3388,10 +3916,14 @@ public partial class CopyObjectData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CopyObjectData>(this, RpcMessagesJsonContext.Default.CopyObjectData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CopyObjectEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3408,10 +3940,14 @@ public partial class CopyObjectEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CopyObjectEnvelope>(this, RpcMessagesJsonContext.Default.CopyObjectEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class WaitForSlotEventRequest : IRpcRequest
 {
     [Key(0)]
@@ -3435,10 +3971,14 @@ public partial class WaitForSlotEventRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<WaitForSlotEventRequest>(this, RpcMessagesJsonContext.Default.WaitForSlotEventRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class WaitForSlotEventEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3455,10 +3995,14 @@ public partial class WaitForSlotEventEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<WaitForSlotEventEnvelope>(this, RpcMessagesJsonContext.Default.WaitForSlotEventEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class WaitForSlotEventData
 {
     [Key(0)]
@@ -3468,10 +4012,14 @@ public partial class WaitForSlotEventData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<WaitForSlotEventData>(this, RpcMessagesJsonContext.Default.WaitForSlotEventData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignRecoverInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -3502,10 +4050,14 @@ public partial class SignRecoverInitRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignRecoverInitRequest>(this, RpcMessagesJsonContext.Default.SignRecoverInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignRecoverInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3515,10 +4067,14 @@ public partial class SignRecoverInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignRecoverInitEnvelope>(this, RpcMessagesJsonContext.Default.SignRecoverInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignRecoverRequest : IRpcRequest
 {
     [Key(0)]
@@ -3556,10 +4112,14 @@ public partial class SignRecoverRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignRecoverRequest>(this, RpcMessagesJsonContext.Default.SignRecoverRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignRecoverData
 {
     [Key(0)]
@@ -3576,10 +4136,14 @@ public partial class SignRecoverData
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignRecoverData>(this, RpcMessagesJsonContext.Default.SignRecoverData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SignRecoverEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3596,10 +4160,14 @@ public partial class SignRecoverEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SignRecoverEnvelope>(this, RpcMessagesJsonContext.Default.SignRecoverEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyRecoverInitRequest : IRpcRequest
 {
     [Key(0)]
@@ -3630,10 +4198,14 @@ public partial class VerifyRecoverInitRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyRecoverInitRequest>(this, RpcMessagesJsonContext.Default.VerifyRecoverInitRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyRecoverInitEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3643,10 +4215,14 @@ public partial class VerifyRecoverInitEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyRecoverInitEnvelope>(this, RpcMessagesJsonContext.Default.VerifyRecoverInitEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyRecoverRequest : IRpcRequest
 {
     [Key(0)]
@@ -3684,10 +4260,14 @@ public partial class VerifyRecoverRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyRecoverRequest>(this, RpcMessagesJsonContext.Default.VerifyRecoverRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyRecoverData
 {
     [Key(0)]
@@ -3704,10 +4284,14 @@ public partial class VerifyRecoverData
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyRecoverData>(this, RpcMessagesJsonContext.Default.VerifyRecoverData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class VerifyRecoverEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3724,10 +4308,14 @@ public partial class VerifyRecoverEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<VerifyRecoverEnvelope>(this, RpcMessagesJsonContext.Default.VerifyRecoverEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class InitTokenRequest : IRpcRequest
 {
     [Key(0)]
@@ -3758,10 +4346,14 @@ public partial class InitTokenRequest : IRpcRequest
         set;
     } = string.Empty;
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<InitTokenRequest>(this, RpcMessagesJsonContext.Default.InitTokenRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class InitTokenEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3771,10 +4363,14 @@ public partial class InitTokenEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<InitTokenEnvelope>(this, RpcMessagesJsonContext.Default.InitTokenEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class InitPinRequest : IRpcRequest
 {
     [Key(0)]
@@ -3798,10 +4394,14 @@ public partial class InitPinRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<InitPinRequest>(this, RpcMessagesJsonContext.Default.InitPinRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class InitPinEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3811,10 +4411,14 @@ public partial class InitPinEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<InitPinEnvelope>(this, RpcMessagesJsonContext.Default.InitPinEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SessionCancelRequest : IRpcRequest
 {
     [Key(0)]
@@ -3838,10 +4442,14 @@ public partial class SessionCancelRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SessionCancelRequest>(this, RpcMessagesJsonContext.Default.SessionCancelRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class SessionCancelEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3851,10 +4459,14 @@ public partial class SessionCancelEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<SessionCancelEnvelope>(this, RpcMessagesJsonContext.Default.SessionCancelEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncapsulateKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -3906,10 +4518,14 @@ public partial class EncapsulateKeyRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncapsulateKeyRequest>(this, RpcMessagesJsonContext.Default.EncapsulateKeyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncapsulateKeyData
 {
     [Key(0)]
@@ -3940,10 +4556,14 @@ public partial class EncapsulateKeyData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncapsulateKeyData>(this, RpcMessagesJsonContext.Default.EncapsulateKeyData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class EncapsulateKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -3960,10 +4580,14 @@ public partial class EncapsulateKeyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<EncapsulateKeyEnvelope>(this, RpcMessagesJsonContext.Default.EncapsulateKeyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecapsulateKeyRequest : IRpcRequest
 {
     [Key(0)]
@@ -4008,10 +4632,14 @@ public partial class DecapsulateKeyRequest : IRpcRequest
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecapsulateKeyRequest>(this, RpcMessagesJsonContext.Default.DecapsulateKeyRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecapsulateKeyDadta
 {
     [Key(0)]
@@ -4021,10 +4649,14 @@ public partial class DecapsulateKeyDadta
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecapsulateKeyDadta>(this, RpcMessagesJsonContext.Default.DecapsulateKeyDadta);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class DecapsulateKeyEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -4041,10 +4673,14 @@ public partial class DecapsulateKeyEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<DecapsulateKeyEnvelope>(this, RpcMessagesJsonContext.Default.DecapsulateKeyEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSessionValidationFlagsRequest : IRpcRequest
 {
     [Key(0)]
@@ -4068,10 +4704,14 @@ public partial class GetSessionValidationFlagsRequest : IRpcRequest
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSessionValidationFlagsRequest>(this, RpcMessagesJsonContext.Default.GetSessionValidationFlagsRequest);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSessionValidationFlagsData
 {
     [Key(0)]
@@ -4081,10 +4721,14 @@ public partial class GetSessionValidationFlagsData
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSessionValidationFlagsData>(this, RpcMessagesJsonContext.Default.GetSessionValidationFlagsData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class GetSessionValidationFlagsEnvelope : IRpcResponse
 {
     [Key(0)]
@@ -4101,10 +4745,14 @@ public partial class GetSessionValidationFlagsEnvelope : IRpcResponse
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<GetSessionValidationFlagsEnvelope>(this, RpcMessagesJsonContext.Default.GetSessionValidationFlagsEnvelope);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkP_MacGeneralParams
 {
     [Key(0)]
@@ -4114,10 +4762,14 @@ public partial class CkP_MacGeneralParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkP_MacGeneralParams>(this, RpcMessagesJsonContext.Default.CkP_MacGeneralParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkP_ExtractParams
 {
     [Key(0)]
@@ -4127,10 +4779,14 @@ public partial class CkP_ExtractParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkP_ExtractParams>(this, RpcMessagesJsonContext.Default.CkP_ExtractParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkP_RsaPkcsPssParams
 {
     [Key(0)]
@@ -4154,10 +4810,14 @@ public partial class CkP_RsaPkcsPssParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkP_RsaPkcsPssParams>(this, RpcMessagesJsonContext.Default.CkP_RsaPkcsPssParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkP_RawDataParams
 {
     [Key(0)]
@@ -4167,10 +4827,14 @@ public partial class CkP_RawDataParams
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkP_RawDataParams>(this, RpcMessagesJsonContext.Default.CkP_RawDataParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkP_KeyDerivationStringData
 {
     [Key(0)]
@@ -4180,10 +4844,14 @@ public partial class CkP_KeyDerivationStringData
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkP_KeyDerivationStringData>(this, RpcMessagesJsonContext.Default.CkP_KeyDerivationStringData);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class CkP_CkObjectHandle
 {
     [Key(0)]
@@ -4193,10 +4861,14 @@ public partial class CkP_CkObjectHandle
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<CkP_CkObjectHandle>(this, RpcMessagesJsonContext.Default.CkP_CkObjectHandle);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkEcdh1DeriveParams
 {
     [Key(0)]
@@ -4220,10 +4892,14 @@ public partial class Ckp_CkEcdh1DeriveParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkEcdh1DeriveParams>(this, RpcMessagesJsonContext.Default.Ckp_CkEcdh1DeriveParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkGcmParams
 {
     [Key(0)]
@@ -4254,10 +4930,14 @@ public partial class Ckp_CkGcmParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkGcmParams>(this, RpcMessagesJsonContext.Default.Ckp_CkGcmParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkCcmParams
 {
     [Key(0)]
@@ -4288,10 +4968,14 @@ public partial class Ckp_CkCcmParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkCcmParams>(this, RpcMessagesJsonContext.Default.Ckp_CkCcmParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkRsaPkcsOaepParams
 {
     [Key(0)]
@@ -4322,10 +5006,14 @@ public partial class Ckp_CkRsaPkcsOaepParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkRsaPkcsOaepParams>(this, RpcMessagesJsonContext.Default.Ckp_CkRsaPkcsOaepParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkAesCbcEnryptDataParams
 {
     [Key(0)]
@@ -4342,10 +5030,14 @@ public partial class Ckp_CkAesCbcEnryptDataParams
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkAesCbcEnryptDataParams>(this, RpcMessagesJsonContext.Default.Ckp_CkAesCbcEnryptDataParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkChaCha20Params
 {
     [Key(0)]
@@ -4383,10 +5075,14 @@ public partial class Ckp_CkChaCha20Params
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkChaCha20Params>(this, RpcMessagesJsonContext.Default.Ckp_CkChaCha20Params);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkSalsa20Params
 {
     [Key(0)]
@@ -4410,10 +5106,14 @@ public partial class Ckp_CkSalsa20Params
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkSalsa20Params>(this, RpcMessagesJsonContext.Default.Ckp_CkSalsa20Params);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkSalsa20ChaCha20Poly1305Params
 {
     [Key(0)]
@@ -4430,10 +5130,14 @@ public partial class Ckp_CkSalsa20ChaCha20Poly1305Params
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkSalsa20ChaCha20Poly1305Params>(this, RpcMessagesJsonContext.Default.Ckp_CkSalsa20ChaCha20Poly1305Params);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkEddsaParams
 {
     [Key(0)]
@@ -4450,10 +5154,14 @@ public partial class Ckp_CkEddsaParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkEddsaParams>(this, RpcMessagesJsonContext.Default.Ckp_CkEddsaParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkSignAdditionalContext
 {
     [Key(0)]
@@ -4470,10 +5178,14 @@ public partial class Ckp_CkSignAdditionalContext
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkSignAdditionalContext>(this, RpcMessagesJsonContext.Default.Ckp_CkSignAdditionalContext);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkHashSignAdditionalContext
 {
     [Key(0)]
@@ -4497,10 +5209,14 @@ public partial class Ckp_CkHashSignAdditionalContext
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkHashSignAdditionalContext>(this, RpcMessagesJsonContext.Default.Ckp_CkHashSignAdditionalContext);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkHkdfParams
 {
     [Key(0)]
@@ -4552,10 +5268,14 @@ public partial class Ckp_CkHkdfParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkHkdfParams>(this, RpcMessagesJsonContext.Default.Ckp_CkHkdfParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkCamelliaCbcEncryptDataParams
 {
     [Key(0)]
@@ -4572,10 +5292,14 @@ public partial class Ckp_CkCamelliaCbcEncryptDataParams
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkCamelliaCbcEncryptDataParams>(this, RpcMessagesJsonContext.Default.Ckp_CkCamelliaCbcEncryptDataParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkSp800_108PrfDataParams
 {
     [Key(0)]
@@ -4627,10 +5351,14 @@ public partial class Ckp_CkSp800_108PrfDataParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkSp800_108PrfDataParams>(this, RpcMessagesJsonContext.Default.Ckp_CkSp800_108PrfDataParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkSp800_108KdfParams
 {
     [Key(0)]
@@ -4654,10 +5382,14 @@ public partial class Ckp_CkSp800_108KdfParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkSp800_108KdfParams>(this, RpcMessagesJsonContext.Default.Ckp_CkSp800_108KdfParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_Ck800_108FeedbackKdfParams
 {
     [Key(0)]
@@ -4688,10 +5420,14 @@ public partial class Ckp_Ck800_108FeedbackKdfParams
         set;
     }
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_Ck800_108FeedbackKdfParams>(this, RpcMessagesJsonContext.Default.Ckp_Ck800_108FeedbackKdfParams);
+    }
 }
 
 [MessagePackObject]
-[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.3.0")]
+[System.CodeDom.Compiler.GeneratedCode("BouncyHsm.RpcGenerator.Generators", "1.4.0")]
 public partial class Ckp_CkAesCtrParams
 {
     [Key(0)]
@@ -4708,5 +5444,9 @@ public partial class Ckp_CkAesCtrParams
         set;
     } = global::System.Array.Empty<byte>();
 
+    public override string ToString()
+    {
+        return System.Text.Json.JsonSerializer.Serialize<Ckp_CkAesCtrParams>(this, RpcMessagesJsonContext.Default.Ckp_CkAesCtrParams);
+    }
 }
 
