@@ -25,6 +25,8 @@ internal class LiteDbPersistentRepository : IPersistentRepository, IDisposable
         TimeProvider timeProvider,
         ILogger<LiteDbPersistentRepository> logger)
     {
+        LiteDBPragmas.I_AM_AWARE_MY_DATABASE_BREAKS_WHEN_I_USE_THIS();
+
         ConnectionString connectionString = new ConnectionString()
         {
             Collation = Collation.Binary,

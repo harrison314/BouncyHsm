@@ -7,16 +7,16 @@ namespace BouncyHsm.Core.Infrastructure.Extensions;
 
 internal static class DomainResultExtensions
 {
-    public static IActionResult ToActionResult(this VoidDomainResult domainResult)
+    public static IResult ToMinimalApiResult(this VoidDomainResult domainResult)
     {
-        return domainResult.Match<IActionResult>(ok => new OkResult(),
+        return domainResult.Match<IResult>(ok => Results.Ok(),
             notFound => ProblemNotFound(),
             invalidInput => ProblemBadRequest(invalidInput.Message));
     }
 
-    public static IActionResult ToActionResult<T>(this DomainResult<T> domainResult)
+    public static IResult ToMinimalApiResult<T>(this DomainResult<T> domainResult)
     {
-        return domainResult.Match<IActionResult>(ok => new ObjectResult(ok.Value),
+        return domainResult.Match<IResult>(ok => Results.Ok(ok.Value),
             notFound => ProblemNotFound(),
             invalidInput => ProblemBadRequest(invalidInput.Message));
     }
@@ -35,7 +35,7 @@ internal static class DomainResultExtensions
             invalidInput => new VoidDomainResult.InvalidInput(invalidInput.Message));
     }
 
-    private static IActionResult ProblemNotFound()
+    private static IResult ProblemNotFound()
     {
         ProblemDetails problemDetails = new ProblemDetails()
         {
@@ -45,13 +45,10 @@ internal static class DomainResultExtensions
             Detail = null
         };
 
-        return new ObjectResult(problemDetails)
-        {
-            StatusCode = 404
-        };
+        return Results.Problem(problemDetails);
     }
 
-    private static IActionResult ProblemBadRequest(string? description)
+    private static IResult ProblemBadRequest(string? description)
     {
         ProblemDetails problemDetails = new ProblemDetails()
         {
@@ -61,9 +58,6 @@ internal static class DomainResultExtensions
             Detail = description
         };
 
-        return new ObjectResult(problemDetails)
-        {
-            StatusCode = 400
-        };
+        return Results.Problem(problemDetails);
     }
 }

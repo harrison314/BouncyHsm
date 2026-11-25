@@ -38,21 +38,13 @@ public class Program
         builder.Services.Configure<Services.Configuration.BouncyHsmSetup>(builder.Configuration.GetSection("BouncyHsmSetup"));
         // Add services to the container.
 
-        builder.Services.AddScoped<BouncyHsm.Infrastructure.Filters.HttpResponseErrorFilter>();
-        builder.Services.AddControllers(cfg =>
+        builder.Services.ConfigureHttpJsonOptions(cfg =>
         {
-            cfg.Filters.Add<BouncyHsm.Infrastructure.Filters.HttpResponseErrorFilter>();
-        })
-            .ConfigureApiBehaviorOptions(cfg =>
-            {
-                cfg.SuppressModelStateInvalidFilter = false;
-            })
-            .AddJsonOptions(cfg =>
-            {
-                cfg.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
-                cfg.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
-                cfg.JsonSerializerOptions.PropertyNamingPolicy = null;
-            });
+            cfg.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            cfg.SerializerOptions.PropertyNameCaseInsensitive = false;
+            cfg.SerializerOptions.PropertyNamingPolicy = null;
+        });
+        builder.Services.AddValidation();
 
 
         builder.Services.AddEndpointsApiExplorer();
@@ -135,6 +127,7 @@ public class Program
 
         app.UseRouting();
 
+        app.UseMiddleware<Infrastructure.HttpResponseErrorMiddleware>();
         app.UseAuthorization();
         app.UseAntiforgery();
 
@@ -142,7 +135,7 @@ public class Program
         app.MapHub<BouncyHsm.Infrastructure.PapServices.PapHub>("/paphub");
 
         app.MapHealthChecks("/health");
-        app.MapControllers();
+        app.MapBouncyHsmApi();
 
         app.MapRazorComponents<App>()
                .AddInteractiveWebAssemblyRenderMode()
