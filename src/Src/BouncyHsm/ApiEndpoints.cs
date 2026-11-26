@@ -18,14 +18,14 @@ internal static class ApiEndpointRouteExtensions
 {
     public static IEndpointRouteBuilder MapBouncyHsmApi(this IEndpointRouteBuilder endpoints)
     {
-        ApiEndpoints.MapApplicationConnectionEndpoints(endpoints.MapGroup("/ApplicationConnection"));
-        ApiEndpoints.MapHsmInfoEndpoints(endpoints.MapGroup("/HsmInfo"));
-        ApiEndpoints.MapKeyGenerationEndpoints(endpoints.MapGroup("/KeyGeneration"));
-        ApiEndpoints.MapMigrationEndpoints(endpoints.MapGroup("/Migration"));
-        ApiEndpoints.MapPkcsEndpoints(endpoints.MapGroup("/Pkcs"));
-        ApiEndpoints.MapSlotEndpoints(endpoints.MapGroup("/Slot"));
-        ApiEndpoints.MapStatsEndpoints(endpoints.MapGroup("/Stats"));
-        ApiEndpoints.MapStorageObjectsEndpoints(endpoints.MapGroup("/StorageObjects"));
+        ApiEndpoints.MapApplicationConnectionEndpoints(endpoints.MapGroup("/ApplicationConnection").WithTags("ApplicationConnection"));
+        ApiEndpoints.MapHsmInfoEndpoints(endpoints.MapGroup("/HsmInfo").WithTags("HsmInfo"));
+        ApiEndpoints.MapKeyGenerationEndpoints(endpoints.MapGroup("/KeyGeneration").WithTags("KeyGeneration"));
+        ApiEndpoints.MapMigrationEndpoints(endpoints.MapGroup("/Migration").WithTags("Migration"));
+        ApiEndpoints.MapPkcsEndpoints(endpoints.MapGroup("/Pkcs").WithTags("Pkcs"));
+        ApiEndpoints.MapSlotEndpoints(endpoints.MapGroup("/Slot").WithTags("Slot"));
+        ApiEndpoints.MapStatsEndpoints(endpoints.MapGroup("/Stats").WithTags("Stats"));
+        ApiEndpoints.MapStorageObjectsEndpoints(endpoints.MapGroup("/StorageObjects").WithTags("StorageObjects"));
         return endpoints;
     }
 }

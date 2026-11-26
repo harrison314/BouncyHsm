@@ -53,7 +53,6 @@ public class Program
             HsmInfoFacade hsmInfoFacade = new HsmInfoFacade();
             cfg.Title = "Bouncy Hsm REST API";
             cfg.Description = "Management API for Bouncy Hsm.";
-            cfg.UseRouteNameAsOperationId = true;
             cfg.Version = hsmInfoFacade.GetVersions().Version;
         });
 
