@@ -18,7 +18,7 @@ public class T99_Issue160
     [DataRow(CKM.CKM_XOR_BASE_AND_DATA)]
     [DataRow(CKM.CKM_CONCATENATE_BASE_AND_DATA)]
     [DataRow(CKM.CKM_CONCATENATE_DATA_AND_BASE)]
-    public void DeriveKey_ProtectionInheritedFromBaseKey(CKM mechanismType)
+    public void DeriveKey_ProtectionInheritedFromBaseKey_Success(CKM mechanismType)
     {
         Pkcs11InteropFactories factories = new Pkcs11InteropFactories();
         using IPkcs11Library library = factories.Pkcs11LibraryFactory.LoadPkcs11Library(factories,
