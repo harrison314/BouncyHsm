@@ -244,7 +244,7 @@ public class StorageObjectsFacade : IStorageObjectsFacade
     private StorageObjectInfo BuildInfo(StorageObject storageObject, string description)
     {
         string? ckaIdHex = storageObject.GetValue(CKA.CKA_ID, CryptoApiObjectGetValueMode.Default)
-            .MatchOk<string?>(ok => HexConvertor.GetString(ok.Value.AsByteArray()),
+            .MatchOk<string?>(ok => Convert.ToHexString(ok.Value.AsByteArray()),
             () => null);
 
         CKK? keyType = storageObject.GetValue(CKA.CKA_KEY_TYPE, CryptoApiObjectGetValueMode.Default)

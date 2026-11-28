@@ -12,11 +12,11 @@ internal static class AttributeValueExtensions
     {
         return attributeValue.TypeTag switch
         {
-            AttrTypeTag.ByteArray => HexConvertor.GetString(attributeValue.AsByteArray()),
+            AttrTypeTag.ByteArray => Convert.ToHexString(attributeValue.AsByteArray()),
             AttrTypeTag.CkBool => attributeValue.AsBool() ? "01" : "00",
             AttrTypeTag.CkUint => attributeValue.AsUint().ToString("X8"),
-            AttrTypeTag.String => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsString())),
-            AttrTypeTag.DateTime => HexConvertor.GetString(Encoding.UTF8.GetBytes(attributeValue.AsDate().ToString())),
+            AttrTypeTag.String => Convert.ToHexString(Encoding.UTF8.GetBytes(attributeValue.AsString())),
+            AttrTypeTag.DateTime => Convert.ToHexString(Encoding.UTF8.GetBytes(attributeValue.AsDate().ToString())),
             AttrTypeTag.UintArray => UintArrayToHex(attributeValue.AsUintArray()),
             AttrTypeTag.CkAttributeArray => string.Empty, //TODO: check is empty or not
             _ => throw new InvalidProgramException($"Enum value {attributeValue.TypeTag} is not supported.")
